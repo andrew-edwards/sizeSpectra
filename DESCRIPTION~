@@ -1,0 +1,13 @@
+Package: sizeSpectra
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Andrew",
+           family = "Edwards",
+           role = c("aut", "cre"),
+           email = "andrew.edwards@dfo-mpo.gc.ca",
+           comment = c(ORCID = "0000-0003-2749-8198"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
