@@ -1,5 +1,26 @@
 # stats.R - functions related to random number generation and statistical fitting.
 
+##' Bounded and unbounded power-law distributions
+##'
+##' Probability density function, cumulative distribution function P(X <= x),
+##' [**no quantile function - maybe add] and random
+##' generation of values for the bounded and unbounded power-law distributions, with
+##' exponent 'b', minimum 'x_min' and maximum (for bounded distribution)
+##' 'x_max' as described in Edwards et al., 2017, Methods in Ecology and
+##' Evolution, 8:57-67). Random generation uses the inverse method (e.g. p1215 of Edwards
+##' 2008, Journal of Animal Ecology, 77:1212-1222).
+##' @param x vector of values to compute the density and distribution functions.
+##' @param n number of random numbers to be generated (if 'length(n) > 1' then
+##' generate 'length(n)' values)
+##' @param b exponent of the distribution (must be <-1 for unbounded)
+##' @param x_min minimum bound of the distribution, x_min > 0
+##' @param x_max maximum bound for bounded distribution, x_max > x_min
+##' @return 'dPL' and 'dPLB' return vector of probability density values
+##' corresponding to x, 'pPL' and 'pPLB' return vector of probability
+##' distribution values P(X <= x) corresponding to x, 'rPL' and 'rPLB' return
+##' a vector (of length 'n') of independent random draws from the distribution.
+##' @name PL
+NULL
 
 # dPL - probability density function for unbounded power-law distribution
 # pPL - probability distribution function for unbounded power-law distribution
@@ -8,28 +29,8 @@
 # pPLB - probability distribution function for bounded power-law distribution
 # rPLB - random numbers from a bounded power-law distribution
 
-# Statistical functions:
-##' Bounded and unbounded power-law distributions
-##'
-##' .. content for \details{} ..
-##' @title
-##' @param x
-##' @param b
-##' @param xmin
-##' @return
-##' @author
 dPL = function(x = 1, b = -2, xmin = 1)
   {
-  # Computes probability density function for an unbounded power-law
-  #  (Pareto) distribution
-  #
-  # Args:
-  #   x: vector of values to compute the density function
-  #   b: exponent of probability density function, b < -1
-  #   xmin: minimum bound of the distribution, xmin > 0
-  #
-  # Returns:
-  #   vector of probability density corresponding to vector x
   #
     if(b >= -1 | xmin <= 0) stop("Parameters out of bounds in dPL")
     C = - (b+1) / xmin^(b+1)
@@ -40,17 +41,6 @@ dPL = function(x = 1, b = -2, xmin = 1)
 
 pPL = function(x = 10, b = -2, xmin = 1)
   {
-  # Computes probability distribution function, P(X <= x),  for an
-  #   unbounded power-law (Pareto) distribution
-  #
-  # Args:
-  #   x: vector of values at which to compute the distribution function
-  #   b: exponent of probability density function, b < -1
-  #   xmin: minimum bound of the distribution, xmin > 0
-  #
-  # Returns:
-  #   vector of probability distribution values P(X <= x) corresponding to x
-  #
     if(b >= -1 | xmin <= 0) stop("Parameters out of bounds in qPL")
     y = 0 * x     # so have zeros where x < xmin
     y[x >= xmin] = 1 - (x[x >= xmin]/xmin)^(b+1)
@@ -59,20 +49,6 @@ pPL = function(x = 10, b = -2, xmin = 1)
 
 rPL = function(n = 1, b = -2, xmin = 1)
   {
-  # Computes random numbers from an unbounded power-law (Pareto) distribution
-  #
-  # Args:
-  #   n: number of random numbers in sample. If 'length(n) > 1', the length is
-  #       taken to be the number required.
-  #   b: exponent of probability density function, b < -1
-  #   xmin: minimum bound of the distribution, xmin > 0
-  #
-  # Returns:
-  #   vector of length n of independent random draws from the distribution
-  #
-  # Uses the inverse method (e.g. p1215 of Edwards 2008, Journal
-  #   of Animal Ecology, 77:1212-1222).
-  #
     if(b >= -1 | xmin <= 0) stop("Parameters out of bounds in rPL")
     u = runif(n)
     y = xmin * ( 1 - u ) ^ (1/(b+1))
@@ -83,17 +59,6 @@ rPL = function(n = 1, b = -2, xmin = 1)
 
 dPLB = function(x = 1, b = -2, xmin = 1, xmax = 100)
   {
-  # Computes probability density function for a bounded power-law
-  #  (Pareto) distribution
-  #
-  # Args:
-  #   x: vector of values to compute the density function
-  #   b: exponent of probability density function
-  #   xmin: minimum bound of the distribution, xmin > 0
-  #   xmax: maximum bound of the distribution, xmax > xmin
-  # Returns:
-  #   vector of probability density corresponding to vector x
-  #
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in dPLB")
     if(b != -1)
         { C = (b+1) / ( xmax^(b+1) - xmin^(b+1) )
@@ -109,14 +74,6 @@ pPLB = function(x = 10, b = -2, xmin = 1, xmax = 100)
   {
   # Computes probability distribution function, P(X <= x),  for a
   #   bounded power-law (Pareto) distribution
-  #
-  # Args:
-  #   x: vector of values at which to compute the distribution function
-  #   b: exponent of probability density function
-  #   xmin: minimum bound of the distribution, xmin > 0
-  #   xmax: maximum bound of the distribution, xmax > xmin
-  # Returns:
-  #   vector of probability distribution values P(X <= x) corresponding to x
   #
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in pPLB")
     y = 0 * x     # so have zeros where x < xmin
@@ -139,19 +96,6 @@ rPLB = function(n = 1, b = -2, xmin = 1, xmax = 100)
   {
   # Computes random numbers from a bounded power-law distribution
   #
-  # Args:
-  #   n: number of random numbers in sample. If 'length(n) > 1', the length is
-  #       taken to be the number required.
-  #   b: exponent of probability density function
-  #   xmin: minimum bound of the distribution, xmin > 0
-  #   xmax: maximum bound of the distribution, xmax > xmin
-  #
-  # Returns:
-  #   vector of length n of independent random draws from the distribution
-  #
-  # Uses the inverse method (e.g. p1215 of Edwards 2008, Journal
-  #   of Animal Ecology, 77:1212-1222).
-  #
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in rPLB")
     u = runif(n)
     if(b != -1)
@@ -161,8 +105,6 @@ rPLB = function(n = 1, b = -2, xmin = 1, xmax = 100)
         }
     return(y)
   }
-
-
 
 # PLBfunctions.r - functions to be sourced, including density, distribution
 #  function and random number generator for unbounded and bounded power-law
