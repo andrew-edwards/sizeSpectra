@@ -10,3 +10,5 @@ Meta
 lib/*
 *.tex
 *.pdf
+
+fromOtherRepo/
