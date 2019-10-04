@@ -209,7 +209,7 @@ LBNbiom.method = function(bodyMass = NULL,
                           labels = binBreaks[-1])
         # indiv$binWidth =cut(x, breaks=binBreaks, right=FALSE,
         #    include.lowest=TRUE, labels = diff(binBreaks))
-        # indiv = mutate(indiv, binWidth = binMax - binMin)
+        # indiv = dplyr::mutate(indiv, binWidth = binMax - binMin)
            # Above commands avoid any problems with bins with 0 counts.
            # Don't really need all of them, but include for completeness.
         indiv$binMid = as.numeric(as.character(indiv$binMid))
@@ -234,9 +234,9 @@ LBNbiom.method = function(bodyMass = NULL,
         binVals[ is.infinite(binVals$log10totalBiomNorm), "log10totalBiomNorm"] = NA
         binVals = dplyr::mutate(binVals, aboveCutOff = (binMid > lowerCutOff))
                   # aboveCutOff is TRUE/FALSE for the regression
-        unNorm.lm = lm( log10totalBiom ~ log10binMid,
+        unNorm.lm = lm(log10totalBiom ~ log10binMid,
                        data = dplyr::filter(binVals, aboveCutOff),
-                       na.action=na.omit)
+                       na.action = na.omit)
         unNorm.slope = unNorm.lm$coeff[2]
         unNorm.conf = confint(unNorm.lm,
                               "log10binMid",
@@ -304,47 +304,39 @@ LBmizbinsFun = function(beta, xmin, xmax, k)
     return(fun)
     }
 
-
+##' Construct bins that double in size and encompass the data,
+##'
+##' Construct bins that double in size and encompass the data, resulting in
+##' `binBreaks` ..., 0.25, 0.5, 1, 2, 4, 8, 16,.... as necessary, where the
+##' breaks are powers of 2. Adapting from `LBNbiom.method()`.
+##'
+##' @param x vector of individual values (e.g. body masses)
+##' @param counts dataframe (or array) with first column being an `x` value
+##'  (e.g. body mass), and second column being the `counts` of the number of
+##'   individuals for that value. Only `x` or `counts` can be specified.
+##' @return       list containing:
+##' * indiv: dataframe with a row for each x value, with columns:
+##'   + `x`: original `x` values
+##'   + `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum, maximum,
+##'   and width, respectively, of the bin within which the `x` value falls.   If
+##'   `indiv` has >=10^6 rows then it isn't saved.  If `counts` was specified
+##'   then an equivalent `x` vector is created and is column `x` (i.e. `x`
+##'   values are repeated). May not be the most efficient way, but it easiest to
+##'   program. May not need `indiv` returned, but it needs to be calculated
+##'   anyway.
+##' * `binVals`: dataframe with a row for each new bin, with columns:
+##'   + `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum, maximum, and width,
+##'     respectively, of the bin
+##'   + `binCount`: total number of individuals in that bin
+##'   + `binCountNorm`: `binCount / binWidth`
+##'   +  `binSum`: sum of individual values in that bin (appropriate if `x`
+##'      represents biomass, but not length)
+##'   + `binSumNorm`: `binSum / binWidth`
+##'   + `log10...`: `log10()` of some of the above quantities.
+##' @export
+##' @author Andrew Edwards
 log2bins = function(x = NULL, counts = NULL)
     {
-    #  Construct bins that double in size and encompass the data,
-    #   resulting in binBreaks   ..., 0.25, 0.5, 1, 2, 4, 8, 16,....
-    #   as necessary.
-    #  Adapting from LBNbiom.method().
-    #
-    # Args:
-    #  x: vector of individual values (e.g. body masses).
-    #  counts: dataframe (or array) with first column being an x value
-    #  (e.g. body mass), and second column being the counts of the
-    #   number of individuals for that value.
-    #   Only x or counts can be specified.
-    #
-    # Returns:
-    #  list containing:
-    #
-    #   indiv: dataframe with a row for each x value, where the
-    #    columns are: x - original x values.
-    #                 binMid, binMin, binMax, binWidth - midpoint, minimum,
-    #                  maximum, and width, respectively, of the bin within
-    #                  which the x value falls.
-    #     If indiv has >=10^6 rows then it isn't saved.
-    #     If counts was specified then an equivalent x
-    #      vector is created and is column x (i.e. x values are repeated). May
-    #      not be the most efficient way, but it easiest to program.
-    #     May not need indiv returned, but it needs to be calculated anyway.
-    #
-    #   binVals: dataframe with a row for each new bin, where the
-    #    columns are: binMid, binMin, binMax, binWidth - midpoint, minimum,
-    #                  maximum, and width, respectively, of the bin
-    #                 binCount - total number of individuals in that bin
-    #                 binCountNorm - binCount / binWidth
-    #                 binSum - sum of individual values in that bin
-    #                  (appropriate if x represents biomass, but not length)
-    #                 binSumNorm - binSum / binWidth
-    #                 log10.... - log10 of some of the above quantities
-    #
-    #
-    #   require(dplyr)            # Need for this function.
         if(!is.null(x) & !is.null(counts)) {
             stop("need only one of x or counts in log2bins") }
         if(is.null(x) & is.null(counts)) {
@@ -397,7 +389,7 @@ log2bins = function(x = NULL, counts = NULL)
            # binWidth uses new columns binMax and binMin
         binVals = binVals[order(binVals$binMid),]   # order by binMid
         #
-        binVals = mutate(binVals, log10binMid = log10(binMid),
+        binVals = dplyr::mutate(binVals, log10binMid = log10(binMid),
             log10binCount = log10(binCount),
             log10binSum = log10(binSum),
             log10binSumNorm = log10(binSumNorm))
