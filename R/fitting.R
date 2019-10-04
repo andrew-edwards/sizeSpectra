@@ -410,33 +410,37 @@ log2bins = function(x = NULL, counts = NULL)
           }
         return(y)
        }
-
+##' Compute size-spectra exponents for a dataset using all eight methods
+##'
+##' TODO: Developed and is called in `nSea15analysis.Snw`, which was modified
+##' from what was in fitting2.r. May be specific to the IBTS data set.
+##'
+##' @param oneYear the year of data to use, from that in the multiple years contained
+##'   in `data`. TODO: that should presumably be `dataForYear`
+##' @param dataForYear  TODO: I had this for `data`: local data frame that has a
+##'   unique row for every combination of `Year`, `SpecCode` and `LngtClass`,
+##'   with columns:
+##' * `Number`: number of observed individuals of that species in that
+##'   length class in that year
+##' * `bodyMass`: body mass representative of such an individual, as calculated
+##'   previously by `LWa * LngtClass ^ LWb`.
+##' @param figName figure name, will get appended by `-Year` for each year, to
+##'   create a `.png` file for each year.
+##' @return data frame with one row for each method, with columns:
+##' * `Year`
+##' * `Method`
+##' * `b`: estimate of b from that method
+##' * `confMin`: lower end of 95\% confidence interval of `b` for that method
+##' * `confMax`: upper end of 95\% confidence interval of `b` for that method.
+##'
+##' Also saves a `.png` figure called `paste(figName, "-", oneYear, ".png")`, of the
+##'   fits for each of the eight methods.
+##' @export
+##' @author Andrew Edwards
 eightMethods = function(oneYear = 1980,
   dataForYear = dplyr::filter(data, Year == oneYear), figName = "eightMethods" )
   {
-  # Computes exponents for a dataset using all eight methods. It was developed
-  #  and is called in nSea15analysis.Snw, which was modified from what was
-  #  in fitting2.r.
-  # Args:
-  #  oneYear: the year of data to use, from that in the multiple years contained
-  #   in data.
-  #  data: local data frame that has a unique row for every combination
-  #   of Year, SpecCode and LngtClass. The `Number' column is
-  #   the number of observed individuals of that species in that length
-  #   class in that year. `bodyMass' is the body mass representative of such
-  #   an individual, as calculated previously by LWa * LngtClass ^ LWb.
-  #  figName: figure name, will get appended by -Year for each year, to create
-  #   a .png for each year.
-  # Returns:
-  #   data frame with one row for each method, with columns Year, Method,
-  #    b (estimate of b from that method), confMin (lower end of 95% confidence
-  #    interval of b for that method), and confMax (upper end of 95% confidence
-  #    interval of b for that method).
-  #   plots a .png figure paste(figName, "-", oneYear, ".png") of the
-  #    fits for each of the eight methods. Does .png instead of .eps since
-  #    .eps was >150Mb for 1980 data, .png is 66Kb.
-  #
-  #
+  # TODO: move this to help if necessary
   # Need x, a vector of individual fish sizes (lengths or weights), which is how
   #  the original methods functions are written.
   # Now adding explicit methods in eightMethods.counts, such as
@@ -445,14 +449,13 @@ eightMethods = function(oneYear = 1980,
   #  counts, the expansion to give x should give the same results.
   x = rep(dataForYear$bodyMass, dataForYear$Number)
               # 3.3 million for 1980 for old nSea15, but it was quick
-  # return(head(dataForYear))   }       # when testing
   log.x = log(x)
   sum.log.x = sum( log.x )
   xmin = min(x)
   xmax = max(x)
 
-  figheight = 7 # 5.6     For 4x2 figure
-  figwidth = 5.7    # 5.7 inches for JAE
+  figheight = 7     # inches, 5.6 For 4x2 figure
+  figwidth = 5.7    #
 
   num.bins = 8   # number of bins for standard histogram and Llin method, though
                  #  this is only a suggestion (and can get overridden). Daan used
@@ -461,8 +464,15 @@ eightMethods = function(oneYear = 1980,
   # postscript("nSea1980-fitting2a.eps", height = figheight,
   #           width = figwidth, horizontal=FALSE, paper="special")
   # Postscript plots all 3million points, ends up >150Mb file. So try .png:
-  png(paste(figName, "-", oneYear, ".png", sep=""), height = figheight,
-             width = figwidth, res=300,, units="in")
+    png(paste(figName,
+              "-",
+              oneYear,
+              ".png",
+              sep=""),
+        height = figheight,
+        width = figwidth,
+        res=300,,
+        units="in")
 
   par(mfrow=c(4,2))
   oldmai = par("mai")    #  0.95625 0.76875 0.76875 0.39375  inches I think,
@@ -485,9 +495,12 @@ eightMethods = function(oneYear = 1980,
   hLlin.b = hLlin.list$slope
   hLlin.confMin = hLlin.list$confVals[1]
   hLlin.confMax = hLlin.list$confVals[2]
-  eightMethodsRes = data.frame("Year"=oneYear, "Method"="Llin",
-      "b" = hLlin.b, "confMin"= hLlin.confMin, "confMax"= hLlin.confMax,
-      row.names=NULL)
+  eightMethodsRes = data.frame("Year"=oneYear,
+                               "Method"="Llin",
+                               "b" = hLlin.b,
+                               "confMin" = hLlin.confMin,
+                               "confMax"= hLlin.confMax,
+                               row.names=NULL)
 
   plot( hLlin.list$mids, hLlin.list$log.counts,
      xlab=expression(paste("Bin midpoints for data ", italic(x))),
