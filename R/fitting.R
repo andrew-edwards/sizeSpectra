@@ -257,19 +257,26 @@ LBNbiom.method = function(bodyMass = NULL, counts = NULL,
           }
         return(y)
        }
-
+##' @title Calculate the bin breaks for the LBmiz method
+##'
+##' Calculate the bin breaks for the LBmiz (log binning as done by the package
+##'   mizer), given `xmin` and `xmax` (min and max of data) and the number of
+##'   bins, `k`. To be minimised by `nlm()` to calculate `beta`.
+##'
+##' @param beta to be calculated, `log10(beta)` is the constant binwidth on
+##'   log10 scale. `beta` is solution to
+##' ```
+##' 0 = beta^(k-2) * (2 * beta-1) - xmax/xmin = 2 * beta^(k-1) - beta^(k-2) -
+##'   xmax/xmin
+##' ```
+##' @param xmin minimum of data (lower bound of lowest bin)
+##' @param xmax maximum of data (upper bound of highest bin)
+##' @param k number of bins
+##' @return value to be minimised by `nlm()`
+##' @export
+##' @author Andrew Edwards
 LBmizbinsFun = function(beta, xmin, xmax, k)
     {
-    # Calculates the bin breaks for the LBmiz method taken from mizer, given
-    #  xmin and xmax (min and max of data) and the number of bins, k. To be
-    #  minimised by nlm to calculate beta.
-    #
-    # beta: to be calculated,  log10 beta is the constant binwidth on log10
-    #   scale. beta is solution to 0 = beta^(k-2) * (2 * beta-1) - xmax/xmin
-    #                                = 2 * beta^(k-1) - beta^(k-2) - xmax/xmin
-    # xmin: minimum of data (lower bound of lowest bin)
-    # xmax: maximum of data (upper bound of highest bin)
-    # k: number of bins
     # if( beta < 1) stop("beta needs to be >1; try reducing the number of
     #                       requested bins (k)")
     if( xmin <= 0 | xmin >= xmax | xmin >= xmax | k < 2 )
