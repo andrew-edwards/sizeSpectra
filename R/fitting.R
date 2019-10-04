@@ -3,7 +3,6 @@
 
 # Statistical functions:
 # negLL.PLB - negative log-likelihood function for PLB model
-# sum.bins - calculate the total sum of values within a bin
 # Llin.method - fitting data using the Llin method
 # LBNbiom.method - fitting data using the LBbiom and LBNbiom methods
 # LBmizbinsFuns - calculate the bin breaks for the LBmiz method from mizer
@@ -15,24 +14,24 @@
 #
 
 
-
+##' @title Calculate negative log-likelihood for the bounded power-law distribution
+##' Calculate the negative log-likelihood of the parameters `b`, `xmin` and
+##'   `xmax` given data `x` for the PLB model. Returns the negative
+##'   log-likelihood. Will be called by `nlm()` or similar. `xmin` and `xmax`
+##'   are just estimated as the min and max of the data, not numerically using likelihood.
+##'
+##' @param b value of `b` for which to calculate the negative log-likelihood
+##' @param x vector of values of data (e.g. masses of individual fish)
+##' @param n `length(x)`, have as an input to avoid repeatedly calculating it when
+##'   function is called multiple times in an optimization routine
+##' @param xmin minimum value of `x` to avoid repeatedly calculating
+##' @param xmax maximum value of `x` to avoid repeatedly calculating
+##' @param sumlogx `sum(log(x))` to avoid repeatedly calculating
+##' @return negative log-likelihood of the parameters given the data
+##' @export
+##' @author Andrew Edwards
 negLL.PLB = function(b, x, n, xmin, xmax, sumlogx)
   {
-  # Calculates the negative log-likelihood of the parameters b, xmin and xmax
-  #  given data x for the PLB model. Returns the negative log-likelihood. Will
-  #  be called by nlm or similar, but xmin and xmax are just estimated as the
-  #  min and max of the data, not numerically using likelihood.
-  # Args:
-  #   b: value of b for which to calculate the negative log-likelihood
-  #   x: vector of values of data (e.g. masses of individual fish)
-  #   n: length(x), have as an input to avoid repeatedly calculating it
-  #   xmin: minimum value of x, have as an input to avoid repeatedly calculating
-  #   xmax: maximum value of x, have as an input to avoid repeatedly calculating
-  #   sumlogx: sum(log(x)) as an input, to avoid repeatedly calculating
-  #
-  # Returns:
-  #   negative log-likelihood of the parameters given the data.
-  #
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in negLL.PLB")
     if(b != -1)
       { neglogLL = -n * log( ( b + 1) / (xmax^(b + 1) - xmin^(b + 1)) ) -
