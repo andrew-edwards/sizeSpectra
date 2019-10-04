@@ -179,12 +179,21 @@ LBNbiom.method = function(bodyMass = NULL, counts = NULL,
            #  practice people would plot the binned data and then choose which
            #  points (binned counts) to ignore when fitting the regression.
         indiv = data.frame(x)       # dataframe with one row for each individual
-        indiv$binMid =cut(x, breaks=binBreaks, right=FALSE, include.lowest=TRUE,
-            labels = binBreaks[-length(binBreaks)] + 0.5*diff(binBreaks))
-        indiv$binMin =cut(x, breaks=binBreaks, right=FALSE, include.lowest=TRUE,
-            labels = binBreaks[-length(binBreaks)])
-        indiv$binMax =cut(x, breaks=binBreaks, right=FALSE, include.lowest=TRUE,
-            labels = binBreaks[-1])
+        indiv$binMid =cut(x,
+                          breaks=binBreaks,
+                          right=FALSE,
+                          include.lowest=TRUE,
+                          labels = binBreaks[-length(binBreaks)] + 0.5*diff(binBreaks))
+        indiv$binMin =cut(x,
+                          breaks=binBreaks,
+                          right=FALSE,
+                          include.lowest=TRUE,
+                          labels = binBreaks[-length(binBreaks)])
+        indiv$binMax =cut(x,
+                          breaks=binBreaks,
+                          right=FALSE,
+                          include.lowest=TRUE,
+                          labels = binBreaks[-1])
         # indiv$binWidth =cut(x, breaks=binBreaks, right=FALSE,
         #    include.lowest=TRUE, labels = diff(binBreaks))
         # indiv = mutate(indiv, binWidth = binMax - binMin)
@@ -195,46 +204,56 @@ LBNbiom.method = function(bodyMass = NULL, counts = NULL,
         indiv$binMax = as.numeric(as.character(indiv$binMax))
            # Now calculate biomass in each bin class:
         binVals = dplyr::summarise(group_by(indiv, binMid),
-            binMin = unique(binMin),
-            binMax = unique(binMax), binWidth = binMax - binMin,
-            totalBiom = sum(x), totalBiomNorm = totalBiom / binWidth )
+                                   binMin = unique(binMin),
+                                   binMax = unique(binMax), binWidth = binMax -
+                                                              binMin,
+                                   totalBiom = sum(x), totalBiomNorm = totalBiom / binWidth )
            # binWidth uses new columns binMax and binMin
         binVals = binVals[order(binVals$binMid),]   # order by binMid
         #
-        binVals = mutate(binVals, log10binMid = log10(binMid),
-            log10totalBiom = log10(totalBiom),
-            log10totalBiomNorm = log10(totalBiomNorm))
-        binVals[ is.infinite(binVals$log10totalBiom),
-                  "log10totalBiom"] = NA
+        binVals = dplyr::mutate(binVals,
+                                log10binMid = log10(binMid),
+                                log10totalBiom = log10(totalBiom),
+                                log10totalBiomNorm = log10(totalBiomNorm))
+        binVals[ is.infinite(binVals$log10totalBiom), "log10totalBiom"] = NA
                   # lm can't cope with -Inf, which appear if 0 counts in a bin
-        binVals[ is.infinite(binVals$log10totalBiomNorm),
-                  "log10totalBiomNorm"] = NA
-        binVals = mutate(binVals, aboveCutOff = (binMid > lowerCutOff))
+        binVals[ is.infinite(binVals$log10totalBiomNorm), "log10totalBiomNorm"] = NA
+        binVals = dplyr::mutate(binVals, aboveCutOff = (binMid > lowerCutOff))
                   # aboveCutOff is TRUE/FALSE for the regression
         unNorm.lm = lm( log10totalBiom ~ log10binMid,
-            data = dplyr::filter(binVals, aboveCutOff),
-            na.action=na.omit)
+                       data = dplyr::filter(binVals, aboveCutOff),
+                       na.action=na.omit)
         unNorm.slope = unNorm.lm$coeff[2]
-        unNorm.conf = confint(unNorm.lm, "log10binMid", 0.95)
+        unNorm.conf = confint(unNorm.lm,
+                              "log10binMid",
+                              0.95)
 
         norm.lm = lm( log10totalBiomNorm ~ log10binMid,
-            data = dplyr::filter(binVals, aboveCutOff),
-            na.action=na.omit)
+                     data = dplyr::filter(binVals, aboveCutOff),
+                     na.action=na.omit)
         norm.slope = norm.lm$coeff[2]
-        norm.conf = confint(norm.lm, "log10binMid", 0.95)
+        norm.conf = confint(norm.lm,
+                            "log10binMid",
+                            0.95)
         if(dim(indiv)[1] < 10^6) {       # only save indiv if not too big
-          y = list(indiv = indiv, binVals = binVals,
-            unNorm.lm = unNorm.lm, unNorm.slope = unNorm.slope,
-            unNorm.conf = unNorm.conf,
-            norm.lm = norm.lm, norm.slope = norm.slope, norm.conf = norm.conf,
-            lowerCutOff = lowerCutOff)
-          } else
-          {
-          y = list(binVals = binVals,
-            unNorm.lm = unNorm.lm, unNorm.slope = unNorm.slope,
-            unNorm.conf = unNorm.conf,
-            norm.lm = norm.lm, norm.slope = norm.slope, norm.conf = norm.conf,
-            lowerCutOff = lowerCutOff)
+          y = list(indiv = indiv,
+                   binVals = binVals,
+                   unNorm.lm = unNorm.lm,
+                   unNorm.slope = unNorm.slope,
+                   unNorm.conf = unNorm.conf,
+                   norm.lm = norm.lm,
+                   norm.slope = norm.slope,
+                   norm.conf = norm.conf,
+                   lowerCutOff = lowerCutOff)
+          } else {
+            y = list(binVals = binVals,
+                     unNorm.lm = unNorm.lm,
+                     unNorm.slope = unNorm.slope,
+                     unNorm.conf = unNorm.conf,
+                     norm.lm = norm.lm,
+                     norm.slope = norm.slope,
+                     norm.conf = norm.conf,
+                     lowerCutOff = lowerCutOff)
           }
         return(y)
        }
