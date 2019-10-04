@@ -69,7 +69,9 @@ negLL.PLB = function(b, x, n, xmin, xmax, sumlogx)
 ##'   * confVals: 95\% confidence interval of the fitted slope
 ##' @export
 ##' @author Andrew Edwards
-Llin.method = function(bodyMass, num.bins = NULL, binBreaks = NULL)
+Llin.method = function(bodyMass,
+                       num.bins = NULL,
+                       binBreaks = NULL)
     {
         if(!is.vector(bodyMass)) stop("bodyMass not a vector in Llin.method")
         if(anyNA(bodyMass)) stop("bodyMass contains NA's in Llin.method")
@@ -145,8 +147,10 @@ Llin.method = function(bodyMass, num.bins = NULL, binBreaks = NULL)
 ##'       normalising the biomass in each bin
 ##' @export
 ##' @author Andrew Edwards
-LBNbiom.method = function(bodyMass = NULL, counts = NULL,
-       binBreaks = NULL, lowerCutOff = 0)
+LBNbiom.method = function(bodyMass = NULL,
+                          counts = NULL,
+                          binBreaks = NULL,
+                          lowerCutOff = 0)
     {
         if(!is.null(bodyMass) & !is.null(counts)) {
             stop("need only one of bodyMass or counts in LBNbiom.method") }
@@ -214,9 +218,10 @@ LBNbiom.method = function(bodyMass = NULL, counts = NULL,
            # Now calculate biomass in each bin class:
         binVals = dplyr::summarise(group_by(indiv, binMid),
                                    binMin = unique(binMin),
-                                   binMax = unique(binMax), binWidth = binMax -
-                                                              binMin,
-                                   totalBiom = sum(x), totalBiomNorm = totalBiom / binWidth )
+                                   binMax = unique(binMax),
+                                   binWidth = binMax - binMin,
+                                   totalBiom = sum(x),
+                                   totalBiomNorm = totalBiom / binWidth )
            # binWidth uses new columns binMax and binMin
         binVals = binVals[order(binVals$binMid),]   # order by binMid
         #
@@ -265,8 +270,9 @@ LBNbiom.method = function(bodyMass = NULL, counts = NULL,
                      lowerCutOff = lowerCutOff)
           }
         return(y)
-       }
-##' @title Calculate the bin breaks for the LBmiz method
+    }
+
+##' Calculate the bin breaks for the LBmiz method
 ##'
 ##' Calculate the bin breaks for the LBmiz (log binning as done by the package
 ##'   mizer), given `xmin` and `xmax` (min and max of data) and the number of
@@ -275,8 +281,9 @@ LBNbiom.method = function(bodyMass = NULL, counts = NULL,
 ##' @param beta to be calculated, `log10(beta)` is the constant binwidth on
 ##'   log10 scale. `beta` is solution to
 ##' ```
-##' 0 = beta^(k-2) * (2 * beta-1) - xmax/xmin = 2 * beta^(k-1) - beta^(k-2) -
-##'   xmax/xmin
+##' 0 = beta^(k-2) * (2 * beta-1) - xmax/xmin
+##'
+##'   = 2 * beta^(k-1) - beta^(k-2) - xmax/xmin
 ##' ```
 ##' @param xmin minimum of data (lower bound of lowest bin)
 ##' @param xmax maximum of data (upper bound of highest bin)
