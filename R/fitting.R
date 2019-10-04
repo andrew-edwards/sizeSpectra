@@ -40,32 +40,29 @@ negLL.PLB = function(b, x, n, xmin, xmax, sumlogx)
       { neglogLL = n * log( log(xmax) - log(xmin) ) + sumlogx
       }
     return(neglogLL)
-  }
+}
 
-
+##' @title Fit size spectrum using Llin method
+##'
+##' Fit size spectrum using Llin method, which is plotting binned counts on
+##' log-linear axes and then fitting a linear regression.
+##' @param bodyMass vector of individual body masses
+##' @param num.bins  number of bins to be used, though this is only a suggestion
+##'   since can get over-ridden by `hist()`
+##' @param binBreaks breaks for the bins to be used to bin the data and
+##'   then fit the regression
+##' @return list containing:
+##'   mids: midpoint of bins
+##'   log.counts: log(counts) in each bin
+##'   counts: counts in each bin
+##'   lm: results of the linear regression of `log.counts ~ mids`
+##'   slope: slope of the linear regression fit
+##'   breaks: bin breaks
+##'   confVals: 95\% confidence interval of the fitted slope
+##' @export
+##' @author Andrew Edwards
 Llin.method = function(bodyMass, num.bins = NULL, binBreaks = NULL)
     {
-    # Use the Llin method, which is plotting binned counts on log-linear
-    #  axes and then fitting a regression, as done by Daan et al. 2005.
-    #
-    # Args:
-    #  bodyMass: vector of individual body masses
-    #  num.bins: number of bins to be used, though this is only a suggestion
-    #   since can get over-ridden by hist().
-    #  binBreaks: breaks for the bins to be used to bin the data and
-    #   then fit the regression.
-    #
-    # Returns:
-    #  list containing:
-    #   mids: midpoint of bins
-    #   log.counts: log(counts) in each bin
-    #   counts: counts in each bin
-    #   lm: results of the linear regression of log.counts ~ mids
-    #   slope: slope of the linear regression fit
-    #   breaks: bin breaks
-    #   confVals: 95% confidence interval of the fitted slope
-    #
-    #   require(dplyr)            # Need for this function.
         if(!is.vector(bodyMass)) stop("bodyMass not a vector in Llin.method")
         if(anyNA(bodyMass)) stop("bodyMass contains NA's in Llin.method")
         if(min(bodyMass) <= 0) stop("bodyMass needs to be >0 in Llin.method")
@@ -85,10 +82,13 @@ Llin.method = function(bodyMass, num.bins = NULL, binBreaks = NULL)
 
         hLlin.lm = lm( hLlin.log.counts ~ hLlin.mids, na.action=na.omit)
 
-        y = list(mids = hLlin.mids, log.counts = hLlin.log.counts,
-            counts = hLlin$counts, lm = hLlin.lm, slope = hLlin.lm$coeff[2],
-            breaks = hLlin$breaks,
-            confVals = confint(hLlin.lm, "hLlin.mids",0.95))
+        y = list(mids = hLlin.mids,
+                 log.counts = hLlin.log.counts,
+                 counts = hLlin$counts,
+                 lm = hLlin.lm,
+                 slope = hLlin.lm$coeff[2],
+                 breaks = hLlin$breaks,
+                 confVals = confint(hLlin.lm, "hLlin.mids",0.95))
         return(y)
        }
 
@@ -218,13 +218,13 @@ LBNbiom.method = function(bodyMass = NULL, counts = NULL,
         binVals = mutate(binVals, aboveCutOff = (binMid > lowerCutOff))
                   # aboveCutOff is TRUE/FALSE for the regression
         unNorm.lm = lm( log10totalBiom ~ log10binMid,
-            data = filter(binVals, aboveCutOff),
+            data = dplyr::filter(binVals, aboveCutOff),
             na.action=na.omit)
         unNorm.slope = unNorm.lm$coeff[2]
         unNorm.conf = confint(unNorm.lm, "log10binMid", 0.95)
 
         norm.lm = lm( log10totalBiomNorm ~ log10binMid,
-            data = filter(binVals, aboveCutOff),
+            data = dplyr::filter(binVals, aboveCutOff),
             na.action=na.omit)
         norm.slope = norm.lm$coeff[2]
         norm.conf = confint(norm.lm, "log10binMid", 0.95)
@@ -384,7 +384,7 @@ log2bins = function(x = NULL, counts = NULL)
        }
 
 eightMethods = function(oneYear = 1980,
-  dataForYear = filter(data, Year == oneYear), figName = "eightMethods" )
+  dataForYear = dplyr::filter(data, Year == oneYear), figName = "eightMethods" )
   {
   # Computes exponents for a dataset using all eight methods. It was developed
   #  and is called in nSea15analysis.Snw, which was modified from what was
