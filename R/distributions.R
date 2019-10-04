@@ -20,7 +20,7 @@
 ##' corresponding to `x`. `pPL` and `pPLB` return vector of cumulative
 ##' distribution values P(X <= x) corresponding to `x`. `rPL` and `rPLB` return
 ##' a vector (of length `n`) of independent random draws from the distribution.
-##' @name PL
+##' @name Distributions
 NULL
 
 # dPL - probability density function for unbounded power-law distribution
@@ -30,7 +30,8 @@ NULL
 # pPLB - probability distribution function for bounded power-law distribution
 # rPLB - random numbers from a bounded power-law distribution
 
-#' @rdname PL
+##' @rdname Distributions
+##' @export
 dPL = function(x = 1, b = -2, xmin = 1)
   {
     if(b >= -1 | xmin <= 0) stop("Parameters out of bounds in dPL")
@@ -40,7 +41,8 @@ dPL = function(x = 1, b = -2, xmin = 1)
     return(y)
   }
 
-#' @rdname PL
+##' @rdname Distributions
+##' @export
 pPL = function(x = 10, b = -2, xmin = 1)
   {
     if(b >= -1 | xmin <= 0) stop("Parameters out of bounds in qPL")
@@ -49,7 +51,8 @@ pPL = function(x = 10, b = -2, xmin = 1)
     return(y)
   }
 
-#' @rdname PL
+##' @rdname Distributions
+##' @export
 rPL = function(n = 1, b = -2, xmin = 1)
   {
     if(b >= -1 | xmin <= 0) stop("Parameters out of bounds in rPL")
@@ -58,7 +61,8 @@ rPL = function(n = 1, b = -2, xmin = 1)
     return(y)
   }
 
-#' @rdname PL
+##' @rdname Distributions
+##' @export
 dPLB = function(x = 1, b = -2, xmin = 1, xmax = 100)
   {
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in dPLB")
@@ -72,7 +76,8 @@ dPLB = function(x = 1, b = -2, xmin = 1, xmax = 100)
     return(y)
   }
 
-#' @rdname PL
+##' @rdname Distributions
+##' @export
 pPLB = function(x = 10, b = -2, xmin = 1, xmax = 100)
   {
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in pPLB")
@@ -92,7 +97,8 @@ pPLB = function(x = 10, b = -2, xmin = 1, xmax = 100)
     return(y)
   }
 
-#' @rdname PL
+##' @rdname Distributions
+##' @export
 rPLB = function(n = 1, b = -2, xmin = 1, xmax = 100)
   {
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in rPLB")
