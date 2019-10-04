@@ -1,4 +1,4 @@
-# distributions.R - functions related to random number generation and statistical fitting.
+# distributions.R - functions related to random number generation.
 
 ##' Bounded and unbounded power-law distributions
 ##'
