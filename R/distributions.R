@@ -1,25 +1,25 @@
-# stats.R - functions related to random number generation and statistical fitting.
+# distributions.R - functions related to random number generation and statistical fitting.
 
 ##' Bounded and unbounded power-law distributions
 ##'
-##' Probability density function (`dPL` and `dPLB`), cumulative distribution function P(X <= x),
-##' and random generation of values for the bounded and unbounded power-law distributions
-##' (PL and PLB respectively), with exponent 'b', minimum 'x_min' and maximum
-##' (for bounded distribution)
-##' 'x_max' as described in Edwards et al., 2017, Methods in Ecology and
+##' For the unbounded and bounded power-law distributions (PL and PLB
+##' respectively), probability density function (`dPL` and `dPLB`),
+##' cumulative distribution function [P(X <= x)] (`pPL` and `pPLB`),
+##' and random generation of values (`rPL` and `rPLB`), with exponent `b`, minimum `x_min` and maximum
+##' (for bounded distribution) `x_max` as described in Edwards et al. (2017, Methods in Ecology and
 ##' Evolution, 8:57-67). Random generation uses the inverse method (e.g. p1215 of Edwards
 ##' 2008, Journal of Animal Ecology, 77:1212-1222). Unbounded distribution
-##' included for completeness.
+##' included for completeness [TODO: may not get used in remaining code].
 ##' @param x vector of values to compute the density and distribution functions.
-##' @param n number of random numbers to be generated (if 'length(n) > 1' then
-##' generate 'length(n)' values)
+##' @param n number of random numbers to be generated (if `length(n) > 1` then
+##' generate `length(n)` values)
 ##' @param b exponent of the distribution (must be <-1 for unbounded)
-##' @param x_min minimum bound of the distribution, x_min > 0
-##' @param x_max maximum bound for bounded distribution, x_max > x_min
-##' @return 'dPL' and 'dPLB' return vector of probability density values
-##' corresponding to x, 'pPL' and 'pPLB' return vector of probability
-##' distribution values P(X <= x) corresponding to x, 'rPL' and 'rPLB' return
-##' a vector (of length 'n') of independent random draws from the distribution.
+##' @param x_min minimum bound of the distribution, `x_min > 0`
+##' @param x_max maximum bound for bounded distribution, `x_max > x_min`
+##' @return `dPL` and `dPLB` return vector of probability density values
+##' corresponding to `x`. `pPL` and `pPLB` return vector of cumulative
+##' distribution values P(X <= x) corresponding to `x`. `rPL` and `rPLB` return
+##' a vector (of length `n`) of independent random draws from the distribution.
 ##' @name PL
 NULL
 
@@ -76,8 +76,8 @@ dPLB = function(x = 1, b = -2, xmin = 1, xmax = 100)
 pPLB = function(x = 10, b = -2, xmin = 1, xmax = 100)
   {
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in pPLB")
-    y = 0 * x     # so have zeros where x < xmin
-    y[x > xmax] = 1  # 1 for x > xmax
+    y = 0 * x        # so have zeros where x < xmin
+    y[x > xmax] = 1
     if(b != -1)
         {  xmintobplus1 = xmin^(b+1)
            denom = xmax^(b+1) - xmintobplus1
