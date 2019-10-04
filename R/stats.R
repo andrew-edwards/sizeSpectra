@@ -2,13 +2,14 @@
 
 ##' Bounded and unbounded power-law distributions
 ##'
-##' Probability density function, cumulative distribution function P(X <= x),
-##' [**no quantile function - maybe add] and random
-##' generation of values for the bounded and unbounded power-law distributions, with
-##' exponent 'b', minimum 'x_min' and maximum (for bounded distribution)
+##' Probability density function (`dPL` and `dPLB`), cumulative distribution function P(X <= x),
+##' and random generation of values for the bounded and unbounded power-law distributions
+##' (PL and PLB respectively), with exponent 'b', minimum 'x_min' and maximum
+##' (for bounded distribution)
 ##' 'x_max' as described in Edwards et al., 2017, Methods in Ecology and
 ##' Evolution, 8:57-67). Random generation uses the inverse method (e.g. p1215 of Edwards
-##' 2008, Journal of Animal Ecology, 77:1212-1222).
+##' 2008, Journal of Animal Ecology, 77:1212-1222). Unbounded distribution
+##' included for completeness.
 ##' @param x vector of values to compute the density and distribution functions.
 ##' @param n number of random numbers to be generated (if 'length(n) > 1' then
 ##' generate 'length(n)' values)
@@ -29,9 +30,9 @@ NULL
 # pPLB - probability distribution function for bounded power-law distribution
 # rPLB - random numbers from a bounded power-law distribution
 
+#' @rdname PL
 dPL = function(x = 1, b = -2, xmin = 1)
   {
-  #
     if(b >= -1 | xmin <= 0) stop("Parameters out of bounds in dPL")
     C = - (b+1) / xmin^(b+1)
     y = 0 * x     # so have zeros where x < xmin
@@ -39,6 +40,7 @@ dPL = function(x = 1, b = -2, xmin = 1)
     return(y)
   }
 
+#' @rdname PL
 pPL = function(x = 10, b = -2, xmin = 1)
   {
     if(b >= -1 | xmin <= 0) stop("Parameters out of bounds in qPL")
@@ -47,6 +49,7 @@ pPL = function(x = 10, b = -2, xmin = 1)
     return(y)
   }
 
+#' @rdname PL
 rPL = function(n = 1, b = -2, xmin = 1)
   {
     if(b >= -1 | xmin <= 0) stop("Parameters out of bounds in rPL")
@@ -55,8 +58,7 @@ rPL = function(n = 1, b = -2, xmin = 1)
     return(y)
   }
 
-# Bounded power-law distribution:
-
+#' @rdname PL
 dPLB = function(x = 1, b = -2, xmin = 1, xmax = 100)
   {
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in dPLB")
@@ -70,11 +72,9 @@ dPLB = function(x = 1, b = -2, xmin = 1, xmax = 100)
     return(y)
   }
 
+#' @rdname PL
 pPLB = function(x = 10, b = -2, xmin = 1, xmax = 100)
   {
-  # Computes probability distribution function, P(X <= x),  for a
-  #   bounded power-law (Pareto) distribution
-  #
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in pPLB")
     y = 0 * x     # so have zeros where x < xmin
     y[x > xmax] = 1  # 1 for x > xmax
@@ -92,10 +92,9 @@ pPLB = function(x = 10, b = -2, xmin = 1, xmax = 100)
     return(y)
   }
 
+#' @rdname PL
 rPLB = function(n = 1, b = -2, xmin = 1, xmax = 100)
   {
-  # Computes random numbers from a bounded power-law distribution
-  #
     if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in rPLB")
     u = runif(n)
     if(b != -1)
@@ -107,11 +106,6 @@ rPLB = function(n = 1, b = -2, xmin = 1, xmax = 100)
   }
 
 # PLBfunctions.r - functions to be sourced, including density, distribution
-#  function and random number generator for unbounded and bounded power-law
-#  distributions. Associated with paper in Methods in Ecology and Evolution:
-#  http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12641/full
-#
-#  andrew.edwards@dfo-mpo.gc.ca   or  andrew.edwards.dfo@gmail.com
 #
 # CONTENTS
 #

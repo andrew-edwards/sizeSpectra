@@ -1,13 +1,16 @@
 Package: sizeSpectra
-Title: What the Package Does (One Line, Title Case)
+Title: Fits Size Spectra to Ecological Data Using Maximum Likelihood
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
     person(given = "Andrew",
            family = "Edwards",
            role = c("aut", "cre"),
            email = "andrew.edwards@dfo-mpo.gc.ca",
            comment = c(ORCID = "0000-0003-2749-8198"))
-Description: What the package does (one paragraph).
+Description: Provides code for fitting size spectra to ecological data using maximum likelihood methods. Reproduces the results of *** and *** and provides documented functions and vignettes for users to fit size spectra to their own data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Suggests: 
+    covr
+RoxygenNote: 6.1.1
