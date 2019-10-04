@@ -10,29 +10,29 @@
 \alias{rPLB}
 \title{Bounded and unbounded power-law distributions}
 \usage{
-dPL(x = 1, b = -2, x_min = 1)
+dPL(x = 1, b = -2, xmin = 1)
 
-pPL(x = 10, b = -2, x_min = 1)
+pPL(x = 10, b = -2, xmin = 1)
 
-rPL(n = 1, b = -2, x_min = 1)
+rPL(n = 1, b = -2, xmin = 1)
 
-dPLB(x = 1, b = -2, x_min = 1, x_max = 100)
+dPLB(x = 1, b = -2, xmin = 1, xmax = 100)
 
-pPLB(x = 10, b = -2, x_min = 1, x_max = 100)
+pPLB(x = 10, b = -2, xmin = 1, xmax = 100)
 
-rPLB(n = 1, b = -2, x_min = 1, x_max = 100)
+rPLB(n = 1, b = -2, xmin = 1, xmax = 100)
 }
 \arguments{
 \item{x}{vector of values to compute the density and distribution functions.}
 
 \item{b}{exponent of the distribution (must be <-1 for unbounded)}
 
-\item{x_min}{minimum bound of the distribution, \code{x_min > 0}}
+\item{xmin}{minimum bound of the distribution, \code{xmin > 0}}
 
 \item{n}{number of random numbers to be generated (if \code{length(n) > 1} then
 generate \code{length(n)} values)}
 
-\item{x_max}{maximum bound for bounded distribution, \code{x_max > x_min}}
+\item{xmax}{maximum bound for bounded distribution, \code{xmax > xmin}}
 }
 \value{
 \code{dPL} and \code{dPLB} return vector of probability density values
@@ -44,8 +44,8 @@ a vector (of length \code{n}) of independent random draws from the distribution.
 For the unbounded and bounded power-law distributions (PL and PLB
 respectively), probability density function (\code{dPL} and \code{dPLB}),
 cumulative distribution function \link{P(X <= x)} (\code{pPL} and \code{pPLB}),
-and random generation of values (\code{rPL} and \code{rPLB}), with exponent \code{b}, minimum \code{x_min} and maximum
-(for bounded distribution) \code{x_max} as described in Edwards et al. (2017, Methods in Ecology and
+and random generation of values (\code{rPL} and \code{rPLB}), with exponent \code{b}, minimum \code{xmin} and maximum
+(for bounded distribution) \code{xmax} as described in Edwards et al. (2017, Methods in Ecology and
 Evolution, 8:57-67). Random generation uses the inverse method (e.g. p1215 of Edwards
 2008, Journal of Animal Ecology, 77:1212-1222). Unbounded distribution
 included for completeness \link{TODO: may not get used in remaining code}.

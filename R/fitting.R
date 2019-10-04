@@ -14,12 +14,13 @@
 #
 
 
-##' @title Calculate negative log-likelihood for the bounded power-law distribution
+##' Calculate negative log-likelihood for the bounded power-law
+##'   distribution
+##'
 ##' Calculate the negative log-likelihood of the parameters `b`, `xmin` and
 ##'   `xmax` given data `x` for the PLB model. Returns the negative
 ##'   log-likelihood. Will be called by `nlm()` or similar. `xmin` and `xmax`
 ##'   are just estimated as the min and max of the data, not numerically using likelihood.
-##'
 ##' @param b value of `b` for which to calculate the negative log-likelihood
 ##' @param x vector of values of data (e.g. masses of individual fish)
 ##' @param n `length(x)`, have as an input to avoid repeatedly calculating it when
@@ -42,7 +43,7 @@ negLL.PLB = function(b, x, n, xmin, xmax, sumlogx)
     return(neglogLL)
 }
 
-##' @title Fit size spectrum using Llin method
+##' Fit size spectrum using Llin method
 ##'
 ##' Fit size spectrum using Llin method, which is plotting binned counts on
 ##' log-linear axes and then fitting a linear regression.
@@ -52,13 +53,20 @@ negLL.PLB = function(b, x, n, xmin, xmax, sumlogx)
 ##' @param binBreaks breaks for the bins to be used to bin the data and
 ##'   then fit the regression
 ##' @return list containing:
-##'   mids: midpoint of bins
-##'   log.counts: log(counts) in each bin
-##'   counts: counts in each bin
-##'   lm: results of the linear regression of `log.counts ~ mids`
-##'   slope: slope of the linear regression fit
-##'   breaks: bin breaks
-##'   confVals: 95\% confidence interval of the fitted slope
+##'
+##'   * mids: midpoint of bins
+##'
+##'   * log.counts: log(counts) in each bin
+##'
+##'   * counts: counts in each bin
+##'
+##'   * lm: results of the linear regression of `log.counts ~ mids`
+##'
+##'   * slope: slope of the linear regression fit
+##'
+##'   * breaks: bin breaks
+##'
+##'   * confVals: 95\% confidence interval of the fitted slope
 ##' @export
 ##' @author Andrew Edwards
 Llin.method = function(bodyMass, num.bins = NULL, binBreaks = NULL)
@@ -90,8 +98,9 @@ Llin.method = function(bodyMass, num.bins = NULL, binBreaks = NULL)
                  breaks = hLlin$breaks,
                  confVals = confint(hLlin.lm, "hLlin.mids",0.95))
         return(y)
-       }
-##' @title Fit biomass size spectrum with the LBNbiom and LBbiom methods
+    }
+
+##' Fit biomass size spectrum with the LBNbiom and LBbiom methods
 ##'
 ##' Use the log-binning with normalisation technique (LBNbiom method) to
 ##' calculate the slope of the biomass size spectra. Slope is from fitting
@@ -112,28 +121,28 @@ Llin.method = function(bodyMass, num.bins = NULL, binBreaks = NULL)
 ##'
 ##' @param lowerCutOff body mass representing the lower cut off for the range being
 ##'   fit
-##' @return       list containing:
-##'   indiv: dataframe with a row for each `bodyMass` value and columns:
-##'       'x': original `bodyMass` values.
-##'       `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum, maximum,
+##' @return list containing:
+##'   * indiv: dataframe with a row for each `bodyMass` value and with columns:
+##'     + 'x': original `bodyMass` values.
+##'     +  `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum, maximum,
 ##'        and width, respectively, of the bin within which the `x` value falls.
 ##'        If `indiv` has >=10^6 rows then it is not saved.
 ##'        If `counts` was specified then, for now, an equivalent `bodyMass`
 ##'        vector was created and is column `x` (i.e. body masses are repeated).
-##'   binVals: dataframe with a row for each bin, where the columns are:
-##'     `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum, maximum, and
-##'     width, respectively, of the bin.
-##'     `totalBiom`: total biomass in that bin
-##'     `totalBiomNorm`: normalised total biomass in that bin, defined as `totalBiom / binWidth`
-##'     `log10....`: `log10` of some of the above quantities
-##'   norm.lm: lm() result of the linear regression fit using normalised
-##'     biomass in each bin
-##'   norm.slope: slope of the linear regression fit using normalised
-##'     biomass in each bin
-##'   unNorm.lm: lm() result of the linear regression fit when not
-##'     normalising the biomass in each bin
-##'   unNorm.slope: slope of the linear regression fit when not
-##'     normalising the biomass in each bin
+##'   * binVals: dataframe with a row for each bin and columns:
+##'     + `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum, maximum, and
+##'        width, respectively, of the bin.
+##'     + `totalBiom`: total biomass in that bin
+##'     + `totalBiomNorm`: normalised total biomass in that bin, defined as `totalBiom / binWidth`
+##'     +  `log10....`: `log10` of some of the above quantities
+##'   * norm.lm: `lm()` result of the linear regression fit using normalised
+##'       biomass in each bin
+##'   * norm.slope: slope of the linear regression fit using normalised
+##'       biomass in each bin
+##'   * unNorm.lm: `lm()` result of the linear regression fit when not
+##'       normalising the biomass in each bin
+##'   * unNorm.slope: slope of the linear regression fit when not
+##'       normalising the biomass in each bin
 ##' @export
 ##' @author Andrew Edwards
 LBNbiom.method = function(bodyMass = NULL, counts = NULL,
