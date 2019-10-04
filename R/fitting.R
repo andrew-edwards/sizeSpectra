@@ -91,60 +91,54 @@ Llin.method = function(bodyMass, num.bins = NULL, binBreaks = NULL)
                  confVals = confint(hLlin.lm, "hLlin.mids",0.95))
         return(y)
        }
-
+##' @title Fit biomass size spectrum with the LBNbiom and LBbiom methods
+##'
+##' Use the log-binning with normalisation technique (LBNbiom method) to
+##' calculate the slope of the biomass size spectra. Slope is from fitting
+##' a linear regression of log10(normalised biomass in bin) against
+##' log10(midpoint of bin). Bins can be defined by user, else are created to
+##' double in size. Also calculates slope for the LBbiom method, for which
+##'   biomasses are not normalised.
+##'
+##' @param bodyMass vector of individual body masses
+##' @param counts dataframe (or array) with first column being a body mass
+##'   value, and second column being the counts of the number of individuals for
+##'   that body mass. Only bodyMass or counts can be specified.
+##' @param binBreaks breaks for the bins to be used to bin the data and then fit
+##'   the regression. If not provided then it calculates them as bin widths that
+##'   double in size (with breaks that are powers of 2) that encompass the data,
+##'   resulting in binBreaks   ..., 0.25, 0.5, 1, 2, 4, 8, 16,.... as
+##'   necessary.
+##'
+##' @param lowerCutOff body mass representing the lower cut off for the range being
+##'   fit
+##' @return       list containing:
+##'   indiv: dataframe with a row for each `bodyMass` value and columns:
+##'       'x': original `bodyMass` values.
+##'       `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum, maximum,
+##'        and width, respectively, of the bin within which the `x` value falls.
+##'        If `indiv` has >=10^6 rows then it is not saved.
+##'        If `counts` was specified then, for now, an equivalent `bodyMass`
+##'        vector was created and is column `x` (i.e. body masses are repeated).
+##'   binVals: dataframe with a row for each bin, where the columns are:
+##'     `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum, maximum, and
+##'     width, respectively, of the bin.
+##'     `totalBiom`: total biomass in that bin
+##'     `totalBiomNorm`: normalised total biomass in that bin, defined as `totalBiom / binWidth`
+##'     `log10....`: `log10` of some of the above quantities
+##'   norm.lm: lm() result of the linear regression fit using normalised
+##'     biomass in each bin
+##'   norm.slope: slope of the linear regression fit using normalised
+##'     biomass in each bin
+##'   unNorm.lm: lm() result of the linear regression fit when not
+##'     normalising the biomass in each bin
+##'   unNorm.slope: slope of the linear regression fit when not
+##'     normalising the biomass in each bin
+##' @export
+##' @author Andrew Edwards
 LBNbiom.method = function(bodyMass = NULL, counts = NULL,
        binBreaks = NULL, lowerCutOff = 0)
     {
-    # Use the log-binning with normalisation technique (LBN method) to
-    #  calculate the slope of the biomass size spectra. Slope is from fitting
-    #  a linear regression of log10(normalised biomass in bin)
-    #  against log10(midpoint of bin). Bins can be defined by user,
-    #  else are created to double in size. Also calculates slope
-    #  for biomasses not being normalised (LBbiom method).
-    #
-    # Args:
-    #  bodyMass: vector of individual body masses.
-    #  counts: dataframe (or array) with first column being a body mass
-    #   value, and second column being the counts of the number of individuals
-    #   for that body mass. Only bodyMass or counts can be specified.
-    #  binBreaks: breaks for the bins to be used to bin the data and
-    #   then fit the regression. If not provided then it calculates
-    #   them as bin widths that double in size that encompass the data,
-    #   resulting in binBreaks   ..., 0.25, 0.5, 1, 2, 4, 8, 16,....
-    #   as necessary.
-    #  lowerCutOff: body mass value representing the lower cut off for
-    #   the range being fit.
-    #
-    # Returns:
-    #  list containing:
-    #
-    #   indiv: dataframe with a row for each bodyMass value, where the
-    #    columns are: x - original bodyMass values.
-    #                 binMid, binMin, binMax, binWidth - midpoint, minimum,
-    #                  maximum, and width, respectively, of the bin within
-    #                  which the x value falls.
-    #     If indiv has >=10^6 rows then it isn't saved.
-    #     If counts was specified then, for now, an equivalent bodyMass
-    #      vector was created and is column x (i.e. body masses are repeated).
-    #
-    #   binVals: dataframe with a row for each bin, where the
-    #    columns are: binMid, binMin, binMax, binWidth - midpoint, minimum,
-    #                  maximum, and width, respectively, of the bin
-    #                 totalBiom - total biomass in that bin
-    #                 totalBiomNorm - normalised total biomass in that bin,
-    #                  defined as totalBiom / binWidth
-    #                 log10.... - log10 of some of the above quantities
-    #  norm.lm: lm() result of the linear regression fit using normalised
-    #    biomass in each bin
-    #  norm.slope: slope of the linear regression fit using normalised
-    #    biomass in each bin
-    #  unNorm.lm: lm() result of the linear regression fit when not
-    #    normalising the biomass in each bin
-    #  unNorm.slope: slope of the linear regression fit when not
-    #    normalising the biomass in each bin
-    #
-    #
-    #  require(dplyr)           # Need for this function.
         if(!is.null(bodyMass) & !is.null(counts)) {
             stop("need only one of bodyMass or counts in LBNbiom.method") }
         if(is.null(bodyMass) & is.null(counts)) {
@@ -200,7 +194,7 @@ LBNbiom.method = function(bodyMass = NULL, counts = NULL,
         indiv$binMin = as.numeric(as.character(indiv$binMin))
         indiv$binMax = as.numeric(as.character(indiv$binMax))
            # Now calculate biomass in each bin class:
-        binVals = summarise(group_by(indiv, binMid),
+        binVals = dplyr::summarise(group_by(indiv, binMid),
             binMin = unique(binMin),
             binMax = unique(binMax), binWidth = binMax - binMin,
             totalBiom = sum(x), totalBiomNorm = totalBiom / binWidth )
@@ -350,7 +344,7 @@ log2bins = function(x = NULL, counts = NULL)
         indiv$binMin = as.numeric(as.character(indiv$binMin))
         indiv$binMax = as.numeric(as.character(indiv$binMax))
            # Now calculate biomass in each bin class:
-        binVals = summarise(group_by(indiv, binMid),
+        binVals = dplyr::summarise(group_by(indiv, binMid),
             binMin = unique(binMin),
             binMax = unique(binMax),
             binWidth = binMax - binMin,
