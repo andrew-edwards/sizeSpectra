@@ -43,29 +43,6 @@ negLL.PLB = function(b, x, n, xmin, xmax, sumlogx)
     return(neglogLL)
   }
 
-sum.bins = function(x, bin.breaks)
-    {
-    # Calculate the total sum of the values within each bin, e.g. total
-    #  biomass of individuals within each size class. [May have used now used
-    #  cut() instead for this].
-    #
-    # Args:
-    #  x: vector of values (e.g. masses of individual fish)
-    #  bin.breaks: breaks of the bins into which to partition the values,
-    #   in ascending order
-    # Returns:
-    #  vector of totals of x within each bin
-       N = length(bin.breaks)
-       if(min(x) < bin.breaks[1] | max(x) > bin.breaks[N])
-           stop("Data out of range of bins in sum.bins")
-       y = rep(NA, N-1)
-       for(i in 1:(N-1))
-           {  y[i] = sum( x[x >= bin.breaks[i] & x < bin.breaks[i+1]])
-           }
-       y[N-1] = y[N-1] + sum( x[ x == bin.breaks[i+1] ] )
-           # since final bin needs to include max value
-       return(y)
-   }
 
 Llin.method = function(bodyMass, num.bins = NULL, binBreaks = NULL)
     {
