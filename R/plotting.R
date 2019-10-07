@@ -362,3 +362,60 @@ confPlot = function(repConf,
     if(!vertFirst) {abline(v=b.true, lwd=vertThick, col=vertCol)}
     return(repConf.sort.full)     # repConf.sort is what's plotted though
 }
+##' Histogram axes for figures TODO
+##'
+##' Do the histogram axes in `fitting3rep.r` TODO and later, since almost all
+##' panels will have same axes. Not very flexible, use `histAxes2()`
+##' to plot up to 10,000. TODO Note that `xbsmallticks` and `xbigticks` need to be
+##' prespecified, but
+##' they haven't yet been made arguments here.
+##'
+##' @param yBigTickLab y-axis big ticks to label
+##' @param yBigTickNoLab y-axis big ticks to not label
+##' @param ySmallTick y-axis small ticks (unlabelled)
+##' @return Adds axes to existing histogram TODO: check
+##' @export
+##' @author Andrew Edwards
+histAxes = function(yBigTickLab = c(0, 2000, 4000),
+                    yBigTickNoLab = seq(0, 6500, 1000),
+                    ySmallTick = seq(0, 6500, 500))
+    {
+    axis(1, at=xbigticks, labels = xbigticks, mgp=c(1.7,0.7,0), cex.axis=cexAxis)  # big ticks
+    axis(1, at=xsmallticks, labels=rep("",length(xsmallticks)), tcl=-0.2)
+    axis(2, at=yBigTickLab,
+         labels = yBigTickLab,
+         mgp=c(1.7,0.7,0), cex.axis=cexAxis)  # big ticks labelled
+      axis(2, at=yBigTickNoLab,
+         labels = rep("", length(yBigTickNoLab)),
+         mgp=c(1.7,0.7,0))  # big ticks unlabelled
+      axis(2, at=ySmallTick,
+         labels = rep("", length(ySmallTick)), mgp=c(1.7,0.7,0), tcl=-0.2)
+                           # small ticks
+      abline(v=b.known, col=vertCol, lwd=vertThick)
+}
+
+##' Do histogram axes for Figure TODO
+##'
+##' Do the histogram axes for, in particular, TODO `fitting3rep-n10000.r`,
+##' since the larger n sample size means affects the resulting histograms
+##' of estimated b. Not very flexible, just doing for the one figure.
+##' Copying what is used for Llin method (so could go back and use this function
+##'   throughout earlier code).
+##'
+##' @return Adds axes to existing histogram TODO: check
+##' @export
+##' @author Andrew Edwards
+histAxes2 = function()
+    {
+      axis(1, at=xbigticks, labels = xbigticks, mgp=c(1.7,0.7,0),
+           cex.axis=cexAxis)  # big ticks
+      axis(1, at=xsmallticks, labels=rep("",length(xsmallticks)),
+           tcl=-0.2)
+      axis(2, at=c(0, 5000, 10000),
+         labels = c(0, 5000, 10000),
+         mgp=c(1.7,0.7,0), cex.axis=cexAxis)  # big ticks labelled
+      axis(2, at=seq(0, 10000, 1000),
+         labels = rep("", 11),
+         mgp=c(1.7,0.7,0))  # big ticks unlabelled
+      abline(v=b.known, col=vertCol, lwd=vertThick)
+    }
