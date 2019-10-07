@@ -11,6 +11,7 @@ Description: Provides code for fitting size spectra to ecological data using max
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: 
+Suggests:
     covr
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1

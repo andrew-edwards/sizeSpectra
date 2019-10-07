@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "andrew.edwards@dfo-mpo.gc.ca",
            comment = c(ORCID = "0000-0003-2749-8198"))
-Description: Provides code for fitting size spectra to ecological data using maximum likelihood methods. Reproduces the results of *** and *** and provides documented functions and vignettes for users to fit size spectra to their own data.
+Description: Provides code for fitting size spectra to ecological data using maximum likelihood methods. Reproduces the results of TODO and TODO and provides documented functions and vignettes for users to fit size spectra to their own data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

@@ -320,7 +320,7 @@ confPlot = function(repConf,
     # Plot just the rows for which true value lie outside CI
     if(horizLinesOut)
         {
-        outConf = filter(repConf.sort, (!inConf))
+        outConf = dplyr::filter(repConf.sort, (!inConf))
         for(jj in 1:(dim(outConf)[1]))
           {
 
@@ -333,7 +333,7 @@ confPlot = function(repConf,
     # Plot just the rows for which true value lie inside CI
     if(horizLinesIn)
         {
-        in.Conf = filter(repConf.sort, (inConf))
+        in.Conf = dplyr::filter(repConf.sort, (inConf))
         for(jj in 1:(dim(in.Conf)[1]))
           {
 
