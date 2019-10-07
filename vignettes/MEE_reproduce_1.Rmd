@@ -1,9 +1,9 @@
 ---
-title: "MEE_reproduce"
+title: "MEE_reproduce_1"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MEE_reproduce}
+  %\VignetteIndexEntry{MEE_reproduce_1}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -24,8 +24,9 @@ library(sizeSpectra)
 # Reproduce Figures 1, 2 and A.1 of MEE paper
 
 This vignette reproduces all the figures and tables in TODO: ref paper. See the
-paper for details, the aim of the vignette is to enable users to reproduce the
-results so that they can see what functions are appropriate for their own data.
+paper for details. The aim of the vignette is to enable users to reproduce the
+results so that they can see what functions are appropriate for their own data,
+and perform further analyses as required.
 
 
 ```{r}
