@@ -3,6 +3,7 @@
 export(LBNbiom.method)
 export(LBmizbinsFun)
 export(Llin.method)
+export(confPlot)
 export(dPL)
 export(dPLB)
 export(eightMethods)

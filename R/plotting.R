@@ -198,3 +198,167 @@ qqtab = function(xx,
                                   big.mark=",")),
          sep="", collapse="")             # , "\\%"),
   }
+
+
+
+##' Plot confidence intervals of repeated estimates for one method
+##'
+##' Plot confidence intervals of the repeated estimates of `b` for one
+##' method. Gets called eight times to produce Figure 4 of MEE paper and TODO of
+##' MEPS paper. Plots
+##' horizontal lines for the intervals, colour coded as to whether or not they
+##' include the true value of b.
+##'
+##' @param repConf data frame with columns `confMin` and `confMax`, the
+##'   minimum and maximum of the 95\% confidence interval for b, and rows
+##'   corresponding to each (TODO a, yes?) simulated data set. When `confPlot` is called, for
+##'   some methods `b = slope - 1` or `b = slope - 2`, which gets done in the
+##'   call.
+##' @param legName legend name for that panel
+##' @param b.true true known value of b (as used for simulating the data)
+##' @param inCol colour for intervals that `b.true` is inside
+##' @param outCol colour for intervals that `b.true` is outside
+##' @param vertCol colour of vertical line for `b.true`
+##' @param pchVal `pch` for points at endpoints of intervals
+##' @param cexVal size of points (default of 0 does not plot them)
+##' @param xLim x-axis range
+##' @param colourCode colour code the figure (may not completely work TODO)
+##' @param vertThick thickness of vertical line for `b.true`
+##' @param horizThick thickness of horizontal lines
+##' @param thin number of values to thin the values for plotting. Only works for
+##'      33 or 99 for now (since they are factors of 9999, the value used in simulations).
+##' @param horizLines whether to plot horizontal grey lines or not as example
+##'        (not needed now since doing lines for intervals)
+##' @param horizLinesOut whether to plot horizontal lines for
+##'      intervals for which true value is outside the interval
+##' @param horizLinesIn whether to plot horizontal lines for
+##'      intervals for which true value is inside the interval
+##' @param yLab label for y-axis
+##' @param yTicks where to have tickmarks on y-axis
+##' @param yLabels whether or not to label tickmarks on y-axis
+##' @param vertFirst whether or not to plot vertical line first in order to see
+##'      the horizontal lines better (for LCD plot)
+##' @param insetVal inset shift for naming the panel
+##' @param insetVal2 inset shift for printing observed coverage percentage
+##' @param xsmallticks where to put unlabelled small tick marks on x-axis
+##' @param legLoc where to put the legend, as the first argument in `legend()`
+##' @return plots a panel and returns what is plotted as a sorted data frame TODO
+##' @export
+##' @author Andrew Edwards
+confPlot = function(repConf,
+                    legName,
+                    b.true = b.known,
+                    inCol="darkgrey",
+                    outCol="blue",
+                    vertCol="red",
+                    pchVal = 20,
+                    cexVal = 0.0,
+                    xLim = NULL,
+                    colourCode = TRUE,
+                    vertThick = 1,
+                    horizThick = 0.3,
+                    thin = 33,
+                    horizLines = FALSE,
+                    horizLinesOut = TRUE,
+                    horizLinesIn = TRUE,
+                    yLab = "Sample number",
+                    yTicks = seq(0, 300, 50),
+                    yLabels = TRUE,
+                    vertFirst = FALSE,
+                    insetVal = c(-0.08, -0.06),
+                    insetVal2 = c(-0.08, 0.07),
+                    xsmallticks=NULL,
+                    legLoc = "topleft")
+    {
+    if(!colourCode) outCol = inCol
+    if(!(thin %in% c(33,99))) stop("Need to edit confPlot if thin not 33 or 99")
+    if(is.null(xLim))
+        {
+            rangeVal = range(repConf)
+            xLim = c(floor(rangeVal[1]), ceiling(rangeVal[2]))
+                  # min(repConf[,1])), ceiling(max(repConf[,2])))
+        }
+    repConf = mutate(repConf,
+      inConf = (b.true > confMin & b.true < confMax))  # does CI cover b.true?
+
+    repConf = mutate(repConf, confCol = NA)
+    # Couldn't figure this out in dplyr:
+    repConf[which(repConf$inConf), "confCol"] = inCol
+    repConf[which(!repConf$inConf), "confCol"] = outCol
+    repConf[, "num.rep"] = as.numeric(row.names(repConf))
+              # To preserve the iteration number in case needed later
+
+    repConf.sort.full = arrange(repConf, confMin)   # arranged by min of CI
+    sum.inConf = sum(repConf.sort.full$inConf, na.rm=TRUE) /
+        dim(repConf.sort.full)[1]      # get NA's for Llin, LT with xmax=10000
+    # subset for better plotting:
+    if(thin == 33)
+        { repConf.sort = repConf.sort.full[c(1, 1+thin*(1:303)), ] }else
+        { repConf.sort = repConf.sort.full[c(1, 1+thin*(1:101)), ] }
+    # print(head(repConf.sort))
+    # repConf.sort[, "num.sorted"] = as.numeric(row.names(repConf.sort))
+    #  That doesn't work since it preserves the repConf.sort.full row names
+    repConf.sort[, "num.sorted"] = 1:(dim(repConf.sort)[1])
+              # To preserve the new row number since needed later
+    plot(repConf.sort$confMin, repConf.sort$num.sorted, col=repConf.sort$confCol,
+     xlim = xLim, ylim = c(0, 1.02*dim(repConf.sort)[1]),
+     pch=pchVal, cex=cexVal,
+     xlab = "",
+     ylab = yLab, yaxt="n")
+    if(vertFirst) {abline(v=b.true, lwd=vertThick, col=vertCol)}
+    axis(2, at = yTicks, labels = yLabels, tck=-0.04)
+    if(!is.null(xsmallticks))
+        { axis(1, at=xsmallticks, labels=rep("",length(xsmallticks)), tcl=-0.2)}
+    # xlab = expression(paste("Estimate of slope (or ", italic(b), ")")),
+    points(repConf.sort$confMax, repConf.sort$num.sorted,
+           col=repConf.sort$confCol, pch=pchVal, cex=cexVal)
+    legend(legLoc, legName, bty="n", inset=insetVal)
+    legend(legLoc, paste(round(sum.inConf*100, dig=0), "%", sep=""),
+           bty="n", inset=insetVal2)
+    # legend("topleft", "hello", bty="n", inset=c(-0.08, -0.2))
+
+    # Plot just the rows for which true value lie outside CI
+    if(horizLinesOut)
+        {
+        outConf = filter(repConf.sort, (!inConf))
+        for(jj in 1:(dim(outConf)[1]))
+          {
+
+            lines(c(outConf$confMin[jj], outConf$confMax[jj]),
+              c(outConf$num.sorted[jj], outConf$num.sorted[jj]),
+              col=outCol, lwd=horizThick)
+          }
+        }
+
+    # Plot just the rows for which true value lie inside CI
+    if(horizLinesIn)
+        {
+        in.Conf = filter(repConf.sort, (inConf))
+        for(jj in 1:(dim(in.Conf)[1]))
+          {
+
+            lines(c(in.Conf$confMin[jj], in.Conf$confMax[jj]),
+              c(in.Conf$num.sorted[jj], in.Conf$num.sorted[jj]),
+              col=inCol, lwd=horizThick)
+          }
+        }
+
+    # Plot equally spaced horizontal lines between 2.5 and 97.5 values
+    #  (though even from the likelihood ratio test for MLE a 95% CI
+    #  isn't actually the 2.5-97.5 range, it's a 95% interval).
+    if(horizLines)
+        {
+        # row numbers to use to plot equally spaced horizontal lines
+        horLineInd = round(c(2.5, 21.5, 40.5, 59.5, 78.5, 97.5) * 0.01 *
+            dim(repConf.sort)[1])
+        horiz.lines = repConf.sort[horLineInd,]
+        for(jj in 1:length(horLineInd))
+            {
+              lines(c(horiz.lines$confMin[jj], horiz.lines$confMax[jj]),
+              c(horiz.lines$num.sorted[jj], horiz.lines$num.sorted[jj] ),
+              col="grey", lwd=horizThick)
+            }
+        }
+    if(!vertFirst) {abline(v=b.true, lwd=vertThick, col=vertCol)}
+    return(repConf.sort.full)     # repConf.sort is what's plotted though
+}
