@@ -1,7 +1,6 @@
 # fitting.R - functions related to statistical fitting.
 
-
-# Statistical functions:
+# Statistical functions documented here:
 # negLL.PLB - negative log-likelihood function for PLB model
 # Llin.method - fitting data using the Llin method
 # LBNbiom.method - fitting data using the LBbiom and LBNbiom methods
