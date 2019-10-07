@@ -26,7 +26,7 @@ do not add anything to y-axis}
 \item{mgpVal}{\code{mgp} values for axes. See \code{?par}}
 }
 \value{
-adds axes and big and small tick marks to the plot, returns NULL
+Adds axes and big and small tick marks to the plot. Returns NULL
 }
 \description{
 Useful because you can then interpret the unlogged, e.g. Figure TODO

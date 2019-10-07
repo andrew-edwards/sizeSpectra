@@ -435,7 +435,7 @@ histAxes2 = function()
 ##' @param xLabelBig which big tick marks on the x-axis to label
 ##'   (when automated they can overlap, so may need to specify)
 ##' @param mgpVal `mgp` values for axes. See `?par`
-##' @return adds axes and big and small tick marks to the plot, returns NULL
+##' @return Adds axes and big and small tick marks to the plot. Returns NULL
 ##' @examples
 ##' \dontrun{
 ##' # Adapt the following:   TODO make explicit
@@ -446,8 +446,13 @@ histAxes2 = function()
 ##' }
 ##' @export
 ##' @author Andrew Edwards
-logTicks = function(xLim, yLim = NULL, tclSmall = -0.2, xLabelSmall = NULL,
-       yLabelSmall = NULL, xLabelBig = NULL, mgpVal=c(1.6,0.5,0))
+logTicks = function(xLim,
+                    yLim = NULL,
+                    tclSmall = -0.2,
+                    xLabelSmall = NULL,
+                    yLabelSmall = NULL,
+                    xLabelBig = NULL,
+                    mgpVal=c(1.6,0.5,0))
     {
     ll = 1:9
     log10ll = log10(ll)
@@ -488,4 +493,44 @@ logTicks = function(xLim, yLim = NULL, tclSmall = -0.2, xLabelSmall = NULL,
           axis(2, at=yLabelSmall, labels=yLabelSmall, mgp=mgpVal, tcl=tclSmall)
           }
       }
+}
+##' Add legend with right-justification
+##'
+##' Add legend with right-justification, functionalising Uwe Ligges'
+##'   example in `?legend`. Really a way of adding text automatically in
+##'   the corner (which `legend()` works out the positioning for).
+##'
+##' @param textVec text for the legend, one element for each row
+##' @param pos position of the legend (not tested for all positions)
+##' @param textWidth width to make the text
+##' @param inset inset distance
+##' @param logxy TRUE if axes are logarithmic
+##' @return Adds legend to exiting plot. Returns NULL.
+##' @export
+##' @examples
+##' \dontrun{ TODO check
+##'   plot(10:1)
+##'  legJust(c("Method", paste("value=", mean(1:10), sep=""), "x=7.0"))
+##' }
+##' @author Andrew Edwards
+legJust = function(textVec,
+                   pos="topright",
+                   textWidth = "slope=-*.**",
+                   inset=0,
+                   logxy=FALSE)
+    {
+      leg = legend(pos,
+                   legend = rep(" ", length(textVec)),
+                   text.width = strwidth(textWidth),
+                   bty="n",
+                   inset=inset)
+    if(logxy)
+    { text(10^(leg$rect$left + leg$rect$w),
+           10^(leg$text$y),
+           textVec,
+           pos = 2) } else
+    { text(leg$rect$left + leg$rect$w,
+           leg$text$y,
+           textVec,
+           pos = 2) }
 }
