@@ -1,4 +1,4 @@
-# Functions for plotting
+# Functions for plotting and customised functions for output for latex tables
 
 # lm.line - plot straight line of lm fit but restricted to the x values
 # gap.barplot.cust - customised version of Jim Lemon's gap.barplot for
@@ -52,8 +52,8 @@ lm.line = function(x.vector, lm.results, ...)
 ##' @param xtics position of the x axis ticks
 ##' @param yaxlab labels for the y axis ticks
 ##' @param ytics position of the y axis ticks
-##' @param midpoints
-##' @param breakpoints
+##' @param midpoints TODO
+##' @param breakpoints TODO
 ##' @param xlim optional x limits for the plot
 ##' @param ylim optional y limits for the plot
 ##' @param xlab label for the x axis
@@ -166,3 +166,35 @@ gap.barplot.cust = function (y,
     }
     invisible(x)
 }
+
+##' Produce LaTeX table code for quantiles of results
+##'
+##'  Quantile table function, to construct lines of quantiles to copy
+##'   into LaTeX. Does `quants[1]`, 50\% (median), mean, `quants[2]` quantiles,
+##'   and the \%age of values < the true value.
+##'
+##' @param xx vector of values to give quantiles for
+##' @param dig number of decimal places to give
+##' @param true the true value of the quantity being estimated, will
+##'     depend on method
+##' @param quants quantiles to use, with defaults of 0.25 and 0.75 (25\% and 75\%).
+##' @return LaTeX output for table to copy into a .tex file
+##' @export
+##' @author Andrew Edwards
+qqtab = function(xx,
+                 dig=2,
+                 true=b.known,
+                 quants = c(0.25, 0.75))
+  {
+      paste( c( prettyNum(round(quantile(xx, quants[1]),
+                                  digits=dig), big.mark=","),
+         " & ", prettyNum(round(quantile(xx, 0.50), digits=dig),
+                                  big.mark=","),
+         " & ", prettyNum(round(mean(xx), digits=dig),
+                                  big.mark=","),
+         " & ", prettyNum(round(quantile(xx, quants[2]), digits=dig),
+                                  big.mark=","),
+         " & ", prettyNum(round(sum(xx < true)/length(xx)*100, digits=0),
+                                  big.mark=",")),
+         sep="", collapse="")             # , "\\%"),
+  }

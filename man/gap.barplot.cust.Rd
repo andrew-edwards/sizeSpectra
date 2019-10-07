@@ -21,6 +21,10 @@ gap.barplot.cust(y, gap, xaxlab, xtics, yaxlab, ytics, midpoints,
 
 \item{ytics}{position of the y axis ticks}
 
+\item{midpoints}{TODO}
+
+\item{breakpoints}{TODO}
+
 \item{xlim}{optional x limits for the plot}
 
 \item{ylim}{optional y limits for the plot}
@@ -42,7 +46,7 @@ Barplot with a gap in the y-axis
 }
 \description{
 For Figure 1 of MEE paper, to make a histogram (barplot) with a gap in the y-axis.
-Customising \code{gap.barplot()} from the package plotrix by Jim Lemon.
+Customising \code{gap.barplot()} from the package plotrix by Jim Lemon and others
 Several options here are customised for the particular plot (and to
 change a few of the defaults in gap.barplot) so the code would
 require some modifiying to use more generally.
