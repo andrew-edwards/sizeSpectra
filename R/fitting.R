@@ -215,7 +215,7 @@ LBNbiom.method = function(bodyMass = NULL,
         indiv$binMin = as.numeric(as.character(indiv$binMin))
         indiv$binMax = as.numeric(as.character(indiv$binMax))
            # Now calculate biomass in each bin class:
-        binVals = dplyr::summarise(group_by(indiv, binMid),
+        binVals = dplyr::summarise(dplyr::group_by(indiv, binMid),
                                    binMin = unique(binMin),
                                    binMax = unique(binMax),
                                    binWidth = binMax - binMin,
@@ -377,7 +377,7 @@ log2bins = function(x = NULL, counts = NULL)
         indiv$binMin = as.numeric(as.character(indiv$binMin))
         indiv$binMax = as.numeric(as.character(indiv$binMax))
            # Now calculate biomass in each bin class:
-        binVals = dplyr::summarise(group_by(indiv, binMid),
+        binVals = dplyr::summarise(dplyr::group_by(indiv, binMid),
             binMin = unique(binMin),
             binMax = unique(binMax),
             binWidth = binMax - binMin,
