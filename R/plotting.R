@@ -419,3 +419,73 @@ histAxes2 = function()
          mgp=c(1.7,0.7,0))  # big ticks unlabelled
       abline(v=b.known, col=vertCol, lwd=vertThick)
     }
+
+
+##' Add axes and tick marks to a log-log plot to represent unlogged values
+##'
+##' Useful because you can then interpret the unlogged, e.g. Figure TODO
+##'
+##' @param xLim the x limits for the plot (unlogged scale); if NULL then do not
+##'   add anything to x-axis
+##' @param yLim  the y limits for the plot (unlogged scale); if NULL then
+##'   do not add anything to y-axis
+##' @param tclSmall size of small tick marks
+##' @param xLabelSmall which small tick marks on x-axis to label
+##' @param yLabelSmall which small tick marks on y-axis to label
+##' @param xLabelBig which big tick marks on the x-axis to label
+##'   (when automated they can overlap, so may need to specify)
+##' @param mgpVal `mgp` values for axes. See `?par`
+##' @return adds axes and big and small tick marks to the plot, returns NULL
+##' @examples
+##' \dontrun{
+##' # Adapt the following:   TODO make explicit
+##'   plot(..., log="xy", xlab=..., ylab=..., xlim=..., ylim=..., axes=FALSE)
+##'   xLim = 10^par("usr")[1:2]
+##'   yLim = 10^par("usr")[3:4]
+##'   logTicks(xLim, yLim, xLabelSmall = c(5, 50, 500))
+##' }
+##' @export
+##' @author Andrew Edwards
+logTicks = function(xLim, yLim = NULL, tclSmall = -0.2, xLabelSmall = NULL,
+       yLabelSmall = NULL, xLabelBig = NULL, mgpVal=c(1.6,0.5,0))
+    {
+    ll = 1:9
+    log10ll = log10(ll)
+    box()
+    # x axis
+    if(!is.null(xLim))               # if NULL then ignore
+      {
+      # Do enough tick marks to encompass axes:
+      xEncompassLog = c(floor(log10(xLim[1])), ceiling(log10(xLim[2])))
+      xBig = 10^c(xEncompassLog[1]:xEncompassLog[2])
+      # Big unlabelled, always want these:
+      axis(1, at= xBig, labels = rep("", length(xBig)), mgp = mgpVal)
+      # Big labelled:
+      if(is.null(xLabelBig)) { xLabelBig = xBig }
+      axis(1, at= xLabelBig, labels = xLabelBig, mgp = mgpVal)
+      # axis(1, at=c(1, 10, 100), labels = c(1, 10, 100), mgp=c(1.7,0.7,0))
+      # Small unlabelled:
+      axis(1, xBig %x% ll, labels=rep("", length(xBig %x% ll)), tcl=tclSmall)
+      # Small labelled:
+      if(!is.null(xLabelSmall))
+          {
+          axis(1, at=xLabelSmall, labels=xLabelSmall, mgp=mgpVal, tcl=tclSmall)
+          }
+      }
+    # Repeat for y axis:
+    if(!is.null(yLim))               # if NULL then ignore
+      {
+      # Do enough tick marks to encompass axes:
+      yEncompassLog = c(floor(log10(yLim[1])), ceiling(log10(yLim[2])))
+      yBig = 10^c(yEncompassLog[1]:yEncompassLog[2])
+      # Big labelled:
+      axis(2, at= yBig, labels = yBig, mgp = mgpVal)
+      # Small unlabelled:
+      axis(2, yBig %x% ll, labels=rep("", length(yBig %x% ll)), tcl=tclSmall)
+      # Small labelled:
+      if(!is.null(yLabelSmall))
+          {
+          axis(2, at=yLabelSmall, labels=yLabelSmall, mgp=mgpVal, tcl=tclSmall)
+          }
+      }
+}
