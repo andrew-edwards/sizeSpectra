@@ -21,8 +21,7 @@ knitr::opts_chunk$set(
 library(sizeSpectra)
 ```
 
-
-# Reproduce results of Methods in Ecology and Evolution paper
+# Reproduce Figures 1, 2 and A.1 of MEE paper
 
 This vignette reproduces all the figures and tables in TODO: ref paper. See the
 paper for details, the aim of the vignette is to enable users to reproduce the
@@ -95,7 +94,11 @@ gap.barplot.cust(hLlin.list$counts,
 
 ## Figure 2 -- results from using eight methods to fit size spectra
 
-TODO: Check if can use some of the functionalisation from later
+Some axes limits may be chosen explicitly for the simulated data set and so are
+not automated. The fitting for each method is done with functions, but the
+actual plots are explicitly made here.
+
+TODO: Check if can use some further functionalisation from later
 
 ```{r, fig.height = 8}
 par(mfrow=c(4,2))
@@ -398,18 +401,52 @@ legJust(c("(h) MLE",
           paste("b=", signif(PLB.bMLE, 3), sep="")),
         inset=inset,
         logxy=TRUE)
-
-# To add the curves at the limits of the 95% confidence interval
-#  (done in recommend.r):
-#for(i in c(1, length(bIn95)))       # for(i in 1:length(bIn95))  to see all vals
-#    {
-#      lines(x.PLB, (1 - pPLB(x = x.PLB, b = bIn95[i], xmin = min(x.PLB),
-#                  xmax = max(x.PLB))) * length(x), col="red", lty=3)
-#    }
-
-dev.off()
 ```
 
+## Figure A.1
+
+Same as (h) above (Figure 2(h) in paper), but on linear-log axes, to help explain in the
+why the red curve on log-log axes in (h) above does not pass through the maximum
+data point.
+
+```{r, fig.height = 5.4}
+par(mai=c(0.8, 0.8, 0.2, 0.3))
+mgpVal = c(2, 0.5, 0)
+plot(sort(x,
+          decreasing=TRUE),
+     1:length(x),
+     log="x",
+     xlab=expression(paste("Values, ", italic(x))),
+     ylab=expression( paste("Number of ", values >= x), sep=""),
+     xlim = c(xmin, xmax), ylim = c(0, n), axes=FALSE,  mgp=mgpVal)
+xLim = 10^par("usr")[1:2]
+yLim = NULL
+
+logTicks(xLim,
+         yLim = NULL,
+         xLabelSmall = c(5, 50, 500),
+         mgp = mgpVal)
+
+yBig = c(0, 500, 1000)
+# Big labelled:
+axis(2,
+     at = yBig,
+     labels = yBig,
+     mgp = mgpVal)
+# Small unlabelled:
+axis(2,
+     seq(yBig[1], yBig[length(yBig)], by = 100),
+     labels = rep("", 11),
+     tcl = -0.2,
+     mgp = mgpVal)
+
+x.PLB = seq(min(x), max(x), length=1000)     # x values to plot PLB
+y.PLB = (1 - pPLB(x = x.PLB,
+                  b = PLB.bMLE,
+                  xmin = min(x.PLB),
+                  xmax = max(x.PLB))) * length(x)
+lines(x.PLB, y.PLB, col="red") #, lty=5)
+```
 
 <!--
 CHECK THIS:   load(file="fitting2.RData")    # or load in data for x
@@ -438,57 +475,8 @@ So to use the MLE method to analyse your own data and plot results as per
 code/fitting2.r  (only r file there):
 
 # fitting2.r - replacing the fitting methods with functions, that are all
-#  in PLBfunctions.r. Some axes limits may be chosen explicitly for the
-#  simulated data set and so are not automated. 5th June 2015.
+#  in PLBfunctions.r. 5th June 2015.
 
-postscript("fitting2a.eps", height = figheight, width = figwidth,
-           horizontal=FALSE, paper="special")
-par(mfrow=c(4,2))
-oldmai = par("mai")    #  0.95625 0.76875 0.76875 0.39375  inches I think,
-                       #   think may be indpt of fig size
-par(mai=c(0.4, 0.5, 0.05, 0.3))  # Affects all figures if don't change again
-mgpVals = c(1.6,0.5,0)            # mgp values   2.0, 0.5, 0
-
-
-
-
-
-
-
-
-# Plotting fit of MLE method on linear-log axes, to help explain in the
-#  Appendix why the red curve on log-log axes (Figure 2h) does not pass
-#  through the maximum data point. This will be Figure A.1 in Appendix.
-
-postscript("fitting2aMLElinlog.eps", height = 5.4, width = figwidth,
-           horizontal=FALSE, paper="special")
-par(mai=c(0.8, 0.8, 0.2, 0.3))
-mgpVal = c(2, 0.5, 0)
-plot(sort(x, decreasing=TRUE), 1:length(x), log="x",
-     xlab=expression(paste("Values, ", italic(x))),
-     ylab=expression( paste("Number of ", values >= x), sep=""),
-     xlim = c(xmin, xmax), ylim = c(0, n), axes=FALSE,  mgp=mgpVal)
-xLim = 10^par("usr")[1:2]
-# yLim = 10^par("usr")[3:4]
-yLim = NULL
-
-
-logTicks(xLim, yLim=NULL, xLabelSmall = c(5, 50, 500), mgp=mgpVal) # Tick marks.
-
-yBig = c(0, 500, 1000)
-# Big labelled:
-axis(2, at= yBig, labels = yBig, mgp=mgpVal)
-# Small unlabelled:
-axis(2, seq(yBig[1], yBig[length(yBig)], by=100), labels=rep("", 11), tcl=-0.2,
-     mgp=mgpVal)
-
-
-x.PLB = seq(min(x), max(x), length=1000)     # x values to plot PLB
-y.PLB = (1 - pPLB(x = x.PLB, b = PLB.bMLE, xmin = min(x.PLB),
-                  xmax = max(x.PLB))) * length(x)
-lines(x.PLB, y.PLB, col="red") #, lty=5)
-# legJust(c("MLE", paste("b=", signif(PLB.bMLE, 3), sep="")), inset=inset,
-#        logxy=TRUE)
 
 dev.off()
 
