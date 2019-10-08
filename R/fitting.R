@@ -881,7 +881,7 @@ eightMethodsMEE <- function(x,
   hLTplus1.list = list(log10.mids = hLTplus1.log10.mids,
                        log10.counts = hLTplus1.log10.counts,
                        lm = hLTplus1.lm,
-                       slope = hLT.plus1.lm$coeff[2])
+                       slope = hLTplus1.lm$coeff[2])
                   # breaks = hLlin$breaks,
                   # confVals = confint(hLlin.lm, "hLlin.mids",0.95))  # TODO
                   # expect is calculated in conf plots, should be exporte here
@@ -1016,4 +1016,12 @@ eightMethodsMEE <- function(x,
 
   hMLE.list = list(b = PLB.bMLE,
                    confVals = PLB.MLE.bConf)
+
+  return(list(hLlin.list = hLlin.list,
+              hLT.list = hLT.list,
+              hLTplus1.list = hLTplus1.list,
+              hLBmiz.list = hLBmiz.list,
+              hLBNbiom.list = hLBNbiom.list,
+              hLCD.list = hLCD.list,
+              hMLE.list = hMLE.list))
 }

@@ -29,10 +29,6 @@ results so that they can see what functions are appropriate for their own data,
 and perform further analyses as required.
 
 
-```{r}
-library(sizeSpectra)
-```
-
 ## Figure 1 - standard histogram of a random sample from a bounded power-law distribution
 
 Generate random sample from bounded power-law distribution, where the resulting
@@ -102,6 +98,11 @@ actual plots are explicitly made here.
 TODO: Check if can use some further functionalisation from later
 
 ```{r, fig.height = 8}
+
+eight.results = eightMethodsMEE(x, num.bins = num.bins)
+
+
+# TODO: Get this working then make into a plotting function:
 par(mfrow=c(4,2))
 oldmai = par("mai")    #  0.95625 0.76875 0.76875 0.39375  inches I think,
                        #   think may be indpt of fig size
@@ -111,7 +112,8 @@ mgpVals = c(1.6,0.5,0)            # mgp values   2.0, 0.5, 0
 # Notation:
 # hAAA - h(istrogram) for method AAA.
 
-# Llin method (results calculated above)
+# Llin method (results calculated above in hLlin.list)
+
 plot(hLlin.list$mids,
      hLlin.list$log.counts,
      xlim=c(0, max(hLlin.list$breaks)),
@@ -130,6 +132,10 @@ legJust(c("(a) Llin",
 # LT method - plotting binned data on log-log axes then fitting regression,
 #  as done by Boldt et al. 2005, natural log of counts plotted against natural
 #  log of size-class midpoints.
+
+TODO GOT TO HERE, have taken out the calculation stuff so just leave the
+plotting here, then maybe make that into a function to simplify the
+vignette. Later figures may be better suited to generalising.
 
 # Use Llin method's binning.
 hLT.log.mids = log(hLlin.list$mids)
