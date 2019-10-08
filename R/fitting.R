@@ -1013,7 +1013,9 @@ eightMethodsMEE <- function(x,
                    confVals = PLB.MLE.bConf)
 
   if(b.only){
-    return(                # slope (or b), conf interval lower and upper bounds
+    return(                # slope (or b), conf interval lower and upper
+                           # bounds. Note that columns are unnamed (though first
+                           # value seems to be named sometimes).
            list(hLlin    = c(hLlin.list$slope, hLlin.list$confVals),
                 hLT      = c(hLT.list$slope, hLT.list$confVals),
                 hLTplus1 = c(hLTplus1.list$slope, hLTplus1.list$confVals),
