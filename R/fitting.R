@@ -865,9 +865,8 @@ eightMethodsMEE <- function(x,
                   log.counts = hLT.log.counts,
                   lm = hLT.lm,
                   slope = hLT.lm$coeff[2],
+                  confVals = confint(hLT.lm, "hLT.log.mids", 0.95))
                   # breaks = hLlin$breaks,
-                  confVals = confint(hLT.lm, "hLT.log.mids", 0.95)
-
   # LTplus1 method - plotting linearly binned data on log-log axes then fitting
   #  regression of log10(counts+1) vs log10(midpoint of bins), as done by
   #  Dulvy et al. (2004).
@@ -1021,8 +1020,8 @@ eightMethodsMEE <- function(x,
                 hLBmiz   = c(hLBmiz.list$slope, hLBmiz.list$confVals),
                 hLBbiom  = c(hLBNbiom.list[["unNorm.slope"]], hLBNbiom.list[["unNorm.conf"]]),
                 hLBNbiom = c(hLBNbiom.list[["norm.slope"]], hLBNbiom.list[["norm.conf"]]),
-                hLCD     = c(hLCD.list$slope,hLCD.list$confVals,
-                hMLE.list = hMLE.list))
+                hLCD     = c(hLCD.list$slope, hLCD.list$confVals),
+                hMLE     = c(hMLE.list$b, hMLE.list$confVals)))
   } else {
     return(list(hLlin.list = hLlin.list,
                 hLT.list = hLT.list,
@@ -1031,5 +1030,5 @@ eightMethodsMEE <- function(x,
                 hLBNbiom.list = hLBNbiom.list,
                 hLCD.list = hLCD.list,
                 hMLE.list = hMLE.list))
-
+  }
 }
