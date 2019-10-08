@@ -152,24 +152,17 @@ legJust(c("(b) LT",
 #  regression of log10(counts+1) vs log10(midpoint of bins), as done by
 #  Dulvy et al. (2004).
 
-# Use Llin method's binning.
-hLTplus1.log10.mids = log10(hLlin.list$mids)
-hLTplus1.log10.counts = log10(hLlin.list$counts + 1)
-hLTplus1.log10.counts[ is.infinite(hLTplus1.log10.counts) ] = NA
-                  # lm can't cope with -Inf, which appear if 0 counts in a bin
-                  #  though the + 1 avoids this issue here
-hLTplus1.lm = lm( hLTplus1.log10.counts ~ hLTplus1.log10.mids, na.action=na.omit)
-hLTplus1.slope = hLTplus1.lm$coeff[2]
+hLTplus1.list = eight.results$hLTplus1.list
 
-plot(hLTplus1.log10.mids,
-     hLTplus1.log10.counts,
+plot(hLTplus1.list$log10.mids,
+     hLTplus1.list$log10.counts,
      xlab=expression(paste("Log10 (bin midpoints for data ", italic(x), ")")),
      ylab = "Log10 (count+1)",
      mgp=mgpVals,
      yaxt="n")
 
-if(min(hLTplus1.log10.counts) < par("usr")[3]
-      | max(hLTplus1.log10.counts) > par("usr")[4])
+if(min(hLTplus1.list$log10.counts) < par("usr")[3]
+      | max(hLTplus1.list$log10.counts) > par("usr")[4])
    { stop("fix ylim for LTplus1 method")}
 
 axis(2,
@@ -181,12 +174,11 @@ axis(2,
      tcl=-0.2,
      labels=rep("", 3))
 
-lm.line(hLTplus1.log10.mids, hLTplus1.lm)
+lm.line(hLTplus1.list$log10.mids, hLTplus1.list$lm)
 legJust(c("(c) LTplus1",
-          paste("slope=", signif(hLTplus1.slope, 3), sep=""),
-          paste("b=", signif(hLTplus1.slope, 3), sep="")),
+          paste("slope=", signif(hLTplus1.list$slope, 3), sep=""),
+          paste("b=", signif(hLTplus1.list$slope, 3), sep="")),
         inset=inset)
-
 
 # LBmiz method - binning data using log10 bins, plotting results on natural
 #  log axes (as in mizer). Mizer does abundance size spectrum or biomass
