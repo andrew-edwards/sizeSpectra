@@ -1,0 +1,385 @@
+---
+title: "MEE_reproduce_2"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MEE_reproduce_2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+```{r setup}
+library(sizeSpectra)
+```
+
+# Reproduce Figures 3, ....TODO.... of MEE paper
+
+This vignette reproduces figures and tables in TODO: ref paper. See the
+paper for details, the aim of the vignette is to enable users to reproduce the
+results so that they can see what functions are appropriate for their own data,
+and perform further analyses as required.
+
+COPIES FIRST ONE FOR NOW (as template)
+
+```{r}
+library(sizeSpectra)
+```
+
+## Figure 3 - TODO standard histogram of a random sample from a bounded power-law distribution
+
+TODO Generate random sample from bounded power-law distribution, where the resulting
+`x` is a vector of individual fish sizes (usually body masses).
+```{r}
+# fitting3rep.r - as for fitting2rep.r, but now plotting histograms in terms
+#  of estimates of b rather than estimates of slope, since they will be clearer.
+#  13th July 2015.
+
+# redo.simulation = TRUE    # Whether or not to redo the simulations
+# if(!redo.simulation)
+#  {load("fitting3rep.RData")
+#  source("../PLBfunctions.r")
+#  } else
+
+# TODO - takes too long to run with 10000 to make vignette, so make me into a
+# data object and save as part of package. Still traceable.
+n = 1000                  # sample size
+b.known = -2              # known fixed value of b
+xmin.known = 1            # known fixed value of xmin
+xmax.known = 1000         # known fixed value of xmax
+
+num.reps = 10000          # number of times to draw sets of n random numbers.
+                          #  (throwing n PLB dice num.reps times)
+set.seed(42)
+
+# Record the slope or b for each method
+Llin.rep = numeric(num.reps)*NA
+LT.rep = Llin.rep
+LTplus1.rep = Llin.rep
+LBmiz.rep = Llin.rep
+LBbiom.rep = Llin.rep
+LBNbiom.rep = Llin.rep
+LCD.rep = Llin.rep
+MLE.rep = Llin.rep
+MLEfix.rep = Llin.rep  # Adding in MLE calculations when we fix xmax=xmax.known
+
+# Record the confidence intervals (in hindsight could have maybe done lists)
+Llin.rep.conf = data.frame(confMin = Llin.rep, confMax = Llin.rep)
+LT.rep.conf = Llin.rep.conf
+LTplus1.rep.conf = Llin.rep.conf
+LBmiz.rep.conf = Llin.rep.conf
+LBbiom.rep.conf = Llin.rep.conf
+LBNbiom.rep.conf = Llin.rep.conf
+LCD.rep.conf = Llin.rep.conf
+MLE.rep.conf = Llin.rep.conf
+MLEfix.rep.conf = Llin.rep.conf
+
+MLE.rep.xmax = Llin.rep   # Also save the xmax =max(x) for each run, to see how
+                           #  correlates with estimate of b.
+
+num.bins = 8    # number of bins for standard histogram and Llin method, though
+                #  this is only a suggestion (and can get overridden). Daan used
+                #  8 bins.
+hLBmiz.num.bins = num.bins    # for mizer method
+# Main loop for doing the fitting num.reps times
+for(iii in 1:num.reps)
+{
+  # if(iii %in% seq(1000, num.reps, 1000)) print(paste("iii = ", iii))
+                                        # show progress, but comment out for vignette
+
+  x = rPLB(n, b = b.known, xmin = xmin.known, xmax = xmax.known)
+
+  log.x = log(x)                      # to avoid keep calculating
+  sum.log.x = sum( log.x )
+  xmin = min(x)
+  xmax = max(x)   #TODO check, should go in function presumably
+
+  eight.results = sizeSpectra::eightMethodsMEE(x,
+                                               num.bins = num.bins,
+                                               b.only = TRUE)
+
+  # Could do more efficiently, but just modify existing code for now
+
+  Llin.rep[iii]       = eight.results$hLlin[1]
+  Llin.rep.conf[iii,] = eight.results$hLlin[2:3]
+
+  LT.rep[iii]         = eight.results$hLT[1]
+  LT.rep.conf[iii,]   = eight.results$hLT[2:3]
+
+  LTplus1.rep[iii]    = eight.results$hLTplus1[1]
+  LTplus1.rep.conf[iii,] = eight.results$hLT[2:3]
+
+  LBmiz.rep[iii]      = eight.results$hLBmiz[1]
+  LBmiz.rep.conf[iii,]= eight.results$hLBmiz[2:3]
+
+  LBbiom.rep[iii]     = eight.results$hLBbiom[1]
+  LBbiom.rep.conf[iii, ]= eight.results$hLBbiom[2:3]
+
+  LBNbiom.rep[iii]    = eight.results$hLBNbiom[1]
+  LBNbiom.rep.conf[iii, ] = eight.results$hLBNbiom[2:3]
+
+  LCD.rep[iii]        = eight.results$hLCD[1]
+  LCD.rep.conf[iii,]  = eight.results$hLCD[2:3]
+
+  MLE.rep[iii]        = eight.results$hMLE[1]
+  MLE.rep.conf[iii,]  = eight.results$hMLE[2:3]
+
+  MLE.rep.xmax[iii] = xmax
+
+  # MLE (maximum likelihood method) calculations, but fix xmax=xmax.known
+  # TODO make a function for MLE, then take it out of eightMethodsMEE function
+
+  # Use analytical value of MLE b for PL model (Box 1, Edwards et al. 2007)
+  #  as a starting point for nlm for MLE of b for PLB model.
+  PL.bMLE = 1/( log(min(x)) - sum.log.x/length(x)) - 1
+
+  PLBfix.minLL =  nlm(negLL.PLB, p=PL.bMLE, x=x, n=length(x),
+      xmin=xmin, xmax=xmax.known, sumlogx=sum.log.x) #, print.level=2 )
+
+  PLBfix.bMLE = PLBfix.minLL$estimate
+  MLEfix.rep[iii] = PLBfix.bMLE
+
+  # 95% confidence intervals for MLE method.
+  PLBfix.minNegLL = PLBfix.minLL$minimum
+
+  # Values of b to test to obtain confidence interval. For the movement data
+  #  sets in Table 2 of Edwards (2011) the intervals were symmetric, so make a
+  #  symmetric interval here.
+  bvec = seq(PLBfix.bMLE - 0.5, PLBfix.bMLE + 0.5, 0.001)
+
+  PLBfix.LLvals = vector(length=length(bvec))  # negative log-likelihood for bvec
+  for(i in 1:length(bvec))
+    {
+        PLBfix.LLvals[i] = negLL.PLB(bvec[i], x=x, n=length(x), xmin=xmin,
+            xmax=xmax.known, sumlogx=sum.log.x)
+    }
+  critVal = PLBfix.minNegLL  + qchisq(0.95,1)/2
+                    # 1 degree of freedom, Hilborn and Mangel (1997) p162.
+  bIn95 = bvec[ PLBfix.LLvals < critVal ]
+                    # b values in 95% confidence interval
+  PLBfix.MLE.bConf = c(min(bIn95), max(bIn95))
+  if(PLBfix.MLE.bConf[1] == min(bvec) | PLBfix.MLE.bConf[2] == max(bvec))
+    { windows()
+      plot(bvec, PLBfix.LLvals)
+      abline(h = critVal, col="red")
+      stop("Need to make bvec larger for PLBfix - see R window")   # Could automate
+    }
+  MLEfix.rep.conf[iii,] = c(PLBfix.MLE.bConf[1], PLBfix.MLE.bConf[2])
+
+}  # End for for(iii in 1:num.reps) loop
+
+# Plotting
+# brange = range( c( Llin.rep, LT.rep, LTplus1.rep, LBmiz.rep,
+#    LBbiom.rep, LBNbiom.rep, MLE.rep))
+# Comes out as -3.38, 0.233 for seed=42, num.reps = 10000
+xrange = c(-3.5, 0.5)         # range of x-axis for histograms - actually to define bins
+xbigticks = seq(-3.5, 0.5, 0.5)
+
+xsmallticks = seq(xrange[1], xrange[2], by=0.1)
+breakshist = seq(xrange[1], xrange[2], by=3/61)
+         # bin ends at 0, 2 is centered. width of 4/81 from solving
+         #  the mean of a bin equals 2, ((N+1)w + Nw)/2 = 2, and setting number
+         #  of the bin that includes 2, N, =40 (which is how many you get with
+         #  0.05, which looked good).
+
+figheight = 7 # 5.6
+figwidth = 5.7    # 5.7 inches for JAE
+#postscript("fitting3rep.eps", height = figheight, width = figwidth,
+#           horizontal=FALSE,  paper="special")
+par(omi = c(0.12, 0.05, 0.12, 0.0))      # outer margins in inches
+par(mfrow=c(4,2)) #7,1))
+
+oldmai = par("mai")
+par(mai=c(0.5, 0.5, 0.1, 0.3)) # Affects all figures if don't change agaiin
+par(xaxs="i", yaxs="i")    # Have to define here for hist
+par(mgp=c(2.0, 0.5, 0))    # puts axes labels closer I think
+par(cex = 0.8)             # With no option all text comes out a bit small
+
+vertCol = "red"            # Colour for vertical lines
+vertThick = 1              # Thickness for vertical lines
+
+xLim = c(-3.2, -1.5)
+xLimLlin = xLim + 2
+ylimA = c(0, 5500)
+ylimLlin = c(0, 10000)
+cexAxis = 0.9      # font size for axes labels to make the y ones fit okay
+
+# Llin.rep has different breakhist so that 0 is a breakpoint. Same width as
+#  others, just shifted.
+hist(Llin.rep, xlim=xLimLlin, breaks=breakshist - breakshist[31],
+  xlab="", ylab="Frequency",
+  main="", axes=FALSE, ylim = ylimLlin)  #  ylim=c(0,1100),
+axis(1, at=xbigticks, labels = xbigticks, mgp=c(1.7,0.7,0), cex.axis=cexAxis)  # big ticks
+axis(1, at=xsmallticks, labels=rep("",length(xsmallticks)), tcl=-0.2)
+axis(2, at=c(0, 5000, 10000),
+         labels = c(0, 5000, 10000),
+         mgp=c(1.7,0.7,0), cex.axis=cexAxis)  # big ticks labelled
+axis(2, at=seq(0, 10000, 1000),
+         labels = rep("", 11),
+         mgp=c(1.7,0.7,0))  # big ticks unlabelled
+abline(v=b.known, col=vertCol, lwd=vertThick)
+inset = c(-0.08, -0.08)     # inset distance of legend
+legend("topleft", "(a) Llin", bty="n", inset=inset)
+
+# TODO think these three lines can be deleted
+figlabpos = 0.93    # proportion of x and y axis lengths to put (a) in etc.
+xlabpos = 0.75       # just play with a number, as now using pos=4 in text
+text( xlabpos, figlabpos * 1100, "(a) Llin", pos=4)
+
+hist(LT.rep, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+  main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
+histAxes()
+legend("topleft", "(b) LT", bty="n", inset=inset)
+
+hist(LTplus1.rep, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+  main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
+histAxes()
+legend("topleft", "(c) LTplus1", bty="n", inset=inset)
+
+hist(LBmiz.rep-1, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+  main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
+histAxes()
+legend("topleft", "(d) LBmiz", bty="n", inset=inset)
+
+hist(LBbiom.rep-2, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+  main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
+histAxes()
+legend("topleft", "(e) LBbiom", bty="n", inset=inset)
+
+hist(LBNbiom.rep-1, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+  main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
+histAxes()
+legend("topleft", "(f) LBNbiom", bty="n", inset=inset)
+
+
+hist(LCD.rep-1, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+  main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
+histAxes()
+legend("topleft", "(g) LCD", bty="n", inset=inset)
+
+hist(MLE.rep, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+  main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
+histAxes()
+legend("topleft", "(h) MLE", bty="n", inset=inset)
+
+# text(-2.5, 0, expression(paste("Estimate of ", italic(b))))
+mtext(expression(paste("Estimate of ", italic(b))), side=1, outer=TRUE, line=-1)
+# mtext("hello", side=1, outer=TRUE, line=-1)
+```
+
+Figure A.3 for just the MLE and MLEfix methods:
+
+```{r}
+
+par(omi = c(0.12, 0.05, 0.12, 0.0))      # outer margins in inches
+par(mfrow=c(2,1))
+
+par(mai=c(0.5, 0.5, 0.1, 0.3))
+par(xaxs="i", yaxs="i")    # Have to define here for hist
+par(mgp=c(2.0, 0.5, 0))    # puts axes labels closer I think
+par(cex = 0.8)             # With no option all text comes out a bit small
+
+xLimFix = c(-2.5, -1.5)
+yLimFix = c(0, 6000)
+hist(MLE.rep, xlim=xLimFix, breaks=breakshist, xlab="", ylab="Frequency",
+  main="", axes=FALSE, ylim = yLimFix)  #  ylim=c(0,1100),
+histAxes()
+axis(2, at=6000, labels = 6000, mgp=c(1.7,0.7,0), cex.axis=cexAxis)
+                                        # big tick label
+legend("topleft", "(a) MLE", bty="n", inset=0.5*inset)
+
+hist(MLEfix.rep, xlim=xLimFix, breaks=breakshist, xlab="", ylab="Frequency",
+  main="", axes=FALSE, ylim = yLimFix)  #  ylim=c(0,1100),
+histAxes()
+axis(2, at=6000, labels = 6000, mgp=c(1.7,0.7,0), cex.axis=cexAxis)
+                                        # big tick label
+legend("topleft", "(b) MLEfix", bty="n", inset=0.5*inset)
+
+mtext(expression(paste("Estimate of ", italic(b))), side=1, outer=TRUE, line=-1)
+```
+
+<!--
+
+# Prints Latex code for table that summarises the results
+# Going to do in terms of b, not slope, so subtract 1 or 2 from some results:
+# Quartiles:
+print("Method & Slope is estimating: & 1st quartile & Median & Mean & 3rd quartile & Percentage below true \\")
+print(paste("Llin & - & ", qqtab(Llin.rep, dig=3), "\\"))
+print(paste("LT & $b$ & ", qqtab(LT.rep), "\\"))
+print(paste("LTplus1 & $b$ & ", qqtab(LTplus1.rep), "\\"))
+print(paste("LBmiz & $b+1$ & ", qqtab(LBmiz.rep - 1), "\\"))
+print(paste("LBbiom & $b+2$ & ", qqtab(LBbiom.rep - 2), "\\"))
+print(paste("LBNbiom & $b+1$ & ", qqtab(LBNbiom.rep - 1), "\\"))
+print(paste("LCD & $b+1$ & ", qqtab(LCD.rep - 1), "\\"))
+print(paste("MLE & $b$ & ", qqtab(MLE.rep), "\\hline"))
+# To give slopes, rather than converting them to b:
+#print(paste("LBmiz & ", qqtab(LBmiz.rep, true=b.known+1), "\\"))
+#print(paste("LBbiom & ", qqtab(LBbiom.rep, true=b.known+2), "\\"))
+#print(paste("LBNbiom & ", qqtab(LBNbiom.rep, true=b.known+1), "\\"))
+#print(paste("LCD & ", qqtab(LCD.rep, true=b.known+1), "\\"))
+
+# 5% and 95% values:
+print("Method & Slope represents & 5% quantile & Median & Mean & 95% quantile & Percentage below true \\")
+print(paste("Llin & - & ", qqtab(Llin.rep, dig=2, quants=c(0.05, 0.95)), "\\"))
+print(paste("LT & $b$ & ", qqtab(LT.rep, quants=c(0.05, 0.95)), "\\"))
+print(paste("LTplus1 & $b$ & ", qqtab(LTplus1.rep, quants=c(0.05, 0.95)), "\\"))
+print(paste("LBmiz & $b+1$ & ", qqtab(LBmiz.rep - 1, quants=c(0.05, 0.95)), "\\"))
+print(paste("LBbiom & $b+2$ & ", qqtab(LBbiom.rep - 2, quants=c(0.05, 0.95)), "\\"))
+print(paste("LBNbiom & $b+1$ & ", qqtab(LBNbiom.rep - 1, quants=c(0.05, 0.95)), "\\"))
+print(paste("LCD & $b+1$ & ", qqtab(LCD.rep - 1, quants=c(0.05, 0.95)), "\\"))
+print(paste("MLE & $b$ & ", qqtab(MLE.rep, quants=c(0.05, 0.95)), "\\hline"))
+print(paste("% MLEfix & $b$ & ", qqtab(MLEfix.rep, quants=c(0.05, 0.95)), "\\"))
+# For slopes:
+#print(paste("LBmiz &  ", qqtab(LBmiz.rep, true=b.known+1, quants=c(0.05, 0.95)), "\\"))
+#print(paste("LBbiom &  ", qqtab(LBbiom.rep, true=b.known+2, quants=c(0.05, 0.95)), "\\"))
+#print(paste("LBNbiom & ", qqtab(LBNbiom.rep, true=b.known+1, quants=c(0.05, 0.95)), "\\"))
+#print(paste("LCD & ", qqtab(LCD.rep, true=b.known+1, quants=c(0.05, 0.95)), "\\"))
+
+save.image(file = "fitting3rep.RData")
+
+
+-->
+
+
+<!--
+CHECK THIS:   load(file="fitting2.RData")    # or load in data for x
+From readMeCode.txt:
+
+The resulting figures (as .eps postscript files) are also included so that
+ code can be independnetly re-run and the results easily compared with my
+ original figures. I have included the .RData file for the results for
+ the main simulation of 10,000 data sets (multiple/fitting3rep.r)
+ and for the xmax=10000 simulation (multiple/xmax10000/fitting3rep10000.r)
+ because the code can take a while to run and the two resulting .RData files
+ are used to produce Figure 3. The remainaing .RData files are have
+ not been included because they are generally large.
+
+The main figures in the manuscript can be found in the following directories:
+
+Figures 1 and 2 - code/single/
+Figures 3 and 4 - code/multiple/
+Figure 5 - code/MLEbin/
+Figure 6 - code/recommend/
+
+So to use the MLE method to analyse your own data and plot results as per
+ our Figure 6, see code/recommend/ . If your data are binned then you will
+ need some of code/MLEbin/ .
+
+code/fitting2.r  (only r file there):
+
+# fitting2.r - replacing the fitting methods with functions, that are all
+#  in PLBfunctions.r. 5th June 2015.
+
+
+dev.off()
+
+save.image(file = "fitting2.RData")
+-->
