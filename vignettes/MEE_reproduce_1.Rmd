@@ -91,17 +91,19 @@ gap.barplot.cust(hLlin$counts,
 
 ## Figure 2 -- results from using eight methods to fit size spectra
 
-Some axes limits may be chosen explicitly for the simulated data set and so are
-not automated. The fitting for each method is done with functions, but the
-actual plots are explicitly made here.
+Calculate size spectra fits using all eight methods on the same data set.
+```{r}
+eight.results = sizeSpectra::eightMethodsMEE(x, num.bins = num.bins)
+```
+
+The following code plots Figure 2, where each panel corresponds to one of the
+methods. Most of this code involves details of the plots to make good figures,
+and so might somewhat tailored for this explicit data set. So it may need
+tweaking for another dataset. (Could be made into a function with lots of
+arguments).
 
 ```{r, fig.height = 8}
 
-eight.results = eightMethodsMEE(x, num.bins = num.bins)
-
-expect_equal(hLlin, eight.results$hLlin.list)         # check results match
-
-# TODO: Get this working then make into a plotting function:
 par(mfrow=c(4,2))
 oldmai = par("mai")
 par(mai=c(0.4, 0.5, 0.05, 0.3))  # Affects all figures if don't change again
@@ -344,11 +346,12 @@ axis(2,
 
 x.PLB = seq(min(x), max(x), length=1000)     # x values to plot PLB
 y.PLB = (1 - pPLB(x = x.PLB,
-                  b = hMLE.list$.b,
+                  b = hMLE.list$b,
                   xmin = min(x.PLB),
                   xmax = max(x.PLB))) * length(x)
 lines(x.PLB, y.PLB, col="red") #, lty=5)
 ```
+
 
 <!--
 CHECK THIS:   load(file="fitting2.RData")    # or load in data for x
