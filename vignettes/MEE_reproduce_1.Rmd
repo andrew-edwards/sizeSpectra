@@ -182,62 +182,25 @@ legJust(c("(c) LTplus1",
 
 # LBmiz method - binning data using log10 bins, plotting results on natural
 #  log axes (as in mizer). Mizer does abundance size spectrum or biomass
-#  size spectrum - the latter multiplies abundance by the min of each bin
-#  (see below).
+#  size spectrum - the latter multiplies abundance by the min of each bin.
 
-# Construction of bins is as follows, from Finlay Scott:
-# The bins dimensions can be specified by the user by passing in min_w, max_w
-#  (min values for the lowest and highest bins) and no_w (number of bins)
-#  arguments. These are then used:
-#    w <- 10^(seq(from=log10(min_w), to=log10(max_w), length.out=no_w))
-#    dw <- diff(w)
-#    dw[no_w] <- dw[no_w-1] # Set final dw as same as penultimate bin
-#
-# The w values are the break points of the bins (the start of the bin).
+hLBmiz.list = eight.results$hLBmiz.list
 
-hLBmiz.num.bins = num.bins
-
-beta = nlm(LBmizbinsFun, 2, xmin=xmin, xmax=xmax, k=hLBmiz.num.bins)$est
-
-hLBmiz.bins = c(beta^(0:(hLBmiz.num.bins-1)) * min(x), max(x))
-   # Mizer bin specification, with final bin being same width as penultimate bin
-
-hLBmiz = hist(x, breaks=hLBmiz.bins, plot=FALSE)     # linear scale
-
-# From mizer's getCommunitySlopeCode.r:
-#  "Calculates the slope of the community abundance through time by
-#  performing a linear regression on the logged total numerical abundance
-#  at weight and logged weights (natural logs, not log to base 10, are used)."
-#  So regress log(total counts) against log(weights) (not log10 and not
-#  normalised). And it's actually on the minima of the bins (their w).
-
-hLBmiz.log.min.of.bins = log(hLBmiz.bins[-length(hLBmiz.bins)]) # min of each bin
-hLBmiz.log.counts = log(hLBmiz$counts)
-hLBmiz.log.counts[ is.infinite(hLBmiz.log.counts) ] = NA
-                  # lm can't cope with -Inf, which appear if 0 counts in a bin
-
-hLBmiz.lm = lm( hLBmiz.log.counts ~ hLBmiz.log.min.of.bins, na.action=na.omit)
-
-# Check result for using midpoints rather than mins of bins, get slope -1.130:
-# hLBmiz.lm = lm( hLBmiz.log.counts ~ log(hLBmiz$mids), na.action=na.omit)
-
-hLBmiz.slope = hLBmiz.lm$coeff[2]
-
-plot( hLBmiz.log.min.of.bins, hLBmiz.log.counts,
+plot( hLBmiz.list$log.min.of.bins, hLBmiz.list$log.counts,
      xlab=expression(paste("Log (minima of bins for data ", italic(x), ")")),
      ylab = "Log (count)", mgp=mgpVals)
 
-lm.line(hLBmiz.log.min.of.bins, hLBmiz.lm)
+lm.line(hLBmiz.list$log.min.of.bins, hLBmiz.list$lm)
 legJust(c("(d) LBmiz",
-          paste("slope=", signif(hLBmiz.slope, 3), sep=""),
-          paste("b=", signif(hLBmiz.slope - 1, 3), sep="")),
+          paste("slope=", signif(hLBmiz.list$slope, 3), sep=""),
+          paste("b=", signif(hLBmiz.list$slope - 1, 3), sep="")),
         inset=inset)
 
 # LBbiom method - binning data using log2 bins, calculating biomass (not counts)
 #  in each bin, plotting log10(biomass in bin) vs log10(midpoint of bin)
 #  as done by Jennings et al. (2007), who used bins defined by a log2 scale.
 
-hLBNbiom.list = LBNbiom.method(x)    # Does this LBbiom and LBNbiom methods.
+hLBNbiom.list = eight.results$hLBNbiom.list  # This does LBbiom and LBNbiom methods.
 
 plot(hLBNbiom.list[["binVals"]]$log10binMid,
      hLBNbiom.list[["binVals"]]$log10totalBiom,
@@ -299,75 +262,26 @@ legJust(c("(f) LBNbiom",
         inset=inset)
 
 # Cumulative Distribution, LCD method
-x.sorted = sort(x, decreasing=TRUE)
-logSorted = log(x.sorted)
-logProp = log((1:length(x))/length(x))
 
-plot(logSorted, logProp, main="",
+hLCD.list = eight.results$hLCD.list
+
+plot(hLCD.list$logSorted,
+     hLCD.list$logProp,
+     main="",
      xlab=expression(paste("Log ", italic(x))),
      ylab=expression( paste("Log (prop. of ", values >= italic(x), ")")),
      mgp=mgpVals)
      #xlim=c(0.8, 1000), xaxs="i", ylim=c(0.0008, 1), yaxs="i",
 
-hLCD.lm = lm(logProp ~ logSorted)   # plot(fitsortedlog10) shows
-                                    #  residuals not good
-hLCD.slope = hLCD.lm$coeff[2]
-lm.line(logSorted, hLCD.lm, col="red")
+lm.line(hLCD.list$logSorted, hLCD.list$lm, col="red")
 
 legJust(c("(g) LCD",
-          paste("slope=", signif(hLCD.slope, 3), sep=""),
-          paste("b=", signif(hLCD.slope - 1, 3), sep="")),
+          paste("slope=", signif(hLCD.list$slope, 3), sep=""),
+          paste("b=", signif(hLCD.list$slope - 1, 3), sep="")),
         inset=inset)
-
-
 # MLE (maximum likelihood method) calculations.
 
-# Use analytical value of MLE b for PL model (Box 1, Edwards et al. 2007)
-#  as a starting point for nlm for MLE of b for PLB model.
-PL.bMLE = 1/( log(min(x)) - sum.log.x/length(x)) - 1
-
-PLB.minLL =  nlm(negLL.PLB,
-                 p=PL.bMLE,
-                 x=x,
-                 n=length(x),
-                 xmin=xmin,
-                 xmax=xmax,
-                 sumlogx=sum.log.x) #, print.level=2 )
-
-PLB.bMLE = PLB.minLL$estimate
-
-# 95% confidence intervals for MLE method.
-
-PLB.minNegLL = PLB.minLL$minimum
-
-# Values of b to test to obtain confidence interval. For the real movement data
-#  sets in Table 2 of Edwards (2011) the intervals were symmetric, so make a
-#  symmetric interval here.
-
-bvec = seq(PLB.bMLE - 0.5, PLB.bMLE + 0.5, 0.00001)
-
-PLB.LLvals = vector(length=length(bvec))  # negative log-likelihood for bvec
-for(i in 1:length(bvec))
-    {
-      PLB.LLvals[i] = negLL.PLB(bvec[i],
-                                x=x,
-                                n=length(x),
-                                xmin=xmin,
-                                xmax=xmax,
-                                sumlogx=sum.log.x)
-    }
-critVal = PLB.minNegLL  + qchisq(0.95,1)/2
-                    # 1 degree of freedom, Hilborn and Mangel (1997) p162.
-bIn95 = bvec[ PLB.LLvals < critVal ]
-                    # b values in 95% confidence interval
-PLB.MLE.bConf = c(min(bIn95), max(bIn95))
-
-if(PLB.MLE.bConf[1] == min(bvec) | PLB.MLE.bConf[2] == max(bvec))
-  { windows()
-    plot(bvec, PLB.LLvals)
-    abline(h = critVal, col="red")
-    stop("Need to make bvec larger - see R window")   # Could automate
-  }
+hMLE.list = eight.results$hMLE.list
 
 # To plot rank/frequency style plot:
 plot(sort(x, decreasing=TRUE), 1:length(x), log="xy",
@@ -381,12 +295,12 @@ logTicks(xLim, yLim, xLabelSmall = c(5, 50, 500))   # Tick marks.
 
 x.PLB = seq(min(x), max(x), length=1000)     # x values to plot PLB
 y.PLB = (1 - pPLB(x = x.PLB,
-                  b = PLB.bMLE,
+                  b = hMLE.list$b,
                   xmin = min(x.PLB),
                   xmax = max(x.PLB))) * length(x)
 lines(x.PLB, y.PLB, col="red")     #, lty=5)
 legJust(c("(h) MLE",
-          paste("b=", signif(PLB.bMLE, 3), sep="")),
+          paste("b=", signif(hMLE.list$b, 3), sep="")),
         inset=inset,
         logxy=TRUE)
 ```
@@ -430,7 +344,7 @@ axis(2,
 
 x.PLB = seq(min(x), max(x), length=1000)     # x values to plot PLB
 y.PLB = (1 - pPLB(x = x.PLB,
-                  b = PLB.bMLE,
+                  b = hMLE.list$.b,
                   xmin = min(x.PLB),
                   xmax = max(x.PLB))) * length(x)
 lines(x.PLB, y.PLB, col="red") #, lty=5)
