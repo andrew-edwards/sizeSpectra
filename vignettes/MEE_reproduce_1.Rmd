@@ -67,19 +67,19 @@ num.bins = 8    # number of bins for standard histogram and Llin method, though
 
 # Llin method - plotting binned data on log-linear axes then fitting regression,
 #  as done by Daan et al. 2005.
-hLlin.list = Llin.method(x,
-                         num.bins = num.bins)
+hLlin = Llin.method(x,
+                    num.bins = num.bins)
 
-gap.barplot.cust(hLlin.list$counts,
+gap.barplot.cust(hLlin$counts,
                  gap=c(9,980),
                  ytics = c(seq(0, 8, by=4),
                            seq(980, 988, by=4)),
-                 midpoints = hLlin.list$mids,
-                 breakpoints = hLlin.list$breaks,
-                 xlim = c(-10,max(hLlin.list$breaks)+10),
+                 midpoints = hLlin$mids,
+                 breakpoints = hLlin$breaks,
+                 xlim = c(-10,max(hLlin$breaks)+10),
                  yaxs = "i",
                  ylim = c(0, 17),  # max = max(y) - gap[2] + gap[1] + some space
-                 col = rep("grey", length(hLlin.list$counts)),
+                 col = rep("grey", length(hLlin$counts)),
                  xaxs = "i",
                  xlab = expression(paste("Values, ", italic(x))),
                  ylab = "Count in each bin",
@@ -95,24 +95,24 @@ Some axes limits may be chosen explicitly for the simulated data set and so are
 not automated. The fitting for each method is done with functions, but the
 actual plots are explicitly made here.
 
-TODO: Check if can use some further functionalisation from later
-
 ```{r, fig.height = 8}
 
 eight.results = eightMethodsMEE(x, num.bins = num.bins)
 
+expect_equal(hLlin, eight.results$hLlin.list)         # check results match
 
 # TODO: Get this working then make into a plotting function:
 par(mfrow=c(4,2))
-oldmai = par("mai")    #  0.95625 0.76875 0.76875 0.39375  inches I think,
-                       #   think may be indpt of fig size
+oldmai = par("mai")
 par(mai=c(0.4, 0.5, 0.05, 0.3))  # Affects all figures if don't change again
-mgpVals = c(1.6,0.5,0)            # mgp values   2.0, 0.5, 0
+mgpVals = c(1.6,0.5,0)           # mgp values, default 2.0, 0.5, 0
 
 # Notation:
 # hAAA - h(istrogram) for method AAA.
 
-# Llin method (results calculated above in hLlin.list)
+# Llin method
+
+hLlin.list = eight.results$hLlin.list
 
 plot(hLlin.list$mids,
      hLlin.list$log.counts,
@@ -133,30 +133,19 @@ legJust(c("(a) Llin",
 #  as done by Boldt et al. 2005, natural log of counts plotted against natural
 #  log of size-class midpoints.
 
-TODO GOT TO HERE, have taken out the calculation stuff so just leave the
-plotting here, then maybe make that into a function to simplify the
-vignette. Later figures may be better suited to generalising.
+hLT.list = eight.results$hLT.list
 
-# Use Llin method's binning.
-hLT.log.mids = log(hLlin.list$mids)
-hLT.log.counts = log(hLlin.list$counts)
-hLT.log.counts[ is.infinite(hLT.log.counts) ] = NA
-                  # lm can't cope with -Inf, which appear if 0 counts in a bin
-
-hLT.lm = lm(hLT.log.counts ~ hLT.log.mids, na.action=na.omit)
-hLT.slope = hLT.lm$coeff[2]
-
-plot(hLT.log.mids,
-     hLT.log.counts,
+plot(hLT.list$log.mids,
+     hLT.list$log.counts,
      xlab=expression(paste("Log (bin midpoints for data ", italic(x), ")")),
      ylab = "Log (count)",
      mgp=mgpVals)
 
-lm.line(hLT.log.mids, hLT.lm)
+lm.line(hLT.list$log.mids, hLT.list$lm)
 
 legJust(c("(b) LT",
-          paste("slope=", signif(hLT.slope, 3), sep=""),
-          paste("b=", signif(hLT.slope, 3), sep="")),
+          paste("slope=", signif(hLT.list$slope, 3), sep=""),
+          paste("b=", signif(hLT.list$slope, 3), sep="")),
         inset=inset)
 
 # LTplus1 method - plotting linearly binned data on log-log axes then fitting
