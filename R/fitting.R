@@ -834,11 +834,14 @@ negLL.PLB.binned = function(b, w, d, J=length(d), xmin=min(w), xmax=max(w))
 ##'
 ##' @param x vector of individual body masses
 ##' @param num.bins suggested number of bins for Llin, LT and LTplus1 methods
+##' @param b.only TRUE only returns slope or b plus confidence intervals, else
+##'   return full details
 ##' @return TODO Bunch of lists
 ##' @export
 ##' @author Andrew Edwards
 eightMethodsMEE <- function(x,
-                            num.bins = 8){
+                            num.bins = 8,
+                            b.only = FALSE){
   # Notation:
   # hAAA - h(istrogram) for method AAA.
 
@@ -861,10 +864,9 @@ eightMethodsMEE <- function(x,
   hLT.list = list(log.mids = hLT.log.mids,
                   log.counts = hLT.log.counts,
                   lm = hLT.lm,
-                  slope = hLT.lm$coeff[2])
+                  slope = hLT.lm$coeff[2],
                   # breaks = hLlin$breaks,
-                  # confVals = confint(hLlin.lm, "hLlin.mids",0.95))  # TODO
-                  # expect is calculated in conf plots, should be exporte here
+                  confVals = confint(hLT.lm, "hLT.log.mids", 0.95)
 
   # LTplus1 method - plotting linearly binned data on log-log axes then fitting
   #  regression of log10(counts+1) vs log10(midpoint of bins), as done by
@@ -881,11 +883,9 @@ eightMethodsMEE <- function(x,
   hLTplus1.list = list(log10.mids = hLTplus1.log10.mids,
                        log10.counts = hLTplus1.log10.counts,
                        lm = hLTplus1.lm,
-                       slope = hLTplus1.lm$coeff[2])
-                  # breaks = hLlin$breaks,
-                  # confVals = confint(hLlin.lm, "hLlin.mids",0.95))  # TODO
-                  # expect is calculated in conf plots, should be exporte here
-
+                       slope = hLTplus1.lm$coeff[2],
+                       confVals = confint(hLTplus1.lm, "hLTplus1.log10.mids", 0.95))
+                       # breaks = hLlin$breaks,
 
   # LBmiz method - binning data using log10 bins, plotting results on natural
   #  log axes (as in mizer). Mizer does abundance size spectrum or biomass
@@ -928,11 +928,9 @@ eightMethodsMEE <- function(x,
   hLBmiz.list = list(log.min.of.bins = hLBmiz.log.min.of.bins,
                      log.counts = hLBmiz.log.counts,
                      lm = hLBmiz.lm,
-                     slope = hLBmiz.lm$coeff[2])
+                     slope = hLBmiz.lm$coeff[2],
+                     confVals = confint(hLBmiz.lm, "hLBmiz.log.min.of.bins", 0.95))
                     # breaks = hLlin$breaks,
-                    # confVals = confint(hLlin.lm, "hLlin.mids",0.95))  # TODO
-                    # expect is calculated in conf plots, should be exporte here
-
 
   # LBbiom method - binning data using log2 bins, calculating biomass (not counts)
   #  in each bin, plotting log10(biomass in bin) vs log10(midpoint of bin)
@@ -959,11 +957,9 @@ eightMethodsMEE <- function(x,
   hLCD.list = list(logSorted = logSorted,
                    logProp = logProp,
                    lm = hLCD.lm,
-                   slope = hLCD.lm$coeff[2])
+                   slope = hLCD.lm$coeff[2],
+                   confVals = confint(hLCD.lm, "logSorted", 0.95))
                     # breaks = hLlin$breaks,
-                    # confVals = confint(hLlin.lm, "hLlin.mids",0.95))  # TODO
-                    # expect is calculated in conf plots, should be exporte here
-
 
   # MLE (maximum likelihood method) calculations.
 
@@ -1017,11 +1013,23 @@ eightMethodsMEE <- function(x,
   hMLE.list = list(b = PLB.bMLE,
                    confVals = PLB.MLE.bConf)
 
-  return(list(hLlin.list = hLlin.list,
-              hLT.list = hLT.list,
-              hLTplus1.list = hLTplus1.list,
-              hLBmiz.list = hLBmiz.list,
-              hLBNbiom.list = hLBNbiom.list,
-              hLCD.list = hLCD.list,
-              hMLE.list = hMLE.list))
+  if(b.only){
+    return(                # slope (or b), conf interval lower and upper bounds
+           list(hLlin    = c(hLlin.list$slope, hLlin.list$confVals),
+                hLT      = c(hLT.list$slope, hLT.list$confVals),
+                hLTplus1 = c(hLTplus1.list$slope, hLTplus1.list$confVals),
+                hLBmiz   = c(hLBmiz.list$slope, hLBmiz.list$confVals),
+                hLBbiom  = c(hLBNbiom.list[["unNorm.slope"]], hLBNbiom.list[["unNorm.conf"]]),
+                hLBNbiom = c(hLBNbiom.list[["norm.slope"]], hLBNbiom.list[["norm.conf"]]),
+                hLCD     = c(hLCD.list$slope,hLCD.list$confVals,
+                hMLE.list = hMLE.list))
+  } else {
+    return(list(hLlin.list = hLlin.list,
+                hLT.list = hLT.list,
+                hLTplus1.list = hLTplus1.list,
+                hLBmiz.list = hLBmiz.list,
+                hLBNbiom.list = hLBNbiom.list,
+                hLCD.list = hLCD.list,
+                hMLE.list = hMLE.list))
+
 }
