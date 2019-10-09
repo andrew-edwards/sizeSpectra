@@ -57,6 +57,52 @@ negLL.PLB = function(b, x, n, xmin, xmax, sumlogx)
     return(neglogLL)
 }
 
+##' Calculate negative log-likelihood for the bounded power-law
+##'   distribution given count data
+##'
+##' Calculate the negative log-likelihood of the parameters `b`, `xmin` and `xmax`
+##' given count data for the PLB model. Returns the negative log-likelihood.
+##' Will be called by `nlm()` or similar, but `xmin` and `xmax` will then be estimated
+##' as the min of lowest bin and max of the largest, not numerically using
+##' likelihood.
+##'
+##' For testing the MLEmid methods (using midpoints of bins), then
+##' give `xmin` and `xmax` explicitly as the lowest and highest bin breaks
+##' because the `x` values correspond to bins. But if `x` just represents
+##' counts of discrete values then no need to specify `xmin` and `xmax`, they
+##' will be automatically determined as `min(x)` and `max(x)`, respectively,
+##' although it can be good to specify them to avoid repeated calculation.
+##'
+##' @param b value of `b` for which to calculate the negative log-likelihood.
+##' @param x vector of length K corresponding to data values `x_k`, with a
+##'   corresponding count `c` being the number of times that `x_k` is repeated
+##' @param c vector of length `K` giving the counts `c_k` for each `k=1, 2, 3, ..., K`.
+##'    Must have `c[1]>0` and `c[K]>0`, i.e. non-zero counts for first and last
+##'    `x_k`. Note that the `c_k` do not have to be integer-valued.
+##' @param K number of `c_k` values (length of `c`).
+##' @param xmin minimum value of `x_k`, as an input to avoid repeatedly calculating.
+##' @param xmax maximum value of `x_k`, as an input to avoid repeatedly calculating.
+##' @param sumclogx `sum( c * log(x) )`, to avoid repeatedly calculating.
+##' @return negative log-likelihood of the parameters given the data
+##' @export
+##' @author Andrew Edwards
+negLL.PLB.counts = function(b, x, c, K=length(c), xmin=min(x), xmax=max(x),
+    sumclogx = sum(c * log(x)))
+  {
+    if(xmin <= 0 | xmin >= xmax | length(x) != K | length(c) != K |
+         c[1] == 0 | c[K] == 0 | min(c) < 0)
+         stop("Parameters out of bounds in negLL.PLB.counts")
+    n = sum(c)
+    if(b != -1)
+      { neglogLL = -n * log( ( b + 1) / (xmax^(b + 1) - xmin^(b + 1)) ) -
+            b * sumclogx
+      } else
+      { neglogLL = n * log( log(xmax) - log(xmin) ) + sumclogx
+      }
+    return(neglogLL)
+  }
+
+
 ##' Fit size spectrum using Llin method
 ##'
 ##' Fit size spectrum using Llin method, which is plotting binned counts on
