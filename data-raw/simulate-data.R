@@ -6,7 +6,7 @@ b.known = -2              # known fixed value of b
 xmin.known = 1            # known fixed value of xmin
 xmax.known = 1000         # known fixed value of xmax
 
-num.reps = 10 #000          # number of times to draw sets of n random numbers.
+num.reps = 10000          # number of times to draw sets of n random numbers.
                           #  (throwing n PLB dice num.reps times)
 set.seed(42)
 

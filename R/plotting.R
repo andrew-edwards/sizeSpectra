@@ -298,17 +298,17 @@ confPlot = function(repConf,
             xLim = c(floor(rangeVal[1]), ceiling(rangeVal[2]))
                   # min(repConf[,1])), ceiling(max(repConf[,2])))
         }
-    repConf = mutate(repConf,
+    repConf = dplyr::mutate(repConf,
       inConf = (b.true > confMin & b.true < confMax))  # does CI cover b.true?
 
-    repConf = mutate(repConf, confCol = NA)
+    repConf = dplyr::mutate(repConf, confCol = NA)
     # Couldn't figure this out in dplyr:
     repConf[which(repConf$inConf), "confCol"] = inCol
     repConf[which(!repConf$inConf), "confCol"] = outCol
     repConf[, "num.rep"] = as.numeric(row.names(repConf))
               # To preserve the iteration number in case needed later
 
-    repConf.sort.full = arrange(repConf, confMin)   # arranged by min of CI
+    repConf.sort.full = dplyr::arrange(repConf, confMin)   # arranged by min of CI
     sum.inConf = sum(repConf.sort.full$inConf, na.rm=TRUE) /
         dim(repConf.sort.full)[1]      # get NA's for Llin, LT with xmax=10000
     # subset for better plotting:
@@ -382,6 +382,7 @@ confPlot = function(repConf,
     if(!vertFirst) {abline(v=b.true, lwd=vertThick, col=vertCol)}
     return(repConf.sort.full)     # repConf.sort is what's plotted though
 }
+
 ##' Histogram axes for figures TODO
 ##'
 ##' Do the histogram axes in `fitting3rep.r` TODO and later, since almost all
