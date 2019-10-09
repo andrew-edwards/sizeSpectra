@@ -175,24 +175,7 @@ legend("topleft", "(b) MLEfix", bty="n", inset=0.5*inset)
 mtext(expression(paste("Estimate of ", italic(b))), side=1, outer=TRUE, line=-1)
 ```
 
-
-
-\begin{table}
-\begin{tabular}{llrrrrr}
-Llin & - &  -0.01 & -0.009 & -0.009 & -0.007 & 0 \\
-\end{tabular}
-\end{table}
-
-
-Year        Hooks enumerated         Data resolution   Location of data      WCVI?
------------ ------------------------ ----------------- -------------------- -------
-1995        All                      Set-by-set        Spreadsheets^1^        N
-1996        All                      Set-by-set        Spreadsheet^2^         N
-
-
-```{r, results='asis'}
-knitr::kable(head(Llin.rep.df$slope))
-```
+Table 2, summarising the results for each method:
 
 <!-- For Latex table for each row, see commented out code below. -->
 <!-- I had that code writen already, so adapted it to make an -->
@@ -200,34 +183,25 @@ knitr::kable(head(Llin.rep.df$slope))
 <!-- kable.
 <!-- Doing table in terms of b, not slope, so have to subtract 1 or 2 from some results.
 -->
-|Method | Slope represents | 1st quartile |Median  |Mean  |3rd quartile  |Percentage below true|
-|:----- | :--------------- | :----------- |:-----  |:---  |:-----------  |:--------------------|
-|Llin   | -                | `r qqtab(Llin.rep.df$slope, dig=3, latex=FALSE)` |
-|LT     | *b*              | `r qqtab(LT.rep.df$slope, latex=FALSE)` |
-|LTplus1| *b*              | `r qqtab(LTplus1.rep.df$slope, latex=FALSE)` |
-|LBmiz  | *b+1*            | `r qqtab(LBmix.rep.df$slope - 1, latex=FALSE)` |
-|LBbiom | *b+2*            | `r qqtab(LBbiom.rep.df$slope - 2, latex=FALSE)` |
-|LBNbiom| *b+1*            | `r qqtab(LBNbiom.rep.df$slope - 1, latex=FALSE)` |
-|LCD    | *b+1*            | `r qqtab(LCD.rep.df$slope - 1, latex=FALSE)` |
-|MLE    | *b*              | `r qqtab(MLE.rep.df$b, latex=FALSE)` |
 
-For MLEbin method see next vignette.TODO
+|Method | Slope represents | 5\% quantile |Median  |Mean  |95\% quantile |Percentage below true|
+|:----- | :--------------- | :----------- |:-----  |:---  |:-----------  |:--------------------|
+|Llin   | -                | `r qqtab(Llin.rep.df$slope, dig=3, quants=c(0.05, 0.95), latex=FALSE)` |
+|LT     | *b*              | `r qqtab(LT.rep.df$slope, quants=c(0.05, 0.95), latex=FALSE)` |
+|LTplus1| *b*              | `r qqtab(LTplus1.rep.df$slope, quants=c(0.05, 0.95), latex=FALSE)` |
+|LBmiz  | *b+1*            | `r qqtab(LBmiz.rep.df$slope - 1, quants=c(0.05, 0.95), latex=FALSE)` |
+|LBbiom | *b+2*            | `r qqtab(LBbiom.rep.df$slope - 2, quants=c(0.05, 0.95), latex=FALSE)` |
+|LBNbiom| *b+1*            | `r qqtab(LBNbiom.rep.df$slope - 1, quants=c(0.05, 0.95), latex=FALSE)` |
+|LCD    | *b+1*            | `r qqtab(LCD.rep.df$slope - 1, quants=c(0.05, 0.95), latex=FALSE)` |
+|MLE    | *b*              | `r qqtab(MLE.rep.df$b, quants=c(0.05, 0.95), latex=FALSE)` |
+
+For MLEbin method see next vignette.TODO. And create data set with 10,000 reps.
 
 
 <!--
 
 # Prints Latex code for table that summarises the results
 # Going to do in terms of b, not slope, so subtract 1 or 2 from some results:
-# Quartiles:
-print("Method & Slope is estimating: & 1st quartile & Median & Mean & 3rd quartile & Percentage below true \\")
-print(noquote((paste("Llin & - & ", qqtab(Llin.rep, dig=3), "\\")))
-print(paste("LT & $b$ & ", qqtab(LT.rep), "\\"))
-print(paste("LTplus1 & $b$ & ", qqtab(LTplus1.rep), "\\"))
-print(paste("LBmiz & $b+1$ & ", qqtab(LBmiz.rep - 1), "\\"))
-print(paste("LBbiom & $b+2$ & ", qqtab(LBbiom.rep - 2), "\\"))
-print(paste("LBNbiom & $b+1$ & ", qqtab(LBNbiom.rep - 1), "\\"))
-print(paste("LCD & $b+1$ & ", qqtab(LCD.rep - 1), "\\"))
-print(paste("MLE & $b$ & ", qqtab(MLE.rep), "\\hline"))
 
 # 5% and 95% values:
 print("Method & Slope represents & 5% quantile & Median & Mean & 95% quantile & Percentage below true \\")
@@ -240,6 +214,7 @@ print(paste("LBNbiom & $b+1$ & ", qqtab(LBNbiom.rep - 1, quants=c(0.05, 0.95)), 
 print(paste("LCD & $b+1$ & ", qqtab(LCD.rep - 1, quants=c(0.05, 0.95)), "\\"))
 print(paste("MLE & $b$ & ", qqtab(MLE.rep, quants=c(0.05, 0.95)), "\\hline"))
 print(paste("% MLEfix & $b$ & ", qqtab(MLEfix.rep, quants=c(0.05, 0.95)), "\\"))
+
 # For slopes:
 #print(paste("LBmiz &  ", qqtab(LBmiz.rep, true=b.known+1, quants=c(0.05, 0.95)), "\\"))
 #print(paste("LBbiom &  ", qqtab(LBbiom.rep, true=b.known+2, quants=c(0.05, 0.95)), "\\"))
