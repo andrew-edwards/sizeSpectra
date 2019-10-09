@@ -20,8 +20,8 @@ LBmiz.rep.df = Llin.rep.df
 LBbiom.rep.df = Llin.rep.df
 LBNbiom.rep.df = Llin.rep.df
 LCD.rep.df = Llin.rep.df
-MLE.rep.df = Llin.rep.df
-MLEfix.rep.df = Llin.rep.df  # Adding in MLE calculations when we fix xmax=xmax.known
+MLE.rep.df = data.frame(b = NA.vec, confMin = NA.vec, confMax = NA.vec)
+MLEfix.rep.df = MLE.rep.df  # Adding in MLE calculations when we fix xmax=xmax.known
 
 MLE.rep.xmax = NA.vec      # Also save the xmax =max(x) for each run, to see how
                            #  correlates with estimate of b.
@@ -128,6 +128,6 @@ eight.results.default <- list(Llin.rep.df    = Llin.rep.df,
                               LCD.rep.df     = LCD.rep.df,
                               MLE.rep.df     = MLE.rep.df,
                               MLEfix.rep.df  = MLEfix.rep.df,
-                              MLE.rep.xmax   = MLE.rep.xmax)
-
-usethis::use_data("eight.results.default")
+                              MLE.rep.xmax   = MLE.rep.xmax,
+                              b.known        = b.known)
+usethis::use_data(eight.results.default, overwrite = TRUE)

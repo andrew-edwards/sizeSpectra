@@ -43,12 +43,8 @@ TODO Generate random sample from bounded power-law distribution, where the resul
 #  of estimates of b rather than estimates of slope, since they will be clearer.
 #  13th July 2015.
 
-# redo.simulation = TRUE    # Whether or not to redo the simulations
-# if(!redo.simulation)
-#  {load("fitting3rep.RData")
-#  source("../PLBfunctions.r")
-#  } else
-
+list2env(eight.results.default, envir=.GlobalEnv)    # Extract previously saved
+                                        # results. To obtain from scratch see data-raw/simulate-data.R
 
 # Plotting
 # brange = range( c( Llin.rep, LT.rep, LTplus1.rep, LBmiz.rep,
@@ -88,7 +84,7 @@ cexAxis = 0.9      # font size for axes labels to make the y ones fit okay
 
 # Llin.rep has different breakhist so that 0 is a breakpoint. Same width as
 #  others, just shifted.
-hist(Llin.rep, xlim=xLimLlin, breaks=breakshist - breakshist[31],
+hist(Llin.rep.df$slope, xlim=xLimLlin, breaks=breakshist - breakshist[31],
   xlab="", ylab="Frequency",
   main="", axes=FALSE, ylim = ylimLlin)  #  ylim=c(0,1100),
 axis(1, at=xbigticks, labels = xbigticks, mgp=c(1.7,0.7,0), cex.axis=cexAxis)  # big ticks
@@ -108,38 +104,38 @@ figlabpos = 0.93    # proportion of x and y axis lengths to put (a) in etc.
 xlabpos = 0.75       # just play with a number, as now using pos=4 in text
 text( xlabpos, figlabpos * 1100, "(a) Llin", pos=4)
 
-hist(LT.rep, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+hist(LT.rep.df$slope, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
   main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
 histAxes()
 legend("topleft", "(b) LT", bty="n", inset=inset)
 
-hist(LTplus1.rep, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+hist(LTplus1.rep.df$slope, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
   main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
 histAxes()
 legend("topleft", "(c) LTplus1", bty="n", inset=inset)
 
-hist(LBmiz.rep-1, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+hist(LBmiz.rep.df$slope - 1, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
   main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
 histAxes()
 legend("topleft", "(d) LBmiz", bty="n", inset=inset)
 
-hist(LBbiom.rep-2, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+hist(LBbiom.rep.df$slope - 2, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
   main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
 histAxes()
 legend("topleft", "(e) LBbiom", bty="n", inset=inset)
 
-hist(LBNbiom.rep-1, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+hist(LBNbiom.rep.df$slope - 1, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
   main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
 histAxes()
 legend("topleft", "(f) LBNbiom", bty="n", inset=inset)
 
 
-hist(LCD.rep-1, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+hist(LCD.rep.df$slope - 1, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
   main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
 histAxes()
 legend("topleft", "(g) LCD", bty="n", inset=inset)
 
-hist(MLE.rep, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
+hist(MLE.rep.df$b, xlim=xLim, breaks=breakshist, xlab="", ylab="Frequency",
   main="", axes=FALSE, ylim = ylimA)  #  ylim=c(0,1100),
 histAxes()
 legend("topleft", "(h) MLE", bty="n", inset=inset)
