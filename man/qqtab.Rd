@@ -2,9 +2,10 @@
 % Please edit documentation in R/plotting.R
 \name{qqtab}
 \alias{qqtab}
-\title{Produce LaTeX table code for quantiles of results}
+\title{Produce LaTeX or Rmarkdown table code for quantiles of results}
 \usage{
-qqtab(xx, dig = 2, true = b.known, quants = c(0.25, 0.75))
+qqtab(xx, dig = 2, true = b.known, quants = c(0.25, 0.75),
+  latex = TRUE)
 }
 \arguments{
 \item{xx}{vector of values to give quantiles for}
@@ -14,14 +15,19 @@ qqtab(xx, dig = 2, true = b.known, quants = c(0.25, 0.75))
 \item{true}{the true value of the quantity being estimated, will
 depend on method}
 
-\item{quants}{quantiles to use, with defaults of 0.25 and 0.75 (25\% and 75\%).}
+\item{quants}{quantiles to use, with defaults of 0.25 and 0.75 (25\% and
+75\%).}
+
+\item{latex}{if TRUE gives \code{latex} output to copy into a \code{.tex} file, else gives \code{Rmd} gives Rmarkdown output
+(see vignette TODO).}
 }
 \value{
 LaTeX output for table to copy into a .tex file
 }
 \description{
 Quantile table function, to construct lines of quantiles to copy
-into LaTeX. Does \code{quants[1]}, 50\% (median), mean, \code{quants[2]} quantiles,
+into LaTeX, or render directly in an Rmarkdown document. Does \code{quants[1]},
+50\% (median), mean, \code{quants[2]} quantiles,
 and the \%age of values < the true value.
 }
 \author{

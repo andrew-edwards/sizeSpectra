@@ -26,7 +26,7 @@ fit}
 \value{
 list containing:
 \itemize{
-\item indiv: dataframe with a row for each \code{bodyMass} value and with columns:
+\item \code{indiv}: dataframe with a row for each \code{bodyMass} value and with columns:
 \itemize{
 \item 'x': original \code{bodyMass} values.
 \item \code{binMid}, \code{binMin}, \code{binMax}, \code{binWidth}: midpoint, minimum, maximum,

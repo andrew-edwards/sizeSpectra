@@ -1,16 +1,4 @@
-# fitting.R - functions related to statistical fitting.
-
-# Statistical functions documented here:
-# negLL.PLB - negative log-likelihood function for PLB model
-# Llin.method - fitting data using the Llin method
-# LBNbiom.method - fitting data using the LBbiom and LBNbiom methods
-# LBmizbinsFuns - calculate the bin breaks for the LBmiz method from mizer
-# log2bins - construct bins that double in size and encompass the data
-# eightMethods - computes exponents for a dataset using all eight methods, for
-#  a second manuscript
-# negLL.PLB.binned - negative log-likelihood function for PLB when data are
-#  only available in binned form
-#
+# fitting.R - non-likelihood related functions for statistical fitting.
 
 ##' Tests if each value in a vector is a whole number
 ##'
@@ -26,82 +14,6 @@ is.wholenumber = function(x, tol = .Machine$double.eps^0.5)
     {
     abs(x - round(x)) < tol
     }
-
-
-##' Calculate negative log-likelihood for the bounded power-law
-##'   distribution
-##'
-##' Calculate the negative log-likelihood of the parameters `b`, `xmin` and
-##'   `xmax` given data `x` for the PLB model. Returns the negative
-##'   log-likelihood. Will be called by `nlm()` or similar. `xmin` and `xmax`
-##'   are just estimated as the min and max of the data, not numerically using likelihood.
-##' @param b value of `b` for which to calculate the negative log-likelihood
-##' @param x vector of values of data (e.g. masses of individual fish)
-##' @param n `length(x)`, have as an input to avoid repeatedly calculating it when
-##'   function is called multiple times in an optimization routine
-##' @param xmin minimum value of `x` to avoid repeatedly calculating
-##' @param xmax maximum value of `x` to avoid repeatedly calculating
-##' @param sumlogx `sum(log(x))` to avoid repeatedly calculating
-##' @return negative log-likelihood of the parameters given the data
-##' @export
-##' @author Andrew Edwards
-negLL.PLB = function(b, x, n, xmin, xmax, sumlogx)
-  {
-    if(xmin <= 0 | xmin >= xmax) stop("Parameters out of bounds in negLL.PLB")
-    if(b != -1)
-      { neglogLL = -n * log( ( b + 1) / (xmax^(b + 1) - xmin^(b + 1)) ) -
-            b * sumlogx
-      } else
-      { neglogLL = n * log( log(xmax) - log(xmin) ) + sumlogx
-      }
-    return(neglogLL)
-}
-
-##' Calculate negative log-likelihood for the bounded power-law
-##'   distribution given count data
-##'
-##' Calculate the negative log-likelihood of the parameters `b`, `xmin` and `xmax`
-##' given count data for the PLB model. Returns the negative log-likelihood.
-##' Will be called by `nlm()` or similar, but `xmin` and `xmax` will then be estimated
-##' as the min of lowest bin and max of the largest, not numerically using
-##' likelihood.
-##'
-##' For testing the MLEmid methods (using midpoints of bins), then
-##' give `xmin` and `xmax` explicitly as the lowest and highest bin breaks
-##' because the `x` values correspond to bins. But if `x` just represents
-##' counts of discrete values then no need to specify `xmin` and `xmax`, they
-##' will be automatically determined as `min(x)` and `max(x)`, respectively,
-##' although it can be good to specify them to avoid repeated calculation.
-##'
-##' @param b value of `b` for which to calculate the negative log-likelihood.
-##' @param x vector of length K corresponding to data values `x_k`, with a
-##'   corresponding count `c` being the number of times that `x_k` is repeated
-##' @param c vector of length `K` giving the counts `c_k` for each `k=1, 2, 3, ..., K`.
-##'    Must have `c[1]>0` and `c[K]>0`, i.e. non-zero counts for first and last
-##'    `x_k`. Note that the `c_k` do not have to be integer-valued.
-##' @param K number of `c_k` values (length of `c`).
-##' @param xmin minimum value of `x_k`, as an input to avoid repeatedly calculating.
-##' @param xmax maximum value of `x_k`, as an input to avoid repeatedly calculating.
-##' @param sumclogx `sum( c * log(x) )`, to avoid repeatedly calculating.
-##' @return negative log-likelihood of the parameters given the data
-##' @export
-##' @author Andrew Edwards
-negLL.PLB.counts = function(b, x, c, K=length(c), xmin=min(x), xmax=max(x),
-    sumclogx = sum(c * log(x)))
-  {
-    if(xmin <= 0 | xmin >= xmax | length(x) != K | length(c) != K |
-         c[1] == 0 | c[K] == 0 | min(c) < 0)
-         stop("Parameters out of bounds in negLL.PLB.counts")
-    n = sum(c)
-    if(b != -1)
-      { neglogLL = -n * log( ( b + 1) / (xmax^(b + 1) - xmin^(b + 1)) ) -
-            b * sumclogx
-      } else
-      { neglogLL = n * log( log(xmax) - log(xmin) ) + sumclogx
-      }
-    return(neglogLL)
-  }
-
 
 ##' Fit size spectrum using Llin method
 ##'
@@ -184,7 +96,7 @@ Llin.method = function(bodyMass,
 ##' @param lowerCutOff body mass representing the lower cut off for the range being
 ##'   fit
 ##' @return list containing:
-##'   * indiv: dataframe with a row for each `bodyMass` value and with columns:
+##'   * `indiv`: dataframe with a row for each `bodyMass` value and with columns:
 ##'     + 'x': original `bodyMass` values.
 ##'     +  `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum, maximum,
 ##'        and width, respectively, of the bin within which the `x` value falls.
@@ -841,48 +753,6 @@ eightMethods = function(oneYear = 1980,
   dev.off()
   return(eightMethodsRes)
 }
-##' Calculate negative log-likelihood for the bounded power-law
-##'   distribution given binned data
-##'
-##' Calculates the negative log-likelihood of the parameters `b`, `xmin` and
-##' `xmax` given binned data for the PLB model. Returns the negative
-##' log-likelihood. Will be called by `nlm()` or similar, but `xmin` and `xmax`
-##' will just be estimated as the minimum of lowest bin and maximum of the
-##' largest bin, respectively, (since they are the MLEs), no need to do
-##' numerically. Specifically this is the negative of the log-likelihood
-##' function given in (A.70) of Edwards et al. (2017) and (S.27) of Edwards et
-##' al. (TODO), where the latter fixed a minor error in (A.75) of Edwards et
-##' al. (2017).
-##'
-##' @param b value of b for which to calculate the negative log-likelihood
-##' @param w vector of length `J+1` giving the bin breaks `w_1, w_2, ..., w_{J+1}`
-##' @param d vector of length `J` giving the count in each bin; must have `d_1,
-##'   d_J > 0`
-##' @param J number of bins (length of `d`)
-##' @param xmin minimum value of bins, as an input to avoid repeatedly calculating
-##' @param xmax maximum value of bins, as an input to avoid repeatedly calculating
-##' @return negative log-likelihood of the parameters given the data
-##' @export
-##' @author Andrew Edwards
-negLL.PLB.binned = function(b, w, d, J=length(d), xmin=min(w), xmax=max(w))
-                                        # sumlogx)
-  {
-   # TODO fix those J=length(d) type things in args, that messed me up in
-   # another project
-    if(xmin <= 0 | xmin >= xmax | length(d) != J | length(w) != J+1 |
-         d[1] == 0 | d[J] == 0 | min(d) < 0)
-         stop("Parameters out of bounds in negLL.PLB")
-    n = sum(d)
-    if(b != -1)
-      { neglogLL = n * log( abs( w[J+1]^(b+1) - w[1]^(b+1) ) ) -
-            sum( d * log( abs( w[-1]^(b+1) - w[-(J+1)]^(b+1) ) ) )
-      } else
-      { neglogLL = n * log( log(w[J+1]) - log(w[1]) ) -
-            sum( d * log( ( log(w[-1]) - log(w[-(J+1)]) ) ) )
-      }
-    return(neglogLL)
-  }
-
 
 # Copying from .Rmd the calculations for all eight methods for MEE
 # approach. Need to make a function to then use in other simulations and look at
@@ -1094,4 +964,138 @@ eightMethodsMEE <- function(x,
                 hLCD.list = hLCD.list,
                 hMLE.list = hMLE.list))
   }
+}
+
+##' Use the LBN and LB methods to calculate the slope of the biomass size spectra for count data
+##'
+##' Use the log-binning with normalisation technique to calculate the slope of
+##' the biomass size spectra, for count data. Slope is from fitting
+##' a linear regression of `log10(normalised biomass in bin)`
+##' against `log10(midpoint of bin)`. Bins can be defined by user,
+##' else are created to double in size. Also calculates slope
+##' for biomasses not being normalised (LB method).
+##'
+##' @param valCounts valCounts: data.frame (or tbl_df) with columns `bodyMass`
+##'   and `Number`, which is the count for each body mass. `bodyMass` can
+##'   represent midpoints, say, of existing bins, or be the actual
+##'   species-specific converted-to-bodyMass values. Number can be non-integer,
+##'   which can arise from standardising, say, trawl data scaled to be per hour.
+##' @param binBreaks breaks for the bins to be used to bin the data and
+##'   then fit the regression. If not provided then it calculates
+##'   them as bin widths that double in size that encompass the data,
+##'   resulting in `binBreaks` that are powers of 2, giving  ..., 0.25, 0.5, 1,
+##'   2, 4, 8, 16,...  as necessary.
+##' @param lowerCutOff body mass value representing the lower cut off for
+##'   the range being fit.
+##' @return list containing:
+##'
+##'   * `valCounts2`: dataframe `valCounts` with extra columns `binMin`, the
+##'       minimum of the bin into which that `bodyMass` falls, and `biomass`,
+##'       the biomass corresponding to `bodyMass * Number`.
+##'
+##'   * `binVals`: dataframe with a row for each bin and columns:
+##'     + `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum,
+##'        maximum, and width, respectively, of the bin
+##'     +  `totalBiom`: total biomass in that bin
+##'     +  `totalBiomNorm`: normalised total biomass in that bin,
+##'             defined as `totalBiom / binWidth`
+##'     + `log10....`: `log10` of some of the above quantities
+##'   * `norm.lm`: `lm()` result of the linear regression fit using normalised
+##'       biomass in each bin
+##'   * `norm.slope`: slope of the linear regression fit using normalised
+##'       biomass in each bin
+##'   * `unNorm.lm`: `lm()` result of the linear regression fit when not
+##'       normalising the biomass in each bin
+##'   *  `unNorm.slope:` slope of the linear regression fit when not
+##'       normalising the biomass in each bin
+##' @export
+##' @author Andrew Edwards
+LBNbiom.method.counts = function(valCounts, binBreaks = NULL, lowerCutOff = 0)
+    {
+        if(!is.data.frame(valCounts))
+            { stop("valCounts not a data.frame in LBNbiom.method.counts")}
+        if(anyNA(valCounts))
+            { stop("valCounts contains NA's in LBNbiom.method.counts") }
+        if(min(valCounts$bodyMass) <= 0)
+            { stop("valCountsbodyMass needs to be >0 in LBNbiom.method.counts") }
+        #   x = bodyMass
+        xmin = min(valCounts$bodyMass)
+        xmax = max(valCounts$bodyMass)
+        #
+        if(is.null(binBreaks))
+           {
+            binBreaks = 2^( floor(log2(xmin)) : ceiling(log2(xmax)) )
+           } else
+           {
+            if(min(diff(binBreaks)) < 0) { stop("binBreaks need to be increasing
+                                              in LBNbiom.method.counts")}
+           }
+        if(!(lowerCutOff %in% c(0, binBreaks))) { stop("need lowerCutOff
+                           to be 0 or one of the binBreaks in LBNbiom.method.counts") }
+           # We could allow a user to specify a lowerCutoff that was not
+           #  a binBreak, but it just makes defining the binBreaks a bit more
+           #  fiddly -- code could be modified if a user wished. Although in
+           #  practice people would plot the binned data and then choose which
+           #  points (binned counts) to ignore when fitting the regression.
+        valCounts2 = dplyr::mutate(valCounts,
+                                   binMin = binBreaks[findInterval(bodyMass,
+                                                                   binBreaks,
+                                                                   rightmost.close=TRUE)],
+                                   biomass = bodyMass * Number)
+                                        # need total biomass for each row
+        if(max(valCounts2$binMin)  == binBreaks[length(binBreaks)])
+           { stop("check binBreaks in LBNbiom.method.counts") }   # Shouldn't occur
+
+        binVals = dplyr::summarise(dplyr::group_by(valCounts2, binMin),
+                                   binCount = sum(Number),
+                                   totalBiom = sum(biomass))
+        # No guarantee that every binMin value hLlBNbiom.mids shows up here
+        missing1 = setdiff(binBreaks[-length(binBreaks)], binVals$binMin)
+        missing = cbind(binMin = missing1,
+                        binCount = rep(0, length(missing1)),
+                        totalBiom = rep(0, length(missing1)))
+        binVals = rbind(binVals, missing)
+        binVals = tbl_df(binVals)
+        binVals = dplyr::arrange(binVals, binMin)
+        if( max( abs( binBreaks[-length(binBreaks)] - binVals$binMin) ) > 0)
+            { stop("check binVals in LBNbiom.method.counts") }
+        # So all the breaks except final show up as binMin, and have been ordered.
+        #  Therefore to add binMax just do:
+        binVals = dplyr::mutate(binVals,
+                                binMax = binBreaks[-1],
+                                binWidth = binMax - binMin,
+                                binMid = binMin + binWidth/2,
+                                totalBiomNorm = totalBiom / binWidth )
+        binVals = dplyr::mutate(binVals,
+                                log10binMid = log10(binMid),
+                                log10totalBiom = log10(totalBiom),
+                                log10totalBiomNorm = log10(totalBiomNorm))
+        binVals[ is.infinite(binVals$log10totalBiom),
+                "log10totalBiom"] = NA
+                  # lm can't cope with -Inf, which appear if 0 counts in a bin
+        binVals[ is.infinite(binVals$log10totalBiomNorm),
+                "log10totalBiomNorm"] = NA
+        binVals = dplyr::mutate(binVals, aboveCutOff = (binMid > lowerCutOff))
+                  # aboveCutOff is TRUE/FALSE for the regression
+        unNorm.lm = lm(log10totalBiom ~ log10binMid,
+                       data = dplyr::filter(binVals, aboveCutOff),
+                       na.action=na.omit)
+        unNorm.slope = unNorm.lm$coeff[2]
+        unNorm.conf = confint(unNorm.lm, "log10binMid", 0.95)
+
+        norm.lm = lm(log10totalBiomNorm ~ log10binMid,
+                     data = dplyr::filter(binVals, aboveCutOff),
+                     na.action=na.omit)
+        norm.slope = norm.lm$coeff[2]
+        norm.conf = confint(norm.lm, "log10binMid", 0.95)
+        y = list(valCounts2 = valCounts2,
+                 binVals = binVals,
+                 unNorm.lm = unNorm.lm,
+                 unNorm.slope = unNorm.slope,
+                 unNorm.conf = unNorm.conf,
+                 norm.lm = norm.lm,
+                 norm.slope = norm.slope,
+                 norm.conf = norm.conf,
+                 lowerCutOff = lowerCutOff)
+        return(y)
 }
