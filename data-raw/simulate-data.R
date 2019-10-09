@@ -1,5 +1,5 @@
-## Run each line once to create results to bundle with package
-##  that take too long to produce when building a vignette. Code here ensures reproducibility.
+# TODO... that take too long to produce when building a vignette. Code here ensures reproducibility.
+# Change filename of data when decided on a format for multiple data sets.
 
 n = 1000                  # sample size
 b.known = -2              # known fixed value of b
@@ -129,5 +129,8 @@ eight.results.default <- list(Llin.rep.df    = Llin.rep.df,
                               MLE.rep.df     = MLE.rep.df,
                               MLEfix.rep.df  = MLEfix.rep.df,
                               MLE.rep.xmax   = MLE.rep.xmax,
-                              b.known        = b.known)
+                              b.known        = b.known,
+                              xmin           = xmin,
+                              xmax           = xmax)
+
 usethis::use_data(eight.results.default, overwrite = TRUE)

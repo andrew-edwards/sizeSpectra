@@ -34,14 +34,13 @@ COPIES FIRST ONE FOR NOW (as template)
 library(sizeSpectra)
 ```
 
-## Figure 3 - TODO standard histogram of a random sample from a bounded power-law distribution
+## Figure 3 - Histograms of estimated exponent *b* for simulated data
 
-TODO Generate random sample from bounded power-law distribution, where the resulting
-`x` is a vector of individual fish sizes (usually body masses).
+Fit histograms of 10,000 simulated data sets each with .....
+
+The fitting takes a while, so results are saved in `eight.results.default`. To
+run from scratch use the code in `data-raw/simulate-data.R`.
 ```{r}
-# fitting3rep.r - as for fitting2rep.r, but now plotting histograms in terms
-#  of estimates of b rather than estimates of slope, since they will be clearer.
-#  13th July 2015.
 
 list2env(eight.results.default, envir=.GlobalEnv)    # Extract previously saved
                                         # results. To obtain from scratch see data-raw/simulate-data.R
@@ -159,14 +158,14 @@ par(cex = 0.8)             # With no option all text comes out a bit small
 
 xLimFix = c(-2.5, -1.5)
 yLimFix = c(0, 6000)
-hist(MLE.rep, xlim=xLimFix, breaks=breakshist, xlab="", ylab="Frequency",
+hist(MLE.rep.df$b, xlim=xLimFix, breaks=breakshist, xlab="", ylab="Frequency",
   main="", axes=FALSE, ylim = yLimFix)  #  ylim=c(0,1100),
 histAxes()
 axis(2, at=6000, labels = 6000, mgp=c(1.7,0.7,0), cex.axis=cexAxis)
                                         # big tick label
 legend("topleft", "(a) MLE", bty="n", inset=0.5*inset)
 
-hist(MLEfix.rep, xlim=xLimFix, breaks=breakshist, xlab="", ylab="Frequency",
+hist(MLEfix.rep.df$b, xlim=xLimFix, breaks=breakshist, xlab="", ylab="Frequency",
   main="", axes=FALSE, ylim = yLimFix)  #  ylim=c(0,1100),
 histAxes()
 axis(2, at=6000, labels = 6000, mgp=c(1.7,0.7,0), cex.axis=cexAxis)
@@ -176,13 +175,52 @@ legend("topleft", "(b) MLEfix", bty="n", inset=0.5*inset)
 mtext(expression(paste("Estimate of ", italic(b))), side=1, outer=TRUE, line=-1)
 ```
 
+
+
+\begin{table}
+\begin{tabular}{llrrrrr}
+Llin & - &  -0.01 & -0.009 & -0.009 & -0.007 & 0 \\
+\end{tabular}
+\end{table}
+
+
+Year        Hooks enumerated         Data resolution   Location of data      WCVI?
+----------- ------------------------ ----------------- -------------------- -------
+1995        All                      Set-by-set        Spreadsheets^1^        N
+1996        All                      Set-by-set        Spreadsheet^2^         N
+
+
+```{r, results='asis'}
+knitr::kable(head(Llin.rep.df$slope))
+```
+
+<!-- For Latex table for each row, see commented out code below. -->
+<!-- I had that code writen already, so adapted it to make an -->
+<!-- Rmarkdown one for the vignette (or could have made a data frame and used -->
+<!-- kable.
+<!-- Doing table in terms of b, not slope, so have to subtract 1 or 2 from some results.
+-->
+|Method | Slope represents | 1st quartile |Median  |Mean  |3rd quartile  |Percentage below true|
+|:----- | :--------------- | :----------- |:-----  |:---  |:-----------  |:--------------------|
+|Llin   | -                | `r qqtab(Llin.rep.df$slope, dig=3, latex=FALSE)` |
+|LT     | *b*              | `r qqtab(LT.rep.df$slope, latex=FALSE)` |
+|LTplus1| *b*              | `r qqtab(LTplus1.rep.df$slope, latex=FALSE)` |
+|LBmiz  | *b+1*            | `r qqtab(LBmix.rep.df$slope - 1, latex=FALSE)` |
+|LBbiom | *b+2*            | `r qqtab(LBbiom.rep.df$slope - 2, latex=FALSE)` |
+|LBNbiom| *b+1*            | `r qqtab(LBNbiom.rep.df$slope - 1, latex=FALSE)` |
+|LCD    | *b+1*            | `r qqtab(LCD.rep.df$slope - 1, latex=FALSE)` |
+|MLE    | *b*              | `r qqtab(MLE.rep.df$b, latex=FALSE)` |
+
+For MLEbin method see next vignette.TODO
+
+
 <!--
 
 # Prints Latex code for table that summarises the results
 # Going to do in terms of b, not slope, so subtract 1 or 2 from some results:
 # Quartiles:
 print("Method & Slope is estimating: & 1st quartile & Median & Mean & 3rd quartile & Percentage below true \\")
-print(paste("Llin & - & ", qqtab(Llin.rep, dig=3), "\\"))
+print(noquote((paste("Llin & - & ", qqtab(Llin.rep, dig=3), "\\")))
 print(paste("LT & $b$ & ", qqtab(LT.rep), "\\"))
 print(paste("LTplus1 & $b$ & ", qqtab(LTplus1.rep), "\\"))
 print(paste("LBmiz & $b+1$ & ", qqtab(LBmiz.rep - 1), "\\"))
@@ -190,11 +228,6 @@ print(paste("LBbiom & $b+2$ & ", qqtab(LBbiom.rep - 2), "\\"))
 print(paste("LBNbiom & $b+1$ & ", qqtab(LBNbiom.rep - 1), "\\"))
 print(paste("LCD & $b+1$ & ", qqtab(LCD.rep - 1), "\\"))
 print(paste("MLE & $b$ & ", qqtab(MLE.rep), "\\hline"))
-# To give slopes, rather than converting them to b:
-#print(paste("LBmiz & ", qqtab(LBmiz.rep, true=b.known+1), "\\"))
-#print(paste("LBbiom & ", qqtab(LBbiom.rep, true=b.known+2), "\\"))
-#print(paste("LBNbiom & ", qqtab(LBNbiom.rep, true=b.known+1), "\\"))
-#print(paste("LCD & ", qqtab(LCD.rep, true=b.known+1), "\\"))
 
 # 5% and 95% values:
 print("Method & Slope represents & 5% quantile & Median & Mean & 95% quantile & Percentage below true \\")

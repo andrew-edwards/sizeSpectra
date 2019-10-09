@@ -167,38 +167,58 @@ gap.barplot.cust = function (y,
     invisible(x)
 }
 
-##' Produce LaTeX table code for quantiles of results
+##' Produce LaTeX or Rmarkdown table code for quantiles of results
 ##'
 ##'  Quantile table function, to construct lines of quantiles to copy
-##'   into LaTeX. Does `quants[1]`, 50\% (median), mean, `quants[2]` quantiles,
+##'   into LaTeX, or render directly in an Rmarkdown document. Does `quants[1]`,
+##'   50\% (median), mean, `quants[2]` quantiles,
 ##'   and the \%age of values < the true value.
 ##'
 ##' @param xx vector of values to give quantiles for
 ##' @param dig number of decimal places to give
 ##' @param true the true value of the quantity being estimated, will
 ##'     depend on method
-##' @param quants quantiles to use, with defaults of 0.25 and 0.75 (25\% and 75\%).
+##' @param quants quantiles to use, with defaults of 0.25 and 0.75 (25\% and
+##'   75\%).
+##' @param latex if TRUE gives `latex` output to copy into a `.tex` file, else gives `Rmd` gives Rmarkdown output
+##'   (see vignette TODO).
 ##' @return LaTeX output for table to copy into a .tex file
+##'
 ##' @export
 ##' @author Andrew Edwards
 qqtab = function(xx,
                  dig=2,
                  true=b.known,
-                 quants = c(0.25, 0.75))
-  {
+                 quants = c(0.25, 0.75),
+                 latex = TRUE)
+   { if(latex){
+     noquote(
+       paste( c( prettyNum(round(quantile(xx, quants[1]),
+                                  digits=dig), big.mark=","),
+             " & ", prettyNum(round(quantile(xx, 0.50), digits=dig),
+                              big.mark=","),
+             " & ", prettyNum(round(mean(xx), digits=dig),
+                                  big.mark=","),
+             " & ", prettyNum(round(quantile(xx, quants[2]), digits=dig),
+                                  big.mark=","),
+             " & ", prettyNum(round(sum(xx < true)/length(xx)*100, digits=0),
+                                  big.mark=",")),
+             sep="", collapse=""))             # , "\\%"),
+  } else {
+    noquote(
       paste( c( prettyNum(round(quantile(xx, quants[1]),
                                   digits=dig), big.mark=","),
-         " & ", prettyNum(round(quantile(xx, 0.50), digits=dig),
+             " | ", prettyNum(round(quantile(xx, 0.50), digits=dig),
                                   big.mark=","),
-         " & ", prettyNum(round(mean(xx), digits=dig),
+             " | ", prettyNum(round(mean(xx), digits=dig),
                                   big.mark=","),
-         " & ", prettyNum(round(quantile(xx, quants[2]), digits=dig),
+             " | ", prettyNum(round(quantile(xx, quants[2]), digits=dig),
                                   big.mark=","),
-         " & ", prettyNum(round(sum(xx < true)/length(xx)*100, digits=0),
+             " | ", prettyNum(round(sum(xx < true)/length(xx)*100, digits=0),
                                   big.mark=",")),
-         sep="", collapse="")             # , "\\%"),
+               sep=" ", collapse=" "))
   }
-
+}
 
 
 ##' Plot confidence intervals of repeated estimates for one method
