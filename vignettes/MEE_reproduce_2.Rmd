@@ -40,7 +40,7 @@ Fit histograms of 10,000 simulated data sets each with .....
 
 The fitting takes a while, so results are saved in `eight.results.default`. To
 run from scratch use the code in `data-raw/simulate-data.R`.
-```{r}
+```{r, fig.height=7}
 
 list2env(eight.results.default, envir=.GlobalEnv)    # Extract previously saved
                                         # results. To obtain from scratch see data-raw/simulate-data.R
@@ -59,8 +59,8 @@ breakshist = seq(xrange[1], xrange[2], by=3/61)
          #  of the bin that includes 2, N, =40 (which is how many you get with
          #  0.05, which looked good).
 
-figheight = 7 # 5.6
-figwidth = 5.7    # 5.7 inches for JAE
+# figheight = 7 # 5.6
+# figwidth = 5.7    # 5.7 inches for JAE
 #postscript("fitting3rep.eps", height = figheight, width = figwidth,
 #           horizontal=FALSE,  paper="special")
 par(omi = c(0.12, 0.05, 0.12, 0.0))      # outer margins in inches
@@ -186,7 +186,7 @@ Table 2, summarising the results for each method:
 
 |Method | Slope represents | 5\% quantile |Median  |Mean  |95\% quantile |Percentage below true|
 |:----- | :--------------- | :----------- |:-----  |:---  |:-----------  |:--------------------|
-|Llin   | -                | `r qqtab(Llin.rep.df$slope, dig=3, quants=c(0.05, 0.95), latex=FALSE)` |
+|Llin   | -                | `r qqtab(Llin.rep.df$slope, dig=2, quants=c(0.05, 0.95), latex=FALSE)` |
 |LT     | *b*              | `r qqtab(LT.rep.df$slope, quants=c(0.05, 0.95), latex=FALSE)` |
 |LTplus1| *b*              | `r qqtab(LTplus1.rep.df$slope, quants=c(0.05, 0.95), latex=FALSE)` |
 |LBmiz  | *b+1*            | `r qqtab(LBmiz.rep.df$slope - 1, quants=c(0.05, 0.95), latex=FALSE)` |
@@ -228,7 +228,7 @@ save.image(file = "fitting3rep.RData")
 
 # From fitting3conf.r
 
-```{r}
+```{r, fig.height=7}
 par(omi = c(0.14, 0, 0.1, 0.15))      # outer margins in inches
 par(mfrow=c(4,2)) #7,1))
 
@@ -347,3 +347,9 @@ dev.off()
 
 save.image(file = "fitting2.RData")
 -->
+
+# Figure 5 - MLEbin
+
+Come back to once done from binning paper as likely more functionalised.
+
+# Figure 6 - recommend

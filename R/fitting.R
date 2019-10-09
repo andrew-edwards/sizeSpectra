@@ -12,6 +12,21 @@
 #  only available in binned form
 #
 
+##' Tests if each value in a vector is a whole number
+##'
+##' Test if each value in a vector is a whole number. Taken from ?is.integer and
+##' documentation is added here.
+##'
+##' @param x vector
+##' @param tol tolerance
+##' @return vector of TRUE/FALSE corresponding to each element of `x`
+##' @export
+##' @author Andrew Edwards
+is.wholenumber = function(x, tol = .Machine$double.eps^0.5)
+    {
+    abs(x - round(x)) < tol
+    }
+
 
 ##' Calculate negative log-likelihood for the bounded power-law
 ##'   distribution
