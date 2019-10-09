@@ -1099,3 +1099,86 @@ LBNbiom.method.counts = function(valCounts, binBreaks = NULL, lowerCutOff = 0)
                  lowerCutOff = lowerCutOff)
         return(y)
 }
+
+##' The Llin method for count data
+
+##' The Llin method, which is plotting binned counts on log-linear
+##'  axes and then fitting a regression, for count data.
+##'
+##' @param valCounts   valCounts: data.frame (can be tbl_df) with columns `bodyMass`
+##'    and `Number` (which is the count for each body mass). `bodyMass` can
+##'    represent midpoints, say, of existing bins, or be the actual
+##'    species-specific converted-to-bodyMass values. `Number` can be
+##'    non-integer, which can arise from standardising, say, trawl data to be per
+##'    hour.
+##'
+
+##' @param num.bins number of bins to be used, though this is only a suggestion
+##'   since can get over-ridden by `hist()`. Need to specify `num.bins` OR `binBreaks`.
+##' @param binBreaks breaks for the bins to be used to bin the data and
+##'   then fit the regression.
+##' @return list containing:
+##'   * `mids`: midpoint of bins
+##'   * `log.counts`: `log(counts)` in each bin
+##'   * `counts`: counts in each bin
+##'   * `lm`: results of the linear regression of `log.counts ~ mids`
+##'   * `slope`: slope of the linear regression fit
+##'   * `breaks`: bin breaks
+##'   * `confVals`: 95\% confidence interval of the fitted slope
+##'   * `stdError`: standard error of the fitted slope
+##'
+##' @export
+##' @author Andrew Edwards
+Llin.method.counts = function(valCounts, num.bins = NULL, binBreaks = NULL)
+    {
+        if(!is.data.frame(valCounts))
+            { stop("valCounts not a data.frame in Llin.method.counts")}
+        if(anyNA(valCounts))
+            { stop("valCounts contains NA's in Llin.method.counts") }
+        if(min(valCounts$bodyMass) <= 0)
+            { stop("valCountsbodyMass needs to be >0 in Llin.method.counts") }
+        if(is.null(binBreaks) & is.null(num.bins))
+            { stop("need binBreaks or num.bins in Llin.method.counts") }
+        if(!is.null(binBreaks) & !is.null(num.bins))
+            { stop("need one of binBreaks OR num.bins in Llin.method.counts") }
+        if(!is.null(binBreaks))      # use to get the bin breaks
+           {
+            if(min(diff(binBreaks)) < 0) stop("binBreaks need to be increasing")
+            hLlin.temp = hist(valCounts$bodyMass, breaks = binBreaks, plot=FALSE)
+                      # will give error if binBreaks don't span bodyMass values
+           }  else    # { breaks = num.bins }
+           {
+            hLlin.temp = hist(valCounts$bodyMass, breaks = num.bins, plot=FALSE)
+           }          # Still lets hist select the breaks; num.bins is a guide
+        breaks = hLlin.temp$breaks
+        hLlin.mids = hLlin.temp$mids
+
+        valCounts2 = dplyr::mutate(valCounts,
+            binMid = hLlin.mids[findInterval(bodyMass, breaks,
+                rightmost.close=TRUE)])
+        binVals = dplyr::summarise(dplyr::group_by(valCounts2, binMid), binCount = sum(Number))
+        # No guarantee that every binMid hLlin.mids shows up here (unlikely,
+        #  given linear binning and long-tailed data). Even though need to
+        #  exclude 0 counts (since get logged) from lm, still best to return
+        #  values for all bins, especially since the bins can be specified.
+        missing1 = setdiff(hLlin.mids, binVals$binMid)
+        missing = cbind(binMid = missing1, binCount = rep(0, length(missing1)))
+        binVals = rbind(binVals, missing)
+        binVals = dplyr::tbl_df(binVals)
+        binVals = dplyr::arrange(binVals, binMid)
+        if( max( abs( hLlin.mids - binVals$binMid) ) > 0)
+            { stop("check binVals in Llin.method.counts") }
+        hLlin.log.counts = log(binVals$binCount)
+                  # binVals$binCount was hLlin$counts
+        hLlin.log.counts[ is.infinite(hLlin.log.counts) ] = NA
+                  # lm can't cope with -Inf, which appear if 0 counts in a bin
+
+        hLlin.lm = lm( hLlin.log.counts ~ hLlin.mids, na.action=na.omit)
+
+        y = list(mids = hLlin.mids, log.counts = hLlin.log.counts,
+            counts = binVals$binCount, lm = hLlin.lm, slope = hLlin.lm$coeff[2],
+            breaks = breaks,
+            confVals = confint(hLlin.lm, "hLlin.mids",0.95),
+            stdErr = coef(summary(hLlin.lm))["hLlin.mids", "Std. Error"])
+        return(y)
+       }
