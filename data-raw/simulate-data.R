@@ -10,29 +10,20 @@ num.reps = 10 #000          # number of times to draw sets of n random numbers.
                           #  (throwing n PLB dice num.reps times)
 set.seed(42)
 
-# Record the slope or b for each method
-Llin.rep = numeric(num.reps)*NA
-LT.rep = Llin.rep
-LTplus1.rep = Llin.rep
-LBmiz.rep = Llin.rep
-LBbiom.rep = Llin.rep
-LBNbiom.rep = Llin.rep
-LCD.rep = Llin.rep
-MLE.rep = Llin.rep
-MLEfix.rep = Llin.rep  # Adding in MLE calculations when we fix xmax=xmax.known
+# Changing Llin.rep etc to be data frame with three columns, less to save. Call
+# ...df for now then remove that.
+NA.vec = numeric(num.reps)*NA
+Llin.rep.df = data.frame(slope = NA.vec, confMin = NA.vec, confMax = NA.vec)
+LT.rep.df = Llin.rep.df
+LTplus1.rep.df = Llin.rep.df
+LBmiz.rep.df = Llin.rep.df
+LBbiom.rep.df = Llin.rep.df
+LBNbiom.rep.df = Llin.rep.df
+LCD.rep.df = Llin.rep.df
+MLE.rep.df = Llin.rep.df
+MLEfix.rep.df = Llin.rep.df  # Adding in MLE calculations when we fix xmax=xmax.known
 
-# Record the confidence intervals (in hindsight could have maybe done lists)
-Llin.rep.conf = data.frame(confMin = Llin.rep, confMax = Llin.rep)
-LT.rep.conf = Llin.rep.conf
-LTplus1.rep.conf = Llin.rep.conf
-LBmiz.rep.conf = Llin.rep.conf
-LBbiom.rep.conf = Llin.rep.conf
-LBNbiom.rep.conf = Llin.rep.conf
-LCD.rep.conf = Llin.rep.conf
-MLE.rep.conf = Llin.rep.conf
-MLEfix.rep.conf = Llin.rep.conf
-
-MLE.rep.xmax = Llin.rep   # Also save the xmax =max(x) for each run, to see how
+MLE.rep.xmax = NA.vec      # Also save the xmax =max(x) for each run, to see how
                            #  correlates with estimate of b.
 
 num.bins = 8    # number of bins for standard histogram and Llin method, though
@@ -58,29 +49,29 @@ for(iii in 1:num.reps)
 
   # Could do more efficiently, but just modify existing code for now
 
-  Llin.rep[iii]       = eight.results$hLlin[1]
-  Llin.rep.conf[iii,] = eight.results$hLlin[2:3]
+  Llin.rep.df[iii, ]       = eight.results$hLlin[1:3]
+#  Llin.rep.conf[iii,] = eight.results$hLlin[2:3]
 
-  LT.rep[iii]         = eight.results$hLT[1]
-  LT.rep.conf[iii,]   = eight.results$hLT[2:3]
+  LT.rep.df[iii, ]         = eight.results$hLT[1:3]
+#  LT.rep.conf[iii,]   = eight.results$hLT[2:3]
 
-  LTplus1.rep[iii]    = eight.results$hLTplus1[1]
-  LTplus1.rep.conf[iii,] = eight.results$hLT[2:3]
+  LTplus1.rep.df[iii, ]    = eight.results$hLTplus1[1:3]
+#  LTplus1.rep.conf[iii,] = eight.results$hLT[2:3]
 
-  LBmiz.rep[iii]      = eight.results$hLBmiz[1]
-  LBmiz.rep.conf[iii,]= eight.results$hLBmiz[2:3]
+  LBmiz.rep.df[iii, ]      = eight.results$hLBmiz[1:3]
+#  LBmiz.rep.conf[iii,]= eight.results$hLBmiz[2:3]
 
-  LBbiom.rep[iii]     = eight.results$hLBbiom[1]
-  LBbiom.rep.conf[iii, ]= eight.results$hLBbiom[2:3]
+  LBbiom.rep.df[iii, ]     = eight.results$hLBbiom[1:3]
+#   LBbiom.rep.conf[iii, ]= eight.results$hLBbiom[2:3]
 
-  LBNbiom.rep[iii]    = eight.results$hLBNbiom[1]
-  LBNbiom.rep.conf[iii, ] = eight.results$hLBNbiom[2:3]
+  LBNbiom.rep.df[iii, ]    = eight.results$hLBNbiom[1:3]
+#  LBNbiom.rep.conf[iii, ] = eight.results$hLBNbiom[2:3]
 
-  LCD.rep[iii]        = eight.results$hLCD[1]
-  LCD.rep.conf[iii,]  = eight.results$hLCD[2:3]
+  LCD.rep.df[iii, ]        = eight.results$hLCD[1:3]
+#  LCD.rep.conf[iii,]  = eight.results$hLCD[2:3]
 
-  MLE.rep[iii]        = eight.results$hMLE[1]
-  MLE.rep.conf[iii,]  = eight.results$hMLE[2:3]
+  MLE.rep.df[iii, ]        = eight.results$hMLE[1:3]
+#  MLE.rep.conf[iii,]  = eight.results$hMLE[2:3]
 
   MLE.rep.xmax[iii] = xmax
 
@@ -95,7 +86,7 @@ for(iii in 1:num.reps)
       xmin=xmin, xmax=xmax.known, sumlogx=sum.log.x) #, print.level=2 )
 
   PLBfix.bMLE = PLBfix.minLL$estimate
-  MLEfix.rep[iii] = PLBfix.bMLE
+
 
   # 95% confidence intervals for MLE method.
   PLBfix.minNegLL = PLBfix.minLL$minimum
@@ -122,8 +113,21 @@ for(iii in 1:num.reps)
       abline(h = critVal, col="red")
       stop("Need to make bvec larger for PLBfix - see R window")   # Could automate
     }
-  MLEfix.rep.conf[iii,] = c(PLBfix.MLE.bConf[1], PLBfix.MLE.bConf[2])
+
+  MLEfix.rep.df[iii, ] = c(PLBfix.bMLE, PLBfix.MLE.bConf)
+#  MLEfix.rep.conf[iii,] = c(PLBfix.MLE.bConf[1], PLBfix.MLE.bConf[2])
 
 }  # End for for(iii in 1:num.reps) loop
 
-usethis::use_data("DATASET")
+eight.results.default <- list(Llin.rep.df    = Llin.rep.df,
+                              LT.rep.df      = LT.rep.df,
+                              LTplus1.rep.df = LTplus1.rep.df,
+                              LBmiz.rep.df   = LBmiz.rep.df,
+                              LBbiom.rep.df  = LBbiom.rep.df,
+                              LBNbiom.rep.df = LBNbiom.rep.df,
+                              LCD.rep.df     = LCD.rep.df,
+                              MLE.rep.df     = MLE.rep.df,
+                              MLEfix.rep.df  = MLEfix.rep.df,
+                              MLE.rep.xmax   = MLE.rep.xmax)
+
+usethis::use_data("eight.results.default")
