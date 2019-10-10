@@ -1,5 +1,42 @@
 # likelihood.R - likelihood-related functions for statistical fitting.
 
+##' Calculate maximum likelihood estimate and 95\% confidence
+##'      interval
+##'
+##' Calculate maximum likelihood estimate of a parameter and its 95\% confidence
+##'  interval using the profile log-likelihood method, for a given
+##'  negative log-likelihood function and its arguments (other parameters and data).
+##'
+##' @param negLL.fn negative log-likelihood function that take arguments
+##'  (parameters and data) in ... and returns a negative
+##'  log-likelihood value.
+##' @param p starting point to calculate the maximum likelihood estimate
+##' @param vecDiff the range over which to test the negative log-likelihood
+##'  to construct the confidence interval. Default is 0.5 and a symmetric
+##'  range is tested for fitting size spectra, since for movement data
+##'  sets in Table 2 of Edwards (2011; 92(6):1247-1257) the intervals were
+##'  symmetric, so symmetric seems a good start.
+##' @param vecInc increments to try, the accuracy of the resulting bounds
+##'  will depend on this. Note that a resulting interval of, say,
+##'  (-2.123, -1.987) means that that interval is contained within the
+##'  true 95\% interval, which is itself contained within (-2.124, -1.986).
+##'  The true bounds lie between the stated lower bounds and between
+##'  the stated upper bounds. So reduce `vecInc` if further accuracy is needed.
+##'
+##' @param ... further arguments (including parameters and data) to `negLL.fn()`
+##' @return       list containing:
+##'   * MLE: the maximum likelihood estimate
+##'   * conf: the 95\% confidence interval of the MLE
+##' @export
+##' @author Andrew Edwards
+calcLike = function(negLL.fn, p, vecDiff=0.5, vecInc=0.001, ...)
+    {
+    minLL = nlm(f=negLL.fn, p=p, ...)
+    MLE = minLL$estimate
+    conf = profLike(negLL.fn=negLL.fn, MLE=MLE, minNegLL=minLL$minimum, ...)
+    res = list(MLE = MLE, conf = conf)
+    return(res)
+}
 
 ##' Profile log-likelihood method to calculate 95\% confidence interval
 ##'
