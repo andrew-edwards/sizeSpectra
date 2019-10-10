@@ -1823,4 +1823,48 @@ binData = function(x = NULL, counts = NULL, binWidth = NULL, binBreaks = NULL,
           y = list(binVals = binVals)
           }
         return(y)
-       }
+    }
+
+##' Calculate the total biomass for given parameter values for PLB model
+##'
+##' Calculate the total biomass (in same units as `xmin` or nondimensionalised
+##'   and scaled to `xmin`) for given values of `b` (in the vector `bvec`), `n`
+##'   and either both `xmin` and `xmax` or just `r`.
+##'
+##' @param bvec vector of size-spectrum exponents (values of `b`)
+##' @param r ratio of `xmax/xmin`. Need to specificy `r` or `xmin` and `xmax`, all scalars.
+##' @param xmin minimum allowable body size
+##' @param xmax maximum allowable body size
+##' @param n number of individuals
+##' @return vector of total biomass values corresponding to the values of `b` in
+##'  `bvec`; total biomass has same units as `xmin` (if `xmin` and `xmax` specified),
+##'  or is nondimensional if `r` is specified.
+##' @export
+##' @author Andrew Edwards
+totalBiomass = function(bvec, r = NULL, xmin=NULL, xmax=NULL, n=1000)
+  {
+    if( !( !is.null(xmin) & !is.null(xmax) & is.null(r) |
+           is.null(xmin) & is.null(xmax) & !is.null(r) )) {
+            stop("need either r or xmin and xmax in totalBiomass") }
+    if(is.null(r))
+      {
+        returnDiml = TRUE      # if TRUE then return dimensional T
+        r = xmax/xmin
+      } else
+      {
+        returnDiml = FALSE
+      }
+
+    Tvec = n * (bvec+1)/(bvec+2) * (r^(bvec+2) - 1) / (r^(bvec+1) - 1)
+    Tvec[bvec == -1] = n * (r - 1) / log(r)
+    Tvec[bvec == -2] = n * r * log(r) / (r - 1)
+
+    if(returnDiml)
+      {
+        output = Tvec * xmin
+      } else
+      {
+        output = Tvec
+      }
+    return(output)
+  }
