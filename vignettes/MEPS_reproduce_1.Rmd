@@ -1,0 +1,140 @@
+---
+title: "MEPS_reproduce_1"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MEPS_reproduce_1}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 5,
+  fig.height = 5
+)
+```
+
+```{r setup}
+library(sizeSpectra)
+```
+
+# Reproducing Figures 2, 3, TODO.... of MEPS paper
+
+ See the
+paper for details, the aim of the vignette is to enable users to reproduce the
+results so that they can see what functions are appropriate for their own data,
+and perform further analyses as required.
+
+```{r}
+library(sizeSpectra)
+```
+
+## Figure 2 - example length-weight relationships for two species
+
+```{r}
+sp1 = "Common Ling"   # Molva molva
+sp2 = "Lemon Sole"    # Microstomus kitt
+
+LWa = c(0.001, 0.0255)    # sp1 then sp2
+LWb = c(3.4362, 2.7643)
+
+col1 = c("red", "pink")           # Colours for species 1
+col2 = c("blue", "lightblue")     # Colours for species 2
+thick=7                           # thickness of bins
+
+length = 10:50
+
+mass = rbind(lengthToMass(length, LWa[1], LWb[1]),
+             lengthToMass(length, LWa[2], LWb[2]))
+
+par(xaxs="i", yaxs="i")
+par(mgp=c(2.0, 0.5, 0))    # puts axes labels closer I think
+
+lThick = 3                 # Thickness for curves
+par(lend="butt")           # To have butted line caps, need for thick lines.
+
+# Axes ranges not automated - should do if want to start changing them.
+plot(length, mass[1,], col=col1[1], type="l", xlab="Length, cm",
+     ylab="Body mass, g", xlim=c(-6, 50), ylim=c(-60, 800), lwd=lThick)
+
+lines(length, mass[2,], col=col2[1], lwd=lThick)
+
+# Switching sp1 and sp2 around in the legend (and thus the text), since
+#  looks more consistent.
+legend("topleft", legend=c(sp2, sp1), lty=1, lwd=lThick, col=c(col2[1], col1[1]),
+       bty="n", inset=c(0.1,-0.02))
+axis(1, at = seq(0, 50, by=5), labels=rep("", 11), tck=-0.02)
+axis(2, at = seq(0, 800, by=100), labels=rep("", 9), tck=-0.02)
+axis(2, at = seq(0, 800, by=50), labels=rep("", 17), tck=-0.01)
+
+lenBins = seq(10, 40, by=5)      # Length bin endpoints for the example
+numBinBreaks = length(lenBins)
+lenBinsStart = lenBins[-numBinBreaks]     # starting point for length bins
+lenBinsEnd = lenBins[-1]
+
+massBins = rbind(lengthToMass(lenBins, LWa[1], LWb[1]),
+             lengthToMass(lenBins, LWa[2], LWb[2]))  # resulting species-specific
+                                                     #  bins of body mass.
+massBinsStart = massBins[, -numBinBreaks]
+massBinsEnd = massBins[, -1]
+
+colBins = rbind( rep(col1, length=round(length(lenBinsStart))),
+    rep(col2, length=round(length(lenBinsStart))))
+                                        # colours for bins for each species
+
+yLengths = c(-40, -20)                        # y values to plot length bins, for
+                                              #  each species
+xMasses  = c(-3, -1)                         # x values to plot mass bins
+
+# length bins:
+segments(x0=lenBinsStart, y0=yLengths[1], x1 = lenBinsEnd, col=colBins[1,],
+          lwd=thick)  # y1=y0
+segments(x0=lenBinsStart, y0=yLengths[2], x1 = lenBinsEnd, col=colBins[2,],
+          lwd=thick)
+
+# resulting mass bins:
+segments(x0=xMasses[1], y0=lengthToMass(lenBinsStart, LWa[1], LWb[1]),
+         y1=lengthToMass(lenBinsEnd, LWa[1], LWb[1]),
+         col=colBins[1,], lwd=thick)
+segments(x0=xMasses[2], y0=lengthToMass(lenBinsStart, LWa[2], LWb[2]),
+         y1=lengthToMass(lenBinsEnd, LWa[2], LWb[2]),
+         col=colBins[2,], lwd=thick)
+
+egBin = 5         # example bin number to highlight
+offset = 0.1      # offset to shift species vertical lines so they show up
+midOfBin = mean(lenBinsStart[c(egBin, egBin+1)])    # midpoint of example bin
+massMidOfBin = rbind(lengthToMass(midOfBin, LWa[1], LWb[1]),
+    lengthToMass(midOfBin, LWa[2], LWb[2]))
+# example bin for species 1:
+lines(c(rep(lenBinsStart[egBin], 2), xMasses[1])-offset,
+       c(yLengths[1], rep(lengthToMass(lenBinsStart[egBin], LWa[1], LWb[1]), 2)),
+       lty=3, lwd=1, col=col1[1])
+lines(c(rep(lenBinsStart[egBin+1], 2), xMasses[1])-offset,
+       c(yLengths[1], rep(lengthToMass(lenBinsStart[egBin+1], LWa[1], LWb[1]),
+         2)), lty=3, lwd=1, col=col1[1])
+lines(c(rep(midOfBin, 2), xMasses[1]) - offset,
+       c(yLengths[1], rep(massMidOfBin[1,], 2)),
+       lty=1, lwd=1, col=col1[1])
+
+# example bin for species 2:
+lines(c(rep(lenBinsStart[egBin], 2), xMasses[2]) + offset,
+       c(yLengths[2], rep(lengthToMass(lenBinsStart[egBin], LWa[2], LWb[2]), 2)),
+       lty=3, lwd=1, col=col2[1])
+lines(c(rep(lenBinsStart[egBin+1], 2), xMasses[2]) + offset,
+       c(yLengths[2], rep(lengthToMass(lenBinsStart[egBin+1], LWa[2], LWb[2]),
+         2)), lty=3, lwd=1, col=col2[1])
+lines(c(rep(midOfBin, 2), xMasses[2]) + offset,
+       c(yLengths[2], rep(massMidOfBin[2,], 2)),
+       lty=1, lwd=1, col=col2[1])
+```
+
+```{r}
+num2 = 11       # number of log2 bin breaks
+log2bins = 2^(0:(num2-1))    # on unlogged axes
+log2binsStart = log2bins[-num2]
+log2binsEnd = log2bins[-1]   # see segments in next figure
+log2binsMid = colMeans(rbind(log2binsStart, log2binsEnd))  # midpoints (unlogged)
+```
