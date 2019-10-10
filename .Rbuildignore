@@ -8,3 +8,5 @@
 ^data-raw$
 ^codecov\.yml$
 ^fromOtherRepo$
+^vignettes/MEE_Reproduce_1.Rmd$
+^vignettes/MEE_Reproduce_2.Rmd$
