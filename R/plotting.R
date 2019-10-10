@@ -555,3 +555,149 @@ legJust = function(textVec,
            textVec,
            pos = 2) }
 }
+
+
+# Function to plot and fit time series of exponent as estimated by
+#  a given method.
+##' Plot time series of estimated *b* with confidence intervals
+##'
+##' Plot time series of estimated *b* with confidence intervals, for
+##' data that are analysed year-by-year by a single method. And then
+##' fit a linear regression with its confidence intervals.
+##' This will get called eight times to produce a comparison figure of
+##' the methods.
+##'
+##' @param bForYears dataframe with columns `Year`, `Method` (optional), `b`
+##'   (the estimate of *b*), `confMin` and `confMax` (the 95\% lower and upper
+##'   confidence limits) and `stdError` (the standard error of the estimate of
+##'   *b*).
+##' @param legName legend name for that panel
+##' @param method method used to obtain the inputted estimates of `b`
+##' @param weightReg  TRUE if doing weighted regression (using standard errors)
+##'   or FALSE to not do weighted regression.
+##' @param bCol colour for points for *b*
+##' @param pchVal pch for points for *b*
+##' @param cexVal size of points for *b*
+##' @param confCol colour for confidence intervals for *b*
+##' @param confThick thickness of vertical line for confidence intervals
+##' @param xLim x-axis limits
+##' @param yLim y-axis limits
+##' @param xLab label for x-axis
+##' @param yLab label for y-axis
+##' @param sep TODO: not needed, make the value if yLab is NULL - expect will
+##'   fail sometimes
+##' @param xTicksSmallInc increments for where to have small (unlabelled)
+##'   tickmarks on x-axis
+##' @param xTicksSmallTck tick length for small (unlabelled) tickmarks on x-axis
+##' @param yLabels whether or not to label main tickmarks on y-axis
+##' @param yTicksSmallInc increments for where to have small (unlabelled)
+##' tickmarks on y-axis
+##' @param yTicksSmallTck tick length for small (unlabelled) tickmarks on y-axis
+##' @param legPos legend position
+##' @param newPlot TRUE to create a new plot, FALSE to add to existing
+##' @param regPlot TRUE to plot the regression line and conf intervals
+##' @param regColNotSig colour for regression line (and its confidence intervals)
+##' if the trend is not significant
+##' @param regColSig colour for regression line (and its confidence intervals)
+##' if the trend is significant
+##' @param legExtra extra manually-specified legend (e.g. to distinguish two
+##' sets of results)
+##' @param legExtraPos position for extra manually-specified legend
+##' @param legExtraCol colours (vector) for extra manually-specified legend
+##' @param insetVal inset shift for naming the panel
+##' @param xJitter value to jitter the x-values by (for comparison plot the
+##'   confidence intervals overlap)
+##' @return dataframe of just one row (TODO: check) with columns:
+##'   * Method: method used
+##'   * Low: lower bound of 95\% confidence interval
+##'   * Trend: gradient of regression fit
+##'   * High: upper bound of 95\% confidence interval
+##'   * p: p-value of regression fit
+##'   * Rsquared: r-squared of regression fit
+##'   * adjRsquared: adjusted r-squared of regression fit
+##' @export
+##' @author Andrew Edwards
+timeSerPlot = function(bForYears, legName, method, weightReg = FALSE,
+    bCol="black",
+    pchVal = 20, cexVal = 1, confCol="black", confThick = 1,
+    xLim = NULL, yLim = NULL, xLab="",
+    yLab = expression(paste("Estimate of ", italic(b)), sep=""),
+    xTicksSmallInc = NULL, xTicksSmallTck = 0.01,
+    yLabels = TRUE, yTicksSmallInc = NULL, yTicksSmallTck = 0.01,
+    legPos = "topleft", newPlot = TRUE,
+    regPlot = TRUE,
+    regColNotSig = "darkgrey", regColSig = "red",
+    legExtra = NULL, legExtraPos = "topleft", legExtraCol = "",
+    insetVal = c(-0.08, -0.06),
+    xJitter = 0)
+    {
+    if(is.null(xLim))
+        {
+            xLim = range(bForYears$Year)
+        }
+    if(is.null(yLim))        # just do the yLim for this set of results
+        {
+        yLim = range(c(bForYears$confMin, bForYears$confMax), na.rm=TRUE)
+        }        # For Llin and LT can get only two bins and so NaN for
+                 #  conf intervals, so need na.rm.
+    if(newPlot)
+       {
+       plot(bForYears$Year+xJitter, bForYears$b, xlim=xLim, ylim=yLim, col=bCol,
+         pch=pchVal, cex=cexVal, xlab=xLab, ylab=yLab)    # yaxt="n")
+
+       legend(legPos, legName, bty="n", inset=insetVal)
+       if(!is.null(yTicksSmallInc))
+           { yTicksSmall = seq(yLim[1], yLim[-1], by=yTicksSmallInc)
+             axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)),
+                tck=-yTicksSmallTck)
+           }
+       if(!is.null(xTicksSmallInc))
+           { xTicksSmall = seq(xLim[1], xLim[-1], by=xTicksSmallInc)
+             axis(1, at = xTicksSmall, labels = rep("", length(xTicksSmall)),
+                tck=-xTicksSmallTck)
+           }
+       # Confidence intervals (instead of plotCI from regress2.Snw):
+       segments(x0=bForYears$Year+xJitter, y0=bForYears$confMin,
+                x1=bForYears$Year+xJitter, y1=bForYears$confMax)
+       if(!is.null(legExtra)) legend(legExtraPos, legExtra, bty="n",
+                                     col=legExtraCol, pch=pchVal, cex=cexVal)
+       } else    # Add to existing plot
+       {
+       points(bForYears$Year+xJitter, bForYears$b, col=bCol,
+         pch=pchVal, cex=cexVal)
+       segments(x0=bForYears$Year+xJitter, y0=bForYears$confMin,
+                x1=bForYears$Year+xJitter, y1=bForYears$confMax)
+       }
+
+
+    # Now just fit a linear regression through the points,
+    #  and colour code it red if significant trend and grey if not. This
+    #  is taken and adapted from regress2.Snw from RBR14 assessment.
+    if(weightReg == TRUE)
+        { lm = lm(b ~ Year, data = bForYears, weights = 1/(stdErr^2))   } else
+        { lm = lm(b ~ Year, data = bForYears) }
+
+    yearInc = seq(xLim[1], xLim[2], 0.1)
+    p.conf = predict(lm, newdata=data.frame(Year=yearInc), interval="confidence")
+    pVal = summary(lm)$coeff["Year",4]
+    if(regPlot)
+      {
+        if (pVal > 0.05) regCol = regColNotSig else regCol= regColSig
+        lm.line(xLim, lm, col=regCol)
+        matlines(yearInc,
+                 p.conf[ ,c("lwr", "upr")],
+                 col=regCol,
+                 lty=2)
+      }
+    confVals = confint(lm, "Year", level=0.95)
+
+    res = data.frame(Method = method,
+                     Low = confVals[1],
+                     Trend = lm$coeff[2],
+                     High = confVals[2],
+                     p = pVal,
+                     Rsquared = summary(lm)$r.squared,
+                     adjRsquared = summary(lm)$adj.r.squared,
+                     row.names=NULL)
+    return(res)
+}
