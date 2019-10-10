@@ -204,7 +204,7 @@ negLL.PLB.binned = function(b, w, d, J=length(d), xmin=min(w), xmax=max(w))
   }
 
 ##' Calculate the negative log-likelihood of `b` for the PLB model, given
-##'  species-specific binned data
+##'  species-specific binned data (MLEbins method)
 ##'
 ##' Calculate the negative log-likelihood of *b* for the PLB model,
 ##'  given binned data where the bins can be different for each species.
@@ -254,6 +254,64 @@ negLL.PLB.binned.species = function(b, dataBinForLike, dataBinForLikeSummary)
          comp2Sum = sum(temp2$comp2)
          #
          neglogLL = - comp1Sum - comp2Sum
+      } else
+      { stop("NOT DONE b=-1 yet; adapt, but first correct, negLL.PLB.binned")
+      }
+    return(neglogLL)
+  }
+##' TODO DOCUMENT ME IF NECESSARY
+##'
+##' TODO Need to clarify how this differs from `negLL.PLB.binned.species()`
+##'
+##' @param b temp
+##' @param dataBinForLike temp
+##' @param n temp
+##' @param xmin temp
+##' @param xmax temp
+##' @return temp
+##' @export
+##' @author Andrew Edwards
+negLL.PLB.bins.species = function(b, dataBinForLike, n, xmin, xmax)
+  {
+  # Calculates the negative log-likelihood of b for the PLB model,
+  #  given binned data where the bins can be different for each species -- i.e.
+  #  the MLEbins method. Returns the negative log-likelihood.
+  #  Will be called by nlm or similar, but xmin and xmax will just be estimated
+  #  as the min of lowest bin and max of the largest bin (that is their MLEs),
+  #  no need to do numerically. See Appendix of second manuscript for derivation.
+  #
+  # COPIED FROM negLL.PLB.binned.species, for which b=-1 may need correcting
+  #
+  # Args:
+  #   b: value of b for which to calculate the negative log-likelihood
+  #   dataBinForLike: table data frame where each row is the count in a bin
+  #      of a species, where the columns [and corresponding mathematical
+  #      notation in Appendix] are:
+  #          SpecCode: code for each species [s]
+  #          wmin: lower bound of the bin [w_{sj}, where j is the bin number]
+  #          wmax: upper bound of the bin [w_{s,j+1}]
+  #          Number: count in that bin for that species [d_{sj}].
+  #   n: total number of counts [n = \Sum_{sj} d_{sj} over all s and j]
+  #   xmin: maximum likelihood estimate for xmin [xmin = min_{sj} w_{s,1} ]
+  #   xmax: maximum likelihood estimate for xmax [xmax = max_{sj} w_{s,J_s+1} ]
+  #
+  # Returns:
+  #   negative log-likelihood of the parameters given the data.
+  #
+  # Useful to have in pre-processing function:
+  #    if(xmin <= 0 | xmin >= xmax | length(d) != J | length(w) != J+1 |
+  #       d[1] == 0 | d[J] == 0 | min(d) < 0)
+  #       stop("Parameters out of bounds in negLL.PLB")
+  stop("TODO Need to properly document negLL.PLB.bins.species() - I wasn't sure if it gets used at all.")
+  if(b != -1)
+      {  # From updated equation (A.63**[number will change]):
+
+         temp2 = dplyr::mutate(dataBinForLike,
+                        comp2 = Number * log( abs( wmax^(b+1) - wmin^(b+1) ) ) )
+         comp2Sum = sum(temp2$comp2)
+
+         logLL = - n * log( abs( xmax^(b+1) - xmin^(b+1) ) ) + comp2Sum
+         neglogLL = - logLL      # Negative log-likelihood
       } else
       { stop("NOT DONE b=-1 yet; adapt, but first correct, negLL.PLB.binned")
       }
