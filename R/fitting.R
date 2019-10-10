@@ -1201,7 +1201,7 @@ Llin.method.counts = function(valCounts, num.bins = NULL, binBreaks = NULL)
 ##' @param data local data frame that has a unique row for every combination of
 ##' `Year`, `SpecCode` and `LngtClass`. The `Number` column is  the number of
 ##' observed individuals of that species in that length class in that
-##' year. `bodyMass' is the body mass representative of such an individual, as
+##' year. `bodyMass` is the body mass representative of such an individual, as
 ##' calculated previously by `LWa * LngtClass ^ LWb`.
 ##' @param oneYear the year of data to use, from that in the multiple years
 ##'   contained in data

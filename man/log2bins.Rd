@@ -44,7 +44,8 @@ represents biomass, but not length)
 \description{
 Construct bins that double in size and encompass the data, resulting in
 \code{binBreaks} ..., 0.25, 0.5, 1, 2, 4, 8, 16,.... as necessary, where the
-breaks are powers of 2. Adapting from \code{LBNbiom.method()}.
+breaks are powers of 2. Adapting from \code{LBNbiom.method()}. See \code{binData()}
+for a generalised version.
 }
 \author{
 Andrew Edwards

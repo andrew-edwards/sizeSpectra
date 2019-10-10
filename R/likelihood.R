@@ -1,4 +1,53 @@
-# likelihood.R - likelihood related functions for statistical fitting.
+# likelihood.R - likelihood-related functions for statistical fitting.
+
+
+##' Profile log-likelihood method to calculate 95\% confidence interval
+##'
+##' Profile log-likelihood method to calculate 95\% confidence interval
+##'  for a given negative log-likelihood function, maximum likelihood estimate
+##'  (MLE) and minimum of of the negative log-likelihood function. Based on
+##'  Hilborn and Mangel (1997), The Ecological Detective, p162.
+##'
+##' @param negLL.fn negative log-likelihood function that take arguments
+##'   (parameters and data) in ... and returns a negative log-likelihood value
+##' @param MLE maximum likelihood estimate (already calculated)
+##' @param minNegLL the minimum of the negative log-likelihood function, at the
+##'   MLE (by definition)
+##' @param vecDiff the range over which to test the negative log-likelihood
+##'   to construct the confidence interval. Default is 0.5 and a symmetric
+##'   range is tested for fitting size spectra, since for movement data
+##'   sets in Table 2 of Edwards (2011; 92(6):1247-1257) the intervals were
+##'   symmetric, so symmetric seems a good start.
+##' @param vecInc increments to try, the accuracy of the resulting bounds
+##'      will depend on this. Note that a resulting interval of, say,
+##'     (-2.123, -1.987) means that that interval is contained within the
+##'     true 95\% interval, which is itself contained within (-2.124, -1.986).
+##'     The true bounds lie between the stated lower bounds and between
+##'     the stated upper bounds. So reduce vecInc if further accuracy is needed.
+##' @param ... further arguments to `negLL.fn()`
+##' @return two-component vector of the 95\% confidence interval
+##' @export
+##' @author Andrew Edwards
+profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
+    {
+    vec = seq(MLE - vecDiff, MLE + vecDiff, vecInc)
+                 # Values of parameter to test to obtain confidence interval
+
+    # LLvals = vector(length=length(bvec))
+    LLvals = sapply(X=vec, FUN=negLL.fn, ...)
+    critVal = minNegLL  + qchisq(0.95,1)/2
+                      # 1 degree of freedom, Hilborn and Mangel (1997) p162.
+    vecIn95 = vec[ LLvals < critVal ]
+                      # values in 95% confidence interval
+    conf = c(min(vecIn95), max(vecIn95))
+    if(conf[1] == min(vec) | conf[2] == max(vec))
+      { windows()
+        plot(vec, LLvals)
+        abline(h = critVal, col="red")
+        stop("Need to make vec larger - see R window")   # Could automate
+      }
+    return(conf)
+}
 
 ##' Calculate negative log-likelihood for the bounded power-law
 ##'   distribution
