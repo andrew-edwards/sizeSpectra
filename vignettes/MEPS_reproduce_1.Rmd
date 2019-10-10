@@ -134,7 +134,7 @@ lines(c(rep(midOfBin, 2), xMasses[2]) + offset,
 # Figure 3 - how binned body-mass values get assigned to logarithmic size-class bins
 
 
-```{r}
+```{r, fig.width=7.5, fig.height = 6}
 num2 = 11       # number of log2 bin breaks
 log2bins = 2^(0:(num2-1))    # on unlogged axes
 log2binsStart = log2bins[-num2]
