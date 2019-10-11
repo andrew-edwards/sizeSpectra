@@ -1806,6 +1806,12 @@ binData = function(x = NULL, counts = NULL, binWidth = NULL, binBreaks = NULL,
                                 log10binMid = log10(binMid),
                                 log10binCount = log10(binCount),
                                 log10binSum = log10(binSum),
+                                log10binCountNorm = log10(binCountNorm),
+                                # TODO think that last line is needed to avoid
+                                # warnings (e.g. simulate-data2.R) and whole
+                                # column being NA's. Maybe don't actually use it
+                                # in results, but have put it on, may need to
+                                # test it.
                                 log10binSumNorm = log10(binSumNorm))
         binVals[is.infinite(binVals$log10binCount),
                 "log10binCount"] = NA
