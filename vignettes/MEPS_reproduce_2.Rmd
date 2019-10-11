@@ -40,6 +40,7 @@ num.reps = MLE.array.known$num.reps
 b.known = MLE.array.known$b.known
 binTypes = MLE.array.known$binTypes
 binType.name = MLE.array.known$binType.name
+MLEmethod.name = dimnames(MLE.array)[[3]]
 
 vertCol = "red"            # Colour for vertical lines in MLE histogram
 vertThick = 1              # Thickness for vertical lines
@@ -222,8 +223,9 @@ mtext("         MLEmid                                              MLEbin",
 ```
 
 TODO - table of results:
+
 <!--
-# 5% and 95% values of MLEs, to copy into .tex write up.
+# 5% and 95% values of MLEs, latex version (to copy into .tex file)
 print("Binning type & Method & 5% quantile & Median & Mean & 95% quantile & Percentage below true \\ \\hline", quote=FALSE)
 
 for(j in 1:binTypes)                    # Loop over binning type
@@ -233,7 +235,26 @@ for(j in 1:binTypes)                    # Loop over binning type
   print(paste(" & ", MLEmethod.name[2], " & ",
       qqtab(MLE.array[ ,j,2], quants=c(0.05, 0.95)), "\\"), quote=FALSE)
 }
+-->
 
+|Binning type| Method | 5\% quantile |Median  |Mean  |95\% quantile |Percentage below true|
+|:----- | :--------------- | -----------: |-----:  |---:  |-----------:  |--------------------:|
+```{r, echo=FALSE, results='asis', comment=NA}
+for(j in 1:binTypes)                    # Loop over binning type
+  {
+    print(paste(binType.name[[j]],
+                " | ",
+                MLEmethod.name[1],
+                " | ",
+                qqtab(MLE.array[ ,j,1], quants=c(0.05, 0.95), latex=FALSE)),
+          quote=FALSE)
+#    print(paste(" | ", MLEmethod.name[2], " | ",
+#                qqtab(MLE.array[ ,j,2], quants=c(0.05, 0.95), latex=FALSE)),
+#          quote=FALSE)
+}
+```
+
+<!--
 # Range of widths of confidence intervals, may want to quote them but
 #  unlikely need to report the full table.
 print("Binning type & Method & Shortest CI & Widest CI\\ \\hline", quote=FALSE)

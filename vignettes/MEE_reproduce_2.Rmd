@@ -185,7 +185,7 @@ Table 2, summarising the results for each method:
 -->
 
 |Method | Slope represents | 5\% quantile |Median  |Mean  |95\% quantile |Percentage below true|
-|:----- | :--------------- | :----------- |:-----  |:---  |:-----------  |:--------------------|
+|:----- | :--------------- | -----------: |-----:  |---:  |-----------:  |--------------------:|
 |Llin   | -                | `r qqtab(Llin.rep.df$slope, dig=2, quants=c(0.05, 0.95), latex=FALSE)` |
 |LT     | *b*              | `r qqtab(LT.rep.df$slope, quants=c(0.05, 0.95), latex=FALSE)` |
 |LTplus1| *b*              | `r qqtab(LTplus1.rep.df$slope, quants=c(0.05, 0.95), latex=FALSE)` |
