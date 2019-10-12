@@ -24,12 +24,177 @@ library(sizeSpectra)
 # Pre-processing of IBTS data
 
 This vignette steps through the pre-processing steps of the IBTS data as presented in the
-MEPS paper to retain just the desired parts.
+MEPS paper to retain just the desired parts. May be useful for anyone wanting to
+extract data and do similar analyses.
 
 ```{r}
 library(sizeSpectra)
-IBTS.data
 ```
+
+<!-- From nSeaFungImport.Snw:-->
+
+Data extracted from IBTS DATRAS website TODO: copy details from paper. This may
+already include some extra steps from Julia - check her earlier code. Fairly sure a
+and b are from Fung et al. (I have that .csv file also).
+
+
+```{r, eval=FALSE}
+# This is done in package in data-raw/IBTS-data.R to save the data more
+#  efficiently as dataOrig within the package. Code is not evaluated here.
+load("ibtsQ1cpuelength.RData") # 2.2 Mb dataset, just contains
+                               #  "q1" which is a data.frame
+dataOrig = tbl_df(q1)        # for dplyr
+```
+
+Understand the raw data:
+```{r}
+dim(dataOrig)
+names(dataOrig)
+dataOrig[1:5,1:7]
+dataOrig[1:5,8:13]
+
+summary(dataOrig)
+```
+
+Note that 'LngtClas' is in mm, not cm, but that 'a' and 'b' are the length-weight coefficients for the length being in cm. Will use cm as units later.
+
+Some columns are duplicated and we just want to keep the useful ones. 'AphiaID'
+is a numerical code for each species. Need to know the number of areas, but
+don't need to keep 'Area'.
+
+Want to end up with a data frame of the same format as in {\tt
+  nSea15import.Snw}, since then presumably the {\tt nSea15analysis.Snw} code
+will not need too much modification to work on this new data set. {\tt Survey}
+and {\tt Quarter} are the same for all entries, and I don't need to keep {\tt
+  Area}, just need the number of areas.
+
+```{r}
+numAreas = length(unique(dataOrig$Area))
+numAreas
+colsKeep = c("Year",
+             "AphiaID",
+             "LngtClas",
+             "CPUE_number_per_hour",
+             "a",
+             "b",
+             "weight_g",
+             "CPUE_bio_per_hour")
+colsDiscard = setdiff(names(dataOrig), colsKeep)
+colsDiscard
+```
+
+Note that 'data' will change a lot in the following code.
+
+<<>>=
+data = s_select(dataOrig, colsKeep)   # uses Sebastian Kranz's s_dplyr_funcs.r
+data
+str(data)
+summary(data)
+min(data$CPUE_number_per_hour)
+@
+
+So no negative CPUE values or spurious weights. There are a lot of zero CPUE values:
+<<>>=
+sum(data$CPUE_number_per_hour == 0)
+@
+
+Want to end up with {\tt data} in the same form as was done in {\tt nSea15import.Snw}, so that analysis code won't need modifying much. So need to rename some of the headings, make the lengths in cm not mm, and it would be helpful to order by Year, SpecCode and then Lgnt.
+
+1. Rename the columns:
+<<rename>>=
+if(sum( colsKeep != c("Year", "AphiaID", "LngtClas", "CPUE_number_per_hour",
+    "a", "b", "weight_g", "CPUE_bio_per_hour")) > 0)
+       { stop("Need to adjust renaming") }
+names(data) = c("Year", "SpecCode", "LngtClass", "Number", "LWa", "LWb",
+         "bodyMass", "CPUE_bio_per_hour")
+# CPUE_bio_per_hour is Number * bodyMass
+@
+
+2. Make cm not mm:
+<<cm>>=
+data$LngtClass = data$LngtClass/10
+@
+
+3. Rearrange the order to be more intuitive:
+<<arrange>>=
+data = arrange(data, Year, SpecCode, LngtClass)
+data
+@
+
+That shows that we have a lot of (i) repeated values that can be amalgamated (presumably repeated because at one point the data included details about trawls, or it's just how the data were obtained), (ii) lots of {\tt Number == 0} that we can discard, though keep for now since will help verify the binning.
+
+(i) So, each row represents a combination of {\tt Year, SpecCode, LngtClass}, but these aren't unique. For example, looking at just one species for one year for one length class:
+<<>>=
+exampleSp = filter(data, Year == 1986, SpecCode == 105814, LngtClass == 60)
+exampleSp
+@
+So, yes, we have multiple counts of 60cm fish of this species, which we can just aggregate together. Do this for all years, species and lengths:
+
+<<aggregating>>=
+data = summarise(group_by(data, Year, SpecCode, LngtClass),
+    "Number" = sum(Number)/numAreas, "LWa" = unique(LWa), "LWb" = unique(LWb),
+    "bodyMass" = unique(bodyMass))   # , "totalBiom" = sum(CPUE_bio_per_hour))
+# Don't think I need the totalBiom one; it gets calculated in the methods.
+
+data
+summary(data)
+
+filter(data, SpecCode == 105814, Year == 1986, LngtClass == 60)
+  # "Number" here correctly equals the sum of the first two rows of exampleSp
+  #  divided by 7
+@
+
+% **Total biomass for each unique row should also get calculated in {\tt nSeaFungAnalysis.Snw}, so check it agrees with this {\tt totalBiom} here.
+
+So {\tt Number} is the average number (of each species and length) caught per
+hour of trawling across all seven areas. Originally I had the sum.
+
+Now to redo the calculations for {\tt bodyMass} (body mass of an individual of that {\tt LngtClass}); should get the same answer, using species-specific length-weight coversions.
+<<bodyMass>>=
+data = mutate(data, bodyMass2 = LWa * LngtClass^LWb)
+if(max(abs(data$bodyMass2 - data$bodyMass)) > 0.0001) stop("Check conversions")
+data = select(data, -bodyMass2)              # don't keep the confirming column
+@
+
+
+
+
+
+
+
+Blanchard et al.~(2005) only included body-mass classes above 4~g. Do that here (since presumably data are noisy for smaller organisms):
+<<>>=
+range(data$LngtClass)
+range(data$bodyMass)
+sum(data$bodyMass == 0)   # 2549
+sum(data$bodyMass < 4 )   # 6893
+data = filter(data, bodyMass >= 4)
+range(data$bodyMass)
+data
+summary(data)
+
+# Total number of fish in this dataset is:
+sum(data$Number)
+@
+
+The unique length classes are:
+<<lengths>>=
+sort(unique(data$LngtClass))
+diff(sort(unique(data$LngtClass)))
+@
+
+I think they may change over the years, which will become apparent in the figure to be constructed in {\tt nSeaFungAnalysis.Snw}, which will load in this {\tt data} dataframe.
+
+Saving {\tt data} so this file does not need to be re-run:
+
+<<saveData>>=
+save(data, file="nSeaFungImport.RData")
+@
+
+\end{document}
+
+
+-----------------------------------
 
 
 
