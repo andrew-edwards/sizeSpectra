@@ -4,16 +4,33 @@
 # 11th October 2019, hadn't changed). Have edited the comments and added documentation to make package-worthy.
 # Only need s_select so commenting out the others.
 
-#' Internal function used by s_filter, s_select etc.
-#' @param .data input
-#' @param .fun.name one of dplyr's functions
-#' @param ... other arguments to the the dplyr function
+##' Internal function used by s_filter, s_select etc.
+##'
+##' Internal functions
+##'
+##' @param .data input
+##' @param .fun.name one of dplyr's functions
+##' @param ... other arguments to the the dplyr function
+##' @author Sebastian Kranz (https://gist.github.com/skranz/9681509)
 eval.string.dplyr = function(.data, .fun.name, ...) {
   args = list(...)
   args = unlist(args)
   code = paste0(.fun.name,"(.data,", paste0(args, collapse=","), ")")
   df = eval(parse(text=code,srcfile=NULL))
   df
+}
+
+
+##' Modified version of dplyr's select that uses string arguments
+##'
+##' Taken from https://gist.github.com/skranz/9681509 by Sebastian Kranz
+##'
+##' @param .data input
+##' @param ... other arguments to `dplyr::select()`
+##' @export
+##' @author Sebastian Kranz (https://gist.github.com/skranz/9681509)
+s_select = function(.data, ...) {
+  eval.string.dplyr(.data,"dplyr::select", ...)
 }
 
 # Add dplyr:: everywhere if use others.
@@ -24,14 +41,6 @@ eval.string.dplyr = function(.data, .fun.name, ...) {
 # s_filter = function(.data, ...) {
 #   eval.string.dplyr(.data,"filter", ...)
 # }
-
-#' Modified version of dplyr's select that uses string arguments
-#' @export
-#' @param .data input
-#' @param ... other arguments to `dplyr::select()`
-s_select = function(.data, ...) {
-  eval.string.dplyr(.data,"dplyr::select", ...)
-}
 
 # #' Modified version of dplyr's arrange that uses string arguments
 # #' @export
