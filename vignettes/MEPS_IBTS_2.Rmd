@@ -21,9 +21,9 @@ knitr::opts_chunk$set(
 library(sizeSpectra)
 ```
 
-# Analyses of IBTS data
+# Analyses of IBTS data using the original eight methods
 
-TODO: This vignette analyses the IBTS data....
+This vignette analyses the IBTS data using the original eight methods, without accounting for the bin structure.
 
 ```{r}
 library(sizeSpectra)
@@ -150,45 +150,18 @@ mtext("Year", side=1, outer=TRUE, line=-0.2, cex=0.8)
 
 TODO:
 
-<!--
-
-trendResultsTab = xtable(dplyr::select(trendResults, -adjRsquared),
-  digits=c(0, 0, 4, 4, 4, 2, 2),
-  caption="Summary of weighted regression analysis
-  of trend through time of the estimated exponent $b$, as estimated using each
-  of the eight methods. `Trend' is the estimated annual trend, with
-  95\\% confidence intervals given by `Low' and `High';
-  p is the p-value for the probability that the trend is significantly
-  different to 0, and $R^2$ is the coefficient of determination.
-  If $p \\geq 0.05$ then the trend can be considered not
-  significantly different to 0. If $p<0.05$ then a negative trend indicates
-  a statistically significant decline in the exponent over time, and
-  a positive trend indicates a statistically significant increase.",
-  lab="tab:trendRes")
+The results of the regression analyses (Table S.1) are:
+```{r results='asis'}
+knitr::kable(dplyr::select(trendResults, -adjRsquared),
+             digits=c(0, 4, 4, 4, 2, 2))
+```
 
 
 
-TODO:
+TODO: put this earlier somewhere, likely be done when tidying up initial data
+extraction stuff
 
-print(trendResultsTab, table.placement="tp", caption.placement="top",
-    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
-
--->
-
-TODO:
-<!--
-# example lines of data, to maybe have as a table in Part 2 manuscript.
-egData = data[c(1:6, (dim(data)[1]-5):(dim(data)[1])), ]
-egData = dplyr::mutate(egData, Biomass = Number * bodyMass)
-names(egData) = c("Year", "Species", "Length class (cm)", "Number (h$^{-1}$)", "alpha",          "beta", "Body mass (g)", "Total biomass (g)")
-egDataTab = xtable(egData, digits=c(0, 0, 0, 0, 3, 4, 4, 2, 2),
-  caption="Example data (first six and last six rows) from the ** data set, to demonstrate the information available. Each row represents a unique combination of year, species and length class. `Number' gives the number of individuals (per hour of **trawling) observed for that combination, and can be non-integer because counts of individual fish are scaled by tow duration**. Fish lengths are assigned into length classes, where the value of `Length class' (cm) is the minimum value of the length bin; for this data set fish were usually assigned to 1-cm length classes, and occasionally 0.5~cm. Parameters $\\alpha$ and $\\beta$ are the length-weight coefficients for each particular species, and `Body mass' (g) is the resulting estimated body mass for individuals of that species and length class. `Biomass' (g) is the total biomass of individuals for each row.**TO DO manually: **Change to $\\alpha$ and $\\beta$. Replace SpecCode by actual species name. Add in rows of $\\cdot \\cdot \\cdot$. Manually split column headers over two rows.", lab="tab:egData")  # digits[1] is row.names
-
--->
-TODO:
 ```{r, eval=FALSE}
-print(egDataTab, table.placement="tp", caption.placement="top",
-    include.rownames = FALSE) #, sanitize.text.function=function(x){x})  # was !ht
 # To get particular species names:
 # load("ibtsQ1cpuelength.RData")
 # dataOrig = tbl_df(q1)
