@@ -85,13 +85,13 @@ colsDiscard
 
 Note that 'data' will change a lot in the following code.
 
-<<>>=
+```{r}
 data = s_select(dataOrig, colsKeep)   # uses Sebastian Kranz's s_dplyr_funcs.r
 data
-str(data)
+# str(data)
 summary(data)
 min(data$CPUE_number_per_hour)
-@
+```
 
 So no negative CPUE values or spurious weights. There are a lot of zero CPUE values:
 <<>>=

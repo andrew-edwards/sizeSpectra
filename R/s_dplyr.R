@@ -2,12 +2,12 @@
 # Author: Sebastian Kranz. Downloaded from
 # https://gist.github.com/skranz/9681509 (originally in 2015, downloaded again
 # 11th October 2019, hadn't changed). Have edited the comments and added documentation to make package-worthy.
-
+# Only need s_select so commenting out the others.
 
 #' Internal function used by s_filter, s_select etc.
 #' @param .data input
-#' @param .fun.name one of dplyr's functions TODO: may have to add dplyr:: everywehre
-#' @param ...
+#' @param .fun.name one of dplyr's functions
+#' @param ... other arguments to the the dplyr function
 eval.string.dplyr = function(.data, .fun.name, ...) {
   args = list(...)
   args = unlist(args)
@@ -16,43 +16,46 @@ eval.string.dplyr = function(.data, .fun.name, ...) {
   df
 }
 
-#' Modified version of dplyr's filter that uses string arguments
-#' @export
-#' @param .data
-#' @param ...
-s_filter = function(.data, ...) {
-  eval.string.dplyr(.data,"filter", ...)
-}
+# Add dplyr:: everywhere if use others.
+# #' Modified version of dplyr's filter that uses string arguments
+# #' @export
+# #' @param .data
+# #' @param ...
+# s_filter = function(.data, ...) {
+#   eval.string.dplyr(.data,"filter", ...)
+# }
 
 #' Modified version of dplyr's select that uses string arguments
 #' @export
+#' @param .data input
+#' @param ... other arguments to `dplyr::select()`
 s_select = function(.data, ...) {
-  eval.string.dplyr(.data,"select", ...)
+  eval.string.dplyr(.data,"dplyr::select", ...)
 }
 
-#' Modified version of dplyr's arrange that uses string arguments
-#' @export
-s_arrange = function(.data, ...) {
-  eval.string.dplyr(.data,"arrange", ...)
-}
-
-#' Modified version of dplyr's arrange that uses string arguments
-#' @export
-s_mutate = function(.data, ...) {
-  eval.string.dplyr(.data,"mutate", ...)
-}
-
-#' Modified version of dplyr's summarise that uses string arguments
-#' @export
-s_summarise = function(.data, ...) {
-  eval.string.dplyr(.data,"summarise", ...)
-}
-
-#' Modified version of dplyr's group_by that uses string arguments
-#' @export
-s_group_by = function(.data, ...) {
-  eval.string.dplyr(.data,"group_by", ...)
-}
+# #' Modified version of dplyr's arrange that uses string arguments
+# #' @export
+# s_arrange = function(.data, ...) {
+#   eval.string.dplyr(.data,"arrange", ...)
+# }
+#
+# #' Modified version of dplyr's arrange that uses string arguments
+# #' @export
+# s_mutate = function(.data, ...) {
+#   eval.string.dplyr(.data,"mutate", ...)
+# }
+#
+# #' Modified version of dplyr's summarise that uses string arguments
+# #' @export
+# s_summarise = function(.data, ...) {
+#   eval.string.dplyr(.data,"summarise", ...)
+# }
+#
+# #' Modified version of dplyr's group_by that uses string arguments
+# #' @export
+# s_group_by = function(.data, ...) {
+#   eval.string.dplyr(.data,"group_by", ...)
+# }
 
 # Examples
 # library(dplyr)
