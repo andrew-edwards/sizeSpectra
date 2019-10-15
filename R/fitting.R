@@ -386,7 +386,8 @@ log2bins = function(x = NULL, counts = NULL)
 ##' Compute size-spectra exponents for a dataset using all eight methods
 ##'
 ##' TODO: Developed and is called in `nSea15analysis.Snw`, which was modified
-##' from what was in fitting2.r. May be specific to the IBTS data set.
+##' from what was in fitting2.r. May be specific to the IBTS data set. MAY only
+##' be for one year and may not be needed - subsumed in eightMethods.count() ???TODO
 ##'
 ##' @param oneYear the year of data to use, from that in the multiple years contained
 ##'   in `data`. TODO: that should presumably be `dataForYear`

@@ -1,0 +1,5 @@
+# The main analyses of the IBTS data in the MEPS paper.
+
+load("nSeaFungAnalysis.RData")    # Output from nSeaFungAnalysis.Snw, TODO
+                                  # should then become output from vignette.
+usethis::use_data(fullResults, overwrite = TRUE)

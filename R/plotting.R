@@ -557,8 +557,6 @@ legJust = function(textVec,
 }
 
 
-# Function to plot and fit time series of exponent as estimated by
-#  a given method.
 ##' Plot time series of estimated *b* with confidence intervals
 ##'
 ##' Plot time series of estimated *b* with confidence intervals, for
