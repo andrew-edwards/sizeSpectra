@@ -24,12 +24,14 @@ MEPS paper to retain just the desired parts. May be useful for anyone wanting to
 extract data and do similar analyses.
 
 ```{r setup}
-library(sizeSpectra)  # TODO commenting out while building, so can use:
+library(sizeSpectra)
 ```
 
 <!-- From nSeaFungImport.Snw:-->
 
-Data extracted from IBTS DATRAS website TODO: copy details from paper. This may
+Data extracted from IBTS DATRAS website TODO: copy details from paper and put
+some of Julia's earlier code in; may want to use the even raw-er data; just
+getting this working for now. This may
 already include some extra steps from Julia - check her earlier code. Fairly sure a
 and b are from Fung et al. (I have that .csv file also).
 
@@ -56,14 +58,11 @@ Note that `LngtClas` is in mm, not cm, but that `a` and `b` are the
 length-weight coefficients for the length being in cm. Will use cm as units
 later.
 
-Some columns are duplicated and we just want to keep the useful ones. 'AphiaID'
+Some columns are duplicated and we just want to keep the useful ones. `AphiaID`
 is a numerical code for each species. Need to know the number of areas, but
-don't need to keep 'Area'.
+don't need to keep `Area`.
 
-TODO Want to end up with a data frame of the same format as in `
-  nSea15import.Snw`, since then presumably the ` nSea15analysis.Snw` code
-will not need too much modification to work on this new data set. `Survey`
-and `Quarter` are the same for all entries, and I don't need to keep `Area`,
+`Survey` and `Quarter` are the same for all entries, and we don't need to keep `Area`,
   just need the number of areas.
 
 ```{r}
@@ -152,7 +151,7 @@ dplyr::filter(data, SpecCode == 105814, Year == 1986, LngtClass == 60)
 So `Number` here correctly equals the sum of the first two rows of `exampleSp`
 divided by seven (areas).
 
-So `Number` is the average number (of each species and length) caught per
+`Number` is the average number (of each species and length) caught per
 hour of trawling across all seven areas.
 
 Just confirm the calculations for `bodyMass` (body mass of an individual of that
@@ -166,7 +165,7 @@ data = dplyr::select(data, -bodyMass2)              # don't keep the confirming 
 ```
 
 Now only include body-mass classes above 4 g, following Blanchard et
-al. (2005). Presumably data are noisy for smaller organisms [TODO: look at
+al. (2005), since data are unreliable for smaller organisms [TODO: look at
 sensitivity if time].
 ```{r}
 range(data$LngtClass)
@@ -179,19 +178,30 @@ data
 summary(data)
 ```
 
-Total number of fish in this dataset is `r sum(data$Number)`.
+Total number of fish in this dataset is
+```{r}
+sum(data$Number)
+```
 
 The unique length classes are:
 ```{r lengths}
 sort(unique(data$LngtClass))
 diff(sort(unique(data$LngtClass)))
+ ```
+
+The 0.5-cm length classes are only for two species, Atlantic Herring (code
+ 126417) and European Sprat (code 126425), as confirmed here (no differences of 0.5cm):
+```{r halfcm}
+temp = dplyr::filter(IBTS.data, !(SpecCode %in% c(126417, 126425)))
+unique(diff(sort(unique(temp$LngtClass))))
 ```
 
+Need this to stop earlier groups being kept (can mess up later code):
 ```{r}
-data = dplyr::ungroup(data)   # Else some groups get kept
+data = dplyr::ungroup(data)
 ```
 
-The commands here (which are not run in this vignette) are to save `IBTS.data`
+These next commands here (which are not run in this vignette) are to save `IBTS.data`
 in the package (which has already been run once to build the package). Rename
 and save `data` with a meaningful name for your own data.
 ```{r eval=FALSE}
