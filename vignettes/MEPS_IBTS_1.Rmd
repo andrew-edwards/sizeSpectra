@@ -83,7 +83,7 @@ colsDiscard = setdiff(names(dataOrig), colsKeep)
 colsDiscard
 ```
 
-Note that 'data' will change a lot in the following code.
+Note that `data` will change a lot in the following code.
 
 ```{r}
 data = s_select(dataOrig, colsKeep)   # uses Sebastian Kranz's s_dplyr_funcs.r
@@ -94,71 +94,78 @@ min(data$CPUE_number_per_hour)
 ```
 
 So no negative CPUE values or spurious weights. There are a lot of zero CPUE values:
-<<>>=
+```{r}
 sum(data$CPUE_number_per_hour == 0)
-@
+```
 
-Want to end up with {\tt data} in the same form as was done in {\tt nSea15import.Snw}, so that analysis code won't need modifying much. So need to rename some of the headings, make the lengths in cm not mm, and it would be helpful to order by Year, SpecCode and then Lgnt.
+Want to end up with `data` in a standard format (based on some original
+analysis). Need to rename some of the headings, make the lengths in cm not mm,
+and (for helpfulness) order by `Year`, `SpecCode` and then `Lgnt`.
 
 1. Rename the columns:
-<<rename>>=
+```{r rename}
 if(sum( colsKeep != c("Year", "AphiaID", "LngtClas", "CPUE_number_per_hour",
     "a", "b", "weight_g", "CPUE_bio_per_hour")) > 0)
        { stop("Need to adjust renaming") }
 names(data) = c("Year", "SpecCode", "LngtClass", "Number", "LWa", "LWb",
          "bodyMass", "CPUE_bio_per_hour")
 # CPUE_bio_per_hour is Number * bodyMass
-@
+```
 
 2. Make cm not mm:
-<<cm>>=
+```{r cm}
 data$LngtClass = data$LngtClass/10
-@
+```
 
 3. Rearrange the order to be more intuitive:
-<<arrange>>=
-data = arrange(data, Year, SpecCode, LngtClass)
+```{r arrange}
+data = dplyr::arrange(data, Year, SpecCode, LngtClass)
 data
-@
+```
 
-That shows that we have a lot of (i) repeated values that can be amalgamated (presumably repeated because at one point the data included details about trawls, or it's just how the data were obtained), (ii) lots of {\tt Number == 0} that we can discard, though keep for now since will help verify the binning.
+That shows that we have a lot of (i) repeated values that can be amalgamated
+(presumably repeated because at one point the data included details about
+trawls, or it's just how the data were obtained), (ii) lots of `Number == 0`
+that we can discard, though keep for now since will help verify the binning.
 
-(i) So, each row represents a combination of {\tt Year, SpecCode, LngtClass}, but these aren't unique. For example, looking at just one species for one year for one length class:
-<<>>=
-exampleSp = filter(data, Year == 1986, SpecCode == 105814, LngtClass == 60)
+(i) So, each row represents a combination of `Year, SpecCode, LngtClass`, but
+these aren't unique. For example, looking at just one species for one year for
+one length class:
+```{r}
+exampleSp = dplyr::filter(data, Year == 1986, SpecCode == 105814, LngtClass == 60)
 exampleSp
-@
+```
 So, yes, we have multiple counts of 60cm fish of this species, which we can just aggregate together. Do this for all years, species and lengths:
 
-<<aggregating>>=
-data = summarise(group_by(data, Year, SpecCode, LngtClass),
-    "Number" = sum(Number)/numAreas, "LWa" = unique(LWa), "LWb" = unique(LWb),
-    "bodyMass" = unique(bodyMass))   # , "totalBiom" = sum(CPUE_bio_per_hour))
-# Don't think I need the totalBiom one; it gets calculated in the methods.
-
+```{r, aggregating}
+data = dplyr::summarise(dplyr::group_by(data,
+                                        Year,
+                                        SpecCode,
+                                        LngtClass),
+                        "Number" = sum(Number)/numAreas,
+                        "LWa" = unique(LWa),
+                        "LWb" = unique(LWb),
+                        "bodyMass" = unique(bodyMass))
 data
 summary(data)
 
-filter(data, SpecCode == 105814, Year == 1986, LngtClass == 60)
-  # "Number" here correctly equals the sum of the first two rows of exampleSp
-  #  divided by 7
-@
-
-% **Total biomass for each unique row should also get calculated in {\tt nSeaFungAnalysis.Snw}, so check it agrees with this {\tt totalBiom} here.
+dplyr::filter(data, SpecCode == 105814, Year == 1986, LngtClass == 60)
+```
+So `Number` here correctly equals the sum of the first two rows of `exampleSp`
+divided by seven (areas).
 
 So {\tt Number} is the average number (of each species and length) caught per
-hour of trawling across all seven areas. Originally I had the sum.
+hour of trawling across all seven areas.
 
-Now to redo the calculations for {\tt bodyMass} (body mass of an individual of that {\tt LngtClass}); should get the same answer, using species-specific length-weight coversions.
-<<bodyMass>>=
-data = mutate(data, bodyMass2 = LWa * LngtClass^LWb)
+Just confirm the calculations for `bodyMass` (body mass of an individual of that
+`LngtClass`) since they were done during preprocessing;
+should get the same answer, using species-specific length-weight coversions.
+```{r, bodyMass}
+data = dplyr::mutate(data,
+                     bodyMass2 = LWa * LngtClass^LWb)
 if(max(abs(data$bodyMass2 - data$bodyMass)) > 0.0001) stop("Check conversions")
-data = select(data, -bodyMass2)              # don't keep the confirming column
-@
-
-
-
-
+data = dplyr::select(data, -bodyMass2)              # don't keep the confirming column
+```
 
 
 
@@ -168,7 +175,7 @@ range(data$LngtClass)
 range(data$bodyMass)
 sum(data$bodyMass == 0)   # 2549
 sum(data$bodyMass < 4 )   # 6893
-data = filter(data, bodyMass >= 4)
+data = dplyr::filter(data, bodyMass >= 4)
 range(data$bodyMass)
 data
 summary(data)
@@ -332,7 +339,7 @@ vertThick = 1              # Thickness for vertical lines
 #     max(fullResults$confMax, na.rm=TRUE))   # -54, 41 due to LT method for
                                               #  original nSea15 dataset.
 # Can have common y axis for five methods (after inspecting results):
-fullResFive = filter(fullResults, Method %in% c("LBmiz", "LBbiom", "LBNbiom",
+fullResFive = dplyr::filter(fullResults, Method %in% c("LBmiz", "LBbiom", "LBNbiom",
     "LCD", "MLE"))
 yLim = c(min(fullResFive$confMin), max(fullResFive$confMax))
 
@@ -348,37 +355,37 @@ yLim = c(min(fullResFive$confMin), max(fullResFive$confMax))
 
 trendResults = data.frame()  # Will have one row of trend results for each method
 
-res = timeSerPlot(filter(fullResults, Method == "Llin"), legName = "(a) Llin",
+res = timeSerPlot(dplyr::filter(fullResults, Method == "Llin"), legName = "(a) Llin",
             method = "Llin", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
 
-res = timeSerPlot(filter(fullResults, Method == "LT"), legName = "(b) LT",
+res = timeSerPlot(dplyr::filter(fullResults, Method == "LT"), legName = "(b) LT",
             yLab="", method = "LT", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(filter(fullResults, Method == "LTplus1"),
+res = timeSerPlot(dplyr::filter(fullResults, Method == "LTplus1"),
     legName = "(c) LTplus1", method = "LTplus1", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(filter(fullResults, Method == "LBmiz"), legName = "(d) LBmiz",
+res = timeSerPlot(dplyr::filter(fullResults, Method == "LBmiz"), legName = "(d) LBmiz",
             yLim=yLim, yLab="", method = "LBmiz", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(filter(fullResults, Method == "LBbiom"),
+res = timeSerPlot(dplyr::filter(fullResults, Method == "LBbiom"),
     legName = "(e) LBbiom", yLim=yLim, method = "LBbiom", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(filter(fullResults, Method == "LBNbiom"),
+res = timeSerPlot(dplyr::filter(fullResults, Method == "LBNbiom"),
     legName = "(f) LBNbiom", yLim=yLim, yLab="", method = "LBNbiom",
     weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(filter(fullResults, Method == "LCD"), legName = "(g) LCD",
+res = timeSerPlot(dplyr::filter(fullResults, Method == "LCD"), legName = "(g) LCD",
     yLim=yLim, method = "LCD", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(filter(fullResults, Method == "MLE"), legName = "(h) MLE",
+res = timeSerPlot(dplyr::filter(fullResults, Method == "MLE"), legName = "(h) MLE",
     yLim=yLim, yLab="", method = "MLE", legPos = "bottomleft",
     weightReg=TRUE)
 trendResults = rbind(trendResults, res)
@@ -387,7 +394,7 @@ mtext("Year", side=1, outer=TRUE, line=-0.2, cex=0.8)
 
 dev.off()
 
-trendResultsTab = xtable(select(trendResults, -adjRsquared),
+trendResultsTab = xtable(dplyr::select(trendResults, -adjRsquared),
   digits=c(0, 0, 4, 4, 4, 2, 2),
   caption="Summary of weighted regression analysis
   of trend through time of the estimated exponent $b$, as estimated using each
@@ -430,7 +437,7 @@ print(egDataTab, table.placement="tp", caption.placement="top",
 # To get particular species names:
 # load("ibtsQ1cpuelength.RData")
 # dataOrig = tbl_df(q1)
-# filter(dataOrig, AphiaID == 105814)
+# dplyr::filter(dataOrig, AphiaID == 105814)
 # Gives:
 # 105814 NS-IBTS 2012       1    3 Sciliorhinus caniculus      340
 # 105814 NS-IBTS 1999       1    3  Scyliorhinus canicula      580
@@ -447,7 +454,7 @@ print(egDataTab, table.placement="tp", caption.placement="top",
 <<>>=
 postscript("nSeaFungCheck.eps", height = figheight/2, width = figwidth,
            horizontal=FALSE,  paper="special")
-plot(filter(fullResults, Method=="MLE")$stdErr)
+plot(dplyr::filter(fullResults, Method=="MLE")$stdErr)
 dev.off()
 @
 
