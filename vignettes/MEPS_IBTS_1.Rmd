@@ -209,3 +209,16 @@ IBTS.data = data
 usethis::use_data(IBTS.data, overwrite = TRUE)
 ```
 <!--  save(data, file="nSeaFungImport.RData")-->
+
+So we have the following, where each row is a unique combination of `Year`,
+`SpecCode` and `LngtClass` (cm, the minimum value of the 1-cm length bin [or
+0.5-cm bin for Atlantic Herring and European Sprat]), and `Number` gives the number of individuals per hour
+of trawling observed for the combination. Parameters `LWa` and `LWb` [TODO:
+change to alpha, beta] are the length-weight cofficients for that species from
+Fung et al. (2012), `bodyMass` (g) is the resulting estimated body mass for an
+individual of that species and length class. To see Table 1 [TODO: need last column]
+
+```{r results='asis'}
+knitr::kable(rbind(IBTS.data[1:5,],
+                   IBTS.data[ (nrow(IBTS.data)-5):nrow(IBTS.data), ]))
+```
