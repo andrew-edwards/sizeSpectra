@@ -427,9 +427,8 @@ MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
 #MLEbins.nSeaFung.new = dplyr::select(MLEbins.nSeaFung.new, -diff)
 ```
 
-
-<<>>=
-# time series plot:
+Now for Figure 8, comparing the results with the original MLE method:
+```{r timeseries}
 postscript("nSeaMLEbins.eps",
             height = 6, width = 7.5,
             horizontal=FALSE,  paper="special")
@@ -448,12 +447,7 @@ resNonWeight = timeSerPlot(MLEbins.nSeaFung.new, legName = "(a) MLEbins",
 dev.off()
 @
 
-\onefig{nSeaMLEbins}{MLEs for $b$ with weighted linear regression for MLEbins method.} % Results are going into {\tt nSeaFungCompareNew.Snw}.}
 
-\onefig{nSeaMLEbinsUnw}{MLEs for $b$ with non-weighted linear regression for
-  MLEbins method.}
-
-<<results=tex, echo=FALSE>>=
 trendResultsMLEbinNew = tbl_df(rbind(res, resNonWeight))
 
 trendResultsMLEbinTabNew = xtable(dplyr::select(trendResultsMLEbinNew, -adjRsquared),
@@ -472,59 +466,51 @@ trendResultsMLEbinTabNew = xtable(dplyr::select(trendResultsMLEbinNew, -adjRsqua
 
 print(trendResultsMLEbinTabNew, table.placement="tp", caption.placement="top",
     include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
-@
 
-\section{Compare with original MLE results}
 
-% Extracting from nSeaFungCompareNew.Snw
-
-In {\tt nSeaFungAnalysis.Snw} I used all eight original methods (that we
-documented in MEE paper) to fit the IBTS, including MLE just based on the body
-masses that were converted using the species-specific length-weight
-relationships and the minima of each bin. Here comparing those MLE results with
-the MLEbins method used above.
-
-\medskip
-
-<<>>=
-# Results from using MLEbinsNew
-fullResults.MLEbins = MLEbins.nSeaFung.new  # should have just used MLEbins..
-trend.MLEbins.new = dplyr::filter(trendResultsMLEbinNew, Method == "MLEbins")
-
-figwidth = 7.5
-
+```{r fig.width=7.5, fig.height=6.3}
+fullResults.MLEbins = MLEbins.nSeaFung.new  # TODO should have just used MLEbins..
+trend.MLEbins.new = dplyr::filter(trendResultsMLEbinNew,
+                                  Method == "MLEbins")
 bYears = fullResults.MLE$Year
 xLim = range(bYears)
 yLim = c(-1.82, -1.35)
 MLE.col = "blue"
 MLEbins.col = "red"
-postscript("nSeaFungCompareTrends.eps", height = figheight*0.9,
-           width = figwidth,
-           horizontal=FALSE,  paper="special")
-res.MLE = timeSerPlot(fullResults.MLE, legName = "", xLim=xLim,
-    yLim=yLim, xLab = "Year", method = "MLE", legPos = "bottomleft",
-    weightReg=TRUE, bCol=MLE.col,
-    regPlot = FALSE,
-    regColNotSig = "lightblue", regColSig="darkblue",
-    xTicksSmallInc = 1, yTicksSmallInc = 0.02,
-    legExtra = c("MLEbins", "MLE"), legExtraCol=c(MLEbins.col, MLE.col),
-    legExtraPos = "topleft",
-    xJitter = -0.03)       # MLEbins on top as values are higher in figure
-                           # Haven't tested the darkblue yet
+res.MLE = timeSerPlot(fullResults.MLE,
+                      legName = "",
+                      xLim=xLim,
+                      yLim=yLim,
+                      xLab = "Year",
+                      method = "MLE",
+                      legPos = "bottomleft",
+                      weightReg=TRUE,
+                      bCol=MLE.col,
+                      regPlot = FALSE,
+                      regColNotSig = "lightblue",
+                      regColSig="darkblue",
+                      xTicksSmallInc = 1,
+                      yTicksSmallInc = 0.02,
+                      legExtra = c("MLEbins", "MLE"),
+                      legExtraCol=c(MLEbins.col, MLE.col),
+                      legExtraPos = "topleft",
+                      xJitter = -0.03)       # MLEbins on top as values are higher in figure
 
-res.MLEbins.new = timeSerPlot(fullResults.MLEbins, legName = "",
-    method = "MLEbins", weightReg=TRUE, newPlot=FALSE, bCol=MLEbins.col,
-    regPlot = FALSE,
-    regColNotSig = "pink", regColSig="darkred",
-    xJitter = 0.03)        # Haven't seen the darkred
-dev.off()
-@
+res.MLEbins.new = timeSerPlot(fullResults.MLEbins,
+                              legName = "",
+                              method = "MLEbins",
+                              weightReg=TRUE,
+                              newPlot=FALSE,
+                              bCol=MLEbins.col,
+                              regPlot = FALSE,
+                              regColNotSig = "pink",
+                              regColSig="darkred",
+                              xJitter = 0.03)
+```
 
-
-\onefig{nSeaFungCompareTrends}{Comparison of the annual estimates of $b$ using the original MLE method and the MLEbins method.}
-
-Some calculations to compare trends:
-<<bRatio>>=
+Finally, some further calculations to compare trends. This gives the ratio of
+the estimates of *b* between the two methods:
+```{r bRatio, fig.width=7.5, fig.height=6.3}
 bRatio = fullResults.MLE$b / fullResults.MLEbins$b
 xLim = range(bYears)
 yLim = c(1, max(bRatio))
@@ -532,79 +518,106 @@ smallTck = 0.01
 
 lm.bRatio = lm(bRatio ~ bYears)
 yearInc = seq(xLim[1], xLim[2], 0.1)
-p.conf.bRatio = predict(lm.bRatio, newdata=data.frame(Year=bYears),
-    interval="confidence")    # gives warning with Year = yearInc
-pVal.bRatio = summary(lm.bRatio)$coeff["bYears",4]
+p.conf.bRatio = predict(lm.bRatio,
+                        newdata=data.frame(Year=bYears),
+                        interval="confidence")
+pVal.bRatio = summary(lm.bRatio)$coeff["bYears", 4]
 
-postscript("nSeaFungCompareRatio.eps",
-           height = figheight*0.9, width = figwidth,
-           horizontal=FALSE,  paper="special")
-plot( bYears, bRatio, xlab="Year", pch=19,
-     ylab= expression(paste("(", italic(b), " from MLE)/(", italic(b),
-         " from MLEbins)"), sep=""), ylim = yLim)
+plot( bYears,
+     bRatio,
+     xlab="Year",
+     pch=19,
+     ylab= expression(paste("(",
+                            italic(b),
+                            " from MLE)/(",
+                            italic(b),
+                            " from MLEbins)"),
+                      sep=""),
+     ylim = yLim)
 xTicksSmall = seq(xLim[1], xLim[-1], by=1)
-axis(1, at = xTicksSmall, labels = rep("", length(xTicksSmall)),
-                tck=-smallTck)
+axis(1,
+     at = xTicksSmall,
+     labels = rep("", length(xTicksSmall)),
+     tck=-smallTck)
 yTicksSmall = seq(yLim[1], yLim[-1], by=0.05)
-axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)),
-                tck=-smallTck)
+axis(2,
+     at = yTicksSmall,
+     labels = rep("", length(yTicksSmall)),
+     tck=-smallTck)
 
 if (pVal.bRatio > 0.05) regCol = "darkgrey" else regCol = "red"
 lm.line(xLim, lm.bRatio, col=regCol)
-matlines(bYears, p.conf.bRatio[ ,c("lwr", "upr")], col=regCol,
-                lty=2)
+matlines(bYears,
+         p.conf.bRatio[ ,c("lwr", "upr")],
+         col=regCol,
+         lty=2)
 confVals = confint(lm.bRatio, "bYears", level=0.95)
+```
+Above figure shows the annual ratio of the estimate of *b* using the original
+MLE method to the estimate of *b* using the MLEbins method. The linear
+regression slope is `r round(lm.bRatio$coeff[2],dig=5)` with 95\% confidence
+interval `r round(confVals[1],dig=5)` to `r round(confVals[2],dig=5)}`, *p*=`r
+round(pVal.bRatio, dig=5)`, *R*^2=`r round(summary(lm.bRatio)$r.squared, dig=3)`.
 
-dev.off()
-@
 
-
-\onefig{nSeaFungCompareRatio}{The annual ratio of the estimate of $b$ using the original MLE method to the estimate of $b$ using the MLEbins method. The linear regression slope is \Sexpr{round(lm.bRatio$coeff[2],dig=5)} (95\% confidence interval \Sexpr{round(confVals[1],dig=5)}-\Sexpr{round(confVals[2],dig=5)}), $p=$\Sexpr{round(pVal.bRatio, dig=5)}, $R^2=$\Sexpr{round(summary(lm.bRatio)$r.squared, dig=3)}.}
-
-
-<<bDiff>>=
+And this shows the difference of the estimates of *b* between the two methods.
+```{r bDiff, fig.width=7.5, fig.height=6.3}}
 bDiff = fullResults.MLEbins$b - fullResults.MLE$b
-yLim = range(pretty(bDiff))   # c(1, max(bRatio))
+yLim = range(pretty(bDiff))
 
 lm.bDiff = lm(bDiff ~ bYears)
-p.conf.bDiff = predict(lm.bDiff, newdata=data.frame(Year=bYears),
-    interval="confidence")    # gives warning with Year = yearInc
+p.conf.bDiff = predict(lm.bDiff,
+                       newdata=data.frame(Year=bYears),
+                       interval="confidence")
 pVal.bDiff = summary(lm.bDiff)$coeff["bYears",4]
 
-postscript("nSeaFungCompareDiff.eps",
-           height = figheight*0.9, width = figwidth,
-           horizontal=FALSE,  paper="special")
-plot( bYears, bDiff, xlab="Year", pch=19,
-     ylab= expression(paste("(", italic(b), " from MLEbins) - (", italic(b),
-         " from MLE)"), sep=""), ylim = yLim)
+plot(bYears,
+     bDiff,
+     xlab="Year",
+     pch=19,
+     ylab= expression(paste("(",
+                            italic(b),
+                            " from MLEbins) - (",
+                            italic(b),
+                            " from MLE)"),
+                      sep=""),
+     ylim = yLim)
 xTicksSmall = seq(xLim[1], xLim[-1], by=1)
-             axis(1, at = xTicksSmall, labels = rep("", length(xTicksSmall)),
-                tck=-smallTck)
+axis(1,
+     at = xTicksSmall,
+     labels = rep("", length(xTicksSmall)),
+     tck=-smallTck)
 yTicksSmall = seq(yLim[1], yLim[-1], by=0.01)
-axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)),
-                tck=-smallTck)
+axis(2,
+     at = yTicksSmall,
+     labels = rep("", length(yTicksSmall)),
+     tck=-smallTck)
 
 if (pVal.bDiff > 0.05) regCol = "darkgrey" else regCol = "red"
 lm.line(xLim, lm.bDiff, col=regCol)
-matlines(bYears, p.conf.bDiff[ ,c("lwr", "upr")], col=regCol,
-                lty=2)
+matlines(bYears,
+         p.conf.bDiff[ ,c("lwr", "upr")],
+         col = regCol,
+         lty=2)
 confVals = confint(lm.bDiff, "bYears", level=0.95)
-dev.off()
-@
+```
+The above figure shows the annual difference of the estimate of *b* using
+MLEbins to the estimate of *b* using the original MLE method. The linear
+regression slope is `r round(lm.bDiff$coeff[2],dig=5)` with 95\% confidence
+interval `r round(confVals[1],dig=5)` to `r round(confVals[2],dig=5)`, *p*=`r
+round(pVal.bDiff, dig=5)`, *R*^2=`r round(summary(lm.bDiff)$r.squared, dig=3)`.
 
-\onefig{nSeaFungCompareDiff}{The annual difference of the estimate of $b$ using MLEbins to the estimate of $b$ using the original MLE method. The linear regression slope is \Sexpr{round(lm.bDiff$coeff[2],dig=5)} (95\% confidence interval \Sexpr{round(confVals[1],dig=5)}-\Sexpr{round(confVals[2],dig=5)}), $p=$\Sexpr{round(pVal.bDiff, dig=5)}, $R^2=$\Sexpr{round(summary(lm.bDiff)$r.squared, dig=3)}.}
+Finally, the actual results for each method, with the MLEbins table being Table
+S.2:
+TODO: use kable, first one might work:
+```{r, eval=FALSE}
+knitr::kable(dplyr::select(fullResults.MLE, -Method),
+             caption="Full results for original MLE method.",
+             lab="tab:fullresults.MLE",
+             digits=c(0, 0, 3, 3, 3, 5))
 
-For the earlier MLEbins likelihood function, the 2011 estimate of $b$ was somewhat higher than the rest, looking a bit of an outlier. Interestingly, this doesn't happen here, so no need to investigate.
-
-Showing the actual values for each method:
-
-<<results=tex, echo=FALSE>>=
-fullResults.MLEtab = xtable(dplyr::select(fullResults.MLE, -Method),
-  caption="Full results for original MLE method.",
-  lab="tab:fullresults.MLE", digits=c(0, 0, 3, 3, 3, 5))
-
-print(fullResults.MLEtab, table.placement="tp", caption.placement="top",
-    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
+#print(fullResults.MLEtab, table.placement="tp", caption.placement="top",
+#    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
 
 fullResults.MLEbinsTab = xtable(
   # dplyr::select(fullResults.MLEbins, -n, -xmin, -xmax),
@@ -614,166 +627,9 @@ fullResults.MLEbinsTab = xtable(
 
 print(fullResults.MLEbinsTab, table.placement="tp", caption.placement="top",
     include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
-@
-
-\section{Save results}
-
-<<save>>=>>=
-save.image(file="nSeaMLEbins.RData")
-@
-
-\end{document}
-
-------------
-
-
-
-
-
-
-
-THIS WAS MEPS_IBTS_2.Rmd:
-<!-- From nSeaFungAnalysis.Snw, removing what isn't needed -->
-
-Each row of `data` is a unique combination of year, species code and length
-class. The `Number` column is the number of observed individuals of that species
-in that length class in that year, `bodyMass` is the body mass of such an
-individual, and `LWa` and `LWb` are the length-weight coefficients, used to
-calculate `bodyMass`. To verify that each row is a unique combination of year,
-species code and length class:
-```{r}
-data
-unique = dim(dplyr::summarise(dplyr::group_by(data,
-                                              Year,
-                                              SpecCode,
-                                              LngtClass),
-                              count=dplyr::n()))[1]
-unique
-
-if( unique != dim(data)[1]) stop("something wrong with 'data'")
 ```
 
-
-
-See if the number of length classes or species seems to change over time:
-```{r, dataSumm}
-dataSumm = dplyr::summarise(dplyr::group_by(data, Year),
-                            uniqLngtClass = length(unique(LngtClass)),
-                            uniqSpec = length(unique(SpecCode)))
-par(mfrow=c(2,1)) #7,1))
-
-plot(dataSumm$Year, dataSumm$uniqLngtClass, xlab="Year",
-     ylab="No. unique length classes", type="o",
-     ylim=c(0, max(dataSumm$uniqLngtClass)))
-plot(dataSumm$Year, dataSumm$uniqSpec, xlab="Year",
-     ylab="No. unique species", type="o", ylim=c(0, max(dataSumm$uniqSpec)))
-```
-
-Doesn't look to be any serious issue with this (no drastic changes in, for
-     example, species identification through time).
-
-The following code calculates, using `eightMethods.count()`, the slope or
-exponent for each of the original eight methods for each year in turn, and saves a `.png` plot
- for each year that shows the fit of each method. It is
-not run here because it takes a few hours (results are saved in TODO).
-```{r doEachYear, echo=TRUE, eval=FALSE}
-fullYears = unique(data$Year)
-fullResults = data.frame()
-for(ii in fullYears){
-  eightMethodsRes = eightMethods.count(data = data,
-                                       oneYear = ii,
-                                       figName = "nSeaFung")
-  fullResults = rbind(fullResults, eightMethodsRes)
-}
-```
-
-
-Now to plot Figure 1, time series of each estimate of `b` for each method, and
-fit regression.
-
-```{r, fig.height = 7.5}
-# , caption= "For each method in turn, the estimated exponents $b$ (circles) and 95\% confidence intervals (vertical bars) are shown for every year. The fit of a weighted linear regression with 95\% confidence interval is shown as red lines if the trend can be considered statistically significant from 0 ($p<0.05$), and in grey if the trend is not statistically significantly different from 0 ($p \geq 0.05$). The y-axes are the same for (d)-(h)."}
-par(omi = c(0.14, 0, 0.1, 0.15))      # outer margins in inches
-par(mfrow=c(4,2))
-
-oldmai = par("mai")
-par(mai=c(0.3, 0.5, 0.08, 0))  # Affects all four figures if don't change agaiin
-par(mgp=c(2.0, 0.5, 0))
-par(cex = 0.8)
-vertThick = 1                  # Thickness for vertical lines
-
-fullResFive = dplyr::dplyr::filter(fullResults,
-                            Method %in% c("LBmiz", "LBbiom", "LBNbiom",
-                                          "LCD", "MLE"))
-yLim = c(min(fullResFive$confMin), max(fullResFive$confMax))
-
-# Each of these plots a panel for one method. Define xLim if the default
-#  (integer-based calculation) is not suitable
-
-trendResults = data.frame()  # Will have one row of trend results for each method
-
-# Could make into a loop, but this works
-res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "Llin"), legName = "(a) Llin",
-            method = "Llin", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LT"), legName = "(b) LT",
-            yLab="", method = "LT", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LTplus1"),
-    legName = "(c) LTplus1", method = "LTplus1", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LBmiz"), legName = "(d) LBmiz",
-            yLim=yLim, yLab="", method = "LBmiz", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LBbiom"),
-    legName = "(e) LBbiom", yLim=yLim, method = "LBbiom", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LBNbiom"),
-    legName = "(f) LBNbiom", yLim=yLim, yLab="", method = "LBNbiom",
-    weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LCD"), legName = "(g) LCD",
-    yLim=yLim, method = "LCD", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "MLE"), legName = "(h) MLE",
-    yLim=yLim, yLab="", method = "MLE", legPos = "bottomleft",
-    weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-mtext("Year", side=1, outer=TRUE, line=-0.2, cex=0.8)
-```
-
-TODO:
-
-The results of the regression analyses (Table S.1) are:
-```{r results='asis'}
-knitr::kable(dplyr::dplyr::select(trendResults, -adjRsquared),
-             digits=c(0, 4, 4, 4, 2, 2))
-```
-
-
-
-TODO: put this earlier somewhere, likely be done when tidying up initial data
-extraction stuff
-
-```{r, eval=FALSE}
-# To get particular species names:
-# load("ibtsQ1cpuelength.RData")
-# dataOrig = tbl_df(q1)
-# dplyr::dplyr::filter(dataOrig, AphiaID == 105814)
-# Gives:
-# 105814 NS-IBTS 2012       1    3 Sciliorhinus caniculus      340
-# 105814 NS-IBTS 1999       1    3  Scyliorhinus canicula      580
-# 105814 NS-IBTS 2014       1    5  Scyliorhinus canicula      370
-# Great, two names. Go with Scyliorhinus canicula (Smallspotted Catshark
-#  [Sharks of the world, Compagno et al.])
-# 154675: Lumpenus lampretaeformis  (Snakeblenny)
-# 274304: Microchirus variegatus (Thickback SOle
+```{r save}
+# TODO - work out what to save, just copy from data-raw I expect.
+# save.image(file="nSeaMLEbins.RData")
 ```
