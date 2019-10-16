@@ -259,7 +259,7 @@ negLL.PLB.binned.species = function(b, dataBinForLike, dataBinForLikeSummary)
       }
     return(neglogLL)
   }
-##' TODO DOCUMENT ME IF NECESSARY
+##' TODO DOCUMENT ME IF NECESSARY - YES, is called from MLEbins vignette
 ##'
 ##' TODO Need to clarify how this differs from `negLL.PLB.binned.species()`
 ##'
@@ -302,7 +302,6 @@ negLL.PLB.bins.species = function(b, dataBinForLike, n, xmin, xmax)
   #    if(xmin <= 0 | xmin >= xmax | length(d) != J | length(w) != J+1 |
   #       d[1] == 0 | d[J] == 0 | min(d) < 0)
   #       stop("Parameters out of bounds in negLL.PLB")
-  stop("TODO Need to properly document negLL.PLB.bins.species() - I wasn't sure if it gets used at all.")
   if(b != -1)
       {  # From updated equation (A.63**[number will change]):
 

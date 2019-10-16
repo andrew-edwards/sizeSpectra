@@ -12,3 +12,5 @@
 ^vignettes/MEE_Reproduce_2.Rmd$
 ^vignettes/MEPS_Reproduce_1.Rmd$
 ^vignettes/MEPS_Reproduce_2.Rmd$
+^vignettes/MEPS_IBTS_1.Rmd$
+^vignettes/MEPS_IBTS_2.Rmd$

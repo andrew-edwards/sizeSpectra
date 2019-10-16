@@ -17,10 +17,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(sizeSpectra)
-```
-
 # Analyses of IBTS data using the MLEbins method
 
 This vignette analyses the IBTS data using the MLEbins method that explicitly accounts for
@@ -342,7 +338,6 @@ plot(1:(dim(dataBinSpecWmax)[1]),
      log="y",
      xlab="Species index",
      ylab="Wmax for each species")
-dev.off()
 
 # Plot of maximum overall body size (max of max(wmax)) each year
 maxWmaxByYear = dplyr::summarise(dplyr::group_by(dataBin, Year),
@@ -427,26 +422,17 @@ MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
 #MLEbins.nSeaFung.new = dplyr::select(MLEbins.nSeaFung.new, -diff)
 ```
 
+TODO - will prob break here
 Now for Figure 8, comparing the results with the original MLE method:
-```{r timeseries}
-postscript("nSeaMLEbins.eps",
-            height = 6, width = 7.5,
-            horizontal=FALSE,  paper="special")
+```{r timeseries, fig.width=7.5, fig.height=6}
 yLim=c(-2.2, -0.9)
 res = timeSerPlot(MLEbins.nSeaFung.new, legName = "(a) MLEbins",
     yLim=yLim, xLab="Year", method = "MLEbins", legPos = "bottomleft",
     weightReg=TRUE, xTicksSmallInc = 1, yTicksSmallInc = 0.05)
-dev.off()
 
-postscript("nSeaMLEbinsUnw.eps",
-            height = 6, width = 7.5,
-            horizontal=FALSE,  paper="special")
 resNonWeight = timeSerPlot(MLEbins.nSeaFung.new, legName = "(a) MLEbins",
     yLim=yLim, xLab="Year", method = "MLEbinsNonweight", legPos = "bottomleft",
     weightReg=FALSE, xTicksSmallInc = 1, yTicksSmallInc = 0.05)
-dev.off()
-@
-
 
 trendResultsMLEbinNew = tbl_df(rbind(res, resNonWeight))
 
@@ -466,7 +452,7 @@ trendResultsMLEbinTabNew = xtable(dplyr::select(trendResultsMLEbinNew, -adjRsqua
 
 print(trendResultsMLEbinTabNew, table.placement="tp", caption.placement="top",
     include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
-
+```
 
 ```{r fig.width=7.5, fig.height=6.3}
 fullResults.MLEbins = MLEbins.nSeaFung.new  # TODO should have just used MLEbins..
@@ -561,7 +547,7 @@ round(pVal.bRatio, dig=5)`, *R*^2=`r round(summary(lm.bRatio)$r.squared, dig=3)`
 
 
 And this shows the difference of the estimates of *b* between the two methods.
-```{r bDiff, fig.width=7.5, fig.height=6.3}}
+```{r bDiff, fig.width=7.5, fig.height=6.3}
 bDiff = fullResults.MLEbins$b - fullResults.MLE$b
 yLim = range(pretty(bDiff))
 
