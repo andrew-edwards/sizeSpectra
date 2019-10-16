@@ -39,8 +39,6 @@ data
 <!-- From nSeaMLEbins.Snw, removing what isn't needed. Took this from -->
 <!-- fitting-size-spectra repo, think I took earlier ones from manuscript2 -->
 
-TODO: Will need fullResults or trendResults  - search through.
-
 TODO: And see what to save in data-raw/IBTS-MLEbins.R, copy those lines to end of here
 
 
@@ -56,77 +54,79 @@ specCodeNames                  # species names and id's. But there are more
 length(unique(specCodeNames$speccode))   # checking speccode are unique
 ```
 
-\section{Determining which rows are 0.5~cm bins}
+## Determining which rows are 0.5 cm bins
 
-{\tt LngtClass} for all species is the minimum value of a 1~cm-width bin, except for herring (\emph{Clupea harengus}) and sprat (\emph{Sprattus sprattus)}) for which lengths are rounded down to 0.5~cm values. The {\tt SpecCode} values for these:
+`LngtClass` for all species is the minimum value of a 1-cm-width bin, except for
+herring (*Clupea harengus*) and sprat (*Sprattus sprattus*) for which lengths
+are rounded down to 0.5 cm values (bins are 0.5-cm wide). The `SpecCode` values for these:
 
-<<speciesNames, echo=TRUE>>=
-# For the 0.5-cm bins; note speccode from specCodeNames, not SpecCode
-herringCode = filter(specCodeNames, species == "Clupea harengus")$speccode
+```{r speciesNames}
+herringCode = dplyr::filter(specCodeNames, species == "Clupea harengus")$speccode
 herringCode
-spratCode = filter(specCodeNames, species == "Sprattus sprattus")$speccode
+spratCode = dplyr::filter(specCodeNames, species == "Sprattus sprattus")$speccode
 spratCode
-@
+``
 
-\subsection{Verify sprat and herring}
+TODO: this may have been done in earlier vignette - delete one or the other,
+this seems concise and is appropriate here.
 
-First verify that (i) these species codes do have 0.5~cm values for {\tt LngtClass}, and (ii) that no other species codes have 0.5~cm values for {\tt LngtClass}.
+Verify that: (i) these species codes do have 0.5 cm values for `LngtClass`, and
+(ii) that no other species codes have 0.5 cm values for `LngtClass`.
 
-<<herring, echo=TRUE>>=
-herring = filter(data, SpecCode == herringCode)
+```{r verify}
+herring = dplyr::filter(data, SpecCode == herringCode)
 unique(herring$LngtClass)
-@
-
-So, yes, herring do have 0.5~cm length classes.
-
-<<sprat, echo=TRUE>>=
-sprat = filter(data, SpecCode == spratCode)
+sprat = dplyr::filter(data, SpecCode == spratCode)
 unique(sprat$LngtClass)
-@
 
-And so do sprat.
+So, yes, both have 0.5 cm length classes.
 
-<<others>>=
+```{r verify2}
 specCode05 = c(herringCode, spratCode)      # species codes with 0.5cm length bins
-others = filter(data, !SpecCode %in% specCode05)
+others = dplyr::filter(data, !SpecCode %in% specCode05)
 sort(unique(others$LngtClass))
 @
 
-Can visually see that there are no 0.5 values.
+Can visually see that there are no 0.5 values, confirming that just the two
+species have the 0.5-cm length bins.
 
-This confirms that just the two species have the 0.5~cm length bins.
+## Append the max of the bin breaks for each row
 
-\subsection{Append the max of the bin breaks for each row}
+So `LngtClass` is the minimum of each length bin. Need to work out the maximum
+of each length bin `LengthMax`, and then use the species-specific length-weight
+relationships to give the min (`wmin`) and max (`wmax`) of each body-mass bin.
+So create `dataBin` table dataframe that has `LengthMax`, `wmin` and `wmax` as
+extra columns for each row:
 
-So {\tt LngtClass} is the minimum of each length bin. Need to work out the maximum of each length bin {\tt LengthMax}, and then use the species specific length-weight relationships to give the min and max of each body-mass bin.
+```{r dataBin}
+dataBin = dplyr::mutate(data,
+                        LngtMax = LngtClass + 1)
+aa = which(dataBin$SpecCode %in% specCode05)           # row numbers for herring, sprat
+dataBin[aa, "LngtMax"] = dataBin[aa, "LngtMax"] - 0.5  # subtract 0.5 cm to
+                                                       # give 0.5-cm wide bins
+unique(dataBin$LngtMax - dataBin$LngtClass)            # correctly just has 0.5 and 1
+unique( dplyr::filter(dataBin, LngtMax - LngtClass == 0.5)$SpecCode)  # just herring,sprat
 
-It seems straightfoward to just add {\tt LengthMax, wmin} and {\tt wmax} to the dataframe.
-
-<<lengthmax>>=
-dataBin = mutate(data, LngtMax = LngtClass + 1) # for all species, dataBin is
-                                                #  adding the bins to data
-aa = which(dataBin$SpecCode %in% specCode05)    # row numbers for herring, sprat
-dataBin[aa, "LngtMax"] = dataBin[aa, "LngtMax"] - 0.5    # subtract 0.5 cm
-unique(dataBin$LngtMax - dataBin$LngtClass)      # correctly just has 0.5 and 1
-unique( filter(dataBin, LngtMax - LngtClass == 0.5)$SpecCode)  # just herring,sprat
-
-dataBin = mutate(dataBin, wmax = LWa * LngtMax^LWb)   # calculate max body mass
-                                                # for each bin (min is bodyMass)
-dataBin = rename(dataBin, LngtMin = LngtClass)
-dataBin = rename(dataBin, wmin = bodyMass)
+dataBin = dplyr::mutate(dataBin, wmax = LWa * LngtMax^LWb)  # calculate max body mass
+                                                            # for each bin (min
+                                                            # is currently bodyMass)
+dataBin = dplyr::rename(dataBin, LngtMin = LngtClass)       # For consistency
+dataBin = dplyr::rename(dataBin, wmin = bodyMass)
 
 dataBin = dataBin[ , c("Year", "SpecCode", "LngtMin", "LngtMax",
-    "LWa", "LWb", "wmin", "wmax", "Number")]     # Just reorder columns
+                       "LWa", "LWb", "wmin", "wmax", "Number")]     # Reorder columns
 
-range(mutate(dataBin, wminCheck = LWa * LngtMin^LWb)$wminCheck - dataBin$wmin)
+range(dplyr::mutate(dataBin, wminCheck = LWa * LngtMin^LWb)$wminCheck - dataBin$wmin)
                                               # Verifying that wmin is correct
+                                              # (was calculated independently)
 length(unique(dataBin$SpecCode))
 @
 
-So there are \Sexpr{length(unique(dataBin$SpecCode))} uniques species. Now
- going to plot the resulting body mass bins for each species. Do vertically (like my existing bin figures), should be okay with 45 on a figure (45 species along x axis, no need to number them).
+## Plot the resulting body mass bins}
 
-\section{Plot the resulting body mass bins}
+So there are `r length(unique(dataBin$SpecCode))` uniques species. Now going to
+plot the resulting body mass bins for each species, with 45 on each figure. This
+gives Figures 6, S.1, S.2 and S.3.
 
 <<multipleBins, echo=FALSE, results=hide>>=
 
@@ -147,7 +147,7 @@ dataBinSpecWmax = arrange(dataBinSpecWmax, maxWmax)   # Gives the SpecCode in
 dataBinSpec = ungroup(dataBinSpec)
 # http://stackoverflow.com/questions/26548495/reorder-rows-using-custom-order
 # Create levels in the desired order
-dataBinSpec = mutate(dataBinSpec, SpecCode = factor(SpecCode, levels =
+dataBinSpec = dplyr::mutate(dataBinSpec, SpecCode = factor(SpecCode, levels =
                                       dataBinSpecWmax$SpecCode))
 dataBinSpec = arrange(dataBinSpec, SpecCode)
 
@@ -165,17 +165,17 @@ maxNumBins = max(summarise(group_by(dataBinSpec,SpecCode),
     numBins = length(unique(wmin)))$numBins)    # max number of bins for any
                                                 #  species
 
-dataBinSpec = mutate(dataBinSpec, wWidth = wmax - wmin,
+dataBinSpec = dplyr::mutate(dataBinSpec, wWidth = wmax - wmin,
     wWidthRatio = wWidth/wmin)
           # wWidth is width of body-mass bin, wWidthRatio is ratio to wmin
 rowMaxWidth = which.max(dataBinSpec$wWidth)
 specCodeMaxWidth = dataBinSpec[rowMaxWidth, ]$SpecCode
-specNameMaxWidth = filter(specCodeNames, speccode ==  specCodeMaxWidth)$species
+specNameMaxWidth = dplyr::filter(specCodeNames, speccode ==  specCodeMaxWidth)$species
 
 rowMaxRatio = which.max(dataBinSpec$wWidthRatio)
 specCodeMaxRatio = dataBinSpec[rowMaxRatio, ]$SpecCode
-specNameMaxRatio = filter(specCodeNames, speccode ==  specCodeMaxRatio)$species
-dataBinMaxRatio = filter(dataBin, SpecCode == specCodeMaxRatio,
+specNameMaxRatio = dplyr::filter(specCodeNames, speccode ==  specCodeMaxRatio)$species
+dataBinMaxRatio = dplyr::filter(dataBin, SpecCode == specCodeMaxRatio,
     wmin == dataBinSpec[rowMaxRatio, ]$"wmin")
                                    # original data row(s) for maxRatio. "wmin"
                                    #  needed since wmin appears in dataBin also
@@ -215,7 +215,7 @@ for(fig.num in 1:4)      # doing 3 figures
     specForFig = uniqBinSpecCode[ specVecStart[fig.num]:specVecEnd[fig.num]]
     xVals = seq(0.2, xLimMax[fig.num]-0.2, length=length(specForFig))
                                         # xvals for vertical mass bins
-    yLim = 1.02*max(filter(dataBinSpec, SpecCode %in% specForFig)$wmax)
+    yLim = 1.02*max(dplyr::filter(dataBinSpec, SpecCode %in% specForFig)$wmax)
     postscript(paste("nSeaFungBins", fig.num, ".eps", sep=""),
             height = 6, width = 7.5,
             horizontal=FALSE,  paper="special")
@@ -248,9 +248,9 @@ for(fig.num in 1:4)      # doing 3 figures
         if(as.numeric(specForFig[ii]) %in% specCodeHighlight)
             { colSpec = colHighlight } else { colSpec = col}
 
-        segments(x0 = xVal, y0 = filter(dataBinSpec,
+        segments(x0 = xVal, y0 = dplyr::filter(dataBinSpec,
                                 SpecCode == specForFig[ii])$wmin,
-         y1 = filter(dataBinSpec, SpecCode == specForFig[ii])$wmax,
+         y1 = dplyr::filter(dataBinSpec, SpecCode == specForFig[ii])$wmax,
          col=colSpec, lwd=thick)    # recycles col
         }
     par(xpd=TRUE)                   # allow plotting outside main region
@@ -284,14 +284,14 @@ coefficients. Figures~\ref{fig:nSeaFungBins1}-\ref{fig:nSeaFungBins4} show that 
 if(specCodeMaxRatio != 127251) stop("Need common name; not Blackbelly Rosefish")
 if(specCodeMaxWidth != 126436) stop("Need common name; not Atlantic Cod")
 
-specNameHighlight = filter(specCodeNames, speccode %in% specCodeHighlight)
+specNameHighlight = dplyr::filter(specCodeNames, speccode %in% specCodeHighlight)
                    # 127203 is Shorthorn Sculpin
 specNameHighlight
 @
 
 \emph{Triglops murrayi} is Moustache Sculpin (code 127205). \emph{Lumpenus lampretaeformis} is Snakeblenny (code 154675). Data for these are
 <<highlighted, echo=FALSE>>=
-dataHighlight = filter(data, SpecCode %in% specCodeHighlight)
+dataHighlight = dplyr::filter(data, SpecCode %in% specCodeHighlight)
 dataHighlightSumm = summarise(group_by(dataHighlight, SpecCode),
     minLngt = min(LngtClass),
     maxLngt = max(LngtClass),
@@ -347,7 +347,7 @@ xTicksSmall = maxWmaxByYear$Year
 axis(1, at = xTicksSmall, labels = rep("", length(xTicksSmall)), tck=-smallTck)
 yTicksSmall = seq(yLimWmaxByYear[1], yLimWmaxByYear[2], by=2000)
 axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)), tck=-smallTck)
-points(2011, filter(maxWmaxByYear, Year == 2011)$maxWmax, col="red", pch=19)
+points(2011, dplyr::filter(maxWmaxByYear, Year == 2011)$maxWmax, col="red", pch=19)
 dev.off()
 @
 
@@ -367,8 +367,8 @@ fullYears = sort(unique(dataBin$Year))
 
 for(iii in 1:length(fullYears))
     {
-    dataBinForLike = filter(dataBin, Year == fullYears[iii])
-    dataBinForLike = select(dataBinForLike, SpecCode, wmin, wmax, Number)
+    dataBinForLike = dplyr::filter(dataBin, Year == fullYears[iii])
+    dataBinForLike = dplyr::select(dataBinForLike, SpecCode, wmin, wmax, Number)
     n = sum(dataBinForLike$Number)
     xmin = min(dataBinForLike$wmin)
     xmax = max(dataBinForLike$wmax)
@@ -416,14 +416,14 @@ for(iii in 1:length(fullYears))
 #      though that is fiddly to derive [d is derivative].
 
 MLEbins.nSeaFung.new = tbl_df(MLEbins.nSeaFung.new)
-MLEbins.nSeaFung.new = mutate(MLEbins.nSeaFung.new, stdErr =
+MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new, stdErr =
    (abs(confMin-b) + abs(confMax-b))/(2*1.96) )
 
-MLEbins.nSeaFung.new = mutate(MLEbins.nSeaFung.new,
+MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
                                diff = confMax + confMin - 2*b)
 range(MLEbins.nSeaFung.new$diff)    # thus conf int is symmetric
  # [1] -4.440892e-16  4.440892e-16
-MLEbins.nSeaFung.new = select(MLEbins.nSeaFung.new, -diff)
+MLEbins.nSeaFung.new = dplyr::select(MLEbins.nSeaFung.new, -diff)
 @
 
 
@@ -455,7 +455,7 @@ dev.off()
 <<results=tex, echo=FALSE>>=
 trendResultsMLEbinNew = tbl_df(rbind(res, resNonWeight))
 
-trendResultsMLEbinTabNew = xtable(select(trendResultsMLEbinNew, -adjRsquared),
+trendResultsMLEbinTabNew = xtable(dplyr::select(trendResultsMLEbinNew, -adjRsquared),
   caption="New likelihood function. Summary of regression analysis
   of trend through time of the estimated exponent $b$; top row is MLEbins
   with weighted linear regression, bottom row is with unweighted linear
@@ -488,7 +488,7 @@ the MLEbins method used above.
 <<>>=
 # Results from using MLEbinsNew
 fullResults.MLEbins = MLEbins.nSeaFung.new  # should have just used MLEbins..
-trend.MLEbins.new = filter(trendResultsMLEbinNew, Method == "MLEbins")
+trend.MLEbins.new = dplyr::filter(trendResultsMLEbinNew, Method == "MLEbins")
 
 figwidth = 7.5
 
@@ -598,7 +598,7 @@ For the earlier MLEbins likelihood function, the 2011 estimate of $b$ was somewh
 Showing the actual values for each method:
 
 <<results=tex, echo=FALSE>>=
-fullResults.MLEtab = xtable(select(fullResults.MLE, -Method),
+fullResults.MLEtab = xtable(dplyr::select(fullResults.MLE, -Method),
   caption="Full results for original MLE method.",
   lab="tab:fullresults.MLE", digits=c(0, 0, 3, 3, 3, 5))
 
@@ -606,7 +606,7 @@ print(fullResults.MLEtab, table.placement="tp", caption.placement="top",
     include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
 
 fullResults.MLEbinsTab = xtable(
-  # select(fullResults.MLEbins, -n, -xmin, -xmax),
+  # dplyr::select(fullResults.MLEbins, -n, -xmin, -xmax),
   fullResults.MLEbins,
   caption="Full results for MLEbins.",
   lab="tab:fullresults.MLEbins", digits=c(0, 0, 2, 2, 1, 3, 3, 3, 5))
@@ -701,7 +701,7 @@ par(mgp=c(2.0, 0.5, 0))
 par(cex = 0.8)
 vertThick = 1                  # Thickness for vertical lines
 
-fullResFive = dplyr::filter(fullResults,
+fullResFive = dplyr::dplyr::filter(fullResults,
                             Method %in% c("LBmiz", "LBbiom", "LBNbiom",
                                           "LCD", "MLE"))
 yLim = c(min(fullResFive$confMin), max(fullResFive$confMax))
@@ -712,36 +712,36 @@ yLim = c(min(fullResFive$confMin), max(fullResFive$confMax))
 trendResults = data.frame()  # Will have one row of trend results for each method
 
 # Could make into a loop, but this works
-res = timeSerPlot(dplyr::filter(fullResults, Method == "Llin"), legName = "(a) Llin",
+res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "Llin"), legName = "(a) Llin",
             method = "Llin", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LT"), legName = "(b) LT",
+res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LT"), legName = "(b) LT",
             yLab="", method = "LT", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LTplus1"),
+res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LTplus1"),
     legName = "(c) LTplus1", method = "LTplus1", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LBmiz"), legName = "(d) LBmiz",
+res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LBmiz"), legName = "(d) LBmiz",
             yLim=yLim, yLab="", method = "LBmiz", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LBbiom"),
+res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LBbiom"),
     legName = "(e) LBbiom", yLim=yLim, method = "LBbiom", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LBNbiom"),
+res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LBNbiom"),
     legName = "(f) LBNbiom", yLim=yLim, yLab="", method = "LBNbiom",
     weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LCD"), legName = "(g) LCD",
+res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "LCD"), legName = "(g) LCD",
     yLim=yLim, method = "LCD", weightReg=TRUE)
 trendResults = rbind(trendResults, res)
 
-res = timeSerPlot(dplyr::filter(fullResults, Method == "MLE"), legName = "(h) MLE",
+res = timeSerPlot(dplyr::dplyr::filter(fullResults, Method == "MLE"), legName = "(h) MLE",
     yLim=yLim, yLab="", method = "MLE", legPos = "bottomleft",
     weightReg=TRUE)
 trendResults = rbind(trendResults, res)
@@ -753,7 +753,7 @@ TODO:
 
 The results of the regression analyses (Table S.1) are:
 ```{r results='asis'}
-knitr::kable(dplyr::select(trendResults, -adjRsquared),
+knitr::kable(dplyr::dplyr::select(trendResults, -adjRsquared),
              digits=c(0, 4, 4, 4, 2, 2))
 ```
 
@@ -766,7 +766,7 @@ extraction stuff
 # To get particular species names:
 # load("ibtsQ1cpuelength.RData")
 # dataOrig = tbl_df(q1)
-# dplyr::filter(dataOrig, AphiaID == 105814)
+# dplyr::dplyr::filter(dataOrig, AphiaID == 105814)
 # Gives:
 # 105814 NS-IBTS 2012       1    3 Sciliorhinus caniculus      340
 # 105814 NS-IBTS 1999       1    3  Scyliorhinus canicula      580
