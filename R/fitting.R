@@ -1560,11 +1560,13 @@ eightMethods.count = function(data = data, oneYear = 1980,
 
   #  Assume for now that confidence interval is PLB.bMLE +/- 1.96 * stdErr
   #   just to quickly calc stdErr. So stdErr = -(confMin - PLB.bMLE)/1.96.
-  #      PLB.bMLE - PLB.MLE.bConf - is symmetric anyway, implying quadratic
-  #      likelihood profile, implying normal approximation is okay. So use
-  #      it now to go backwards. To properly calculate should do the
-  #      Fisher information. stdErr = 1 / (sqrt( d^2 logLik /db^2 at MLE))
-  #      though that is fiddly to derive, where d is derivative.
+  #   Also equals (confMax - PLB.bMLE)/1.96, so take the mean of absolute of
+  #   values of those.
+  #   PLB.bMLE - PLB.MLE.bConf - is symmetric anyway, implying quadratic
+  #   likelihood profile, implying normal approximation is okay. So use
+  #   it now to go backwards. To properly calculate should do the
+  #   Fisher information. stdErr = 1 / (sqrt( d^2 logLik /db^2 at MLE))
+  #   though that is fiddly to derive, where d is derivative.
   PLB.MLE.stdErr = mean(abs((PLB.MLE.bConf - PLB.bMLE)/1.96))
 
   # MLE.rep.xmax[iii] = xmax   - not storing xmax for now

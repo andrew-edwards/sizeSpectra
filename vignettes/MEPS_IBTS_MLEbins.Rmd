@@ -151,7 +151,8 @@ dataBinSpec = dplyr::arrange(dataBinSpec, SpecCode)
 uniqBinSpecCode = levels(dataBinSpec$SpecCode) # species codes in
                                                #  the desired order
 
-# species in the data (in order of figures) but with no name:
+# species in the data (in order of figures) but with no name (just to avoid
+#  highlighting in figures):
 specIDnoName = setdiff(uniqBinSpecCode, specCodeNames$speccode)
 # species with names but not in data (not so important):
 # specNotInData = setdiff(specCodeNames$speccode, uniqBinSpecCode)
@@ -184,7 +185,7 @@ Now create the figures:
 col = c("blue", "lightblue")     # Colours for bins
 colHighlight = c("red", "pink")  # Colours for herring and sprat
 
-thick=7                           # thickness of bins
+thick = 7                           # thickness of bins
 
 # Doing 3 figures, each with 135/3 = 45 species. Then a fourth that is
 #  just some of the third one.
@@ -287,27 +288,23 @@ for(fig.num in 1:4)      # doing 3 figures
 }
 ```
 
-<<specNames, echo=TRUE>>=
-as.numeric(specIDnoName) # species ID but no name right now, so avoid
-                         #  highlighting in figures for now
-@
 
-Figures~\ref{fig:nSeaFungBins1}-\ref{fig:nSeaFungBins4} show how the length bins
-for each species get converted to body mass bins. The conversions are different
-for each species because of the different values of the length-weight
-coefficients. Figures~\ref{fig:nSeaFungBins1}-\ref{fig:nSeaFungBins4} show that even with 1-cm length bins (and 0.5-cm for herring and sprat) the resulting body-mass bins can span a large range.
+Those four figures show how the length bins for each species get converted to
+body mass bins. The conversions are different for each species because of the
+different values of the length-weight coefficients. Even with 1-cm length bins
+(and 0.5-cm for herring and sprat) the resulting body-mass bins can span a large
+range. See paper for further details.
 
-<<>>=
+```{r}
 if(specCodeMaxRatio != 127251) stop("Need common name; not Blackbelly Rosefish")
 if(specCodeMaxWidth != 126436) stop("Need common name; not Atlantic Cod")
 
 specNameHighlight = dplyr::filter(specCodeNames, speccode %in% specCodeHighlight)
-                   # 127203 is Shorthorn Sculpin
 specNameHighlight
-@
+```
 
-\emph{Triglops murrayi} is Moustache Sculpin (code 127205). \emph{Lumpenus lampretaeformis} is Snakeblenny (code 154675). Data for these are
-<<highlighted, echo=FALSE>>=
+TODO: *Triglops murrayi* is Moustache Sculpin (code 127205). *Lumpenus lampretaeformis* is Snakeblenny (code 154675). Data for these are
+```{r highlight}
 dataHighlight = dplyr::filter(data, SpecCode %in% specCodeHighlight)
 dataHighlightSumm = dplyr::summarise(dplyr::group_by(dataHighlight, SpecCode),
     minLngt = min(LngtClass),
@@ -315,133 +312,120 @@ dataHighlightSumm = dplyr::summarise(dplyr::group_by(dataHighlight, SpecCode),
     LWa = unique(LWa),
     LWb = unique(LWb))
 dataHighlightSumm
-@
+```
+
+
+<!-- TODO: The body-mass bin with the biggest ratio of width to lower bound of the bin occurs for the Blackbelly Rosefish (\emph{\Sexpr{specNameMaxRatio}}) which is species code \Sexpr{specCodeMaxRatio}, indicated by $\times$ in Figure~\ref{fig:nSeaFungBins4} [not any more]. The bin goes from \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wmin, dig=2)} to \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wmax, dig=2)}~g, such that the ratio of bin-width to the lower bound is \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wWidthRatio, dig=2)} (though this is hard to see in Figure~\ref{fig:nSeaFungBins4}). Consequently, in the earlier  analyses, all individuals of this species with a body-length of \Sexpr{dataBinMaxRatio$LngtMin}-\Sexpr{dataBinMaxRatio$LngtMax}~cm would get assigned a body length of \Sexpr{dataBinMaxRatio$LngtMin}~cm, and consequently a body mass of \Sexpr{round(dataBinMaxRatio$wmin, dig=2)}. However, the true possible range of body masses is \Sexpr{round(dataBinMaxRatio$wmin, dig=2)}-\Sexpr{round(dataBinMaxRatio$wmax, dig=2)}~g. Thus, individuals at the upper end of this range are being assigned body masses of about half of their actual body mass.-->
+
+The widest resulting body-mass bin occurs for Atlantic Cod (`r
+specNameMaxWidth`), which is species code `r specCodeMaxWidth`, the rightmost
+species in the final figure above figure. The widest bin goes from `r
+round(dataBinSpec[rowMaxWidth, ]$wmin, dig=0)` to `r
+round(dataBinSpec[rowMaxWidth, ]$wmax, dig=0)` g, with a width of `r
+round(dataBinSpec[rowMaxWidth, ]$wWidth, dig=0)` g.
 
 
 
-The body-mass bin with the biggest ratio of width to lower bound of the bin occurs for the Blackbelly Rosefish (\emph{\Sexpr{specNameMaxRatio}}) which is species code \Sexpr{specCodeMaxRatio}, indicated by $\times$ in Figure~\ref{fig:nSeaFungBins4} [not any more]. The bin goes from \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wmin, dig=2)} to \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wmax, dig=2)}~g, such that the ratio of bin-width to the lower bound is \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wWidthRatio, dig=2)} (though this is hard to see in Figure~\ref{fig:nSeaFungBins4}). Consequently, in the earlier  analyses, all individuals of this species with a body-length of \Sexpr{dataBinMaxRatio$LngtMin}-\Sexpr{dataBinMaxRatio$LngtMax}~cm would get assigned a body length of \Sexpr{dataBinMaxRatio$LngtMin}~cm, and consequently a body mass of \Sexpr{round(dataBinMaxRatio$wmin, dig=2)}. However, the true possible range of body masses is \Sexpr{round(dataBinMaxRatio$wmin, dig=2)}-\Sexpr{round(dataBinMaxRatio$wmax, dig=2)}~g. Thus, individuals at the upper end of this range are being assigned body masses of about half of their actual body mass.
-
-A similar effect occurs for \emph{all} body masses in the data set. This systematic rounding down of body masses is likely to have some impact on any analyses (including the MLE method that we used earlier).
-
-The widest resulting body-mass bin occurs for Atlantic Cod (\emph{\Sexpr{specNameMaxWidth}}), which is species code \Sexpr{specCodeMaxWidth}, the rightmost species in Figure~\ref{fig:nSeaFungBins3}. The widest bin goes from \Sexpr{round(dataBinSpec[rowMaxWidth, ]$wmin, dig=0)} to \Sexpr{round(dataBinSpec[rowMaxWidth, ]$wmax, dig=0)}~g, with a width of \Sexpr{round(dataBinSpec[rowMaxWidth, ]$wWidth, dig=0)}~g.
-
-
-
-
-\onefig{nSeaFungBins1}{Vertical blue bars show the body-mass bins that result from converting the 1-cm length bins into body-mass bins using the species-specific length-weight parameters. These are the first 45 species, ordered by the maximum value of the highest bin. Herring and sprat use 0.5-cm length bins, and their resulting body-mass bins are given by crosses (sprat is code \Sexpr{spratCode}). The vertical gaps between vertical bars indicate that there were no body masses of that species in that range (i.e. there were no individuals in the length bin that would result in the body-mass bin(s) that would fill the gap). The two red columns indicate two species that are explicitly discussed in the text.}
+<!-- \onefig{nSeaFungBins1}{Vertical blue bars show the body-mass bins that result from converting the 1-cm length bins into body-mass bins using the species-specific length-weight parameters. These are the first 45 species, ordered by the maximum value of the highest bin. Herring and sprat use 0.5-cm length bins, and their resulting body-mass bins are given by crosses (sprat is code \Sexpr{spratCode}). The vertical gaps between vertical bars indicate that there were no body masses of that species in that range (i.e. there were no individuals in the length bin that would result in the body-mass bin(s) that would fill the gap). The two red columns indicate two species that are explicitly discussed in the text.}
 
 \onefig{nSeaFungBins2}{As for Figure~\ref{fig:nSeaFungBins1} but for the next 45 species -- note the different vertical axis scale from Figure~\ref{fig:nSeaFungBins1}.}
 
 \onefig{nSeaFungBins3}{As for Figure~\ref{fig:nSeaFungBins1} but for the final 45 species -- note the different vertical axis scale from Figure~\ref{fig:nSeaFungBins1}. In some sense the tail containing rare large organisms, characteristic of a power-law distribution, shows up if you rotate the figure clockwise 90 degrees -- it somewhat resembles a power-law distribution.}
 
 \onefig{nSeaFungBins4}{As for Figure~\ref{fig:nSeaFungBins3} but just for species with maximum body mass up to 10~kg to more clearly show their body-mass bins.}
+-->
 
-<<plotWmax, echo=FALSE, results=hide>>=
-postscript("nSeaFungwmax.eps",
-            height = 6, width = 7.5,
-            horizontal=FALSE,  paper="special")
-
-plot(1:(dim(dataBinSpecWmax)[1]), dataBinSpecWmax$maxWmax, log="y",
-     xlab="Species index", ylab="Wmax for each species")
+```{r echo=FALSE, eval=FALSE}
+# Plot of wmax for each species. I think it's a metric used somewhere.
+plot(1:(dim(dataBinSpecWmax)[1]),
+     dataBinSpecWmax$maxWmax,
+     log="y",
+     xlab="Species index",
+     ylab="Wmax for each species")
 dev.off()
-@
 
-\onefig{nSeaFungwmax}{Plot of maximum body size (max of max body-size bin) for each species.}
-
-Figure~\ref{fig:nSeaFungwmax} shows the values of maximum body size -- could
-analyse further if interest (I think it's a metric used by someone somewhere).
-
-<<wmaxByYear, echo=FALSE>>=
-maxWmaxByYear = dplyr::summarise(dplyr::group_by(dataBin, Year), maxWmax = max(wmax))
+# Plot of maximum overall body size (max of max(wmax)) each year
+maxWmaxByYear = dplyr::summarise(dplyr::group_by(dataBin, Year),
+                                 maxWmax = max(wmax))
 smallTck=0.01
 yLimWmaxByYear = range(pretty(c(0, max(maxWmaxByYear$maxWmax))))
-postscript("maxWmaxByYear.eps",
-            height = 6, width = 7.5,
-            horizontal=FALSE,  paper="special")
-plot(maxWmaxByYear$Year, maxWmaxByYear$maxWmax,
-     xlab="Year", ylab="Wmax for each year", ylim=yLimWmaxByYear)
+plot(maxWmaxByYear$Year,
+     maxWmaxByYear$maxWmax,
+     xlab="Year",
+     ylab="Wmax for each year",
+     ylim=yLimWmaxByYear)
 xTicksSmall = maxWmaxByYear$Year
 axis(1, at = xTicksSmall, labels = rep("", length(xTicksSmall)), tck=-smallTck)
 yTicksSmall = seq(yLimWmaxByYear[1], yLimWmaxByYear[2], by=2000)
 axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)), tck=-smallTck)
-points(2011, dplyr::filter(maxWmaxByYear, Year == 2011)$maxWmax, col="red", pch=19)
-dev.off()
-@
+# points(2011, dplyr::filter(maxWmaxByYear, Year == 2011)$maxWmax, col="red", pch=19)
+```
 
-\onefig{maxWmaxByYear}{Plot of the maximum body size (max of max body-size bin)
-  observed in each year. Doing this because in earlier analyses it looked like 2011 was an outlier when comparing MLE and MLEbins methods for estimating $b$. But actually 2011 (in red) is typical.}
+## Likelihood calculations using new MLEbins method}
 
+Now use the MLEbins method to fit each year of data in turn.
 
-% From nSeaFungMLEbinsNew.Snw:
-
-\section{Likelihood calculations using new MLEbins method}
-
-% Do a loop for each year, similar format to doEachYear chunk in
-%  nSeaFungAnalysis.Snw:
-<<doEachYear>>=
+```{r MLEbins}
+# Do a loop for each year, saving the results in MLEbins.nSeaFung.new
 bstart = -1.9                   # just start close to -2,
 fullYears = sort(unique(dataBin$Year))
 
 for(iii in 1:length(fullYears))
-    {
-    dataBinForLike = dplyr::filter(dataBin, Year == fullYears[iii])
-    dataBinForLike = dplyr::select(dataBinForLike, SpecCode, wmin, wmax, Number)
+  {
+    dataBinForLike = dplyr::filter(dataBin,
+                                   Year == fullYears[iii])
+    dataBinForLike = dplyr::select(dataBinForLike,
+                                   SpecCode,
+                                   wmin,
+                                   wmax,
+                                   Number)
     n = sum(dataBinForLike$Number)
     xmin = min(dataBinForLike$wmin)
     xmax = max(dataBinForLike$wmax)
 
-    # dataBinForLikeSummary
-    MLEbins.nSeaFung.oneyear.new  =
-        calcLike(negLL.fn = negLL.PLB.bins.species,
-                 p = bstart,
-                 dataBinForLike = dataBinForLike,
-                 n = n,
-                 xmin = xmin,
-                 xmax = xmax)
+    MLEbins.nSeaFung.oneyear.new  = calcLike(negLL.fn = negLL.PLB.bins.species,
+                                             p = bstart,
+                                             dataBinForLike = dataBinForLike,
+                                             n = n,
+                                             xmin = xmin,
+                                             xmax = xmax)
 
     if(iii == 1)
-        {
-        MLEbins.nSeaFung.new =
-          data.frame(Year = fullYears[iii],
-                     xmin=xmin, xmax=xmax, n=n,
-                     b=MLEbins.nSeaFung.oneyear.new$MLE,
-                     confMin=MLEbins.nSeaFung.oneyear.new$conf[1],
-                     confMax=MLEbins.nSeaFung.oneyear.new$conf[2])
-        } else
-        {
-        MLEbins.nSeaFung.new =
-          rbind(MLEbins.nSeaFung.new,
-            c(fullYears[iii],
-              xmin, xmax, n,
-              MLEbins.nSeaFung.oneyear.new$MLE,
-              MLEbins.nSeaFung.oneyear.new$conf[1],
-              MLEbins.nSeaFung.oneyear.new$conf[2]))
-        }
-    # print(paste("Have done ", oneYear))  - can't print in console - try message
-    }
+    {
+      MLEbins.nSeaFung.new = data.frame(Year = fullYears[iii],
+                                        xmin=xmin,
+                                        xmax=xmax,
+                                        n=n,
+                                        b=MLEbins.nSeaFung.oneyear.new$MLE,
+                                        confMin=MLEbins.nSeaFung.oneyear.new$conf[1],
+                                        confMax=MLEbins.nSeaFung.oneyear.new$conf[2])
+    } else {
+      MLEbins.nSeaFung.new = rbind(MLEbins.nSeaFung.new,
+                                   c(fullYears[iii],
+                                     xmin,
+                                     xmax,
+                                     n,
+                                     MLEbins.nSeaFung.oneyear.new$MLE,
+                                     MLEbins.nSeaFung.oneyear.new$conf[1],
+                                     MLEbins.nSeaFung.oneyear.new$conf[2]))
+   }
+}
 
 # Need the standard error for weighted linear regression.
-#  From eightMethods.count():
-#  Assume for that confidence interval is PLB.bMLE +/- 1.96 * stdErr
-#   just to quickly calc stdErr. So stdErr = -(confMin - PLB.bMLE)/1.96.
-#      PLB.bMLE - PLB.MLE.bConf - is symmetric anyway (see below),
-#      implying quadratic
-#      likelihood profile, implying normal approximation is okay. So use
-#      it now to go backwards.
-#      To properly calculate should do the
-#      Fisher information. stdErr = 1 / (sqrt( d^2 logLik /db^2 at MLE))
-#      though that is fiddly to derive [d is derivative].
+#  [see eightMethods.count() for details]
 
-MLEbins.nSeaFung.new = tbl_df(MLEbins.nSeaFung.new)
-MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new, stdErr =
-   (abs(confMin-b) + abs(confMax-b))/(2*1.96) )
-
+MLEbins.nSeaFung.new = dplyr::tbl_df(MLEbins.nSeaFung.new)
 MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
-                               diff = confMax + confMin - 2*b)
-range(MLEbins.nSeaFung.new$diff)    # thus conf int is symmetric
- # [1] -4.440892e-16  4.440892e-16
-MLEbins.nSeaFung.new = dplyr::select(MLEbins.nSeaFung.new, -diff)
-@
+                                     stdErr = (abs(confMin-b) +
+                                               abs(confMax-b))/(2*1.96) )
+
+# For double checking the confidence interval
+# MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
+#                                     diff = confMax + confMin - 2*b)
+#range(MLEbins.nSeaFung.new$diff)   # This should be small
+#
+#MLEbins.nSeaFung.new = dplyr::select(MLEbins.nSeaFung.new, -diff)
+```
 
 
 <<>>=
