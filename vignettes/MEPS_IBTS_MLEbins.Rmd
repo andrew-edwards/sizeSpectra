@@ -47,63 +47,14 @@ TODO: And see what to save in data-raw/IBTS-MLEbins.R, copy those lines to end o
 ```{r}
 # require(xtable)
 # require(gplots)                 # for plotCI
-redo.calcs = TRUE #FALSE      # whether or not to redo this code, or load in
-                              #  the latest results.
+```
 
-specCodeNames = tbl_df(specCodeNames)
+TODO - put into earlier vignette
+```{r}
 specCodeNames                  # species names and id's. But there are more
                                #  species in the data than here (see later)
 length(unique(specCodeNames$speccode))   # checking speccode are unique
-@
-
-The local data frame {\tt data} has a unique row for every combination of year, species code and length class, as checked by:
-<<>>=
-unique = dim(summarise(group_by(data, Year, SpecCode, LngtClass), count=n()))[1]
-unique
-if( unique != dim(data)[1]) stop("something wrong with 'data'")
-@
-
-The `Number' column in {\tt data} is the number of individuals of that species
-in that length class in that year, observed per hour of trawling (averaged over
-the areas). `bodyMass' is the body mass of such an individual, as calculated by {\tt LWa * LngtClass$^{{\tt LWb}}$} in {\tt nSeaFungImport.Snw}.
-
-<<dataSumm, echo=FALSE, results=hide>>=
-dataSumm = summarise(group_by(data, Year),
-    uniqLngtClass = length(unique(LngtClass)),
-    uniqSpec = length(unique(SpecCode)),
-    medNumber = median(Number), medBodyMass = median(bodyMass))
-@
-
-<<defineFunction, echo=FALSE, results=hide>>=
-dataSummTab = xtable(round(dataSumm), caption="Summary of the data available
-  for each year. For each year, `uniqLngtClass' is the number of unique
-  length classes, `uniqSpec' is the number of unique species, `medNumber'
-  is the median number of individuals (where `Number' is length-class-specific
-  and species-specific), and `medBodyMass' is the median body mass (where
-  body mass is also length-class-specific and species-specific). All values
-  rounded to nearest integer (which is why `medNumber' comes out all 0, since
-  it's per hour, not an integer).",
-  lab="tab:dataSumm", digits = 0)    # Number of digits after decimal
-
-# To plot them:
-#plot(dataSumm$Year, dataSumm$uniqSpec, xlab="Year",
-#     ylab="No. unique species", type="o", ylim=c(0, max(dataSumm$uniqSpec)))
-#plot(dataSumm$Year, dataSumm$medNumber, xlab="Year",
-#    ylab="Median number (per hour)", type="o", ylim=c(0, max(dataSumm$medNumber)))
-#plot(dataSumm$Year, dataSumm$medBodyMass, xlab="Year",
-#     ylab="Median body mass (g)", type="o", ylim=c(0, max(dataSumm$medBodyMass)))
-
-@
-
-<<results=tex, echo=FALSE>>=
-print(dataSummTab, table.placement="tp", caption.placement="top",
-    include.rownames = FALSE) #, sanitize.text.function=function(x){x})  # was !ht
-@
-
-Table~\ref{tab:dataSumm} shows the data summarised by year.
-
-The number of unique species in each year ranges from \Sexpr{range(dataSumm$uniqSpec)[1]} to \Sexpr{range(dataSumm$uniqSpec)[2]}.
-
+```
 
 \section{Determining which rows are 0.5~cm bins}
 
