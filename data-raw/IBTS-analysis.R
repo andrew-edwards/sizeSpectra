@@ -5,3 +5,6 @@ load("nSeaFungAnalysis.RData")    # Output from nSeaFungAnalysis.Snw, TODO
 usethis::use_data(fullResults, overwrite = TRUE)
 
 usethis::use_data(trendResults, overwrite = TRUE)
+
+usethis::use_data(fullResults.MLE, overwrite = TRUE) # TODO seems to be contained in
+                                        # fullResults, so may not need
