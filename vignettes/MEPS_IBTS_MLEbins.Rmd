@@ -55,7 +55,8 @@ length(unique(specCodeNames$speccode))   # checking speccode are unique
 
 `LngtClass` for all species is the minimum value of a 1-cm-width bin, except for
 herring (*Clupea harengus*) and sprat (*Sprattus sprattus*) for which lengths
-are rounded down to 0.5 cm values (bins are 0.5-cm wide). The `SpecCode` values for these:
+are rounded down to 0.5 cm values (so the bins are 0.5-cm wide). The `SpecCode`
+values for these:
 
 ```{r speciesNames}
 herringCode = dplyr::filter(specCodeNames, species == "Clupea harengus")$speccode
@@ -362,10 +363,17 @@ axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)), tck=-smallTck)
 
 Now use the MLEbins method to fit each year of data in turn.
 
-```{r MLEbins}
+```{r MLEbins, warning=FALSE}
 # Do a loop for each year, saving the results in MLEbins.nSeaFung.new
+# Note that warnings have been suppressed in the .html output (they may get sent
+# to the console), as these are
+# common from the nlm() function. Specifically these are:
+#> Warning in nlm(f = negLL.fn, p = p, ...): NA/Inf replaced by maximum
+#> positive value
+# and are okay (the numerical optimisation is just hitting very large number).
+
 bstart = -1.9                   # just start close to -2,
-fullYears = sort(unique(dataBin$Year))[1:3]  # ****TODO***** remove [1:3] - just
+fullYears = sort(unique(dataBin$Year))  # ****TODO [done]***** remove [1:3] - just
                                         # to make it run faster TODO
 
 for(iii in 1:length(fullYears))
