@@ -1,0 +1,1155 @@
+---
+title: "MEPS_IBTS_recommend"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MEPS_IBTS_recommend}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 5.7,
+  fig.height = 7
+)
+```
+
+# Recommended plotting approach from the MLEbins method
+
+This vignette has some of the calculations used to explain the recommended
+plotting approach, reproduces Figure S.4, Figure 7 [TODO check] and presents
+Figures S.5 to S.34 as a movie [TODO: hopefully].
+
+```{r}
+library(sizeSpectra)
+# library(tibble)  # Else prints all of a tibble
+```
+
+
+
+TODO: And see what to save in data-raw/??.R, copy those lines to end of here,
+may not need to save anything new
+
+Copying nSeaMLEbins-recommend.Snw, some already in other vignette so deleting
+that out:
+
+
+## Schematic diagram for two species
+
+Picking two example species (coloured in red in Figure 6). Codes are 127205
+(Moustache Sculpin) and 154675 (Snakeblenny).
+
+```{r}
+sculpin = 127205
+snakeblenny = 154675
+specForFig = c(snakeblenny, sculpin)
+
+dataTwoSpec = dplyr::filter(dataBin, SpecCode %in% specForFig)
+```
+
+Combine the data across all years for illustrative purposes (to reduce the number
+of empty bins in the illustration):
+```{r combine}
+dataComb = dplyr::summarise(dplyr::group_by(dataTwoSpec,
+                                            SpecCode,
+                                            wmin),
+                            wmax = unique(wmax),
+                            number = round(sum(Number), dig=4))
+dataComb = dplyr::mutate(dataComb, j = min_rank(wmin))   # works since they're grouped
+dataComb[nrow(dataComb), "j"] = 25                       # manually, because there's a gap
+dataComb = dplyr::mutate(dataComb, wmid = (wmin + wmax)/2)  # midpoint for plotting
+```
+
+Now create Figures S.4:
+```{r fig.width = 6.5, fig.height = 4}
+target = 7                 # target bin (for species 2)    # TODO 7 to target in
+                           # next two lines
+target.wmin = dplyr::filter(dataComb,
+                            SpecCode == specForFig[2],
+                            j == 7)$wmin
+target.wmax = dplyr::filter(dataComb,
+                            SpecCode == specForFig[2],
+                            j == 7)$wmax
+# Smallest and then largest possible inclusions of being > target bin:
+dataComb = dplyr::mutate(dataComb,
+                         wmin.gt.tmax = (wmin >= target.wmax))
+dataComb = dplyr::mutate(dataComb,
+                         wmax.gt.tmin = (wmax > target.wmin))
+
+xLim = c(15, 43)           # range to show, must be integers
+dataComb = dplyr::filter(dataComb, wmin > xLim[1])  # Only show complete bins
+
+numSpec = length(specForFig)
+yLimMax = 1
+yVals = c(0.3, 0.7)
+                                        # yvals for horizontal mass bins
+colSpec = c("red", "pink")
+thick = 30                          # thickness of bins
+cex.sub = 0.7                     # font size for subscripts
+postscript("binCountRangeSchematic.eps",
+           height = 4, width = 6.5,
+           horizontal=FALSE,  paper="special")
+par(mgp=c(2.0, 0.5, 0))    # puts axes labels closer I think
+par(lend="butt")           # To have butted line caps, need for thick lines.
+par(mar = c(4, 2.5, 3, 2)) # outer margins
+
+plot(0, 0, xlab="Body mass, g", ylab="", xlim=xLim,
+     ylim=c(0, yLimMax), yaxt="n", type="n", xaxs="i") # set up axes.
+
+axis(1, at = xLim[1]:xLim[2], labels = rep("", xLim[2]-xLim[1]+1), tck=-0.01)
+
+mtext("Species Code", side=2, line=1.5, cex.lab=1)
+axis(2, at = yVals, labels = c(1,2), las = 2,
+        tck = -0.005, cex.axis=0.8)
+
+abline(v = target.wmin, col = "grey")
+abline(v = target.wmax, col = "grey")
+
+for(ii in 1:length(specForFig))   # loop over species, plot bins for each
+  {
+    yVal = yVals[ii]         # where to have horizontal bars
+    bins.wmin = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmin  # for this sp
+    bins.wmax = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmax
+    bins.wmid = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmid
+    # bins for which wmin >= target.wmax
+    bins.wmin.gt.tmax = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmin.gt.tmax
+    bins.wmin.gt.tmax.yn = ifelse(bins.wmin.gt.tmax,"Y", "N")
+    # bins for which wmax > target.wmin
+    bins.wmax.gt.tmin = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmax.gt.tmin
+    bins.wmax.gt.tmin.yn = ifelse(bins.wmax.gt.tmin,"Y", "N")
+
+    segments(y0 = yVal,
+             x0 = bins.wmin,
+             x1 = bins.wmax,
+             col=colSpec, lwd=thick)    # recycles col
+    # Bin break labels (cannot do , with vector for labels, it seems):
+    for(iiii in 1:length(bins.wmin))
+      {
+        text(x = bins.wmin[iiii],
+             y = yVal,
+             labels = bquote(paste(w[.(ii)*","*
+                    .(dplyr::filter(dataComb, SpecCode == specForFig[ii])$j[iiii])])),
+             pos = 1,
+             offset = 0.03*thick,
+             cex = cex.sub)
+      }
+    # Do final wmax manually:
+    text(x = bins.wmax[length(bins.wmax)],
+         y = yVal,
+         labels = bquote(paste(w[.(ii)*","*
+                     .(max(dplyr::filter(dataComb, SpecCode == specForFig[ii])$j)+1)])),
+         pos = 1,
+         offset = 0.03*thick,
+         cex = cex.sub)
+    # Put counts for each bin
+    text(x = bins.wmid,
+         y = yVal,
+         labels = f(dplyr::filter(dataComb, SpecCode == specForFig[ii])$number, ii+1),
+                  # ii+1 happens to give 3 d.p.s for species 2 and 2 for species 1,
+                  #  as needed on figure
+         pos = NULL,
+         offset = 0.03*thick,
+         cex = cex.sub*1.2)
+    # Whether to include in counts
+    eps = 0.23                  # Offset from wmid for Y's and N's
+    text(x = bins.wmid - eps,
+         y = yVal,
+         labels = bins.wmin.gt.tmax.yn,
+         pos = 3,
+         offset = 0.03*thick,
+         cex = cex.sub*1.2)
+    text(x = bins.wmid + eps,
+         y = yVal,
+         labels = bins.wmax.gt.tmin.yn,
+         pos = 3,
+         offset = 0.03*thick,
+         cex = cex.sub*1.2)
+  }
+
+# Need w_1,24 manually, assumes this is the only one with j=23
+text(x = dplyr::filter(dataComb, j==23)$wmax,
+     y = yVals[1],
+     labels = bquote(paste(w[.(1)*","*24])),
+     pos = 1,
+     offset = 0.03*thick,
+     cex = cex.sub)
+
+dev.off()
+
+
+lowCount = sum(dataComb$wmin.gt.tmax * dataComb$number)
+highCount = sum(dataComb$wmax.gt.tmin * dataComb$number)
+@
+
+\begin{figure}[tp]
+\begin{center}
+% \epsfxsize=7in
+\epsfbox{binCountRangeSchematic.eps}
+\end{center}
+\caption{Schematic diagram to explain how we calculate
+  the range of counts of individuals that are larger than those in a given bin.
+  Red and pink body-mass bins are those for Snakeblenny and Moustache Sculpin
+  (labelled species 1 and 2, respectively) from Figure~5 (main text of manuscript).
+  Bin breaks are denoted by $w_{s,j}$
+  and the number inside each bin is the number observed per hour of trawling.
+  For illustration data are combined across all years and only bins with
+  minima $>15$~g are shown. The target bin has $s=2$ and $j=7$ and therefore
+  has bin breaks $w_{2,7}$ and $w_{2,8}$ and is indicated by the vertical grey
+  lines.
+  The first letter in each pair (`NN', `NY', or `YY') denotes whether or not
+  each bin is included in the low count $E_{2,7,1}$, i.e. its lower bound is
+  $\geq$ the upper bound of the target bin. Similarly, the second letter denotes
+  whether or not each bin is included in the high count $E_{2,7,2}$, i.e.
+  its upper bound is $>$ the lower bound of the target bin. Summing the
+  respective counts as per (\ref{Esj1}) and (\ref{Esj1}) gives
+  $E_{2,7,1} = \Sexpr{f(lowCount,2)}$ and $E_{2,7,2} = \Sexpr{f(highCount,2)}$.
+  }
+  \label{fig:binCountRangeSchematic}
+\end{figure}
+
+Figure~\ref{fig:binCountRangeSchematic} shows these calculations for
+one `target' bin ($s=2, j=7$) and two
+example species namely Moustache Sculpin and Snakeblenny (which are highlighted
+as 127205 and 154675, respectively, in red in Figure~5). Remaining text already
+copied into Supp Material.
+
+\section{Results for each year}
+
+<<plotCalcs>>=
+# Just what's needed for the calculations for the recommended plot:
+dataRecommend.isd = select(dataBin, Year, wmin, wmax, Number)
+
+xRange.global = c(min(dataRecommend.isd$wmin),
+                  max(dataRecommend.isd$wmax))
+data.year.list = list()                # to save results for each year
+diff.ivec = vector()                   # to save i that have any cumSum != verify
+dirToSaveFigs = "IBTS-ISDfigs"
+if(!dir.exists(dirToSaveFigs)) dir.create(dirToSaveFigs)
+
+for(i in 1:length(fullYears))
+{ # scan()
+  data.year = dplyr::filter(dataRecommend.isd, Year == fullYears[i])
+
+  data.year = arrange(data.year, desc(wmin))
+  sumNumber = sum(data.year$Number)
+  data.year = dplyr::mutate(data.year, cumSum = cumsum(Number))
+  # Have to do not with dplyr
+  wmin.vec = data.year$wmin
+  wmax.vec = data.year$wmax
+  num.vec = data.year$Number
+
+  verify = rep(NA, length(num.vec)) # manual count originally to check that
+                                    #  it equals cumSum - turns out not to as
+                                    #  investigated below
+  lowCount = verify
+  highCount = verify
+  for(iii in 1:length(verify))
+  {
+    verify[iii] = sum( (wmin.vec >= wmin.vec[iii]) * num.vec)
+    lowCount[iii] = sum( (wmin.vec >= wmax.vec[iii]) * num.vec)
+    highCount[iii] = sum( (wmax.vec > wmin.vec[iii]) * num.vec)
+  }
+  data.year = cbind(data.year, "verify" = verify,
+                               "lowCount" = lowCount, "highCount" = highCount)
+  data.year = tbl_df(data.year)
+  # See subsection below for manual look into these.
+  if(sum(abs(data.year$cumSum - data.year$verify)) > 0)
+     diff.ivec = c(diff.ivec, i)
+     #{stop(paste0("need to manually check for i=", i, ", year ", fullYears[i]))}
+     # put that value of i into here (like i!=6), add a subsection, re-run
+     #  to get this year's value into data.year.list and make conclusions in
+     #  the subsection.
+  figheight = 8 # 7 for 4x2 figure
+  figwidth = 0.67*figheight
+  inset = c(0, 0)#-0.04)      # inset for (a) and (b)
+  inset2 = c(0, 0.04)         # inset for year
+
+  postscript(paste0(dirToSaveFigs, "/IBTS-ISD", fullYears[i], ".eps"),
+             height = figheight, width = figwidth,
+             horizontal=FALSE, paper="special")
+  par(mfrow=c(2,1))
+  par(mai=c(0.4, 0.5, 0.05, 0.3), cex=0.7)  # Affects all figures
+  mgpVals = c(1.6,0.5,0)
+  seg.col = "green"        # colour for horizontal segments
+
+  xRange = c(min(data.year$wmin), max(data.year$wmax))  # For PLB line, need
+                                                       #  higher res for log axis
+  x.PLB = seq(xRange[1], xRange[2], length=10000)
+          # x values to plot PLB, need high resolution for both plots, but
+          #  insert value close to xmax to make log-log curve go down further
+  x.PLB.length = length(x.PLB)
+  x.PLB = c(x.PLB[-x.PLB.length],
+            0.99999 * x.PLB[x.PLB.length],
+            x.PLB[x.PLB.length])
+  y.PLB = (1 - pPLB(x = x.PLB,
+                    b = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+                    xmin = min(x.PLB), xmax = max(x.PLB))) * sumNumber
+  # To add curves for the limits of the 95% confidence interval of b:
+  y.PLB.confMin = (1 - pPLB(x = x.PLB,
+                    b = dplyr::filter(MLEbins.res, Year == fullYears[i])$confMin,
+                    xmin = min(x.PLB), xmax = max(x.PLB))) * sumNumber
+  y.PLB.confMax = (1 - pPLB(x = x.PLB,
+                    b = dplyr::filter(MLEbins.res, Year == fullYears[i])$confMax,
+                    xmin = min(x.PLB), xmax = max(x.PLB))) * sumNumber
+
+  # yRange = c(min(data.year$lowCount), max(data.year$highCount))
+  # The above does not work because first val is 0 which is not permissable on
+  #  log axis. Which also means that the rectangle that goes to 0 has to be
+  #  added manually (below). Picking the y-axis to go down to 0.75 the verify
+  #  value of the lowest bin (0.5 was a bit big).
+  yRange = c(0.75*min(data.year$verify), max(data.year$highCount))
+
+  # y-axis not logged
+  plot(data.year$wmin, data.year$verify, log="x",
+     xlab=expression(paste("Body mass (", italic(x), "), g")),
+    ylab=expression(paste("Number of ", values >= italic(x))),
+    xlim = xRange.global,
+    ylim = yRange,
+    type = "n",
+    axes = FALSE,
+    mgp = mgpVals)
+
+  xLim = 10^par("usr")[1:2]
+  yLim = 10^par("usr")[3:4]
+
+  logTicks(xLim, yLim=NULL, xLabelSmall = c(5, 50, 500, 5000))
+  yBig = seq(0, yRange[2], 1000)  # May have to tweak for some years
+  # Big labelled:
+  axis(2, at= yBig, labels = yBig, mgp=mgpVals)
+  # Small unlabelled:
+  axis(2, seq(yBig[1], yRange[2]*1.1, by=250),
+       labels=rep("", length(seq(yBig[1], yRange[2]*1.1, by=250))), tcl=-0.2,
+       mgp=mgpVals)
+
+  rect(xleft = data.year$wmin,
+     ybottom = data.year$lowCount,
+     xright = data.year$wmax,
+     ytop = data.year$highCount,
+     col = "grey")
+  segments(x0=data.year$wmin,
+           y0=data.year$verify,
+           x1=data.year$wmax,
+           y1=data.year$verify, col=seg.col)
+  lines(x.PLB, y.PLB, col="red", lwd=2)  # Plot line last so can see it
+  lines(x.PLB, y.PLB.confMin, col="red", lty=2)
+  lines(x.PLB, y.PLB.confMax, col="red", lty=2)
+
+  legend("topright", "(a)", bty="n", inset=inset)
+  legend("topright", legend=fullYears[i], bty="n", inset=inset2)
+  legend("topright",
+      legend=paste0("b=", round(dplyr::filter(MLEbins.res, Year == fullYears[i])$b, 2)),
+      bty="n", inset=2*inset2)
+  # if(max(abs(sum(data.year$Number) - yRange[2])) > 0.001)
+  #    stop("Check here that n=yRange[2]; comment out once done once.")
+  legend("topright",
+      legend=paste0("n=", round(yRange[2], 2)),
+      bty="n", inset=3*inset2)
+
+  # y-axis logged
+  # empty plot:
+  plot(data.year$wmin, data.year$verify, log="xy",
+     xlab=expression(paste("Body mass (", italic(x), "), g")),
+     ylab=expression(paste("Number of ", values >= italic(x))),
+     xlim = xRange.global,
+     ylim = yRange,
+     type = "n",
+     axes = FALSE,
+     mgp = mgpVals)
+
+  xLim = 10^par("usr")[1:2]
+  yLim = 10^par("usr")[3:4]
+
+  logTicks(xLim, yLim, xLabelSmall = c(5, 50, 500))
+
+  rect(xleft = data.year$wmin,
+       ybottom = data.year$lowCount,
+       xright = data.year$wmax,
+       ytop = data.year$highCount,
+       col = "grey")
+
+  # Need to manually draw the rectangle with lowCount = 0 since it doesn't
+  #  get plotted on log-log plot
+  extra.rect = dplyr::filter(data.year, lowCount == 0)
+  # if(nrow(extra.rect) > 1) stop("Check rows of extra rect.")
+  rect(xleft = extra.rect$wmin,
+       ybottom = rep(0.01 * yRange[1], nrow(extra.rect)),
+       xright = extra.rect$wmax,
+       ytop = extra.rect$highCount,
+       col = "grey")
+
+  segments(x0=data.year$wmin,
+           y0=data.year$verify,
+           x1=data.year$wmax,
+           y1=data.year$verify,
+           col=seg.col)
+
+  lines(x.PLB, y.PLB, col="red", lwd=2) #, lty=5)
+  lines(x.PLB, y.PLB.confMin, col="red", lty=2)
+  lines(x.PLB, y.PLB.confMax, col="red", lty=2)
+  legend("topright", "(b)", bty="n", inset=inset)
+
+  dev.off()
+
+  data.year.list[[i]] = data.year
+}
+@
+
+\subsection{Checking cumSum -- 1991 ($i=6$) didn't agree with verify calculation;
+  see later for automated calculations for each year this occurs}
+
+For $i=6$, year 1991, we get {\tt cumSum} and {\tt verify} differing by
+-0.02941, because there are repeated {\tt wmin}$=31.84771$ values:
+<<year1991>>=
+data.1991 = dplyr::filter(dataBin, Year == 1991)
+data.1991 = arrange(data.1991, desc(wmin))
+data.1991 = dplyr::mutate(data.1991, cumSum = cumsum(Number))
+
+dplyr::filter(data.1991, abs(wmin - 31.84771) < 0.00001)
+@
+Aha, so it's two different species with the same length-weight coefficients
+and same length bins. This is allowed (we have already ensured that we don't
+have multiple counts of the same species in the same length bin). So we should
+use {\tt verify} to plot the horizontal values, not {\tt cumSum}. Not that you'd
+see the (very occasional and very small) difference, and for such cases you'll
+always get the segments (and the grey rectangles) on top of each other (can't
+distinguish two separate species). For unbinned data the {\tt cumSum} may be best
+as it shows up each data point.
+
+\subsection{Check cumSum -- 1992 ($i=7$) didn't agree with verify calculation}
+
+For $i=7$, year 1992, we get {\tt cumSum} and {\tt verify} differing in
+a few places (was only in one for 1991). So do more automated code here
+than that above, in case need to check other years also.
+<<year1992>>=
+diff.i = 7
+diff.year = fullYears[diff.i]
+data.one.year = data.year.list[[diff.i]]
+data.diff = dplyr::filter(data.one.year, abs(cumSum - verify) > 0)
+dataBin.diff = dplyr::filter(dataBin, Year == diff.year, wmin %in% data.diff$wmin)
+# If it's again because two species have same length-weight coefficients then
+#  should be able to manually spot that by arranging the rows:
+arrange(dataBin.diff, LWa, LngtMin)
+# The quick check is that the following is all TRUE (since species are different)
+abs(diff(arrange(dataBin.diff, LWa, LngtMin)$SpecCode)) > 0.1
+@
+
+So, same issue as for 1991 -- species have the same length-weight coefficients.
+
+\subsection{Check remaining years as they come up, but automate as looks
+  like it may keep occuring}
+
+This will print the year then the differences between {\tt cumSum} and
+{\tt verify}, and give the maximum difference at the end. Take a look here
+if necessary if the maximum difference ends up being big (much bigger than 10 say
+given the large sample sizes). In practice it likely won't matter anyway
+which way the figure will be plotted; just helpful to go into here for
+understanding).
+<<year.others>>=
+max.abs.diff = numeric()        # maximum overall abs diff betw cumSum and verify
+for(diff.i in diff.ivec)
+  {
+    diff.year = fullYears[diff.i]
+    print(diff.year)
+    data.one.year = data.year.list[[diff.i]]
+    data.diff = dplyr::filter(data.one.year, abs(cumSum - verify) > 0)
+    print(data.diff$cumSum - data.diff$verify)
+    max.abs.diff = max(max.abs.diff,
+                       max(abs(data.diff$cumSum - data.diff$verify)))
+    dataBin.diff = dplyr::filter(dataBin, Year == diff.year, wmin %in% data.diff$wmin)
+    # If it's again because two species have same length-weight coefficients then
+    #  should be able to manually spot that by arranging the rows:
+    # print(arrange(dataBin.diff, LWa, LngtMin))
+    # The quick check is that the following is all FALSE and so sum = 0
+    #  (since spp are different)
+    if(sum(abs(diff(arrange(dataBin.diff, LWa, LngtMin)$SpecCode)) < 0.1) > 0)
+      { stop(paste0("Not the same repeated species issue for ", diff.year,
+                   " as for 1991."))
+      }
+  }
+@
+
+If no error messages and this sentence gets printed, then any differences between
+{\tt cumSum} and {\tt verify} are due to multiple species having the same
+length-weight coefficients. For reference, the maximum difference is
+\Sexpr{round(max.abs.diff, 6)} -- see above for which year.
+
+Biggest difference is in 1995, so just take a quick look at the details:
+
+<<year.1995>>=
+diff.i = 10
+diff.year = fullYears[diff.i]
+print(diff.year)
+data.one.year = data.year.list[[diff.i]]
+data.diff = dplyr::filter(data.one.year, abs(cumSum - verify) > 0)
+# print(data.diff$cumSum - data.diff$verify)
+#max.abs.diff = max(max.abs.diff,
+#                       max(abs(data.diff$cumSum - data.diff$verify)))
+dataBin.diff = dplyr::filter(dataBin, Year == diff.year, wmin %in% data.diff$wmin)
+# If it's again because two species have same length-weight coefficients then
+#  should be able to manually spot that by arranging the rows:
+print(arrange(dataBin.diff, LWa, LngtMin))
+@
+
+So that (and 1996) are for species 126425 (Atlantic Herring) that has the
+0.5-cm length bins. Which is actually another reason that {\tt cumSum} is
+not actually the right thing to use. Will check in Issue \#24 that it hasn't
+been used in any calculations (don't think it has). For the above example
+it's actually {\tt verify} that is the lower value. This only affects the
+plotting of the y-values of the segments, not the rectangles at all (and so
+at the end of the day is not that important), but we use {\tt verify} in the
+plots anyway.
+
+\section{Commentary on the actual results}
+
+The years for which the PLB model seems to visually fit fairly well, at least
+up to 100~g where they all seem to break off, are 1992, 1995, 1997, 1999,
+2000, 2006, 2008, 2009, 2010 and 2014. The 1999 one shows a good resolution
+of the rectangles, including the right-most one.
+More commentary will be written straight into the Supp Material, since will
+then get edited and refined for the manuscript.
+
+\isdfig{\Sexpr{fullYears[1]}}{Individual size distribution and MLEbins fit
+            (red solid curve)
+            with 95\% confidence intervals (red dashed curves, may be hard to
+            see) for IBTS data in \Sexpr{fullYears[1]}.
+            For each bin, the horizontal green line shows
+            the range of body sizes,
+            with value on the y-axis corresponding to the
+            total number of individuals in bins whose minima are $\geq$ the
+            bin's minimum.
+            For each bin, the vertical span of the grey rectangle shows the
+            possible range of the number of individuals with body mass
+            $\geq$ the body mass of individuals in that bin (horizontal span
+            is the same as for the green lines).
+        }
+
+\newcounter{loop}
+% \forloop{loop}{\Sexpr{min(fullYears)}{\value{loop}<\Sexpr{max(fullYears)+1}}{\isdfig{\arabic{loop}}}{Caption to do**}       % 6 -> \Sexpr{max(fullYears)+1}}
+\newcommand{\loopMax}{\Sexpr{max(fullYears)+1}}
+\forloop{loop}{\Sexpr{fullYears[2]}}{\value{loop} < \loopMax}
+        {\isdfig{\arabic{loop}}{Individual size distribution and MLEbins fit
+            with 95\% confidence intervals for IBTS data in \arabic{loop}.
+            Details as in Figure~\ref{fig:ISD-1986}.
+        }}
+
+% \isdfig{IBTS-ISDfigs/IBTS-ISD1990}{Caption here}
+
+<<save>>=>>=
+save.image(file="nSeaMLEbins-recommend.RData")
+@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------
+From MEPS_IBTS_MLEbins.Rmd
+
+```{r}
+specCodeNames                  # species names and id's. But there are more
+                               #  species in the data than here (see later)
+length(unique(specCodeNames$speccode))   # checking speccode are unique
+```
+
+## Determining which rows are 0.5 cm bins
+
+`LngtClass` for all species is the minimum value of a 1-cm-width bin, except for
+herring (*Clupea harengus*) and sprat (*Sprattus sprattus*) for which lengths
+are rounded down to 0.5 cm values (so the bins are 0.5-cm wide). The `SpecCode`
+values for these:
+
+```{r speciesNames}
+herringCode = dplyr::dplyr::filter(specCodeNames, species == "Clupea harengus")$speccode
+herringCode
+spratCode = dplyr::dplyr::filter(specCodeNames, species == "Sprattus sprattus")$speccode
+spratCode
+```
+
+TODO: this may have been done in earlier vignette - delete one or the other,
+this seems concise and is appropriate here.
+
+Verify that: (i) these species codes do have 0.5 cm values for `LngtClass`, and
+(ii) that no other species codes have 0.5 cm values for `LngtClass`.
+
+```{r verify}
+herring = dplyr::dplyr::filter(data, SpecCode == herringCode)
+unique(herring$LngtClass)
+sprat = dplyr::dplyr::filter(data, SpecCode == spratCode)
+unique(sprat$LngtClass)
+```
+
+So, yes, both have 0.5 cm length classes.
+
+```{r verify2}
+specCode05 = c(herringCode, spratCode)      # species codes with 0.5cm length bins
+others = dplyr::dplyr::filter(data, !SpecCode %in% specCode05)
+sort(unique(others$LngtClass))
+```
+
+Can visually see that there are no 0.5 values, confirming that just the two
+species have the 0.5-cm length bins.
+
+## Append the max of the bin breaks for each row
+
+So `LngtClass` is the minimum of each length bin. Need to work out the maximum
+of each length bin `LengthMax`, and then use the species-specific length-weight
+relationships to give the min (`wmin`) and max (`wmax`) of each body-mass bin.
+So create `dataBin` table dataframe that has `LengthMax`, `wmin` and `wmax` as
+extra columns for each row:
+
+```{r dataBin}
+dataBin = dplyr::dplyr::mutate(data,
+                        LngtMax = LngtClass + 1)
+aa = which(dataBin$SpecCode %in% specCode05)           # row numbers for herring, sprat
+dataBin[aa, "LngtMax"] = dataBin[aa, "LngtMax"] - 0.5  # subtract 0.5 cm to
+                                                       # give 0.5-cm wide bins
+unique(dataBin$LngtMax - dataBin$LngtClass)            # correctly just has 0.5 and 1
+unique( dplyr::dplyr::filter(dataBin, LngtMax - LngtClass == 0.5)$SpecCode)  # just herring,sprat
+
+dataBin = dplyr::dplyr::mutate(dataBin, wmax = LWa * LngtMax^LWb)  # calculate max body mass
+                                                            # for each bin (min
+                                                            # is currently bodyMass)
+dataBin = dplyr::rename(dataBin, LngtMin = LngtClass)       # For consistency
+dataBin = dplyr::rename(dataBin, wmin = bodyMass)
+
+dataBin = dataBin[ , c("Year", "SpecCode", "LngtMin", "LngtMax",
+                       "LWa", "LWb", "wmin", "wmax", "Number")]     # Reorder columns
+
+range(dplyr::dplyr::mutate(dataBin, wminCheck = LWa * LngtMin^LWb)$wminCheck - dataBin$wmin)
+                                              # Verifying that wmin is correct
+                                              # (was calculated independently)
+length(unique(dataBin$SpecCode))
+```
+
+## Plot the resulting body mass bins
+
+So there are `r length(unique(dataBin$SpecCode))` uniques species. Now going to
+plot the resulting body mass bins for each species, with 45 on each figure. This
+gives Figures 6, S.1, S.2 and S.3. First wrangle the data and calculate some
+useful values:
+
+```{r}
+# Just need the species-specific bodymass bins, don't need
+#  Year, length info or Number.
+dataBinSpec = dplyr::summarise(dplyr::group_by(dataBin, SpecCode, wmin),
+                               wmax = unique(wmax))
+# Arrange species in order of their max(wmax)
+
+dataBinSpecWmax = dplyr::summarise(dplyr::group_by(dataBinSpec, SpecCode),
+                                   maxWmax = max(wmax))
+dataBinSpecWmax = dplyr::ungroup(dataBinSpecWmax)
+dataBinSpecWmax = dplyr::arrange(dataBinSpecWmax, maxWmax)   # Species in order of maxWmax
+dataBinSpec = dplyr::ungroup(dataBinSpec)
+# http://stackoverflow.com/questions/26548495/reorder-rows-using-custom-order
+# Create levels in the desired order
+dataBinSpec = dplyr::dplyr::mutate(dataBinSpec,
+                            SpecCode = factor(SpecCode,
+                                              levels = dataBinSpecWmax$SpecCode))
+dataBinSpec = dplyr::arrange(dataBinSpec, SpecCode)
+
+uniqBinSpecCode = levels(dataBinSpec$SpecCode) # species codes in
+                                               #  the desired order
+
+# species in the data (in order of figures) but with no name (just to avoid
+#  highlighting in figures):
+specIDnoName = setdiff(uniqBinSpecCode, specCodeNames$speccode)
+# species with names but not in data (not so important):
+# specNotInData = setdiff(specCodeNames$speccode, uniqBinSpecCode)
+
+# max number of bins for any species:
+maxNumBins = max(dplyr::summarise(dplyr::group_by(dataBinSpec,
+                                                  SpecCode),
+                                  numBins = length(unique(wmin)))$numBins)
+
+dataBinSpec = dplyr::dplyr::mutate(dataBinSpec,
+                            wWidth = wmax - wmin,
+                            wWidthRatio = wWidth/wmin)
+          # wWidth is width of body-mass bin, wWidthRatio is ratio to wmin
+rowMaxWidth = which.max(dataBinSpec$wWidth)
+specCodeMaxWidth = dataBinSpec[rowMaxWidth, ]$SpecCode
+specNameMaxWidth = dplyr::dplyr::filter(specCodeNames, speccode ==  specCodeMaxWidth)$species
+
+rowMaxRatio = which.max(dataBinSpec$wWidthRatio)
+specCodeMaxRatio = dataBinSpec[rowMaxRatio, ]$SpecCode
+specNameMaxRatio = dplyr::dplyr::filter(specCodeNames, speccode ==  specCodeMaxRatio)$species
+dataBinMaxRatio = dplyr::dplyr::filter(dataBin,
+                                SpecCode == specCodeMaxRatio,
+                                wmin == dataBinSpec[rowMaxRatio, ]$"wmin")
+                                   # original data row(s) for maxRatio. "wmin"
+                                   #  needed since wmin appears in dataBin also
+```
+
+Now create the figures:
+```{r fig.width=7.5, fig.height=6}
+col = c("blue", "lightblue")     # Colours for bins
+colHighlight = c("red", "pink")  # Colours for herring and sprat
+
+thick = 7                           # thickness of bins
+
+# Doing 3 figures, each with 135/3 = 45 species. Then a fourth that is
+#  just some of the third one.
+numSpec = 45                   # Number of species in a figure
+specVecStart = c(1, 1 + numSpec, 1 + 2*numSpec, 1 + 2*numSpec)  # start species for fig
+specVecEnd = specVecStart + numSpec - 1
+specVecEnd[4] = specVecStart[4] + 37 - 1
+                               # species 126447, as seen in Fig S.2 (not automated)
+                               #  is the largest one below 10kg, to make Fig S.3
+
+smallTicks = c(2, 20, 1000, 200)        # location of small ticks for fig.num
+medTicks = c(10, 100, 5000, 1000)       # location of medium (unlabelled) ticks
+
+xLimMax = c(10, 10, 10, specVecEnd/numSpec * 10)
+
+specCodeHighlight = c(127205, 154675)
+                                   #  now doing two for first figure for
+                                   #  manuscript. Plus 127251 for Figure A.4 done
+                                   #  within loop.
+
+for(fig.num in 1:4)      # doing 3 figures
+    {
+    specForFig = uniqBinSpecCode[ specVecStart[fig.num]:specVecEnd[fig.num] ]
+    xVals = seq(0.2,
+                xLimMax[fig.num]-0.2,
+                length=length(specForFig))  # xvals for vertical mass bins
+
+    yLim = 1.02*max(dplyr::dplyr::filter(dataBinSpec,
+                                  SpecCode %in% specForFig)$wmax)
+    # postscript(paste("nSeaFungBins", fig.num, ".eps", sep=""),
+    #        height = 6, width = 7.5,
+    #        horizontal=FALSE,  paper="special")
+
+    par(xaxs="i", yaxs="i")
+    par(mgp=c(2.0, 0.5, 0))    # puts axes labels closer
+    par(lend="butt")           # To have butted line caps, need for thick lines.
+
+    plot(0,
+         0,
+         xlab="",
+         ylab="Body mass, g",
+         xlim=c(0, xLimMax[fig.num]),
+         ylim=c(0, yLim),
+         xaxt="n",
+         type="n")      # dummy points to set up axes.
+
+    # Adding horizontal grey lines:
+    axis(2,
+         at = seq(0, yLim, by=medTicks[fig.num]),
+         labels=rep("", length(seq(0, yLim, by=medTicks[fig.num]))),
+         tck=1,
+         col="lightgrey")
+    # Add extra tick marks:
+    axis(2,
+         at = seq(0, yLim, by=smallTicks[fig.num]),
+         labels=rep("", length(seq(0, yLim, by=smallTicks[fig.num]))),
+         tck=-0.01)
+    axis(2,
+         at = seq(0, yLim, by=medTicks[fig.num]),
+         labels=rep("", length(seq(0, yLim, by=medTicks[fig.num]))),
+         tck=-0.02)
+    # Add species codes:
+    axis(1,
+         at = xVals,
+         labels = as.numeric(specForFig),
+         las = 2,
+         tck = -0.005, cex.axis=0.8)
+    mtext("Species Code", side=1, line=3, cex.lab=1)
+    # abline(h=0)      # works when saving each figure to a file, not so well in
+                       #  vignette so use:
+    lines(c(0, xLimMax[fig.num]), c(0,0))
+
+    for(ii in 1:length(specForFig))   # loop over species, plot bins for each
+        {
+        xVal = xVals[ii]         # where to have vertical bars
+        if(as.numeric(specForFig[ii]) %in% specCodeHighlight)
+            { colSpec = colHighlight } else { colSpec = col}
+
+        segments(x0 = xVal,
+                 y0 = dplyr::dplyr::filter(dataBinSpec,
+                                    SpecCode == specForFig[ii])$wmin,
+                 y1 = dplyr::dplyr::filter(dataBinSpec,
+                                    SpecCode == specForFig[ii])$wmax,
+                 col=colSpec,       # recycles colours
+                 lwd=thick)
+        }
+    par(xpd=TRUE)                   # allow plotting outside main region
+    if(fig.num == 1)
+      {
+        points( xVals[which(as.numeric(specForFig) %in% specCode05)],
+               -rep(0.015, length(specCode05))*yLim,
+               pch=4,
+               cex=0.96)            # indicate two species in Fig 6
+      }
+
+    if(fig.num == 4)
+      {
+        points( xVals[which(as.numeric(specForFig) == 127251)],
+           -0.015*yLim, pch=4, cex=0.96) # indicate one species in Fig S.3
+      }
+    # dev.off()
+}
+```
+
+
+Those four figures show how the length bins for each species get converted to
+body mass bins. The conversions are different for each species because of the
+different values of the length-weight coefficients. Even with 1-cm length bins
+(and 0.5-cm for herring and sprat) the resulting body-mass bins can span a large
+range. See paper for further details.
+
+```{r}
+if(specCodeMaxRatio != 127251) stop("Need common name; not Blackbelly Rosefish")
+if(specCodeMaxWidth != 126436) stop("Need common name; not Atlantic Cod")
+
+specNameHighlight = dplyr::dplyr::filter(specCodeNames, speccode %in% specCodeHighlight)
+specNameHighlight
+```
+
+TODO: *Triglops murrayi* is Moustache Sculpin (code 127205). *Lumpenus lampretaeformis* is Snakeblenny (code 154675). Data for these are
+```{r highlight}
+dataHighlight = dplyr::dplyr::filter(data, SpecCode %in% specCodeHighlight)
+dataHighlightSumm = dplyr::summarise(dplyr::group_by(dataHighlight, SpecCode),
+    minLngt = min(LngtClass),
+    maxLngt = max(LngtClass),
+    LWa = unique(LWa),
+    LWb = unique(LWb))
+dataHighlightSumm
+```
+
+
+<!-- TODO: The body-mass bin with the biggest ratio of width to lower bound of the bin occurs for the Blackbelly Rosefish (\emph{\Sexpr{specNameMaxRatio}}) which is species code \Sexpr{specCodeMaxRatio}, indicated by $\times$ in Figure~\ref{fig:nSeaFungBins4} [not any more]. The bin goes from \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wmin, dig=2)} to \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wmax, dig=2)}~g, such that the ratio of bin-width to the lower bound is \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wWidthRatio, dig=2)} (though this is hard to see in Figure~\ref{fig:nSeaFungBins4}). Consequently, in the earlier  analyses, all individuals of this species with a body-length of \Sexpr{dataBinMaxRatio$LngtMin}-\Sexpr{dataBinMaxRatio$LngtMax}~cm would get assigned a body length of \Sexpr{dataBinMaxRatio$LngtMin}~cm, and consequently a body mass of \Sexpr{round(dataBinMaxRatio$wmin, dig=2)}. However, the true possible range of body masses is \Sexpr{round(dataBinMaxRatio$wmin, dig=2)}-\Sexpr{round(dataBinMaxRatio$wmax, dig=2)}~g. Thus, individuals at the upper end of this range are being assigned body masses of about half of their actual body mass.-->
+
+The widest resulting body-mass bin occurs for Atlantic Cod (`r
+specNameMaxWidth`), which is species code `r specCodeMaxWidth`, the rightmost
+species in the final figure above figure. The widest bin goes from `r
+round(dataBinSpec[rowMaxWidth, ]$wmin, dig=0)` to `r
+round(dataBinSpec[rowMaxWidth, ]$wmax, dig=0)` g, with a width of `r
+round(dataBinSpec[rowMaxWidth, ]$wWidth, dig=0)` g.
+
+
+
+<!-- \onefig{nSeaFungBins1}{Vertical blue bars show the body-mass bins that result from converting the 1-cm length bins into body-mass bins using the species-specific length-weight parameters. These are the first 45 species, ordered by the maximum value of the highest bin. Herring and sprat use 0.5-cm length bins, and their resulting body-mass bins are given by crosses (sprat is code \Sexpr{spratCode}). The vertical gaps between vertical bars indicate that there were no body masses of that species in that range (i.e. there were no individuals in the length bin that would result in the body-mass bin(s) that would fill the gap). The two red columns indicate two species that are explicitly discussed in the text.}
+
+\onefig{nSeaFungBins2}{As for Figure~\ref{fig:nSeaFungBins1} but for the next 45 species -- note the different vertical axis scale from Figure~\ref{fig:nSeaFungBins1}.}
+
+\onefig{nSeaFungBins3}{As for Figure~\ref{fig:nSeaFungBins1} but for the final 45 species -- note the different vertical axis scale from Figure~\ref{fig:nSeaFungBins1}. In some sense the tail containing rare large organisms, characteristic of a power-law distribution, shows up if you rotate the figure clockwise 90 degrees -- it somewhat resembles a power-law distribution.}
+
+\onefig{nSeaFungBins4}{As for Figure~\ref{fig:nSeaFungBins3} but just for species with maximum body mass up to 10~kg to more clearly show their body-mass bins.}
+-->
+
+```{r echo=FALSE, eval=FALSE}
+# Plot of wmax for each species. I think it's a metric used somewhere.
+plot(1:(dim(dataBinSpecWmax)[1]),
+     dataBinSpecWmax$maxWmax,
+     log="y",
+     xlab="Species index",
+     ylab="Wmax for each species")
+
+# Plot of maximum overall body size (max of max(wmax)) each year
+maxWmaxByYear = dplyr::summarise(dplyr::group_by(dataBin, Year),
+                                 maxWmax = max(wmax))
+smallTck=0.01
+yLimWmaxByYear = range(pretty(c(0, max(maxWmaxByYear$maxWmax))))
+plot(maxWmaxByYear$Year,
+     maxWmaxByYear$maxWmax,
+     xlab="Year",
+     ylab="Wmax for each year",
+     ylim=yLimWmaxByYear)
+xTicksSmall = maxWmaxByYear$Year
+axis(1, at = xTicksSmall, labels = rep("", length(xTicksSmall)), tck=-smallTck)
+yTicksSmall = seq(yLimWmaxByYear[1], yLimWmaxByYear[2], by=2000)
+axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)), tck=-smallTck)
+# points(2011, dplyr::dplyr::filter(maxWmaxByYear, Year == 2011)$maxWmax, col="red", pch=19)
+```
+
+## Likelihood calculations using new MLEbins method}
+
+Now use the MLEbins method to fit each year of data in turn.
+
+```{r MLEbins, warning=FALSE}
+# Do a loop for each year, saving the results in MLEbins.nSeaFung.new
+# Note that warnings have been suppressed in the .html output (they may get sent
+# to the console), as these are
+# common from the nlm() function. Specifically these are:
+#> Warning in nlm(f = negLL.fn, p = p, ...): NA/Inf replaced by maximum
+#> positive value
+# and are okay (the numerical optimisation is just hitting very large number).
+
+bstart = -1.9                   # just start close to -2,
+fullYears = sort(unique(dataBin$Year))
+
+for(iii in 1:length(fullYears))
+  {
+    dataBinForLike = dplyr::dplyr::filter(dataBin,
+                                   Year == fullYears[iii])
+    dataBinForLike = dplyr::select(dataBinForLike,
+                                   SpecCode,
+                                   wmin,
+                                   wmax,
+                                   Number)
+    n = sum(dataBinForLike$Number)
+    xmin = min(dataBinForLike$wmin)
+    xmax = max(dataBinForLike$wmax)
+
+    MLEbins.nSeaFung.oneyear.new  = calcLike(negLL.fn = negLL.PLB.bins.species,
+                                             p = bstart,
+                                             dataBinForLike = dataBinForLike,
+                                             n = n,
+                                             xmin = xmin,
+                                             xmax = xmax)
+
+    if(iii == 1)
+    {
+      MLEbins.nSeaFung.new = data.frame(Year = fullYears[iii],
+                                        xmin=xmin,
+                                        xmax=xmax,
+                                        n=n,
+                                        b=MLEbins.nSeaFung.oneyear.new$MLE,
+                                        confMin=MLEbins.nSeaFung.oneyear.new$conf[1],
+                                        confMax=MLEbins.nSeaFung.oneyear.new$conf[2])
+    } else {
+      MLEbins.nSeaFung.new = rbind(MLEbins.nSeaFung.new,
+                                   c(fullYears[iii],
+                                     xmin,
+                                     xmax,
+                                     n,
+                                     MLEbins.nSeaFung.oneyear.new$MLE,
+                                     MLEbins.nSeaFung.oneyear.new$conf[1],
+                                     MLEbins.nSeaFung.oneyear.new$conf[2]))
+   }
+}
+
+# Need the standard error for weighted linear regression,
+#  see eightMethods.count() for details.
+
+MLEbins.nSeaFung.new = dplyr::tbl_df(MLEbins.nSeaFung.new)
+MLEbins.nSeaFung.new = dplyr::dplyr::mutate(MLEbins.nSeaFung.new,
+                                     stdErr = (abs(confMin-b) +
+                                               abs(confMax-b))/(2*1.96) )
+```
+
+Now for Figure 8, comparing the results with the original MLE method: TODO don't
+think this one is needed...
+```{r timeseries, fig.width=7.5, fig.height=6}
+yLim=c(-2.2, -0.9)
+res = timeSerPlot(MLEbins.nSeaFung.new,
+                  legName = "(a) MLEbins",
+                  yLim = yLim,
+                  xLab = "Year",
+                  method = "MLEbins",
+                  legPos = "bottomleft",
+                  weightReg = TRUE,
+                  xTicksSmallInc = 1,
+                  yTicksSmallInc = 0.05)
+```
+
+The statistics for the regression fit, the final row in Table S.1 are:
+TODO - change MLEbin to MLEbins in the following
+```{r}
+trendResultsMLEbinNew = dplyr::tbl_df(res)
+knitr::kable(dplyr::select(trendResultsMLEbinNew, Method, Low, Trend, High, p, Rsquared),
+             digits=c(NA, 4, 4, 4, 2, 2))
+```
+
+```{r fig.width=7.5, fig.height=6.3}
+fullResults.MLEbins = MLEbins.nSeaFung.new  # TODO should have just used
+                                        # MLEbins..; and simplify
+trend.MLEbins.new = dplyr::dplyr::filter(trendResultsMLEbinNew,
+                                  Method == "MLEbins")
+bYears = fullResults.MLE$Year
+xLim = range(bYears)
+yLim = c(-1.82, -1.35)
+MLE.col = "blue"
+MLEbins.col = "red"
+res.MLE = timeSerPlot(fullResults.MLE,
+                      legName = "",
+                      xLim=xLim,
+                      yLim=yLim,
+                      xLab = "Year",
+                      method = "MLE",
+                      legPos = "bottomleft",
+                      weightReg=TRUE,
+                      bCol=MLE.col,
+                      regPlot = FALSE,
+                      regColNotSig = "lightblue",
+                      regColSig="darkblue",
+                      xTicksSmallInc = 1,
+                      yTicksSmallInc = 0.02,
+                      legExtra = c("MLEbins", "MLE"),
+                      legExtraCol=c(MLEbins.col, MLE.col),
+                      legExtraPos = "topleft",
+                      xJitter = -0.03)       # MLEbins on top as values are higher in figure
+
+res.MLEbins.new = timeSerPlot(fullResults.MLEbins,
+                              legName = "",
+                              method = "MLEbins",
+                              weightReg=TRUE,
+                              newPlot=FALSE,
+                              bCol=MLEbins.col,
+                              regPlot = FALSE,
+                              regColNotSig = "pink",
+                              regColSig="darkred",
+                              xJitter = 0.03)
+```
+
+Finally, some further calculations to compare trends. This gives the ratio of
+the estimates of *b* between the two methods:
+```{r bRatio, fig.width=7.5, fig.height=6.3}
+bRatio = fullResults.MLE$b / fullResults.MLEbins$b
+xLim = range(bYears)
+yLim = c(1, max(bRatio))
+smallTck = 0.01
+
+lm.bRatio = lm(bRatio ~ bYears)
+yearInc = seq(xLim[1], xLim[2], 0.1)
+p.conf.bRatio = predict(lm.bRatio,
+                        newdata=data.frame(Year=bYears),
+                        interval="confidence")
+pVal.bRatio = summary(lm.bRatio)$coeff["bYears", 4]
+
+plot( bYears,
+     bRatio,
+     xlab="Year",
+     pch=19,
+     ylab= expression(paste("(",
+                            italic(b),
+                            " from MLE)/(",
+                            italic(b),
+                            " from MLEbins)"),
+                      sep=""),
+     ylim = yLim)
+xTicksSmall = seq(xLim[1], xLim[-1], by=1)
+axis(1,
+     at = xTicksSmall,
+     labels = rep("", length(xTicksSmall)),
+     tck=-smallTck)
+yTicksSmall = seq(yLim[1], yLim[-1], by=0.05)
+axis(2,
+     at = yTicksSmall,
+     labels = rep("", length(yTicksSmall)),
+     tck=-smallTck)
+
+if (pVal.bRatio > 0.05) regCol = "darkgrey" else regCol = "red"
+lm.line(xLim, lm.bRatio, col=regCol)
+matlines(bYears,
+         p.conf.bRatio[ ,c("lwr", "upr")],
+         col=regCol,
+         lty=2)
+confVals = confint(lm.bRatio, "bYears", level=0.95)
+```
+Above figure shows the annual ratio of the estimate of *b* using the original
+MLE method to the estimate of *b* using the MLEbins method. The linear
+regression slope is `r round(lm.bRatio$coeff[2],dig=5)` with 95\% confidence
+interval `r round(confVals[1],dig=5)` to `r round(confVals[2],dig=5)`, *p*=`r
+round(pVal.bRatio, dig=5)`, *R*^2=`r round(summary(lm.bRatio)$r.squared, dig=3)`.
+
+
+And this shows the difference of the estimates of *b* between the two methods.
+```{r bDiff, fig.width=7.5, fig.height=6.3}
+bDiff = fullResults.MLEbins$b - fullResults.MLE$b
+yLim = range(pretty(bDiff))
+
+lm.bDiff = lm(bDiff ~ bYears)
+p.conf.bDiff = predict(lm.bDiff,
+                       newdata=data.frame(Year=bYears),
+                       interval="confidence")
+pVal.bDiff = summary(lm.bDiff)$coeff["bYears",4]
+
+plot(bYears,
+     bDiff,
+     xlab="Year",
+     pch=19,
+     ylab= expression(paste("(",
+                            italic(b),
+                            " from MLEbins) - (",
+                            italic(b),
+                            " from MLE)"),
+                      sep=""),
+     ylim = yLim)
+xTicksSmall = seq(xLim[1], xLim[-1], by=1)
+axis(1,
+     at = xTicksSmall,
+     labels = rep("", length(xTicksSmall)),
+     tck=-smallTck)
+yTicksSmall = seq(yLim[1], yLim[-1], by=0.01)
+axis(2,
+     at = yTicksSmall,
+     labels = rep("", length(yTicksSmall)),
+     tck=-smallTck)
+
+if (pVal.bDiff > 0.05) regCol = "darkgrey" else regCol = "red"
+lm.line(xLim, lm.bDiff, col=regCol)
+matlines(bYears,
+         p.conf.bDiff[ ,c("lwr", "upr")],
+         col = regCol,
+         lty=2)
+confVals = confint(lm.bDiff, "bYears", level=0.95)
+```
+The above figure shows the annual difference of the estimate of *b* using
+MLEbins to the estimate of *b* using the original MLE method. The linear
+regression slope is `r round(lm.bDiff$coeff[2],dig=5)` with 95\% confidence
+interval `r round(confVals[1],dig=5)` to `r round(confVals[2],dig=5)`, *p*=`r
+round(pVal.bDiff, dig=5)`, *R*^2=`r round(summary(lm.bDiff)$r.squared, dig=3)`.
+
+TODO: THINK this can all go, S.2 done belowFinally, the actual results for each method, with the MLEbins table being Table
+S.2:
+TODO: use kable, first one might work, do the second one and edit to give Table
+S.2 -
+```{r, eval=FALSE}
+#knitr::kable(dplyr::select(fullResults.MLE, -Method),
+#             caption="Full results for original MLE method.",
+#             lab="tab:fullresults.MLE",
+#            digits=c(0, 0, 3, 3, 3, 5))
+
+#print(fullResults.MLEtab, table.placement="tp", caption.placement="top",
+#    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
+
+
+#fullResults.MLEbinsTab = xtable(
+#  # dplyr::select(fullResults.MLEbins, -n, -xmin, -xmax),
+#  fullResults.MLEbins,
+#  caption="Full results for MLEbins.",
+#  lab="tab:fullresults.MLEbins", digits=c(0, 0, 2, 2, 1, 3, 3, 3, 5))
+
+# print(fullResults.MLEbinsTab, table.placement="tp", caption.placement="top",
+#    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
+```
+
+```{r save}
+# TODO - work out what to save, just copy from data-raw I expect.
+# save.image(file="nSeaMLEbins.RData")
+```
+
+This is the start of `nSeaMLEbins-recommend.Snw`, maybe do figures in separate
+vignette: [TODO - remove that]
+
+Need the constant *C* for each year, so calculate it here:
+```{r}
+MLEbins.res = MLEbins.nSeaFung.new
+MLEbins.res = dplyr::dplyr::mutate(MLEbins.res,
+                            C = (b != -1 ) * (b+1) / ( xmax^(b+1) - xmin^(b+1) ) +
+                                (b == -1) * 1 / ( log(xmax) - log(xmin) )
+                           )
+MLEbins.res = dplyr::select(MLEbins.res, -stdErr)
+```
+
+This is Table S.2, given the results for each year from the MLEbins method:
+```{r}
+knitr::kable(dplyr::select(MLEbins.res, Year, xmin, xmax, n, confMin, b,
+                           confMax, C),
+             digits=c(0, rep(2, 7)))
+```
