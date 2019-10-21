@@ -442,26 +442,17 @@ res = timeSerPlot(MLEbins.nSeaFung.new,
                   yTicksSmallInc = 0.05)
 ```
 
-And show the statistics for the regression fit, the final row in Table S.1:
-TODO exclude unweighted results, and uncomment result.
+The statistics for the regression fit, the final row in Table S.1 are:
 TODO - change MLEbin to MLEbins in the following
 ```{r}
-res
-# just do res
-# trendResultsMLEbinNew = dplyr::tbl_df(rbind(res, resNonWeight))
 trendResultsMLEbinNew = dplyr::tbl_df(res)
-
-trendResultsMLEbinNew
-
-# trendResultsMLEbinTabNew = xtable(dplyr::select(trendResultsMLEbinNew, -adjRsquared),
-#  digits=c(1, 1, 5, 5, 5, 4, 4))
-
-# print(trendResultsMLEbinTabNew, table.placement="tp", caption.placement="top",
-#    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
+knitr::kable(dplyr::select(trendResultsMLEbinNew, Method, Low, Trend, High, p, Rsquared),
+             digits=c(NA, 4, 4, 4, 2, 2))
 ```
 
 ```{r fig.width=7.5, fig.height=6.3}
-fullResults.MLEbins = MLEbins.nSeaFung.new  # TODO should have just used MLEbins..
+fullResults.MLEbins = MLEbins.nSeaFung.new  # TODO should have just used
+                                        # MLEbins..; and simplify
 trend.MLEbins.new = dplyr::filter(trendResultsMLEbinNew,
                                   Method == "MLEbins")
 bYears = fullResults.MLE$Year
