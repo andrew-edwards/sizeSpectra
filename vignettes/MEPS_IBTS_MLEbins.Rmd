@@ -614,11 +614,6 @@ S.2 -
 #    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
 ```
 
-```{r save}
-# TODO - work out what to save, just copy from data-raw I expect.
-# save.image(file="nSeaMLEbins.RData")
-```
-
 This is the start of `nSeaMLEbins-recommend.Snw`, maybe do figures in separate
 vignette: [TODO - remove that]
 
@@ -637,4 +632,12 @@ This is Table S.2, given the results for each year from the MLEbins method:
 knitr::kable(dplyr::select(MLEbins.res, Year, xmin, xmax, n, confMin, b,
                            confMax, C),
              digits=c(0, rep(2, 7)))
+```
+
+```{r save}
+# TODO - work out what to save, just copy from data-raw I expect.
+# save.image(file="nSeaMLEbins.RData")
+
+# MLEbins.res and dataBin saved in data-raw/IBTS-MLEbins.R
+
 ```
