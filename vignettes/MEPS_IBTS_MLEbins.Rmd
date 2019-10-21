@@ -253,7 +253,9 @@ for(fig.num in 1:4)      # doing 3 figures
          las = 2,
          tck = -0.005, cex.axis=0.8)
     mtext("Species Code", side=1, line=3, cex.lab=1)
-    abline(h=0)
+    # abline(h=0)      # works when saving each figure to a file, not so well in
+                       #  vignette so use:
+    lines(c(0, xLimMax[fig.num]), c(0,0))
 
     for(ii in 1:length(specForFig))   # loop over species, plot bins for each
         {
