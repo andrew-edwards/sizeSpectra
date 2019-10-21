@@ -8,8 +8,3 @@ usethis::use_data(trendResults, overwrite = TRUE)
 
 usethis::use_data(fullResults.MLE, overwrite = TRUE) # TODO seems to be contained in
                                         # fullResults, so may not need
-
-## use_tibble() said to document a returned tibble like so: [maybe add when
-#doing documentation, TODO]
-#' @return a [tibble][tibble::tibble-package]
-#'
