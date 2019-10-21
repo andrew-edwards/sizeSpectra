@@ -74,6 +74,7 @@ herring = dplyr::filter(data, SpecCode == herringCode)
 unique(herring$LngtClass)
 sprat = dplyr::filter(data, SpecCode == spratCode)
 unique(sprat$LngtClass)
+```
 
 So, yes, both have 0.5 cm length classes.
 
@@ -81,7 +82,7 @@ So, yes, both have 0.5 cm length classes.
 specCode05 = c(herringCode, spratCode)      # species codes with 0.5cm length bins
 others = dplyr::filter(data, !SpecCode %in% specCode05)
 sort(unique(others$LngtClass))
-@
+```
 
 Can visually see that there are no 0.5 values, confirming that just the two
 species have the 0.5-cm length bins.
@@ -363,7 +364,8 @@ Now use the MLEbins method to fit each year of data in turn.
 ```{r MLEbins}
 # Do a loop for each year, saving the results in MLEbins.nSeaFung.new
 bstart = -1.9                   # just start close to -2,
-fullYears = sort(unique(dataBin$Year))
+fullYears = sort(unique(dataBin$Year))[1:3]  # ****TODO***** remove [1:3] - just
+                                        # to make it run faster TODO
 
 for(iii in 1:length(fullYears))
   {
@@ -441,8 +443,12 @@ res = timeSerPlot(MLEbins.nSeaFung.new,
 
 And show the statistics for the regression fit, the final row in Table S.1:
 TODO exclude unweighted results, and uncomment result.
+TODO - change MLEbin to MLEbins in the following
 ```{r}
-trendResultsMLEbinNew = tbl_df(rbind(res, resNonWeight))
+res
+# just do res
+# trendResultsMLEbinNew = dplyr::tbl_df(rbind(res, resNonWeight))
+trendResultsMLEbinNew = dplyr::tbl_df(res)
 
 # trendResultsMLEbinTabNew = xtable(dplyr::select(trendResultsMLEbinNew, -adjRsquared),
 #  digits=c(1, 1, 5, 5, 5, 4, 4))
@@ -592,7 +598,7 @@ round(pVal.bDiff, dig=5)`, *R*^2=`r round(summary(lm.bDiff)$r.squared, dig=3)`.
 
 Finally, the actual results for each method, with the MLEbins table being Table
 S.2:
-TODO: use kable, first one might work:
+TODO: use kable, first one might work, do the second one and edit to give Table S.2
 ```{r, eval=FALSE}
 knitr::kable(dplyr::select(fullResults.MLE, -Method),
              caption="Full results for original MLE method.",
@@ -602,14 +608,15 @@ knitr::kable(dplyr::select(fullResults.MLE, -Method),
 #print(fullResults.MLEtab, table.placement="tp", caption.placement="top",
 #    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
 
+
 fullResults.MLEbinsTab = xtable(
   # dplyr::select(fullResults.MLEbins, -n, -xmin, -xmax),
   fullResults.MLEbins,
   caption="Full results for MLEbins.",
   lab="tab:fullresults.MLEbins", digits=c(0, 0, 2, 2, 1, 3, 3, 3, 5))
 
-print(fullResults.MLEbinsTab, table.placement="tp", caption.placement="top",
-    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
+# print(fullResults.MLEbinsTab, table.placement="tp", caption.placement="top",
+#    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
 ```
 
 ```{r save}

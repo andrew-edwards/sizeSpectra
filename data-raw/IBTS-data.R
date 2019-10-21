@@ -7,9 +7,8 @@ dataOrig = dplyr::tbl_df(q1)
 usethis::use_data(dataOrig, overwrite = TRUE)
 
 # See TODO vignette
-# load("nSeaFungImport.RData") # TODO prob change me
+load("nSeaFungImport.RData") # TODO prob change me
 
-# data = dplyr::ungroup(data)   # Else some groups get kept
-# IBTS.data = data
+IBTS.data = dplyr::ungroup(data)   # Else some groups get kept
 
-# usethis::use_data(IBTS.data, overwrite = TRUE)
+usethis::use_data(IBTS.data, overwrite = TRUE)
