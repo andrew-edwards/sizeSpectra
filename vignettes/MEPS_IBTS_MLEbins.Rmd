@@ -29,6 +29,7 @@ Table S.1.
 
 ```{r}
 library(sizeSpectra)
+library(tibble)  # Else prints all of a tibble
 data = IBTS_data
 data
 ```
@@ -61,7 +62,7 @@ herringCode = dplyr::filter(specCodeNames, species == "Clupea harengus")$speccod
 herringCode
 spratCode = dplyr::filter(specCodeNames, species == "Sprattus sprattus")$speccode
 spratCode
-``
+```
 
 TODO: this may have been done in earlier vignette - delete one or the other,
 this seems concise and is appropriate here.
@@ -117,7 +118,7 @@ range(dplyr::mutate(dataBin, wminCheck = LWa * LngtMin^LWb)$wminCheck - dataBin$
                                               # Verifying that wmin is correct
                                               # (was calculated independently)
 length(unique(dataBin$SpecCode))
-@
+```
 
 ## Plot the resulting body mass bins
 
@@ -545,7 +546,7 @@ confVals = confint(lm.bRatio, "bYears", level=0.95)
 Above figure shows the annual ratio of the estimate of *b* using the original
 MLE method to the estimate of *b* using the MLEbins method. The linear
 regression slope is `r round(lm.bRatio$coeff[2],dig=5)` with 95\% confidence
-interval `r round(confVals[1],dig=5)` to `r round(confVals[2],dig=5)}`, *p*=`r
+interval `r round(confVals[1],dig=5)` to `r round(confVals[2],dig=5)`, *p*=`r
 round(pVal.bRatio, dig=5)`, *R*^2=`r round(summary(lm.bRatio)$r.squared, dig=3)`.
 
 
