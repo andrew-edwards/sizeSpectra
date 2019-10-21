@@ -423,35 +423,32 @@ MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
 ```
 
 TODO - will prob break here
-Now for Figure 8, comparing the results with the original MLE method:
+
+Now for Figure 8, comparing the results with the original MLE method: TODO don't
+think this one is needed...
 ```{r timeseries, fig.width=7.5, fig.height=6}
 yLim=c(-2.2, -0.9)
-res = timeSerPlot(MLEbins.nSeaFung.new, legName = "(a) MLEbins",
-    yLim=yLim, xLab="Year", method = "MLEbins", legPos = "bottomleft",
-    weightReg=TRUE, xTicksSmallInc = 1, yTicksSmallInc = 0.05)
+res = timeSerPlot(MLEbins.nSeaFung.new,
+                  legName = "(a) MLEbins",
+                  yLim = yLim,
+                  xLab = "Year",
+                  method = "MLEbins",
+                  legPos = "bottomleft",
+                  weightReg = TRUE,
+                  xTicksSmallInc = 1,
+                  yTicksSmallInc = 0.05)
+```
 
-resNonWeight = timeSerPlot(MLEbins.nSeaFung.new, legName = "(a) MLEbins",
-    yLim=yLim, xLab="Year", method = "MLEbinsNonweight", legPos = "bottomleft",
-    weightReg=FALSE, xTicksSmallInc = 1, yTicksSmallInc = 0.05)
-
+And show the statistics for the regression fit, the final row in Table S.1:
+TODO exclude unweighted results, and uncomment result.
+```{r}
 trendResultsMLEbinNew = tbl_df(rbind(res, resNonWeight))
 
-trendResultsMLEbinTabNew = xtable(dplyr::select(trendResultsMLEbinNew, -adjRsquared),
-  caption="New likelihood function. Summary of regression analysis
-  of trend through time of the estimated exponent $b$; top row is MLEbins
-  with weighted linear regression, bottom row is with unweighted linear
-  regression. `Trend' is the estimated annual trend, with
-  95\\% confidence intervals given by `Low' and `High';
-  p is the p-value for the probability that the trend is significantly
-  different to 0, and $R^2$ is the coefficient of determination.
-  If $p \\geq 0.05$ then the trend can be considered not
-  significantly different to 0. If $p<0.05$ then a negative trend indicates
-  a statistically significant decline in the exponent over time, and
-  a positive trend indicates a statistically significant increase.",
-  lab="tab:trendResMLEbins", digits=c(1, 1, 5, 5, 5, 4, 4))
+# trendResultsMLEbinTabNew = xtable(dplyr::select(trendResultsMLEbinNew, -adjRsquared),
+#  digits=c(1, 1, 5, 5, 5, 4, 4))
 
-print(trendResultsMLEbinTabNew, table.placement="tp", caption.placement="top",
-    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
+# print(trendResultsMLEbinTabNew, table.placement="tp", caption.placement="top",
+#    include.rownames = FALSE, sanitize.text.function=function(x){x})  # was !ht
 ```
 
 ```{r fig.width=7.5, fig.height=6.3}
