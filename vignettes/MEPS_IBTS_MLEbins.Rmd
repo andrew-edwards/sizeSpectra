@@ -29,7 +29,7 @@ Table S.1.
 
 ```{r}
 library(sizeSpectra)
-data = IBTS.data
+data = IBTS_data
 data
 ```
 <!-- From nSeaMLEbins.Snw, removing what isn't needed. Took this from -->
