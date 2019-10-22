@@ -213,6 +213,8 @@ copied into Supp Material.
 ## Results plotted for each year
 
 First just get what's needed for the calculations for the recommended plot:
+TODO - should probably functionalise this if possible, would make input to
+figure plotting consistent, and be easier for others to use:
 ```{r recommended}
 dataRecommend.isd = dplyr::select(dataBin,
                                   Year,
@@ -238,25 +240,25 @@ for(i in 1:length(fullYears))
     # data.year = dplyr::mutate(data.year,
     #                          cumSum = cumsum(Number))
     # This is wrong when we have two species with the same
-    #  length-weight coefficients in the same year, use verify then change it to
+    #  length-weight coefficients in the same year, use countGTEwmin then change it to
     #                          cumSum in one go TODO since clearer
     # Have to do not with dplyr:
     wmin.vec = data.year$wmin
     wmax.vec = data.year$wmax
     num.vec  = data.year$Number
 
-    verify = rep(NA, length(num.vec)) # to do a manual count
-    lowCount = verify
-    highCount = verify
+    countGTEwmin = rep(NA, length(num.vec)) # to do a manual count
+    lowCount = countGTEwmin
+    highCount = countGTEwmin
 
-    for(iii in 1:length(verify))
+    for(iii in 1:length(countGTEwmin))
     {
-      verify[iii]    = sum( (wmin.vec >= wmin.vec[iii]) * num.vec)
+      countGTEwmin[iii]    = sum( (wmin.vec >= wmin.vec[iii]) * num.vec)
       lowCount[iii]  = sum( (wmin.vec >= wmax.vec[iii]) * num.vec)
       highCount[iii] = sum( (wmax.vec >  wmin.vec[iii]) * num.vec)
     }
     data.year = cbind(data.year,
-                      "verify" = verify,
+                      "countGTEwmin" = countGTEwmin,
                       "lowCount" = lowCount,
                       "highCount" = highCount)
     data.year = dplyr::tbl_df(data.year)
@@ -290,10 +292,10 @@ for(i in 1:length(fullYears))   # TODO could make a function
 
 <!--
 TODO commented out to try and get it working
-\subsection{Checking cumSum -- 1991 ($i=6$) didn't agree with verify calculation;
+\subsection{Checking cumSum -- 1991 ($i=6$) didn't agree with countGTEwmin calculation;
   see later for automated calculations for each year this occurs}
 
-For $i=6$, year 1991, we get {\tt cumSum} and {\tt verify} differing by
+For $i=6$, year 1991, we get {\tt cumSum} and {\tt countGTEwmin} differing by
 -0.02941, because there are repeated {\tt wmin}$=31.84771$ values:
 <<year1991>>=
 data.1991 = dplyr::filter(dataBin, Year == 1991)
@@ -305,22 +307,22 @@ dplyr::filter(data.1991, abs(wmin - 31.84771) < 0.00001)
 Aha, so it's two different species with the same length-weight coefficients
 and same length bins. This is allowed (we have already ensured that we don't
 have multiple counts of the same species in the same length bin). So we should
-use {\tt verify} to plot the horizontal values, not {\tt cumSum}. Not that you'd
+use {\tt countGTEwmin} to plot the horizontal values, not {\tt cumSum}. Not that you'd
 see the (very occasional and very small) difference, and for such cases you'll
 always get the segments (and the grey rectangles) on top of each other (can't
 distinguish two separate species). For unbinned data the {\tt cumSum} may be best
 as it shows up each data point.
 
-\subsection{Check cumSum -- 1992 ($i=7$) didn't agree with verify calculation}
+\subsection{Check cumSum -- 1992 ($i=7$) didn't agree with countGTEwmin calculation}
 
-For $i=7$, year 1992, we get {\tt cumSum} and {\tt verify} differing in
+For $i=7$, year 1992, we get {\tt cumSum} and {\tt countGTEwmin} differing in
 a few places (was only in one for 1991). So do more automated code here
 than that above, in case need to check other years also.
 <<year1992>>=
 diff.i = 7
 diff.year = fullYears[diff.i]
 data.one.year = data.year.list[[diff.i]]
-data.diff = dplyr::filter(data.one.year, abs(cumSum - verify) > 0)
+data.diff = dplyr::filter(data.one.year, abs(cumSum - countGTEwmin) > 0)
 dataBin.diff = dplyr::filter(dataBin, Year == diff.year, wmin %in% data.diff$wmin)
 # If it's again because two species have same length-weight coefficients then
 #  should be able to manually spot that by arranging the rows:
@@ -335,22 +337,22 @@ So, same issue as for 1991 -- species have the same length-weight coefficients.
   like it may keep occuring}
 
 This will print the year then the differences between {\tt cumSum} and
-{\tt verify}, and give the maximum difference at the end. Take a look here
+{\tt countGTEwmin}, and give the maximum difference at the end. Take a look here
 if necessary if the maximum difference ends up being big (much bigger than 10 say
 given the large sample sizes). In practice it likely won't matter anyway
 which way the figure will be plotted; just helpful to go into here for
 understanding).
 <<year.others>>=
-max.abs.diff = numeric()        # maximum overall abs diff betw cumSum and verify
+max.abs.diff = numeric()        # maximum overall abs diff betw cumSum and countGTEwmin
 for(diff.i in diff.ivec)
   {
     diff.year = fullYears[diff.i]
     print(diff.year)
     data.one.year = data.year.list[[diff.i]]
-    data.diff = dplyr::filter(data.one.year, abs(cumSum - verify) > 0)
-    print(data.diff$cumSum - data.diff$verify)
+    data.diff = dplyr::filter(data.one.year, abs(cumSum - countGTEwmin) > 0)
+    print(data.diff$cumSum - data.diff$countGTEwmin)
     max.abs.diff = max(max.abs.diff,
-                       max(abs(data.diff$cumSum - data.diff$verify)))
+                       max(abs(data.diff$cumSum - data.diff$countGTEwmin)))
     dataBin.diff = dplyr::filter(dataBin, Year == diff.year, wmin %in% data.diff$wmin)
     # If it's again because two species have same length-weight coefficients then
     #  should be able to manually spot that by arranging the rows:
@@ -365,7 +367,7 @@ for(diff.i in diff.ivec)
 @
 
 If no error messages and this sentence gets printed, then any differences between
-{\tt cumSum} and {\tt verify} are due to multiple species having the same
+{\tt cumSum} and {\tt countGTEwmin} are due to multiple species having the same
 length-weight coefficients. For reference, the maximum difference is
 \Sexpr{round(max.abs.diff, 6)} -- see above for which year.
 
@@ -376,10 +378,10 @@ diff.i = 10
 diff.year = fullYears[diff.i]
 print(diff.year)
 data.one.year = data.year.list[[diff.i]]
-data.diff = dplyr::filter(data.one.year, abs(cumSum - verify) > 0)
-# print(data.diff$cumSum - data.diff$verify)
+data.diff = dplyr::filter(data.one.year, abs(cumSum - countGTEwmin) > 0)
+# print(data.diff$cumSum - data.diff$countGTEwmin)
 #max.abs.diff = max(max.abs.diff,
-#                       max(abs(data.diff$cumSum - data.diff$verify)))
+#                       max(abs(data.diff$cumSum - data.diff$countGTEwmin)))
 dataBin.diff = dplyr::filter(dataBin, Year == diff.year, wmin %in% data.diff$wmin)
 # If it's again because two species have same length-weight coefficients then
 #  should be able to manually spot that by arranging the rows:
@@ -390,9 +392,9 @@ So that (and 1996) are for species 126425 (Atlantic Herring) that has the
 0.5-cm length bins. Which is actually another reason that {\tt cumSum} is
 not actually the right thing to use. Will check in Issue \#24 that it hasn't
 been used in any calculations (don't think it has). For the above example
-it's actually {\tt verify} that is the lower value. This only affects the
+it's actually {\tt countGTEwmin} that is the lower value. This only affects the
 plotting of the y-values of the segments, not the rectangles at all (and so
-at the end of the day is not that important), but we use {\tt verify} in the
+at the end of the day is not that important), but we use {\tt countGTEwmin} in the
 plots anyway.
 
 \section{Commentary on the actual results}

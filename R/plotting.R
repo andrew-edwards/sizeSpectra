@@ -710,7 +710,7 @@ timeSerPlot = function(bForYears, legName, method, weightReg = FALSE,
 ##' the MEPS paper.
 ##'
 ##' @param data.year tibble containing columns Year, wmin, wmax, Number,
-##'   verifyTODO-call it Count.gte.wmin, lowCount, highCount
+##'   countGTEwmin, lowCount, highCount
 ##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbins method)
 ##' @param b.confMin lower 95\% confidence limits of *b*
 ##' @param b.confMax upper 95\% confidence limits of *b*
@@ -803,14 +803,14 @@ ISD_bin_plot <- function(data.year,
   # yRange = c(min(data.year$lowCount), max(data.year$highCount))
   # The above does not work because first val is 0 which is not permissable on
   #  log axis. Which also means that the rectangle that goes to 0 has to be
-  #  added manually (below). Picking the y-axis to go down to 0.75 the verify
-  #  value of the lowest bin (0.5 was a bit big). TODO edit that maybe
-  yRange = c(0.75*min(data.year$verify), max(data.year$highCount))   # TODO
+  #  added manually (below). Picking the y-axis to go down to 0.75 of the
+  #  minimum value of CountGTEwmin.
+  yRange = c(0.75*min(data.year$countGTEwmin), max(data.year$highCount))   # TODO
                                         # still don't quite get this
 
   # y-axis not logged
   plot(data.year$wmin,
-       data.year$verify,
+       data.year$countGTEwmin,
        log="x",
        xlab=xLab,
        ylab=yLab,
@@ -847,9 +847,9 @@ ISD_bin_plot <- function(data.year,
        ytop = data.year$highCount,
        col = rect.col)
   segments(x0 = data.year$wmin,
-           y0 = data.year$verify,
+           y0 = data.year$countGTEwmin,
            x1 = data.year$wmax,
-           y1 = data.year$verify,
+           y1 = data.year$countGTEwmin,
            col = seg.col)
   lines(x.PLB, y.PLB, col = fit.col, lwd = fit.lwd)   # Plot line last so can see it
   lines(x.PLB, y.PLB.confMin, col = fit.col, lty = conf.lty)
@@ -878,7 +878,7 @@ ISD_bin_plot <- function(data.year,
   # y-axis logged
   # empty plot:
   plot(data.year$wmin,
-       data.year$verify,
+       data.year$countGTEwmin,
        log = "xy",
        xlab = xLab,
        ylab = yLab,
@@ -913,9 +913,9 @@ ISD_bin_plot <- function(data.year,
        col = rect.col)
 
   segments(x0 = data.year$wmin,
-           y0 = data.year$verify,
+           y0 = data.year$countGTEwmin,
            x1 = data.year$wmax,
-           y1 = data.year$verify,
+           y1 = data.year$countGTEwmin,
            col = seg.col)
 
   lines(x.PLB,
