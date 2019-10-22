@@ -771,7 +771,7 @@ ISD_bin_plot <- function(data.year,
   par(mfrow = par.mfrow)
   par(mai = par.mai, cex = par.cex)  # Affects all figures   TODO put into one
 
-  if(is.na(xRange)){
+  if(is.na(xRange[1])){
     xRange = c(min(data.year$wmin),
                max(data.year$wmax))  # For PLB line
     }
@@ -857,7 +857,7 @@ ISD_bin_plot <- function(data.year,
   legend("topright", "(a)",
          bty = "n",
          inset = inset.a)
-  if(!is.na){
+  if(!is.na(year)){
     legend("topright",
            legend = year,
            bty = "n",
@@ -904,7 +904,7 @@ ISD_bin_plot <- function(data.year,
   #  get plotted on log-log plot
   extra.rect = dplyr::filter(data.year,
                              lowCount == 0)
-  if(nrow(extra.rect) > 1) stop("Check rows of extra rect.")
+  # if(nrow(extra.rect) > 1) stop("Check rows of extra rect.")
   rect(xleft = extra.rect$wmin,
        ybottom = rep(0.01 * yRange[1], nrow(extra.rect)),
        xright = extra.rect$wmax,

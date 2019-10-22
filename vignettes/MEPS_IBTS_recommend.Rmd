@@ -282,9 +282,9 @@ for(i in 1:length(fullYears))   # TODO could make a function
   {
   ISD_bin_plot(data.year = data.year.list[[i]],
                b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
-               confMin = dplyr::filter(MLEbins.res, Year ==
+               b.confMin = dplyr::filter(MLEbins.res, Year ==
                                                     fullYears[i])$confMin,
-               confMax = dplyr::filter(MLEbins.res, Year ==
+               b.confMax = dplyr::filter(MLEbins.res, Year ==
                                                     fullYears[i])$confMax,
                year = fullYears[i],
                xRange = xRange.global)
