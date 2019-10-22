@@ -265,7 +265,8 @@ for(i in 1:length(fullYears))
      # put that value of i into here (like i!=6), add a subsection, re-run
      #  to get this year's value into data.year.list and make conclusions in
      #  the subsection.
-  data.year.list[[i]] = data.year
+    data.year.list[[i]] = data.year
+    rm(data.year)      # TODO not good style but think needed for next section
 }
 
 inset = c(0, 0)#-0.04)      # inset for (a) and (b)
@@ -274,7 +275,7 @@ inset2 = c(0, 0.04)         # inset for year
 ```
 
 
-```{r, animation.hook='gifski', fig.width = 5.36, fig.height = 8}
+```{r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
 # fig.width is 0.67 * fig.height (which is 8)
 
 #  postscript(paste0(dirToSaveFigs, "/IBTS-ISD", fullYears[i], ".eps"),
@@ -289,7 +290,7 @@ for(i in 1:length(fullYears))   # TODO could make a function
   seg.col = "green"                         # colour for horizontal segments
 
   xRange = c(min(data.year$wmin), max(data.year$wmax)) # For PLB line, need
-                                                       #  higher res for log axis
+                                                       #  higher resolution for log axis
   x.PLB = seq(xRange[1], xRange[2], length=10000)
           # x values to plot PLB, need high resolution for both plots, but
           #  insert value close to xmax to make log-log curve go down further
