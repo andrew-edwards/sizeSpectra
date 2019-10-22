@@ -702,26 +702,59 @@ timeSerPlot = function(bForYears, legName, method, weightReg = FALSE,
     return(res)
 }
 
-
+##' Recommended plots of individual size distribution and fit for binned data
+##'
+##' Plots the individual size distribution and the fit from the MLEbins method,
+##' with linear and then logarithmic y-axes, in the recommended way that takes
+##' into account the bin structure of the data, as in Figures 7 and S.5-S.34 of
+##' the MEPS paper.
+##'
+##' @param data.year tibble containing TODO
+##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbins method)
+##' @param b.confMin lower 95\% confidence limits of *b*
+##' @param b.confMax upper 95\% confidence limits of *b*
+##' @param year year of data to go into legend (use NA if not applicable)
+##' @param xRange limits of x-axis
+##' @param MLE.round number of decimal places to show MLE of b on the top plot
+##' @param xLabel.small which small tickmarks to label on the x-axis
+##' @param yBig.inc increment for big tickmarks on the y-axis
+##' @param ySmall.inc increment for small unlabelled tickmarks on the y-axis
+##' @param ySmall.tcl length of small y-axis tick marks - only for (a)??TODO
+##' @param xLab label for x-axis
+##' @param yLab label for y-axis
+##' @param inset.a how far to inset (a) and (b)
+##' @param inset.year how far to inset the year
+##' @param seg.col colour for horizontal green lines showing range of body sizes
+##'   for each bin
+##' @param rect.col colour to fill in the rectangles for each bin
+##' @param fit.col colour to plot the MLE curve, and those for the confidence intervals
+##' @param fit.lwd line weight for MLE curve
+##' @param conf.lty line type for two curves for the MLE confidence intervals
+##' @param par.mfrow vector giving the layout of the figures (number of rows,
+##'   number of columns)
+##' @param par.mai margin size in inches
+##' @param par.cex magnification of plotting text and symbols relative to default
+##' @param mgp.vals margin line for axis title, axis labels and axis line
+##' @return two-panel figure of the recommended plot of binned data and the
+##'   fitted individual size distribution, like Figures 7 and S.5-S.34 of the
+##'   MEPS paper. See the vignette TODO for explicit example.
+##' @export
+##' @author Andrew Edwards
 ISD_bin_plot <- function(data.year,
                          b.MLE,
                          b.confMin,
                          b.confMax,
                          year = NA,
                          xRange = NA,
-                         MLE.round = 2,     # number of decimal places to give b
-                                        # MLE value on plot
+                         MLE.round = 2,
                          xLabel.small = c(5, 50, 500, 5000),
-                         yBig.inc = 1000,   # increment for yBig tick labels
-                         ySmall.inc = 250,  # increment for ySmall unlabelled
-                         # tick labels
-                         ySmall.tcl = -0.2,  # length of small y-axis tick marks  # (only for (a)??TODO)
-                         xLab = expression(paste("Body mass (", italic(x),
-                                                 "), g")),
-                         yLab = expression(paste("Number of ", values >=
-                                                               italic(x))),
-                         inset.a = c(0, 0),            # inset for (a) and (b)
-                         inset.year = c(0, 0.04),      # inset for year
+                         yBig.inc = 1000,
+                         ySmall.inc = 250,
+                         ySmall.tcl = -0.2,
+                         xLab = expression(paste("Body mass (", italic(x), "), g")),
+                         yLab = expression(paste("Number of ", values >= italic(x))),
+                         inset.a = c(0, 0),
+                         inset.year = c(0, 0.04),
                          seg.col = "green",
                          rect.col = "grey",
                          fit.col = "red",
