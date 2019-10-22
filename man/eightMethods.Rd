@@ -39,7 +39,8 @@ fits for each of the eight methods.
 }
 \description{
 TODO: Developed and is called in \code{nSea15analysis.Snw}, which was modified
-from what was in fitting2.r. May be specific to the IBTS data set.
+from what was in fitting2.r. May be specific to the IBTS data set. MAY only
+be for one year and may not be needed - subsumed in eightMethods.count() ???TODO
 }
 \author{
 Andrew Edwards
