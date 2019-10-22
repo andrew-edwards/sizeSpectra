@@ -11,6 +11,8 @@
 # logTicks - add axes and tick marks to a log-log plot to represent
 #  unlogged values (e.g. Figures 2(h) and 6(b))
 # legJust - add legend to a plot
+# ISD_bin_plot - recommended plotting for binned data (MEPS Figures 7 and
+#  S.5-S.34).
 
 ##' Plot bounded straight line of results of `lm()` fit
 ##'
@@ -698,4 +700,203 @@ timeSerPlot = function(bForYears, legName, method, weightReg = FALSE,
                      adjRsquared = summary(lm)$adj.r.squared,
                      row.names=NULL)
     return(res)
+}
+
+
+ISD_bin_plot <- function(data.year,
+                         b.MLE,
+                         b.confMin,
+                         b.confMax,
+                         year = NA,
+                         xRange = NA,
+                         MLE.round = 2,     # number of decimal places to give b
+                                        # MLE value on plot
+                         xLabel.small = c(5, 50, 500, 5000),
+                         yBig.inc = 1000,   # increment for yBig tick labels
+                         ySmall.inc = 250,  # increment for ySmall unlabelled
+                         # tick labels
+                         ySmall.tcl = -0.2  # length of small y-axis tick marks
+                                        # (only for (a)??TODO)
+                         xLab = expression(paste("Body mass (", italic(x),
+                                                 "), g")),
+                         yLab = expression(paste("Number of ", values >=
+                                                               italic(x))),
+                         inset.a = c(0, 0),            # inset for (a) and (b)
+                         inset.year = c(0, 0.04),      # inset for year
+                         seg.col = "green",
+                         rect.col = "grey",
+                         fit.col = "red",
+                         fit.lwd = 2,
+                         conf.lty = 2,
+                         par.mfrow = c(2, 1),
+                         par.mai = c(0.4, 0.5, 0.05, 0.3),
+                         par.cex = 0.7,
+                         mgp.vals = c(1.6,0.5,0)
+                         )
+  {
+  sumNumber = sum(data.year$Number)
+
+  par(mfrow = par.mfrow))
+  par(mai = par.mai, cex = par.cex)  # Affects all figures
+
+  if(is.na(xRange)){
+    xRange = c(min(data.year$wmin),
+               max(data.year$wmax))  # For PLB line
+    }
+
+  x.PLB = seq(xRange[1], xRange[2], length=10000)
+          # x values to plot PLB, need high resolution for both plots, but
+          #  insert value close to xmax to make log-log curve go down further
+  x.PLB.length = length(x.PLB)
+  x.PLB = c(x.PLB[-x.PLB.length],
+            0.99999 * x.PLB[x.PLB.length],
+            x.PLB[x.PLB.length])
+  y.PLB = (1 - pPLB(x = x.PLB,
+                    b = b.MLE,
+                    xmin = min(x.PLB),
+                    xmax = max(x.PLB))) * sumNumber
+  # To add curves for the limits of the 95% confidence interval of b:
+  y.PLB.confMin = (1 - pPLB(x = x.PLB,
+                    b = b.confMin,
+                    xmin = min(x.PLB),
+                    xmax = max(x.PLB))) * sumNumber
+  y.PLB.confMax = (1 - pPLB(x = x.PLB,
+                    b = b.confMax,
+                    xmin = min(x.PLB),
+                    xmax = max(x.PLB))) * sumNumber
+
+  # yRange = c(min(data.year$lowCount), max(data.year$highCount))
+  # The above does not work because first val is 0 which is not permissable on
+  #  log axis. Which also means that the rectangle that goes to 0 has to be
+  #  added manually (below). Picking the y-axis to go down to 0.75 the verify
+  #  value of the lowest bin (0.5 was a bit big). TODO edit that maybe
+  yRange = c(0.75*min(data.year$verify), max(data.year$highCount))   # TODO
+                                        # still don't quite get this
+
+  # y-axis not logged
+  plot(data.year$wmin,
+       data.year$verify,
+       log="x",
+       xlab=xLab,
+       ylab=yLab,
+       xlim = xRange,
+       ylim = yRange,
+       type = "n",
+       axes = FALSE,
+       mgp = mgp.vals)
+
+  xLim = 10^par("usr")[1:2]
+  yLim = 10^par("usr")[3:4]
+
+  logTicks(xLim,
+           yLim=NULL,
+           xLabelSmall = xLabel.small)
+  yBig = seq(0, yRange[2], yBig.inc)  # May have to tweak for some years
+  # Big labelled:
+  axis(2, at = yBig, labels = yBig, mgp=mgp.vals)
+  # Small unlabelled:
+  axis(2,
+       seq(yBig[1],
+           yRange[2]*1.1,
+           by = ySmall.inc),
+       labels = rep("",
+                    length(seq(yBig[1],
+                               yRange[2]*1.1,
+                               by=ySmall.inc))),
+       tcl = ySmall.tcl,
+       mgp = mgp.vals)
+
+  rect(xleft = data.year$wmin,
+       ybottom = data.year$lowCount,
+       xright = data.year$wmax,
+       ytop = data.year$highCount,
+       col = rect.col)
+  segments(x0 = data.year$wmin,
+           y0 = data.year$verify,
+           x1 = data.year$wmax,
+           y1 = data.year$verify,
+           col = seg.col)
+  lines(x.PLB, y.PLB, col = fit.col, lwd = fit.lwd)   # Plot line last so can see it
+  lines(x.PLB, y.PLB.confMin, col = fit.col, lty = conf.lty)
+  lines(x.PLB, y.PLB.confMax, col = fit.col, lty = conf.lty)
+
+  legend("topright", "(a)",
+         bty = "n",
+         inset = inset.a)
+  if(!is.na){
+    legend("topright",
+           legend = year,
+           bty = "n",
+           inset = inset.year)
+  }
+
+  legend("topright",
+         legend = paste0("b=", round(b.MLE, MLE.round)),
+         bty = "n",
+         inset = 2 * inset.year)
+
+  legend("topright",
+         legend = paste0("n=", round(yRange[2], 2)),
+         bty = "n",
+         inset = 3 * inset.year)
+
+  # y-axis logged
+  # empty plot:
+  plot(data.year$wmin,
+       data.year$verify,
+       log = "xy",
+       xlab = xLab,
+       ylab = yLab,
+       xlim = xRange,
+       ylim = yRange,
+       type = "n",
+       axes = FALSE,
+       mgp = mgp.vals)
+
+  xLim = 10^par("usr")[1:2]
+  yLim = 10^par("usr")[3:4]
+
+  logTicks(xLim,
+           yLim,
+           xLabelSmall = xLabel.small)
+
+  rect(xleft = data.year$wmin,
+       ybottom = data.year$lowCount,
+       xright = data.year$wmax,
+       ytop = data.year$highCount,
+       col = rect.col)
+
+  # Need to manually draw the rectangle with lowCount = 0 since it doesn't
+  #  get plotted on log-log plot
+  extra.rect = dplyr::filter(data.year,
+                             lowCount == 0)
+  if(nrow(extra.rect) > 1) stop("Check rows of extra rect.")
+  rect(xleft = extra.rect$wmin,
+       ybottom = rep(0.01 * yRange[1], nrow(extra.rect)),
+       xright = extra.rect$wmax,
+       ytop = extra.rect$highCount,
+       col = rect.col)
+
+  segments(x0 = data.year$wmin,
+           y0 = data.year$verify,
+           x1 = data.year$wmax,
+           y1 = data.year$verify,
+           col = seg.col)
+
+  lines(x.PLB,
+        y.PLB,
+        col = fit.col,
+        lwd = fit.lwd)
+  lines(x.PLB,
+        y.PLB.confMin,
+        col = fit.col,
+        lty = conf.lty)
+  lines(x.PLB,
+        y.PLB.confMax,
+        col = fit.col,
+        lty = conf.lty)
+  legend("topright",
+         "(b)",
+         bty="n",
+         inset = inset.a)
 }

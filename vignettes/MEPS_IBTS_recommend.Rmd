@@ -269,9 +269,6 @@ for(i in 1:length(fullYears))
     rm(data.year)      # TODO not good style but think needed for next section
 }
 
-inset = c(0, 0)#-0.04)      # inset for (a) and (b)
-inset2 = c(0, 0.04)         # inset for year
-
 ```
 
 
@@ -284,145 +281,16 @@ inset2 = c(0, 0.04)         # inset for year
 for(i in 1:length(fullYears))   # TODO could make a function
 {
   data.year = data.year.list[[i]]
-  par(mfrow=c(2,1))
-  par(mai=c(0.4, 0.5, 0.05, 0.3), cex=0.7)  # Affects all figures
-  mgpVals = c(1.6,0.5,0)
-  seg.col = "green"                         # colour for horizontal segments
 
-  xRange = c(min(data.year$wmin), max(data.year$wmax)) # For PLB line, need
-                                                       #  higher resolution for log axis
-  x.PLB = seq(xRange[1], xRange[2], length=10000)
-          # x values to plot PLB, need high resolution for both plots, but
-          #  insert value close to xmax to make log-log curve go down further
-  x.PLB.length = length(x.PLB)
-  x.PLB = c(x.PLB[-x.PLB.length],
-            0.99999 * x.PLB[x.PLB.length],
-            x.PLB[x.PLB.length])
-  y.PLB = (1 - pPLB(x = x.PLB,
-                    b = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
-                    xmin = min(x.PLB),
-                    xmax = max(x.PLB))) * sumNumber
-  # To add curves for the limits of the 95% confidence interval of b:
-  y.PLB.confMin = (1 - pPLB(x = x.PLB,
-                    b = dplyr::filter(MLEbins.res, Year == fullYears[i])$confMin,
-                    xmin = min(x.PLB),
-                    xmax = max(x.PLB))) * sumNumber
-  y.PLB.confMax = (1 - pPLB(x = x.PLB,
-                    b = dplyr::filter(MLEbins.res, Year == fullYears[i])$confMax,
-                    xmin = min(x.PLB),
-                    xmax = max(x.PLB))) * sumNumber
 
-  # yRange = c(min(data.year$lowCount), max(data.year$highCount))
-  # The above does not work because first val is 0 which is not permissable on
-  #  log axis. Which also means that the rectangle that goes to 0 has to be
-  #  added manually (below). Picking the y-axis to go down to 0.75 the verify
-  #  value of the lowest bin (0.5 was a bit big). TODO edit that maybe
-  yRange = c(0.75*min(data.year$verify), max(data.year$highCount))
+  ISD_bin_plot(TODO) INPUTS:
+                       data.year
+  year = fullYears[i],
+  b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+  confMin = dplyr::filter(MLEbins.res, Year == fullYears[i])$confMin,
+  confMax = dplyr::filter(MLEbins.res, Year == fullYears[i])$confMax,
+  xRange = xRange.global,
 
-  # y-axis not logged
-  plot(data.year$wmin,
-       data.year$verify,
-       log="x",
-       xlab=expression(paste("Body mass (", italic(x), "), g")),
-       ylab=expression(paste("Number of ", values >= italic(x))),
-       xlim = xRange.global,
-       ylim = yRange,
-       type = "n",
-       axes = FALSE,
-       mgp = mgpVals)
-
-  xLim = 10^par("usr")[1:2]
-  yLim = 10^par("usr")[3:4]
-
-  logTicks(xLim,
-           yLim=NULL,
-           xLabelSmall = c(5, 50, 500, 5000))
-  yBig = seq(0, yRange[2], 1000)  # May have to tweak for some years
-  # Big labelled:
-  axis(2, at= yBig, labels = yBig, mgp=mgpVals)
-  # Small unlabelled:
-  axis(2,
-       seq(yBig[1], yRange[2]*1.1, by=250),
-       labels=rep("", length(seq(yBig[1], yRange[2]*1.1, by=250))),
-       tcl=-0.2,
-       mgp=mgpVals)
-
-  rect(xleft = data.year$wmin,
-       ybottom = data.year$lowCount,
-       xright = data.year$wmax,
-       ytop = data.year$highCount,
-       col = "grey")
-  segments(x0=data.year$wmin,
-           y0=data.year$verify,
-           x1=data.year$wmax,
-           y1=data.year$verify,
-           col=seg.col)
-  lines(x.PLB, y.PLB, col="red", lwd=2)  # Plot line last so can see it
-  lines(x.PLB, y.PLB.confMin, col="red", lty=2)
-  lines(x.PLB, y.PLB.confMax, col="red", lty=2)
-
-  legend("topright", "(a)",
-         bty="n",
-         inset=inset)
-  legend("topright",
-         legend=fullYears[i],
-         bty="n", inset=inset2)
-  legend("topright",
-         legend=paste0("b=", round(dplyr::filter(MLEbins.res, Year ==
-                                                              fullYears[i])$b, 2)),
-         bty="n",
-         inset=2*inset2)
-  # if(max(abs(sum(data.year$Number) - yRange[2])) > 0.001)
-  #    stop("Check here that n=yRange[2]; comment out once done once.")
-  legend("topright",
-         legend=paste0("n=", round(yRange[2], 2)),
-         bty="n",
-         inset=3*inset2)
-
-  # y-axis logged
-  # empty plot:
-  plot(data.year$wmin,
-       data.year$verify,
-       log="xy",
-       xlab=expression(paste("Body mass (", italic(x), "), g")),
-       ylab=expression(paste("Number of ", values >= italic(x))),
-       xlim = xRange.global,
-       ylim = yRange,
-       type = "n",
-       axes = FALSE,
-       mgp = mgpVals)
-
-  xLim = 10^par("usr")[1:2]
-  yLim = 10^par("usr")[3:4]
-
-  logTicks(xLim, yLim, xLabelSmall = c(5, 50, 500))
-
-  rect(xleft = data.year$wmin,
-       ybottom = data.year$lowCount,
-       xright = data.year$wmax,
-       ytop = data.year$highCount,
-       col = "grey")
-
-  # Need to manually draw the rectangle with lowCount = 0 since it doesn't
-  #  get plotted on log-log plot
-  extra.rect = dplyr::filter(data.year, lowCount == 0)
-  # if(nrow(extra.rect) > 1) stop("Check rows of extra rect.")
-  rect(xleft = extra.rect$wmin,
-       ybottom = rep(0.01 * yRange[1], nrow(extra.rect)),
-       xright = extra.rect$wmax,
-       ytop = extra.rect$highCount,
-       col = "grey")
-
-  segments(x0=data.year$wmin,
-           y0=data.year$verify,
-           x1=data.year$wmax,
-           y1=data.year$verify,
-           col=seg.col)
-
-  lines(x.PLB, y.PLB, col="red", lwd=2) #, lty=5)
-  lines(x.PLB, y.PLB.confMin, col="red", lty=2)
-  lines(x.PLB, y.PLB.confMax, col="red", lty=2)
-  legend("topright", "(b)", bty="n", inset=inset)
 }
 ```
 
