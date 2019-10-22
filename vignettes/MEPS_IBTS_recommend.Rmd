@@ -279,18 +279,15 @@ for(i in 1:length(fullYears))
 #             height = figheight, width = figwidth,
 #             horizontal=FALSE, paper="special")
 for(i in 1:length(fullYears))   # TODO could make a function
-{
-  data.year = data.year.list[[i]]
-
-
-  ISD_bin_plot(TODO) INPUTS:
-                       data.year
-  year = fullYears[i],
-  b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
-  confMin = dplyr::filter(MLEbins.res, Year == fullYears[i])$confMin,
-  confMax = dplyr::filter(MLEbins.res, Year == fullYears[i])$confMax,
-  xRange = xRange.global,
-
+  {
+  ISD_bin_plot(data.year = data.year.list[[i]],
+               b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+               confMin = dplyr::filter(MLEbins.res, Year ==
+                                                    fullYears[i])$confMin,
+               confMax = dplyr::filter(MLEbins.res, Year ==
+                                                    fullYears[i])$confMax,
+               year = fullYears[i],
+               xRange = xRange.global)
 }
 ```
 

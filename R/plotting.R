@@ -715,8 +715,7 @@ ISD_bin_plot <- function(data.year,
                          yBig.inc = 1000,   # increment for yBig tick labels
                          ySmall.inc = 250,  # increment for ySmall unlabelled
                          # tick labels
-                         ySmall.tcl = -0.2  # length of small y-axis tick marks
-                                        # (only for (a)??TODO)
+                         ySmall.tcl = -0.2,  # length of small y-axis tick marks  # (only for (a)??TODO)
                          xLab = expression(paste("Body mass (", italic(x),
                                                  "), g")),
                          yLab = expression(paste("Number of ", values >=
@@ -736,15 +735,17 @@ ISD_bin_plot <- function(data.year,
   {
   sumNumber = sum(data.year$Number)
 
-  par(mfrow = par.mfrow))
-  par(mai = par.mai, cex = par.cex)  # Affects all figures
+  par(mfrow = par.mfrow)
+  par(mai = par.mai, cex = par.cex)  # Affects all figures   TODO put into one
 
   if(is.na(xRange)){
     xRange = c(min(data.year$wmin),
                max(data.year$wmax))  # For PLB line
     }
 
-  x.PLB = seq(xRange[1], xRange[2], length=10000)
+  x.PLB = seq(xRange[1],
+              xRange[2],
+              length=10000)
           # x values to plot PLB, need high resolution for both plots, but
           #  insert value close to xmax to make log-log curve go down further
   x.PLB.length = length(x.PLB)
@@ -757,13 +758,13 @@ ISD_bin_plot <- function(data.year,
                     xmax = max(x.PLB))) * sumNumber
   # To add curves for the limits of the 95% confidence interval of b:
   y.PLB.confMin = (1 - pPLB(x = x.PLB,
-                    b = b.confMin,
-                    xmin = min(x.PLB),
-                    xmax = max(x.PLB))) * sumNumber
+                   b = b.confMin,
+                   xmin = min(x.PLB),
+                   xmax = max(x.PLB))) * sumNumber
   y.PLB.confMax = (1 - pPLB(x = x.PLB,
-                    b = b.confMax,
-                    xmin = min(x.PLB),
-                    xmax = max(x.PLB))) * sumNumber
+                   b = b.confMax,
+                   xmin = min(x.PLB),
+                   xmax = max(x.PLB))) * sumNumber
 
   # yRange = c(min(data.year$lowCount), max(data.year$highCount))
   # The above does not work because first val is 0 which is not permissable on
