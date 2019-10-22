@@ -268,14 +268,20 @@ for(i in 1:length(fullYears))
 
 ```
 
-Animate the figures ...TODO
+Here is the code to give an animation for Figures 7 and S.5-S.34 for the IBTS data. For each year
+(given in top-right corner) the plot shows the individual size distribution and
+MLEbins fit (red solid curve) with 95\% confidence intervals (red dashed curves, may be hard to see).
+For each bin, the horizontal green line shows the range of body sizes, with value on the y-axis
+corresponding to the total number of individuals in bins whose minima are $\geq$
+the bin's minimum.  For each bin, the vertical span of the grey rectangle shows
+the possible range of the number of individuals with body mass $\geq$ the body
+mass of individuals in that bin (horizontal span is the same as for the green
+lines). The text in (a) gives the year, the MLE for the size-spectrum exponent
+$b$, and the sample size $n$.
+
 ```{r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
 # fig.width is 0.67 * fig.height (which is 8)
 
-# Do something like this to save each year as it's own figure:
-#  postscript(paste0(dirToSaveFigs, "/IBTS-ISD", fullYears[i], ".eps"),
-#             height = figheight, width = figwidth,
-#             horizontal=FALSE, paper="special")
 for(i in 1:length(fullYears))   # TODO could make a function
   {
   ISD_bin_plot(data.year = data.year.list[[i]],
@@ -289,140 +295,36 @@ for(i in 1:length(fullYears))   # TODO could make a function
 }
 ```
 
+```{r}
+  # To save each year as it's own figure add something like this within the loop:
+  # postscript(paste0(dirToSaveFigs, "/IBTS-ISD", fullYears[i], ".eps"),
+  #             height = figheight, width = figwidth,
+  #             horizontal=FALSE, paper="special")
+  # ISD_bin_plot(...)
+  # dev.off()
+  # See commented out latex code in vignette to give a loop to include each
+  # figure, for example as done in our Supporting Information.
+```
 
 <!--
-TODO commented out to try and get it working
-\subsection{Checking cumSum -- 1991 ($i=6$) didn't agree with countGTEwmin calculation;
-  see later for automated calculations for each year this occurs}
+% Include this in latex preamble:
+\newcommand\isdfig[2]{    % filename is #1, text is #2
+  \begin{figure}[tp]
+  \begin{center}
+  \epsfbox{IBTS-ISDfigs/IBTS-ISD#1.eps}
+  \end{center}
+  \vspace{-5mm}
+  \caption{#2}
+  \label{fig:ISD-#1}
+  \end{figure}
+  \clearpage
+}
 
-For $i=6$, year 1991, we get {\tt cumSum} and {\tt countGTEwmin} differing by
--0.02941, because there are repeated {\tt wmin}$=31.84771$ values:
-<<year1991>>=
-data.1991 = dplyr::filter(dataBin, Year == 1991)
-data.1991 = arrange(data.1991, desc(wmin))
-data.1991 = dplyr::mutate(data.1991, cumSum = cumsum(Number))
-
-dplyr::filter(data.1991, abs(wmin - 31.84771) < 0.00001)
-@
-Aha, so it's two different species with the same length-weight coefficients
-and same length bins. This is allowed (we have already ensured that we don't
-have multiple counts of the same species in the same length bin). So we should
-use {\tt countGTEwmin} to plot the horizontal values, not {\tt cumSum}. Not that you'd
-see the (very occasional and very small) difference, and for such cases you'll
-always get the segments (and the grey rectangles) on top of each other (can't
-distinguish two separate species). For unbinned data the {\tt cumSum} may be best
-as it shows up each data point.
-
-\subsection{Check cumSum -- 1992 ($i=7$) didn't agree with countGTEwmin calculation}
-
-For $i=7$, year 1992, we get {\tt cumSum} and {\tt countGTEwmin} differing in
-a few places (was only in one for 1991). So do more automated code here
-than that above, in case need to check other years also.
-<<year1992>>=
-diff.i = 7
-diff.year = fullYears[diff.i]
-data.one.year = data.year.list[[diff.i]]
-data.diff = dplyr::filter(data.one.year, abs(cumSum - countGTEwmin) > 0)
-dataBin.diff = dplyr::filter(dataBin, Year == diff.year, wmin %in% data.diff$wmin)
-# If it's again because two species have same length-weight coefficients then
-#  should be able to manually spot that by arranging the rows:
-arrange(dataBin.diff, LWa, LngtMin)
-# The quick check is that the following is all TRUE (since species are different)
-abs(diff(arrange(dataBin.diff, LWa, LngtMin)$SpecCode)) > 0.1
-@
-
-So, same issue as for 1991 -- species have the same length-weight coefficients.
-
-\subsection{Check remaining years as they come up, but automate as looks
-  like it may keep occuring}
-
-This will print the year then the differences between {\tt cumSum} and
-{\tt countGTEwmin}, and give the maximum difference at the end. Take a look here
-if necessary if the maximum difference ends up being big (much bigger than 10 say
-given the large sample sizes). In practice it likely won't matter anyway
-which way the figure will be plotted; just helpful to go into here for
-understanding).
-<<year.others>>=
-max.abs.diff = numeric()        # maximum overall abs diff betw cumSum and countGTEwmin
-for(diff.i in diff.ivec)
-  {
-    diff.year = fullYears[diff.i]
-    print(diff.year)
-    data.one.year = data.year.list[[diff.i]]
-    data.diff = dplyr::filter(data.one.year, abs(cumSum - countGTEwmin) > 0)
-    print(data.diff$cumSum - data.diff$countGTEwmin)
-    max.abs.diff = max(max.abs.diff,
-                       max(abs(data.diff$cumSum - data.diff$countGTEwmin)))
-    dataBin.diff = dplyr::filter(dataBin, Year == diff.year, wmin %in% data.diff$wmin)
-    # If it's again because two species have same length-weight coefficients then
-    #  should be able to manually spot that by arranging the rows:
-    # print(arrange(dataBin.diff, LWa, LngtMin))
-    # The quick check is that the following is all FALSE and so sum = 0
-    #  (since spp are different)
-    if(sum(abs(diff(arrange(dataBin.diff, LWa, LngtMin)$SpecCode)) < 0.1) > 0)
-      { stop(paste0("Not the same repeated species issue for ", diff.year,
-                   " as for 1991."))
-      }
-  }
-@
-
-If no error messages and this sentence gets printed, then any differences between
-{\tt cumSum} and {\tt countGTEwmin} are due to multiple species having the same
-length-weight coefficients. For reference, the maximum difference is
-\Sexpr{round(max.abs.diff, 6)} -- see above for which year.
-
-Biggest difference is in 1995, so just take a quick look at the details:
-
-<<year.1995>>=
-diff.i = 10
-diff.year = fullYears[diff.i]
-print(diff.year)
-data.one.year = data.year.list[[diff.i]]
-data.diff = dplyr::filter(data.one.year, abs(cumSum - countGTEwmin) > 0)
-# print(data.diff$cumSum - data.diff$countGTEwmin)
-#max.abs.diff = max(max.abs.diff,
-#                       max(abs(data.diff$cumSum - data.diff$countGTEwmin)))
-dataBin.diff = dplyr::filter(dataBin, Year == diff.year, wmin %in% data.diff$wmin)
-# If it's again because two species have same length-weight coefficients then
-#  should be able to manually spot that by arranging the rows:
-print(arrange(dataBin.diff, LWa, LngtMin))
-@
-
-So that (and 1996) are for species 126425 (Atlantic Herring) that has the
-0.5-cm length bins. Which is actually another reason that {\tt cumSum} is
-not actually the right thing to use. Will check in Issue \#24 that it hasn't
-been used in any calculations (don't think it has). For the above example
-it's actually {\tt countGTEwmin} that is the lower value. This only affects the
-plotting of the y-values of the segments, not the rectangles at all (and so
-at the end of the day is not that important), but we use {\tt countGTEwmin} in the
-plots anyway.
-
-\section{Commentary on the actual results}
-
-The years for which the PLB model seems to visually fit fairly well, at least
-up to 100~g where they all seem to break off, are 1992, 1995, 1997, 1999,
-2000, 2006, 2008, 2009, 2010 and 2014. The 1999 one shows a good resolution
-of the rectangles, including the right-most one.
-More commentary will be written straight into the Supp Material, since will
-then get edited and refined for the manuscript.
-
-\isdfig{\Sexpr{fullYears[1]}}{Individual size distribution and MLEbins fit
-            (red solid curve)
-            with 95\% confidence intervals (red dashed curves, may be hard to
-            see) for IBTS data in \Sexpr{fullYears[1]}.
-            For each bin, the horizontal green line shows
-            the range of body sizes,
-            with value on the y-axis corresponding to the
-            total number of individuals in bins whose minima are $\geq$ the
-            bin's minimum.
-            For each bin, the vertical span of the grey rectangle shows the
-            possible range of the number of individuals with body mass
-            $\geq$ the body mass of individuals in that bin (horizontal span
-            is the same as for the green lines).
-        }
+% Include this after the figures have already been created in an R loop
+\isdfig{\Sexpr{fullYears[1]}}{Include caption as above for year \Sexpr{fullYears[i]}}
 
 \newcounter{loop}
-% \forloop{loop}{\Sexpr{min(fullYears)}{\value{loop}<\Sexpr{max(fullYears)+1}}{\isdfig{\arabic{loop}}}{Caption to do**}       % 6 -> \Sexpr{max(fullYears)+1}}
+
 \newcommand{\loopMax}{\Sexpr{max(fullYears)+1}}
 \forloop{loop}{\Sexpr{fullYears[2]}}{\value{loop} < \loopMax}
         {\isdfig{\arabic{loop}}{Individual size distribution and MLEbins fit
@@ -430,9 +332,4 @@ then get edited and refined for the manuscript.
             Details as in Figure~\ref{fig:ISD-1986}.
         }}
 
-% \isdfig{IBTS-ISDfigs/IBTS-ISD1990}{Caption here}
-
-<<save>>=>>=
-save.image(file="nSeaMLEbins-recommend.RData")
-@
 -->
