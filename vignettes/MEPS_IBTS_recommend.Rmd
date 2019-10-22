@@ -234,47 +234,43 @@ for(i in 1:length(fullYears))
     data.year = dplyr::arrange(data.year,
                                desc(wmin))
     sumNumber = sum(data.year$Number)
-    data.year = dplyr::mutate(data.year,
-                              cumSum = cumsum(Number))
-    # Have to do not with dplyr
+
+    # data.year = dplyr::mutate(data.year,
+    #                          cumSum = cumsum(Number))
+    # This is wrong when we have two species with the same
+    #  length-weight coefficients in the same year, use verify then change it to
+    #                          cumSum in one go TODO since clearer
+    # Have to do not with dplyr:
     wmin.vec = data.year$wmin
     wmax.vec = data.year$wmax
-    num.vec = data.year$Number
+    num.vec  = data.year$Number
 
-    verify = rep(NA, length(num.vec)) # manual count originally to check that
-                                      #  it equals cumSum - turns out not to as
-                                      #  investigated below TODO decide what to
-                                      #  include without getting confusing
+    verify = rep(NA, length(num.vec)) # to do a manual count
     lowCount = verify
     highCount = verify
+
     for(iii in 1:length(verify))
     {
-      verify[iii] = sum( (wmin.vec >= wmin.vec[iii]) * num.vec)
-      lowCount[iii] = sum( (wmin.vec >= wmax.vec[iii]) * num.vec)
-      highCount[iii] = sum( (wmax.vec > wmin.vec[iii]) * num.vec)
+      verify[iii]    = sum( (wmin.vec >= wmin.vec[iii]) * num.vec)
+      lowCount[iii]  = sum( (wmin.vec >= wmax.vec[iii]) * num.vec)
+      highCount[iii] = sum( (wmax.vec >  wmin.vec[iii]) * num.vec)
     }
     data.year = cbind(data.year,
                       "verify" = verify,
                       "lowCount" = lowCount,
                       "highCount" = highCount)
     data.year = dplyr::tbl_df(data.year)
-    # See subsection below for manual look into these.
-    if(sum(abs(data.year$cumSum - data.year$verify)) > 0)   #TODO
-       diff.ivec = c(diff.ivec, i)
-     #{stop(paste0("need to manually check for i=", i, ", year ", fullYears[i]))}
-     # put that value of i into here (like i!=6), add a subsection, re-run
-     #  to get this year's value into data.year.list and make conclusions in
-     #  the subsection.
+
     data.year.list[[i]] = data.year
-    rm(data.year)      # TODO not good style but think needed for next section
 }
 
 ```
 
-
+Animate the figures ...TODO
 ```{r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
 # fig.width is 0.67 * fig.height (which is 8)
 
+# Do something like this to save each year as it's own figure:
 #  postscript(paste0(dirToSaveFigs, "/IBTS-ISD", fullYears[i], ".eps"),
 #             height = figheight, width = figwidth,
 #             horizontal=FALSE, paper="special")

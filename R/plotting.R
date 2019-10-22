@@ -709,7 +709,8 @@ timeSerPlot = function(bForYears, legName, method, weightReg = FALSE,
 ##' into account the bin structure of the data, as in Figures 7 and S.5-S.34 of
 ##' the MEPS paper.
 ##'
-##' @param data.year tibble containing TODO
+##' @param data.year tibble containing columns Year, wmin, wmax, Number,
+##'   verifyTODO-call it Count.gte.wmin, lowCount, highCount
 ##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbins method)
 ##' @param b.confMin lower 95\% confidence limits of *b*
 ##' @param b.confMax upper 95\% confidence limits of *b*
