@@ -207,10 +207,10 @@ Caption: Schematic diagram to explain how we calculate
   whether or not each bin is included in the high count $E_{2,7,2}$, i.e.
   its upper bound is $>$ the lower bound of the target bin. Summing the
   respective counts as per (TODO ref{Esj1}) and (TODO ref{Esj1}) gives
-  $E_{2,7,1} =$`r f(lowCount,2)` and $E_{2,7,2} =$ `r f(highCount,2)r.
+  $E_{2,7,1} =$`r f(lowCount,2)` and $E_{2,7,2} =$ `r f(highCount,2)`.
 
 TODO:
-Figure~\ref{fig:binCountRangeSchematic} shows these calculations for
+Figure~ref{fig:binCountRangeSchematic} shows these calculations for
 one `target' bin ($s=2, j=7$) and two
 example species namely Moustache Sculpin and Snakeblenny (which are highlighted
 as 127205 and 154675, respectively, in red in Figure~5). Remaining text already
@@ -220,18 +220,18 @@ copied into Supp Material.
 
 First just get what's needed for the calculations for the recommended plot:
 ```{r recommended}
-dataRecommend.isd = select(dataBin,
-                           Year,
-                           wmin,
-                           wmax,
-                           Number)
+dataRecommend.isd = dplyr::select(dataBin,
+                                  Year,
+                                  wmin,
+                                  wmax,
+                                  Number)
 
 xRange.global = c(min(dataRecommend.isd$wmin),
                   max(dataRecommend.isd$wmax))
 data.year.list = list()                # to save results for each year
 diff.ivec = vector()                   # to save i that have any cumSum !=
                                        # verify TODO
-
+fullYears = sort(unique(dataBin$Year))
 for(i in 1:length(fullYears))
   {
     data.year = dplyr::filter(dataRecommend.isd,
@@ -280,7 +280,8 @@ inset2 = c(0, 0.04)         # inset for year
 ```
 
 
-```{r, animation.hook='gifski', fig.width = 8, fig.height = 8 * 0.67}
+```{r, animation.hook='gifski', fig.width = 5.36, fig.height = 8}
+# fig.width is 0.67 * fig.height (which is 8)
 for (i in 1:2) {
   pie(c(i %% 2, 6), col = c('red', 'yellow'), labels = NA)
 }
