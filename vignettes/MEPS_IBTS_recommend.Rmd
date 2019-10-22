@@ -185,12 +185,6 @@ highCount = sum(dataComb$wmax.gt.tmin * dataComb$number)
 
 ```
 
-```{r, animation.hook='gifski'}
-for (i in 1:2) {
-  pie(c(i %% 2, 6), col = c('red', 'yellow'), labels = NA)
-}
-```
-
 Caption: Schematic diagram to explain how we calculate
   the range of counts of individuals that are larger than those in a given bin.
   Red and pink body-mass bins are those for Snakeblenny and Moustache Sculpin
@@ -282,15 +276,13 @@ inset2 = c(0, 0.04)         # inset for year
 
 ```{r, animation.hook='gifski', fig.width = 5.36, fig.height = 8}
 # fig.width is 0.67 * fig.height (which is 8)
-for (i in 1:2) {
-  pie(c(i %% 2, 6), col = c('red', 'yellow'), labels = NA)
-}
 
 #  postscript(paste0(dirToSaveFigs, "/IBTS-ISD", fullYears[i], ".eps"),
 #             height = figheight, width = figwidth,
 #             horizontal=FALSE, paper="special")
 for(i in 1:length(fullYears))   # TODO could make a function
 {
+  data.year = data.year.list[[i]]
   par(mfrow=c(2,1))
   par(mai=c(0.4, 0.5, 0.05, 0.3), cex=0.7)  # Affects all figures
   mgpVals = c(1.6,0.5,0)
@@ -327,7 +319,8 @@ for(i in 1:length(fullYears))   # TODO could make a function
   yRange = c(0.75*min(data.year$verify), max(data.year$highCount))
 
   # y-axis not logged
-  plot(data.year$wmin, data.year$verify,
+  plot(data.year$wmin,
+       data.year$verify,
        log="x",
        xlab=expression(paste("Body mass (", italic(x), "), g")),
        ylab=expression(paste("Number of ", values >= italic(x))),
