@@ -21,6 +21,11 @@ usethis::use_data(MLE.array.known, overwrite = TRUE)
 
 # Then expect to do these:
 
+# Do for xmin16 since fixed function after setting it running:
+temp = list("MLE.array" = MLEbin.MEPS.default[[1]],
+              "MLEconf.array" = MLEbin.MEPS.default[[2]],
+              "MLE.array.parameters" = MLEbin.MEPS.default[[3]])
+
 MLEbin.MEPS.xmin16 <- MLEbin.simulate(xmin.known = 16)
 usethis::use_data(MLEbin.MEPS.xmin16, overwrite = TRUE)
 

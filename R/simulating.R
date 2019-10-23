@@ -178,7 +178,7 @@ MLEbin.simulate = function(n = 1000,
                               "binType" = binType,
                               "binTypes" = binTypes,
                               "binType.name" = binType.name)
-  return(list(MLE.array,
-              MLEconf.array,
-              MLE.array.parameters))
+  return(list("MLE.array" = MLE.array,
+              "MLEconf.array" = MLEconf.array,
+              "MLE.array.parameters" = MLE.array.parameters))
 }
