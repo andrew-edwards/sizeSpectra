@@ -61,7 +61,7 @@ library(sizeSpectra)
 
 Simulated data takes a while to generate, bin and fit, and so results are saved
 as data objects `MLE.array` and `MLEconf.array`. See `data-raw/simulate-data2.R`
-for code. TODO: put that in help for data objects, and delete here.
+for code - now making function `MLEbin.simulate()`. TODO: put that in help for data objects, and delete here.
 
 <!-- TODO - decide if needed
 print("Overall range of MLE values:")
