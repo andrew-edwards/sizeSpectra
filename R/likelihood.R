@@ -33,7 +33,11 @@ calcLike = function(negLL.fn, p, vecDiff=0.5, vecInc=0.001, ...)
     {
     minLL = nlm(f=negLL.fn, p=p, ...)
     MLE = minLL$estimate
-    conf = profLike(negLL.fn=negLL.fn, MLE=MLE, minNegLL=minLL$minimum, ...)
+    conf = profLike(negLL.fn=negLL.fn,
+                    MLE=MLE,
+                    minNegLL=minLL$minimum,
+                    vecDiff = vecDiff,
+                    ...)
     res = list(MLE = MLE, conf = conf)
     return(res)
 }
@@ -50,8 +54,8 @@ calcLike = function(negLL.fn, p, vecDiff=0.5, vecInc=0.001, ...)
 ##' @param MLE maximum likelihood estimate (already calculated)
 ##' @param minNegLL the minimum of the negative log-likelihood function, at the
 ##'   MLE (by definition)
-##' @param vecDiff the range over which to test the negative log-likelihood
-##'   to construct the confidence interval. Default is 0.5 and a symmetric
+##' @param vecDiff value defining  range over which to test the negative log-likelihood
+##'   to construct the confidence interval; range is `MLE` $\pm$ `vecDiff`. Default is 0.5 and a symmetric
 ##'   range is tested for fitting size spectra, since for movement data
 ##'   sets in Table 2 of Edwards (2011; 92(6):1247-1257) the intervals were
 ##'   symmetric, so symmetric seems a good start.
@@ -81,7 +85,7 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
       { windows()
         plot(vec, LLvals)
         abline(h = critVal, col="red")
-        stop("Need to make vec larger - see R window")   # Could automate
+        stop("Need to make vecDiff larger - see R window")   # Could automate
       }
     return(conf)
 }

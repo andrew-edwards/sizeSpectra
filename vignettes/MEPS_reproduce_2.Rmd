@@ -60,7 +60,9 @@ library(sizeSpectra)
 # Reproducing Figures 4, 5, ...TODO of MEPS paper
 
 Simulated data takes a while to generate, bin and fit, and so results are saved
-as data objects `MLE.array` and `MLEconf.array`. See `data-raw/simulate-data2.R`
+in the list `MLEbin.MEPS.default`, which contains the fitted maximum likelihood
+value (and confidence interval) of $b$ for each simulated data set, binning
+method and fitting method (MLEmid or MLEbin). See `data-raw/simulate-data2.R`
 for code - now making function `MLEbin.simulate()`. TODO: put that in help for data objects, and delete here.
 
 <!-- TODO - decide if needed

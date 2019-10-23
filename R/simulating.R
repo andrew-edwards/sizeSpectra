@@ -1,7 +1,3 @@
-
- For Figures 4 and 5 for MEPS paper, and then to use when changing xmin.
- Running in simulate-data2.R to save for vignette.
-
 ##' Simulate, bin and fit data using four different binning methods and two
 ##'  likelihood approaches
 ##'
@@ -10,10 +6,11 @@
 ##' using bins that progressively double in width, and then fit each data set
 ##' using the MLEmid and MLEbin likelihood methods. As in Figures 4, 5, and
 ##' S.35-S.38, and Tables S.3-S.5 of MEPS
-##' paper. See simulate-data2.R (TODO maybe?) and MEPS_reproduce_2.Rmd vignette
-##' for code for those figures and tables.
+##' paper. See `MEPS_reproduce_2.Rmd` vignette for code for those figures and tables.
 ##' All simulated data sets have the same parameters for PLB and the same sample
-##' size `n`.
+##' size `n`. Individual data sets are not saved as they quickly take up a lot
+##' of memory (would be `num.reps` $\times$ `n` random numbers, which for the
+##' default values is 10^7).
 ##'
 ##' @param n sample size of each simulated data set (numeric)
 ##' @param b.known known fixed value of b for all simulations
@@ -27,6 +24,7 @@
 ##' @param binType list containing numeric values for linear bin widths and/or
 ##'   "2k" (the only other option for now) for bins that double in size. Values
 ##'   other than the defaults have not yet been tested but should work.
+##' @param vecDiffVal value to go into `profLike()` to compute confidence intervals.
 ##' @return list containing:
 ##'
 ##'   * MLE.array: three-dimensional array with element `[i, j, k]` representing
@@ -57,12 +55,11 @@ MLEbin.simulate = function(n = 1000,
                            num.reps = 10000,
                            seed = 42,
                            binType = list(1, 5, 10, "2k"),
-
+                           vecDiffVal = 0.5
                            )
 {
-
-if(!is.wholenumber(log2(xmin.known)) | !is.wholenumber(xmin.known))
-     { stop("If want xmin.known to not be an integer and not be an integer
+  if(!is.wholenumber(log2(xmin.known)) | !is.wholenumber(xmin.known))
+    { stop("If want xmin.known to not be an integer and not be an integer
              power of 2 then need to edit binData; may just need to think
              about whether can just set startInteger = FALSE, but will
              need to edit binData to be able to define the binWidth for
@@ -86,7 +83,7 @@ if(!is.wholenumber(log2(xmin.known)) | !is.wholenumber(xmin.known))
                    dimnames=list(1:num.reps,
                                  unlist(binType.name),
                                  MLEmethod.name))
-  # no need to name the rows, just index by simulation number
+  # No need to name the rows, just index by simulation number
   # MLE.array[i,j,k] is random sample i, bin type j, MLE method k
 
   # Record the confidence intervals
@@ -105,7 +102,8 @@ if(!is.wholenumber(log2(xmin.known)) | !is.wholenumber(xmin.known))
     if(num.reps > 1000)
       {
       if(i %in% seq(1000, num.reps, 1000)) {print(paste("i = ", i))}
-                                          # to show progress
+                                # to show progress (currently not working since
+                                #  now in a function)
       }
 
     x = rPLB(n,
@@ -151,7 +149,8 @@ if(!is.wholenumber(log2(xmin.known)) | !is.wholenumber(xmin.known))
                               K = num.bins,
                               xmin = min(binBreaks),
                               xmax = max(binBreaks),
-                              sumclogx = sumCntLogMids)
+                              sumclogx = sumCntLogMids,
+                              vecDiff = vecDiffVal)
 
         MLE.array[i, j, "MLEmid"] = MLEmid.res$MLE
         MLEconf.array[i, j, "MLEmid", ] = MLEmid.res$conf
@@ -162,7 +161,8 @@ if(!is.wholenumber(log2(xmin.known)) | !is.wholenumber(xmin.known))
                               p = PL.bMLE,
                               w = binBreaks,
                               d = binCounts,
-                              J = length(binCounts))
+                              J = length(binCounts),
+                              vecDiff = vecDiffVal)
 
         MLE.array[i, j, "MLEbin"] = MLEbin.res$MLE
         MLEconf.array[i, j, "MLEbin", ] = MLEbin.res$conf
