@@ -16,7 +16,7 @@ if(!is.wholenumber(log2(xmin.known)) | !is.wholenumber(xmin.known))
 }
 xmax.known = 1000         # known fixed value of xmax
 
-num.reps = 100 #00          # number of times to draw sets of n random numbers.
+num.reps = 10000          # number of times to draw sets of n random numbers.
                           #  (throwing n PLB dice num.reps times)
 set.seed(42)              # Same seed as for original simulations in
                           #  first manuscript.
@@ -52,11 +52,11 @@ MLEconf.array = array(NA,
 # Main loop for doing the fitting num.reps times
 for(i in 1:num.reps)
   {
-  # if(num.reps > 1000)
-  #  {
-  #  if(i %in% seq(1000, num.reps, 1000)) print(paste("i = ", i))
-  #                                        # show progress, can be handy
-  #    }
+  if(num.reps > 1000)
+    {
+    if(i %in% seq(1000, num.reps, 1000)) {print(paste("i = ", i))}
+                                          # show progress, can be handy
+    }
 
   x = rPLB(n, b = b.known, xmin = xmin.known, xmax = xmax.known)
 
