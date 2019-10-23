@@ -25,6 +25,11 @@
 ##'   "2k" (the only other option for now) for bins that double in size. Values
 ##'   other than the defaults have not yet been tested but should work.
 ##' @param vecDiffVal value to go into `profLike()` to compute confidence intervals.
+##' @param cut.off cut-off value - data are only sampled $\geq$`cut.off`, for
+##'   Figure S.37 and S.38 and Table S.5 in MEPS paper. Each resulting sample still has
+##'   size `n`.
+##' @param full.mult multiplier to generate desired sample size when using a
+##'   `cut.off` value.
 ##' @return list containing:
 ##'
 ##'   * MLE.array: three-dimensional array with element `[i, j, k]` representing
@@ -55,7 +60,9 @@ MLEbin.simulate = function(n = 1000,
                            num.reps = 10000,
                            seed = 42,
                            binType = list(1, 5, 10, "2k"),
-                           vecDiffVal = 0.5
+                           vecDiffVal = 0.5,
+                           cut.off = NA,
+                           full.mult = 1.5
                            )
 {
   if(!is.wholenumber(log2(xmin.known)) | !is.wholenumber(xmin.known))
@@ -67,6 +74,26 @@ MLEbin.simulate = function(n = 1000,
              best to just remove the first bin (and a fit a range that is
              encompassed by the binned data).")
 }
+
+  if(!is.na(cut.off))
+    {
+      full.sample.size = full.mult * n / (1 - pPLB(cut.off,
+                                                   b = b.known,
+                                                   xmin=xmin.known,
+                                                   xmax=xmax.known))
+                            # full.sample.size to draw from to expect to get n
+                            # values >cut.off.
+                            # Originally did some simulations this and then used the
+                            #  values >= cut.off, which gave a distribution of
+                            #  realised sample sizes, minimum of which was 858
+                            #  (x.min=1, cut.off=16, b=-2). So 1000/858 = 1.165
+                            #  suggests multipling full.sample.size by 1.2 should
+                            #  get 1000 for each sample, so use 1.5 just to be
+                            #  safe (this isn't the time consuming part of the
+                            #  code). This number will change for different
+                            #  parameter values so may need to be calculated
+                            #  analytically, or just increase the value of full.mult.
+  }
 
   set.seed(seed)
   binTypes = length(binType)
@@ -105,10 +132,27 @@ MLEbin.simulate = function(n = 1000,
                                 # to show progress
       }
 
-    x = rPLB(n,
-             b = b.known,
-             xmin = xmin.known,
-             xmax = xmax.known)
+
+    if(is.na(cut.off))
+      {
+      x = rPLB(n,
+               b = b.known,
+               xmin = xmin.known,
+               xmax = xmax.known)
+      } else {
+      x.full = rPLB(full.sample.size,
+                    b = b.known,
+                    xmin = xmin.known,
+                    xmax = xmax.known)
+
+      x.cut = x.full[x.full >= cut.off]
+
+      if(length(x.cut) < n)
+          {
+             stop("Need to increase full.mult in MLEbin.simulate().")
+          }
+      x = x.cut[1:n]       # sample has desired length n
+    }
 
     for(j in 1:binTypes)                    # Loop over binning type
       {

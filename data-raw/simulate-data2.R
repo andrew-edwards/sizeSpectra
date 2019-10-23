@@ -2,22 +2,16 @@
 # Change filename of data when decided on a format for multiple data sets.
 
 
+Have done these two:
 
 MLEbin.MEPS.default <- MLEbin.simulate()
 usethis::use_data(MLEbin.MEPS.default, overwrite = TRUE)
 
-
-
-
-# Then expect to do these:
-
-# Do for xmin16 since fixed function after setting it running:
-temp = list("MLE.array" = MLEbin.MEPS.default[[1]],
-              "MLEconf.array" = MLEbin.MEPS.default[[2]],
-              "MLE.array.parameters" = MLEbin.MEPS.default[[3]])
-
 MLEbin.MEPS.xmin16 <- MLEbin.simulate(xmin.known = 16)
 usethis::use_data(MLEbin.MEPS.xmin16, overwrite = TRUE)
 
-MLEbin.MEPS.cutoff16 <- MLEbin.simulate(xmin.known = 16, ***)
+
+Running now:
+
+MLEbin.MEPS.cutoff16 <- MLEbin.simulate(cut.off = 16)
 usethis::use_data(MLEbin.MEPS.cutoff16, overwrite = TRUE)
