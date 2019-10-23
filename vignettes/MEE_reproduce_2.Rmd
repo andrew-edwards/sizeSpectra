@@ -50,7 +50,7 @@ list2env(eight.results.default, envir=.GlobalEnv)    # Extract previously saved
 #    LBbiom.rep, LBNbiom.rep, MLE.rep))
 # Comes out as -3.38, 0.233 for seed=42, num.reps = 10000
 xrange = c(-3.5, 0.5)         # range of x-axis for histograms - actually to define bins
-xbigticks = seq(-3.5, 0.5, 0.5)
+xbigticks = seq(-3.5, 0.5, 0.5) # NOW THE DEFAULT
 
 xsmallticks = seq(xrange[1], xrange[2], by=0.1)
 breakshist = seq(xrange[1], xrange[2], by=3/61)

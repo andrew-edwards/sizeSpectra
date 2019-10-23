@@ -59,18 +59,12 @@ library(sizeSpectra)
 
 # Reproducing Figures 4, 5, ...TODO of MEPS paper
 
-Simulated data takes a while to generate, bin and fit, and so results are saved
+Simulated data takes a while (over an hour on a fast laptop) to generate, bin and fit, and so results are saved
 in the list `MLEbin.MEPS.default`, which contains the fitted maximum likelihood
 value (and confidence interval) of $b$ for each simulated data set, binning
 method and fitting method (MLEmid or MLEbin). See `data-raw/simulate-data2.R`
 for code - now making function `MLEbin.simulate()`. TODO: put that in help for data objects, and delete here.
 
-<!-- TODO - decide if needed
-print("Overall range of MLE values:")
-print(range(MLE.array[ , , ]))
-print("Overall range of confidence intervals:")
-print(range(MLEconf.array[ , , , ]))
--->
 
 ```{r}
 
@@ -80,30 +74,10 @@ binTypes = MLE.array.parameters$binTypes
 binType.name = MLE.array.parameters$binType.name
 MLEmethod.name = dimnames(MLE.array)[[3]]
 
-vertCol = "red"            # Colour for vertical lines in MLE histogram
-vertThick = 1              # Thickness for vertical lines
-
+May not need:
 inCol = "black"            # Colour for the true value being within the 95% CI
 outCol = "red"             # Colour for the true value being outside the 95% CI
 
-# Common x-axis and bin breaks for histograms
-xrange = c(-2.4, -1.1)      # common width of axes
-xbigticks = seq(xrange[1], xrange[2], by=0.4)
-xsmallticks = seq(xrange[1], xrange[2], by=0.1)
-
-yBigTickLab = seq(0, num.reps, 3000)
-yBigTickNoLab = seq(0, num.reps, 1000)
-ySmallTick = seq(0, num.reps, 500)
-
-# Want -2 to be a midpoint of the Nth bin, which is yy above the minimum.
-#  Say the 20th bin contains -2, so solve ((N+1)w + Nw)/2 = yy
-#  gives  w = 2 * yy / (2*N + 1)
-binwidth = 2 * (b.known - xrange[1]) / ( 2 * 10 + 1)
-breakshist =  seq(xrange[1],
-                  length=ceiling((xrange[2] - xrange[1])/binwidth)+1,
-                  by=binwidth)
-
-ylimA = c(0, 7000)
 ```
 
 <!--
@@ -132,71 +106,10 @@ for(binTypeInd in 1:binTypes)
 -->
 
 ```{r}
-# Histograms of the MLE values for both methods and all four binning types.
 
-par(omi = c(0.12, 0.05, 0.2, 0.0))      # outer margins in inches
-par(mfrow=c(4,2)) #7,1))
+# Doing as MLEmid.MLEbin.hist()
+MLEmid.MLEbin.hist()
 
-par(mai=c(0.5, 0.5, 0.0, 0.3))
-par(xaxs="i", yaxs="i")    # Have to define here for hist
-par(mgp=c(2.0, 0.5, 0))    # Puts axes labels closer
-par(cex = 0.8)             # With no option all text comes out a bit small
-
-cexAxis = 0.9              # font size for axes labels to make the y ones
-                           #  fit okay
-inset = c(0, -0.04)
-
-legLabMid = c("(a)", "(c)", "(e)", "(g)")    # label each panel in MLEmid column
-legLabBin = c("(b)", "(d)", "(f)", "(h)")    # label each panel in MLEmid column
-
-for(binTypeInd in 1:binTypes)
-  {
-    hist(MLE.array[ ,binTypeInd, "MLEmid"],
-         xlim=xrange,
-         breaks=breakshist,
-         xlab="",
-         ylab="",
-         main="",
-         axes=FALSE,
-         ylim = ylimA)
-    histAxes(yBigTickLab = yBigTickLab,
-             yBigTickNoLab = yBigTickNoLab,
-             ySmallTick = ySmallTick)
-    legend("topright",
-           paste(legLabMid[binTypeInd], binType.name[binTypeInd]),
-           bty="n",
-           inset=inset)
-
-    hist(MLE.array[ , binTypeInd, "MLEbin"],
-         xlim=xrange,
-         breaks=breakshist,
-         xlab="",
-         ylab="",
-         main="",
-         axes=FALSE,
-         ylim = ylimA)
-    histAxes(yBigTickLab = yBigTickLab,
-             yBigTickNoLab = yBigTickNoLab,
-             ySmallTick = ySmallTick)
-    legend("topright",
-           paste(legLabBin[binTypeInd], binType.name[binTypeInd]),
-           bty="n",
-           inset=inset)
-}
-
-mtext(expression(paste("Estimate of ", italic(b))),
-      side=1,
-      outer=TRUE,
-      line=-1)
-mtext("Frequency",
-      side=2,
-      outer=TRUE,
-      line=-1)
-
-mtext("    MLEmid                                                MLEbin",
-      side=3,
-      outer=TRUE,
-      line=0)
 ```
 
 That should do Figure 4.

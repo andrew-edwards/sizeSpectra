@@ -396,12 +396,22 @@ confPlot = function(repConf,
 ##' @param yBigTickLab y-axis big ticks to label
 ##' @param yBigTickNoLab y-axis big ticks to not label
 ##' @param ySmallTick y-axis small ticks (unlabelled)
+##' @param cexAxis font size for axis labels TODO defaults are for
+##'   MEE_reproduce_2.Rmd. May have to check other figs
+##'
 ##' @return Adds axes to existing histogram TODO: check
 ##' @export
 ##' @author Andrew Edwards
 histAxes = function(yBigTickLab = c(0, 2000, 4000),
                     yBigTickNoLab = seq(0, 6500, 1000),
-                    ySmallTick = seq(0, 6500, 500))
+                    ySmallTick = seq(0, 6500, 500),
+                    cexAxis = 0.9,
+                    xsmallticks = NA,
+                    xbigticks = seq(-3.5, 0.5, 0.5),
+                    vertCol = "red",
+                    vertThick = 1,
+                    b.known = -2
+                    )
     {
     axis(1, at=xbigticks, labels = xbigticks, mgp=c(1.7,0.7,0), cex.axis=cexAxis)  # big ticks
     axis(1, at=xsmallticks, labels=rep("",length(xsmallticks)), tcl=-0.2)
@@ -556,6 +566,150 @@ legJust = function(textVec,
            leg$text$y,
            textVec,
            pos = 2) }
+}
+
+##' One figure with eight histograms for each of  MLEmid and MLEbin methods and four binning types
+##'
+##' The default plot here reproduces Figure 4 of MEPS paper, showing the
+##' estimated exponent $b$ for 10,000 simulated data sets, binned using four
+##' methods and fitted using the MLEmid and MLEbin methods.
+##'
+##' @return figure with eight histograms, one for each combination of binning
+##'   type and fittine method.
+##' @export
+##' @author Andrew Edwards
+##' @param results.list output list from `MLEbin.simulate()`; see
+##'   `?MLEbin.simulate()` for details
+##' @param MLE.array
+##' @param vertCol colour for vertical line at true value of `b`
+##' @param vertThick thickness of vertical line at true value of `b`
+##' @param xrange range of x values TODO can change to xlimA for consistency
+##' @param xbigticks.by increment between big tick marks on x-axis (all labelled)
+##' @param xsmallticks.by increment between small tick marks on x-axis
+##' @param ylimA range of y values
+##' @param yBigTickLab.by increment between labelled big tick marks on y-axis
+##' @param yBigTickNoLab.by increment between all big tick marks on y-axis
+##' @param ySmallTick.by increment between small tick marks on y-axis
+##' @param binwidth bin width for histograms; if NA then gets calculated such
+##'   that `b.known` is a midpoint of a bin
+##' @param cexAxis font size for axis labels
+##' @param legLabMid character vector of length 4 for labelling each panel in
+##'   the MLEmid column
+##' @param legLabBin character vector of length 4 for labelling each panel in
+##'   the MLEBin column
+##' @param omi,mfrow,mai,xaxs,yaxs,mgp,cex,inset standard options for `par()`,
+##'   defaults are for Figure 4
+MLEmid.MLEbin.hist = function(results.list,
+                              vertCol = "red",
+                              vertThick = 1,
+                              xrange = c(-2.4, -1.1),
+                              xbigticks.by = 0.4,
+                              xsmallticks.by = 0.1,
+                              ylimA = c(0, 7000),
+                              yBigTickLab.by = 3000,
+                              yBigTickNoLab.by = 1000,
+                              ySmallTick.by = 500,
+                              binwidth = NA,
+                              omi = c(0.12, 0.05, 0.2, 0.0),
+                              mfrow = c(4, 2),
+                              mai = c(0.5, 0.5, 0.0, 0.3),
+                              xaxs="i",
+                              yaxs="i",
+                              mgp = c(2.0, 0.5, 0),
+                              cex = 0.8,
+                              cexAxis = 0.9,
+                              inset = c(0, -0.04),
+                              legLabMid = c("(a)", "(c)", "(e)", "(g)"),
+                              legLabBin = c("(b)", "(d)", "(f)", "(h)"))
+{
+  # Extract required components
+  MLE.array = results.list$MLE.array
+  num.reps = results.list$MLE.array.parameters$num.reps
+  b.known = results.list$MLE.array.parameters$b.known
+  binTypes = results.list$MLE.array.parameters$binTypes
+  binType.name = results.list$MLE.array.parameters$binType.name
+
+  xbigticks = seq(xrange[1], xrange[2], by = xbigticks.by)
+  xsmallticks = seq(xrange[1], xrange[2], by = xsmallticks.by)
+
+  yBigTickLab = seq(0, num.reps, yBigTickLab.by)
+  yBigTickNoLab = seq(0, num.reps, yBigTickNoLab.by)
+  ySmallTick = seq(0, num.reps, ySmallTick.by)
+
+  # Want b.known (-2 for default) to be a midpoint of the Nth bin, which is yy above the minimum.
+  #  Say the 20th bin contains -2, so solve ((N+1)w + Nw)/2 = yy
+  #  gives  w = 2 * yy / (2*N + 1). Not flexible yet.
+  binwidth = 2 * (b.known - xrange[1]) / ( 2 * 10 + 1)
+  breakshist =  seq(xrange[1],
+                    length = ceiling( (xrange[2] - xrange[1])/binwidth ) + 1,
+                    by = binwidth)
+
+  par(omi = omi,
+      mfrow = mfrow,
+      mai = mai,
+      xaxs = xaxs,
+      yaxs = yaxs,
+      mgp = mgp,
+      cex = cex)
+
+  for(binTypeInd in 1:binTypes)
+    {
+      hist(MLE.array[ ,binTypeInd, "MLEmid"],
+           xlim=xrange,
+           breaks=breakshist,
+           xlab="",
+           ylab="",
+           main="",
+           axes=FALSE,
+           ylim = ylimA)
+      histAxes(yBigTickLab = yBigTickLab,
+               yBigTickNoLab = yBigTickNoLab,
+               ySmallTick = ySmallTick,
+               cexAxis = cexAxis,
+               xbigticks = xbigticks,
+               xsmallticks = xsmallticks,
+               vertCol = vertCol,
+               vertThick = vertThick)
+      legend("topright",
+             paste(legLabMid[binTypeInd], binType.name[binTypeInd]),
+             bty="n",
+             inset=inset)
+
+      hist(MLE.array[ , binTypeInd, "MLEbin"],
+           xlim=xrange,
+           breaks=breakshist,
+           xlab="",
+           ylab="",
+           main="",
+           axes=FALSE,
+           ylim = ylimA)
+      histAxes(yBigTickLab = yBigTickLab,
+               yBigTickNoLab = yBigTickNoLab,
+               ySmallTick = ySmallTick,
+               cexAxis = cexAxis,
+               xbigticks = xbigticks,
+               xsmallticks = xsmallticks,
+               vertCol = vertCol,
+               vertThick = vertThick)
+      legend("topright",
+             paste(legLabBin[binTypeInd], binType.name[binTypeInd]),
+             bty="n",
+             inset=inset)
+  }
+
+  mtext(expression(paste("Estimate of ", italic(b))),
+        side=1,
+        outer=TRUE,
+        line=-1)
+  mtext("Frequency",
+        side=2,
+        outer=TRUE,
+        line=-1)
+
+  mtext("    MLEmid                                                MLEbin",
+        side=3,
+        outer=TRUE,
+        line=0)
 }
 
 
