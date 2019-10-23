@@ -102,8 +102,7 @@ MLEbin.simulate = function(n = 1000,
     if(num.reps > 1000)
       {
       if(i %in% seq(1000, num.reps, 1000)) {print(paste("i = ", i))}
-                                # to show progress (currently not working since
-                                #  now in a function)
+                                # to show progress
       }
 
     x = rPLB(n,
