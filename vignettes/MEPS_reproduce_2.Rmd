@@ -72,10 +72,10 @@ print(range(MLEconf.array[ , , , ]))
 
 ```{r}
 
-num.reps = MLE.array.known$num.reps
-b.known = MLE.array.known$b.known
-binTypes = MLE.array.known$binTypes
-binType.name = MLE.array.known$binType.name
+num.reps = MLE.array.parameters$num.reps
+b.known = MLE.array.parameters$b.known
+binTypes = MLE.array.parameters$binTypes
+binType.name = MLE.array.parameters$binType.name
 MLEmethod.name = dimnames(MLE.array)[[3]]
 
 vertCol = "red"            # Colour for vertical lines in MLE histogram
