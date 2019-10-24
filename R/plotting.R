@@ -574,13 +574,8 @@ legJust = function(textVec,
 ##' estimated exponent $b$ for 10,000 simulated data sets, binned using four
 ##' methods and fitted using the MLEmid and MLEbin methods.
 ##'
-##' @return figure with eight histograms, one for each combination of binning
-##'   type and fittine method.
-##' @export
-##' @author Andrew Edwards
 ##' @param results.list output list from `MLEbin.simulate()`; see
 ##'   `?MLEbin.simulate()` for details
-##' @param MLE.array
 ##' @param vertCol colour for vertical line at true value of `b`
 ##' @param vertThick thickness of vertical line at true value of `b`
 ##' @param xrange range of x values TODO can change to xlimA for consistency
@@ -599,6 +594,10 @@ legJust = function(textVec,
 ##'   the MLEBin column
 ##' @param omi,mfrow,mai,xaxs,yaxs,mgp,cex,inset standard options for `par()`,
 ##'   defaults are for Figure 4
+##' @return figure with eight histograms, one for each combination of binning
+##'   type and fitting method.
+##' @export
+##' @author Andrew Edwards
 MLEmid.MLEbin.hist = function(results.list,
                               vertCol = "red",
                               vertThick = 1,
@@ -711,6 +710,119 @@ MLEmid.MLEbin.hist = function(results.list,
         outer=TRUE,
         line=0)
 }
+
+##' One figure with eight confidence interval plots for each of  MLEmid and MLEbin methods and four binning types
+##'
+##' The default plot here reproduces Figure 5 of MEPS paper, showing the
+##' confidence intervals of the exponent $b$ for 10,000 simulated data sets, binned using four
+##' methods and fitted using the MLEmid and MLEbin methods.
+##'
+##' @param results.list output list from `MLEbin.simulate()`; see
+##'   `?MLEbin.simulate()` for details
+##' @param vertCol colour for vertical line at true value of `b`
+##' @param vertThick thickness of vertical line at true value of `b`
+##' @param xrange range of x values TODO can change to xlimA for consistency
+##' @param xbigticks.by increment between big tick marks on x-axis (all labelled)
+##' @param xsmallticks.by increment between small tick marks on x-axis
+##' @param legLabMid character vector of length 4 for labelling each panel in
+##'   the MLEmid column
+##' @param legLabBin character vector of length 4 for labelling each panel in
+##'   the MLEBin column
+##' @param insetMat matrix of inset values for MLEmid column (Figure 5(e) legend
+##'   has to be shifted), each row is the inset for that MLEmid panel
+##' @param omi,mfrow,mai,xaxs,yaxs,mgp,cex,inset standard options for `par()`,
+##'   defaults are for Figure 4
+##' @return figure with eight panels of confidence intervals, one for each combination of binning
+##'   type and fitting method.
+##' @export
+##' @author Andrew Edwards
+MLEmid.MLEbin.conf = function(results.list,
+                              vertCol = "red",
+                              vertThick = 1,
+                              xrange = c(-2.4, -1.1),
+                              xbigticks.by = 0.4,
+                              xsmallticks.by = 0.1,
+                              omi = c(0.2, 0.05, 0.22, 0.1),
+                              mfrow = c(4, 2),
+                              mai = c(0.3, 0.5, 0.08, 0),
+                              xaxs = "i",
+                              yaxs = "i",
+                              mgp = c(2.0, 0.5, 0),
+                              cex = 0.8,
+                              inset = c(0, -0.04),
+                              insetMat = insetMat,
+                              legLabMid = c("(a)", "(c)", "(e)", "(g)"),
+                              legLabBin = c("(b)", "(d)", "(f)", "(h)"))
+{
+  # Extract required components
+  MLEconf.array = results.list$MLEconf.array
+  num.reps = results.list$MLE.array.parameters$num.reps
+  b.known = results.list$MLE.array.parameters$b.known
+  binTypes = results.list$MLE.array.parameters$binTypes
+  binType.name = results.list$MLE.array.parameters$binType.name
+
+  #  xbigticks = seq(xrange[1], xrange[2], by = xbigticks.by)
+  xsmallticks = seq(xrange[1], xrange[2], by = xsmallticks.by)
+
+  #  yBigTickLab = seq(0, num.reps, yBigTickLab.by)
+  #  yBigTickNoLab = seq(0, num.reps, yBigTickNoLab.by)
+  #  ySmallTick = seq(0, num.reps, ySmallTick.by)
+
+  par(omi = omi,
+      mfrow = mfrow,
+      mai = mai,
+      xaxs = xaxs,
+      yaxs = yaxs,
+      mgp = mgp,
+      cex = cex)
+
+for(binTypeInd in 1:binTypes)
+  {
+  # confPlot returns a data.frame of intervals, but no need to save them
+  #  for each binType.
+    res = confPlot(as.data.frame(MLEconf.array[ ,binTypeInd, "MLEmid", ]),
+                   legName = paste(legLabMid[binTypeInd],
+                                   binType.name[binTypeInd]),
+                   b.true = b.known,
+                   xLim = xrange,
+                   xsmallticks = xsmallticks,
+                   insetVal = insetMat[binTypeInd,],
+                   insetVal2 = insetMat[binTypeInd,] + c(0, 0.12),
+                   legLoc="topright",
+                   yLab="",
+                   vertCol = vertCol,
+                   vertThick = vertThick)
+
+    res = confPlot(as.data.frame(MLEconf.array[ ,binTypeInd, "MLEbin", ]),
+                   legName=paste(legLabBin[binTypeInd],
+                                 binType.name[binTypeInd]),
+                   b.true = b.known,
+                   xLim = xrange,
+                   xsmallticks = xsmallticks,
+                   insetVal=inset,  # TODO could be wrong
+                   insetVal2=inset + c(0, 0.12),
+                   yLabels=FALSE,
+                   legLoc="topright",
+                   yLab="",
+                   vertCol = vertCol,
+                   vertThick = vertThick)
+  }
+
+  mtext(expression(paste("Estimate of ", italic(b))),
+        side = 1,
+        outer = TRUE,
+        line = 0)
+  mtext("Sample number",
+        side = 2,
+        outer = TRUE,
+        line = -1)
+
+  mtext("         MLEmid                                              MLEbin",
+        side = 3,
+        outer = TRUE,
+        line = 0)
+}
+
 
 
 ##' Plot time series of estimated *b* with confidence intervals
