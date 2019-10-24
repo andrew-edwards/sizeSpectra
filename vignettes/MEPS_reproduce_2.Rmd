@@ -67,15 +67,7 @@ for code - now making function `MLEbin.simulate()`. TODO: put that in help for d
 
 
 ```{r}
-
-# May not need:
-num.reps = MLE.array.parameters$num.reps
-b.known = MLE.array.parameters$b.known
-binTypes = MLE.array.parameters$binTypes
-binType.name = MLE.array.parameters$binType.name
-MLEmethod.name = dimnames(MLE.array)[[3]]
-
-May not need:
+# DELETE prob:
 inCol = "black"            # Colour for the true value being within the 95% CI
 outCol = "red"             # Colour for the true value being outside the 95% CI
 
@@ -151,9 +143,13 @@ knitr::opts_chunk$set(opts.label="kill_prefix")   # hasn't seemed to get rid of
                                         # [1] in next though. TODO
 ```
 
+<!-- TODO MAKE this a function to make dataframe, and then should just be -->
+<!-- printable in Rmarkdown. Remove eval=FALSE
+
+
 |Binning type| Method | 5\% quantile |Median  |Mean  |95\% quantile |Percentage below true|
 |:----- | :--------------- | -----------: |-----:  |---:  |-----------:  |--------------------:|
-```{r, echo=FALSE, results='asis'}
+```{r, echo=FALSE, results='asis', eval=FALSE}
 for(j in 1:binTypes)                    # Loop over binning type; prob should
                                         # have just made a dataframe
   {
@@ -168,6 +164,7 @@ for(j in 1:binTypes)                    # Loop over binning type; prob should
           quote=FALSE)
 }
 ```
+-->
 
 <!--
 # Range of widths of confidence intervals, may want to quote them but

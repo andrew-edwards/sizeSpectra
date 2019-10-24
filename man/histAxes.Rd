@@ -5,7 +5,9 @@
 \title{Histogram axes for figures TODO}
 \usage{
 histAxes(yBigTickLab = c(0, 2000, 4000), yBigTickNoLab = seq(0, 6500,
-  1000), ySmallTick = seq(0, 6500, 500))
+  1000), ySmallTick = seq(0, 6500, 500), cexAxis = 0.9,
+  xsmallticks = NA, xbigticks = seq(-3.5, 0.5, 0.5), vertCol = "red",
+  vertThick = 1, b.known = -2)
 }
 \arguments{
 \item{yBigTickLab}{y-axis big ticks to label}
@@ -13,6 +15,9 @@ histAxes(yBigTickLab = c(0, 2000, 4000), yBigTickNoLab = seq(0, 6500,
 \item{yBigTickNoLab}{y-axis big ticks to not label}
 
 \item{ySmallTick}{y-axis small ticks (unlabelled)}
+
+\item{cexAxis}{font size for axis labels TODO defaults are for
+MEE_reproduce_2.Rmd. May have to check other figs}
 }
 \value{
 Adds axes to existing histogram TODO: check
