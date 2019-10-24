@@ -68,6 +68,7 @@ for code - now making function `MLEbin.simulate()`. TODO: put that in help for d
 
 ```{r}
 
+# May not need:
 num.reps = MLE.array.parameters$num.reps
 b.known = MLE.array.parameters$b.known
 binTypes = MLE.array.parameters$binTypes
@@ -105,16 +106,18 @@ for(binTypeInd in 1:binTypes)
 # ABOVE NOT NEEDED PROB
 -->
 
+Figure 4 is obtained by:
 ```{r}
-
-# Doing as MLEmid.MLEbin.hist()
-MLEmid.MLEbin.hist()
-
+MLEmid.MLEbin.hist(MLEbin.MEPS.default)
 ```
 
-That should do Figure 4.
+TODO repeat for other two cases.
 
 # Figure 5 - Confidence intervals for the MLEs for both methods and all four binning types.
+
+******NEXT******
+TODO: convert this to a function like I just did above. Maybe use the header of
+that function as a template?
 
 ```{r}
 par(omi = c(0.2, 0.05, 0.22, 0.1))      # outer margins in inches
