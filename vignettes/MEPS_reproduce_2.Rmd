@@ -57,62 +57,33 @@ library(sizeSpectra)
 
 
 
-# Reproducing Figures 4, 5, ...TODO of MEPS paper
+## Reproducing Figures 4 and 5 of MEPS paper
 
-Simulated data takes a while (over an hour on a fast laptop) to generate, bin and fit, and so results are saved
-in the list `MLEbin.MEPS.default`, which contains the fitted maximum likelihood
+The imulated data takes a while to generate, bin and fit (over an hour on a fast laptop), and so results are saved
+in the list `MLEbin.MEPS.default`. This list contains the fitted maximum likelihood
 value (and confidence interval) of $b$ for each simulated data set, binning
-method and fitting method (MLEmid or MLEbin). See `data-raw/simulate-data2.R`
-for code - now making function `MLEbin.simulate()`. TODO: put that in help for data objects, and delete here.
+method and fitting method (MLEmid or MLEbin).
 
-
-```{r}
-# DELETE prob:
-inCol = "black"            # Colour for the true value being within the 95% CI
-outCol = "red"             # Colour for the true value being outside the 95% CI
-
+To create `MLEbin.MEPS.default` run the next line (which is not evaluated by
+this vignette but is run once in `data-raw/simulate-data2.R` to save
+the list as part of this package):
+```{r, eval=FALSE}
+MLEbin.MEPS.default <- MLEbin.simulate()
 ```
 
-<!--
-DELETE ME IF REST WORKS
-for(binTypeInd in 1:binTypes)
-  {
-  par(omi = c(0.14, 0, 0.1, 0.15))      # outer margins (inches; set last to 0.2
-                                        #  for single column)
-  par(mfrow=c(2,2))
+The list contains three items (see `?MLEbin.simulate`):
+```{r}
+summary(MLEbin.MEPS.default)
+```
 
-  oldmai = par("mai")
-  par(mai=c(0.3, 0.5, 0.08, 0))  # Affects all four figures if don't change again
-  par(xaxs="i", yaxs="i")    # Have to define here for hist
-  par(mgp=c(2.0, 0.5, 0))    # puts axes labels closer I think
-  par(cex = 0.8)             # With no option all text comes out a bit small
-
-  # Histogram of MLEs for the two methods
-
-  cexAxis = 1  # was 0.9      # font size for axes labels to make the y ones fit okay
-
-  inset = c(0, -0.04)       # (default in confPlot)
-  # xlabpos = 0.75       # just play with a number, as now using pos=4 in text
-
-}                                   # End for(binTypeInd in 1:binTypes)
-# ABOVE NOT NEEDED PROB
--->
-
-Figure 4 is obtained by:
+Figure 4 shows histograms of the estimates of $b$ for the MLEs for both methods and all four binning types:
 ```{r}
 MLEmid.MLEbin.hist(MLEbin.MEPS.default)
 ```
 
-TODO repeat for other two cases.
-
-# Figure 5 - Confidence intervals for the MLEs for both methods and all four binning types.
-
-******NEXT******
-TODO: convert this to a function like I just did above. Maybe use the header of
-that function as a template?
-
+Figure 5 gives the confidence intervals for the MLEs for both methods and all four binning types:
 ```{r}
-# Need a different inset for panel (e) MLEmid Linear 10.
+# These two lines just give a different inset for panel (e):
 insetMat = matrix(rep(c(-0.01, -0.04), 4),
                   ncol=2,
                   byrow=TRUE)
@@ -120,7 +91,6 @@ insetMat[3, 1] = 0.3
 
 MLEmid.MLEbin.conf(MLEbin.MEPS.default,
                    insetMat = insetMat)
-
 ```
 
 Table S.3 of related results TODO: fix the [1] bit, prob make dataframe.
@@ -165,6 +135,18 @@ for(j in 1:binTypes)                    # Loop over binning type; prob should
 }
 ```
 -->
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!--
 # Range of widths of confidence intervals, may want to quote them but
