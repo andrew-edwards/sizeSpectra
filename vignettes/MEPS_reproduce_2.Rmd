@@ -101,7 +101,40 @@ Table S.3 of related results TODO: fix the [1] bit, prob make dataframe.
 |:----- | :--------------- | -----------: |-----:  |---:  |-----------:  |--------------------:|
 
 
-```{r, echo=TRUE, results='asis', eval=FALSE}
+Make a dataframe of the results:
+```{r, echo=TRUE}
+# Taking from below
+MLEbin.table <- data.frame("Binning type" = NA,
+                           "Method" = NA,
+                           "Quantile.5" = NA,
+                           "Median" = NA,
+                           "Mean" = NA,
+                           "Quantile.95" = NA,
+                           "Percent.below.true" = NA)
+for(i in 1:MLEbin.results$MLE.array.parameters$binTypes)
+  {
+    MLEbin.table[2*i - 1, ] =
+      c(MLEbin.results$MLE.array.parameters$binType.name[[i]],
+        names(MLEbin.MEPS.default$MLE.array[1,1,])[1],
+
+HERE
+        MLEbin.results$MLE.array.parameters$binType.name
+
+    print(paste(binType.name[[i]],
+                " | ",
+                MLEmethod.name[1],
+                " | ",
+                qqtab(MLE.array[ ,i,1], quants=c(0.05, 0.95), latex=FALSE)),
+          quote=FALSE)
+    print(paste(" | ", MLEmethod.name[2], " | ",
+                qqtab(MLE.array[ ,i,2], quants=c(0.05, 0.95), latex=FALSE)),
+          quote=FALSE)
+}
+```
+
+
+```{r, eval = FALSE}
+Original, copying to above and then editing:
 for(j in 1:binTypes)                    # Loop over binning type; prob should
                                         # have just made a dataframe
   {
