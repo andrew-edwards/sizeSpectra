@@ -97,9 +97,6 @@ MLEmid.MLEbin.conf(MLEbin.results,
 
 Table S.3 of related results TODO: fix the [1] bit, prob make dataframe.
 
-|Binning type| Method | 5\% quantile |Median  |Mean  |95\% quantile |Percentage below true|
-|:----- | :--------------- | -----------: |-----:  |---:  |-----------:  |--------------------:|
-
 
 Make a dataframe of the results:
 ```{r, echo=TRUE}
@@ -126,6 +123,8 @@ for(i in 1:MLEbin.results$MLE.array.parameters$binTypes)
         )
   }
 }
+
+MLEmid.MLEbin.table(MLEbin.results)
 ```
 
 

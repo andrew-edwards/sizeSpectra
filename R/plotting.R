@@ -846,6 +846,114 @@ for(binTypeInd in 1:binTypes)
 }
 
 
+##' Make dataframe of results from MLEmid and MLEbin methods and four binning types
+##'
+##' Makes dataframe to produce Tables S.3, S.4 and S.5 of MEPS paper, showing the
+##' statistics from estimating exponent $b$ for 10,000 simulated data sets, binned using four
+##' methods and fitted using the MLEmid and MLEbin methods.
+##'
+##' @param results.list output list from `MLEbin.simulate()`; see
+##'   `?MLEbin.simulate()` for details
+##' @return dataframe of table with columns `Binning.type`, `Method`,
+##'   `Quantile.5`, `Median, `Mean`, `Quantile.95`, `Percent.below.true`, one
+##'   row for each combination of binning type and fitting method.
+##' @export
+##' @author Andrew Edwards
+MLEmid.MLEbin.table = function(results.list)
+
+{  HERE - extract components and copy in what I need from the loop in
+  vignette*****HERE TODO
+  # Extract required components
+  MLE.array = results.list$MLE.array
+  num.reps = results.list$MLE.array.parameters$num.reps
+  b.known = results.list$MLE.array.parameters$b.known
+  binTypes = results.list$MLE.array.parameters$binTypes
+  binType.name = results.list$MLE.array.parameters$binType.name
+
+  xbigticks = seq(xrange[1], xrange[2], by = xbigticks.by)
+  xsmallticks = seq(xrange[1], xrange[2], by = xsmallticks.by)
+
+  yBigTickLab = seq(0, num.reps, yBigTickLab.by)
+  yBigTickNoLab = seq(0, num.reps, yBigTickNoLab.by)
+  ySmallTick = seq(0, num.reps, ySmallTick.by)
+
+  # Want b.known (-2 for default) to be a midpoint of the Nth bin, which is yy above the minimum.
+  #  Say the 20th bin contains -2, so solve ((N+1)w + Nw)/2 = yy
+  #  gives  w = 2 * yy / (2*N + 1). Not flexible yet.
+  binwidth = 2 * (b.known - xrange[1]) / ( 2 * 10 + 1)
+  breakshist =  seq(xrange[1],
+                    length = ceiling( (xrange[2] - xrange[1])/binwidth ) + 1,
+                    by = binwidth)
+
+  par(omi = omi,
+      mfrow = mfrow,
+      mai = mai,
+      xaxs = xaxs,
+      yaxs = yaxs,
+      mgp = mgp,
+      cex = cex)
+
+  for(binTypeInd in 1:binTypes)
+    {
+      hist(MLE.array[ ,binTypeInd, "MLEmid"],
+           xlim=xrange,
+           breaks=breakshist,
+           xlab="",
+           ylab="",
+           main="",
+           axes=FALSE,
+           ylim = ylimA)
+      histAxes(yBigTickLab = yBigTickLab,
+               yBigTickNoLab = yBigTickNoLab,
+               ySmallTick = ySmallTick,
+               cexAxis = cexAxis,
+               xbigticks = xbigticks,
+               xsmallticks = xsmallticks,
+               vertCol = vertCol,
+               vertThick = vertThick)
+      legend("topright",
+             paste(legLabMid[binTypeInd], binType.name[binTypeInd]),
+             bty="n",
+             inset=inset)
+
+      hist(MLE.array[ , binTypeInd, "MLEbin"],
+           xlim=xrange,
+           breaks=breakshist,
+           xlab="",
+           ylab="",
+           main="",
+           axes=FALSE,
+           ylim = ylimA)
+      histAxes(yBigTickLab = yBigTickLab,
+               yBigTickNoLab = yBigTickNoLab,
+               ySmallTick = ySmallTick,
+               cexAxis = cexAxis,
+               xbigticks = xbigticks,
+               xsmallticks = xsmallticks,
+               vertCol = vertCol,
+               vertThick = vertThick)
+      legend("topright",
+             paste(legLabBin[binTypeInd], binType.name[binTypeInd]),
+             bty="n",
+             inset=inset)
+  }
+
+  mtext(expression(paste("Estimate of ", italic(b))),
+        side=1,
+        outer=TRUE,
+        line=-1)
+  mtext("Frequency",
+        side=2,
+        outer=TRUE,
+        line=-1)
+
+  mtext("    MLEmid                                                MLEbin",
+        side=3,
+        outer=TRUE,
+        line=0)
+}
+
+
 
 ##' Plot time series of estimated *b* with confidence intervals
 ##'
