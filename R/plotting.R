@@ -191,8 +191,8 @@ gap.barplot.cust = function (y,
 ##' @export
 ##' @author Andrew Edwards
 qqtab = function(xx,
-                 dig=2,
-                 true=b.known,
+                 dig = 2,
+                 true = NA,
                  quants = c(0.25, 0.75),
                  type = "Rmd")
 {
@@ -226,6 +226,21 @@ qqtab = function(xx,
                sep=" ", collapse=" "))
   } else if(type == "data.frame")
   {
+    return(c( prettyNum(round(quantile(xx, quants[1]),
+                              digits=dig),
+                      big.mark=","),
+           prettyNum(round(quantile(xx, 0.50),
+                           digits=dig),
+                     big.mark=","),
+           prettyNum(round(mean(xx), digits=dig),
+                     big.mark=","),
+           prettyNum(round(quantile(xx, quants[2]),
+                           digits=dig),
+                     big.mark=","),
+           prettyNum(round(sum(xx < true)/length(xx)*100,
+                           digits=0),
+                     big.mark=",")))
+               # sep=" ", collapse=" "))
   }
 }
 

@@ -116,8 +116,18 @@ for(i in 1:MLEbin.results$MLE.array.parameters$binTypes)
     MLEbin.table[2*i - 1, ] =
       c(MLEbin.results$MLE.array.parameters$binType.name[[i]],
         names(MLEbin.MEPS.default$MLE.array[1,1,])[1],
+        qqtab(MLEbin.MEPS.default$MLE.array[ ,i,1],
+              quants=c(0.05, 0.95),
+              type="data.frame",
+              true = MLEbin.results$MLE.array.parameters$b.known)
+        )
+HERE do a loop for j = 1,2   (number of methods)     each row is 2*i - 1 + j-1 =
+                                                                   2*i + j - 3
 
-HERE
+
+
+
+    HERE
         MLEbin.results$MLE.array.parameters$binType.name
 
     print(paste(binType.name[[i]],
@@ -134,7 +144,8 @@ HERE
 
 
 ```{r, eval = FALSE}
-Original, copying to above and then editing:  kEEP ME AS example
+Original, copying to above and then editing:  kEEP ME AS example  TODO update
+MEE_reproduce_2.Rmd with type="Rmd"
 for(j in 1:binTypes)                    # Loop over binning type; prob should
                                         # have just made a dataframe
   {
