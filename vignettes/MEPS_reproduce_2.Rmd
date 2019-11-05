@@ -129,6 +129,11 @@ for(i in 1:MLEbin.results$MLE.array.parameters$binTypes)
 ```
 
 
+```{r results='asis'}
+knitr::kable(MLEbin.table)
+```
+
+
 ```{r, eval = FALSE}
 Original, copying to above and then editing:  kEEP ME AS example  TODO update
 MEE_reproduce_2.Rmd with type="Rmd"
