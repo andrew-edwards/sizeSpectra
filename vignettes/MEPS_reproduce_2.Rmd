@@ -134,7 +134,7 @@ HERE
 
 
 ```{r, eval = FALSE}
-Original, copying to above and then editing:
+Original, copying to above and then editing:  kEEP ME AS example
 for(j in 1:binTypes)                    # Loop over binning type; prob should
                                         # have just made a dataframe
   {

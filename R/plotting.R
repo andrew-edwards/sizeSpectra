@@ -169,10 +169,10 @@ gap.barplot.cust = function (y,
     invisible(x)
 }
 
-##' Produce LaTeX or Rmarkdown table code for quantiles of results
+##' Produce row for a dataframe, LaTeX or Rmarkdown table code for quantiles of results.
 ##'
-##'  Quantile table function, to construct lines of quantiles to copy
-##'   into LaTeX, or render directly in an Rmarkdown document. Does `quants[1]`,
+##'  Quantile table function, to construct row for a dataframe or a line of quantiles to copy
+##'   into either LaTeX or render directly in an Rmarkdown document. Does `quants[1]`,
 ##'   50\% (median), mean, `quants[2]` quantiles,
 ##'   and the \%age of values < the true value.
 ##'
@@ -182,9 +182,11 @@ gap.barplot.cust = function (y,
 ##'     depend on method
 ##' @param quants quantiles to use, with defaults of 0.25 and 0.75 (25\% and
 ##'   75\%).
-##' @param latex if TRUE gives `latex` output to copy into a `.tex` file, else gives `Rmd` gives Rmarkdown output
-##'   (see vignette TODO).
-##' @return LaTeX output for table to copy into a .tex file
+##' @param type `data.frame` produces a row to put into a dataframe,
+##'   `latex` gives output to copy into a `.tex` file, `Rmd` gives Rmarkdown
+##'    output (see vignette TODO).
+##' @return row of a data.frame, line of LaTeX output for table to copy into a
+##'   .tex file, or line of Rmarkdown to copy into an Rmarkdown document
 ##'
 ##' @export
 ##' @author Andrew Edwards
@@ -192,8 +194,11 @@ qqtab = function(xx,
                  dig=2,
                  true=b.known,
                  quants = c(0.25, 0.75),
-                 latex = TRUE)
-   { if(latex){
+                 type = "Rmd")
+{
+  if (!(type %in% c("data.frame", "latex", "Rmd"))) stop("Invalid type in qqtab().")
+
+  if(type == "latex"){
      noquote(
        paste( c( prettyNum(round(quantile(xx, quants[1]),
                                   digits=dig), big.mark=","),
@@ -206,7 +211,7 @@ qqtab = function(xx,
              " & ", prettyNum(round(sum(xx < true)/length(xx)*100, digits=0),
                                   big.mark=",")),
              sep="", collapse=""))             # , "\\%"),
-  } else {
+  } else if(type == "Rmd") {
     noquote(
       paste( c( prettyNum(round(quantile(xx, quants[1]),
                                   digits=dig), big.mark=","),
@@ -219,6 +224,8 @@ qqtab = function(xx,
              " | ", prettyNum(round(sum(xx < true)/length(xx)*100, digits=0),
                                   big.mark=",")),
                sep=" ", collapse=" "))
+  } else if(type == "data.frame")
+  {
   }
 }
 
