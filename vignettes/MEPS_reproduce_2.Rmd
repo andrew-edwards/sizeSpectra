@@ -59,7 +59,7 @@ library(sizeSpectra)
 
 ## Reproducing Figures 4 and 5 of MEPS paper
 
-The imulated data takes a while to generate, bin and fit (over an hour on a fast laptop), and so results are saved
+The simulated data takes a while to generate, bin and fit (over an hour on a fast laptop), and so results are saved
 in the list `MLEbin.MEPS.default`. This list contains the fitted maximum likelihood
 value (and confidence interval) of $b$ for each simulated data set, binning
 method and fitting method (MLEmid or MLEbin).
@@ -73,12 +73,14 @@ MLEbin.MEPS.default <- MLEbin.simulate()
 
 The list contains three items (see `?MLEbin.simulate`):
 ```{r}
-summary(MLEbin.MEPS.default)
+MLEbin.results <- MLEbin.MEPS.default   # just change this to use vignette for
+                                        # other results
+summary(MLEbin.results)
 ```
 
 Figure 4 shows histograms of the estimates of $b$ for the MLEs for both methods and all four binning types:
 ```{r}
-MLEmid.MLEbin.hist(MLEbin.MEPS.default)
+MLEmid.MLEbin.hist(MLEbin.results)
 ```
 
 Figure 5 gives the confidence intervals for the MLEs for both methods and all four binning types:
@@ -89,11 +91,32 @@ insetMat = matrix(rep(c(-0.01, -0.04), 4),
                   byrow=TRUE)
 insetMat[3, 1] = 0.3
 
-MLEmid.MLEbin.conf(MLEbin.MEPS.default,
+MLEmid.MLEbin.conf(MLEbin.results,
                    insetMat = insetMat)
 ```
 
 Table S.3 of related results TODO: fix the [1] bit, prob make dataframe.
+
+|Binning type| Method | 5\% quantile |Median  |Mean  |95\% quantile |Percentage below true|
+|:----- | :--------------- | -----------: |-----:  |---:  |-----------:  |--------------------:|
+
+
+```{r, echo=TRUE, results='asis', eval=FALSE}
+for(j in 1:binTypes)                    # Loop over binning type; prob should
+                                        # have just made a dataframe
+  {
+    print(paste(binType.name[[j]],
+                " | ",
+                MLEmethod.name[1],
+                " | ",
+                qqtab(MLE.array[ ,j,1], quants=c(0.05, 0.95), latex=FALSE)),
+          quote=FALSE)
+    print(paste(" | ", MLEmethod.name[2], " | ",
+                qqtab(MLE.array[ ,j,2], quants=c(0.05, 0.95), latex=FALSE)),
+          quote=FALSE)
+}
+```
+
 
 <!--
 # 5% and 95% values of MLEs, latex version (to copy into .tex file)

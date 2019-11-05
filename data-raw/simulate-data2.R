@@ -9,7 +9,7 @@ usethis::use_data(MLEbin.MEPS.default, overwrite = TRUE)
 
 MLEbin.MEPS.xmin16 <- MLEbin.simulate(xmin.known = 16)
 usethis::use_data(MLEbin.MEPS.xmin16, overwrite = TRUE)
-
+# then in vignette: MLEmid.MLEbin.hist(MLEbin.MEPS.cutoff16)
 
 Running now:
 
