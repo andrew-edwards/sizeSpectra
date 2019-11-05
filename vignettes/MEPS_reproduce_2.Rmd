@@ -103,7 +103,8 @@ Table S.3 of related results TODO: fix the [1] bit, prob make dataframe.
 
 Make a dataframe of the results:
 ```{r, echo=TRUE}
-# Taking from below
+# Taking from below, TODO then make into a function
+# Not generalised to more than two fitting methods
 MLEbin.table <- data.frame("Binning type" = NA,
                            "Method" = NA,
                            "Quantile.5" = NA,
@@ -112,33 +113,18 @@ MLEbin.table <- data.frame("Binning type" = NA,
                            "Quantile.95" = NA,
                            "Percent.below.true" = NA)
 for(i in 1:MLEbin.results$MLE.array.parameters$binTypes)
+{
+  for(j in 1:2)
   {
-    MLEbin.table[2*i - 1, ] =
+    MLEbin.table[2*i + j - 2, ] =
       c(MLEbin.results$MLE.array.parameters$binType.name[[i]],
-        names(MLEbin.MEPS.default$MLE.array[1,1,])[1],
-        qqtab(MLEbin.MEPS.default$MLE.array[ ,i,1],
+        names(MLEbin.MEPS.default$MLE.array[1,1,])[j],
+        qqtab(MLEbin.MEPS.default$MLE.array[ ,i,j],
               quants=c(0.05, 0.95),
               type="data.frame",
               true = MLEbin.results$MLE.array.parameters$b.known)
         )
-HERE do a loop for j = 1,2   (number of methods)     each row is 2*i - 1 + j-1 =
-                                                                   2*i + j - 3
-
-
-
-
-    HERE
-        MLEbin.results$MLE.array.parameters$binType.name
-
-    print(paste(binType.name[[i]],
-                " | ",
-                MLEmethod.name[1],
-                " | ",
-                qqtab(MLE.array[ ,i,1], quants=c(0.05, 0.95), latex=FALSE)),
-          quote=FALSE)
-    print(paste(" | ", MLEmethod.name[2], " | ",
-                qqtab(MLE.array[ ,i,2], quants=c(0.05, 0.95), latex=FALSE)),
-          quote=FALSE)
+  }
 }
 ```
 
