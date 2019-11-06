@@ -772,7 +772,10 @@ MLEmid.MLEbin.conf = function(results.list,
                               mgp = c(2.0, 0.5, 0),
                               cex = 0.8,
                               inset = c(0, -0.04),
-                              insetMat = insetMat,
+                              insetMat = matrix(rep(c(-0.01, -0.04),
+                                                    4),
+                                                ncol=2,
+                                                byrow=TRUE),
                               legLabMid = c("(a)", "(c)", "(e)", "(g)"),
                               legLabBin = c("(b)", "(d)", "(f)", "(h)"))
 {
