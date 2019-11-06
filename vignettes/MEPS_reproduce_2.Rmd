@@ -16,46 +16,9 @@ knitr::opts_chunk$set(
   fig.height = 7
   )
 
-# A Prefix nulling hook from
-# https://stackoverflow.com/questions/22524822/how-can-i-remove-the-prefix-index-indicator-1-in-knitr-output
-#  by Stack Overflow 'Thell' (whose bio says they "apparently likes to keep an air of mystery
-# about them."
-
-# Make sure to keep the default for normal processing.
-default_output_hook <- knitr::knit_hooks$get("output")
-
-# Output hooks handle normal R console output.
-knitr::knit_hooks$set( output = function(x, options) {
-
-  comment <- knitr::opts_current$get("comment")
-  if( is.na(comment) ) comment <- ""
-  can_null <- grepl( paste0( comment, "\\s*\\[\\d?\\]" ),
-                     x, perl = TRUE)
-  do_null <- isTRUE( knitr::opts_current$get("null_prefix") )
-  if( can_null && do_null ) {
-    # By default R print output aligns at the right brace.
-    align_index <- regexpr( "\\]", x )[1] - 1
-    # Two cases: start or newline
-    re <- paste0( "^.{", align_index, "}\\]")
-    rep <- comment
-    x <- gsub( re, rep,  x )
-    re <- paste0( "\\\n.{", align_index, "}\\]")
-    rep <- paste0( "\n", comment )
-    x <- gsub( re, rep,  x )
-  }
-
-  default_output_hook( x, options )
-
-})
-
-knitr::opts_template$set("kill_prefix"=list(comment=NA, null_prefix=TRUE))
-```
-
 ```{r setup}
 library(sizeSpectra)
 ```
-
-
 
 ## Reproducing Figures 4 and 5 of MEPS paper
 
@@ -117,59 +80,6 @@ for(j in 1:binTypes)                    # Loop over binning type; prob should
           quote=FALSE)
 }
 ```
-
-
-<!--
-# 5% and 95% values of MLEs, latex version (to copy into .tex file)
-print("Binning type & Method & 5% quantile & Median & Mean & 95% quantile & Percentage below true \\ \\hline", quote=FALSE)
-
-for(j in 1:binTypes)                    # Loop over binning type
-  {
-  print(paste(binType.name[[j]], " & ", MLEmethod.name[1], " & ",
-      qqtab(MLE.array[ ,j,1], quants=c(0.05, 0.95)), "\\"), quote=FALSE)
-  print(paste(" & ", MLEmethod.name[2], " & ",
-      qqtab(MLE.array[ ,j,2], quants=c(0.05, 0.95)), "\\"), quote=FALSE)
-}
--->
-
-```{r, echo=FALSE}
-knitr::opts_chunk$set(opts.label="kill_prefix")   # hasn't seemed to get rid of
-                                        # [1] in next though. TODO
-```
-
-<!-- TODO MAKE this a function to make dataframe, and then should just be -->
-<!-- printable in Rmarkdown. Remove eval=FALSE
-
-
-|Binning type| Method | 5\% quantile |Median  |Mean  |95\% quantile |Percentage below true|
-|:----- | :--------------- | -----------: |-----:  |---:  |-----------:  |--------------------:|
-```{r, echo=FALSE, results='asis', eval=FALSE}
-for(j in 1:binTypes)                    # Loop over binning type; prob should
-                                        # have just made a dataframe
-  {
-    print(paste(binType.name[[j]],
-                " | ",
-                MLEmethod.name[1],
-                " | ",
-                qqtab(MLE.array[ ,j,1], quants=c(0.05, 0.95), latex=FALSE)),
-          quote=FALSE)
-    print(paste(" | ", MLEmethod.name[2], " | ",
-                qqtab(MLE.array[ ,j,2], quants=c(0.05, 0.95), latex=FALSE)),
-          quote=FALSE)
-}
-```
--->
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!--
