@@ -8,9 +8,9 @@
 ^data-raw$
 ^codecov\.yml$
 ^fromOtherRepo$
-^vignettes/MEE_Reproduce_1.Rmd$
-^vignettes/MEE_Reproduce_2.Rmd$
-^vignettes/MEPS_Reproduce_1.Rmd$
-^vignettes/MEPS_IBTS_1.Rmd$
-^vignettes/MEPS_IBTS_2.Rmd$
-^vignettes/MEPS_IBTS_MLEbins.Rmd$
+# ^vignettes/MEE_Reproduce_1.Rmd$
+# ^vignettes/MEE_Reproduce_2.Rmd$
+# ^vignettes/MEPS_Reproduce_1.Rmd$
+# ^vignettes/MEPS_IBTS_1.Rmd$
+# ^vignettes/MEPS_IBTS_2.Rmd$
+# ^vignettes/MEPS_IBTS_MLEbins.Rmd$
