@@ -73,20 +73,40 @@ MLEbin.MEPS.xmin16 <- MLEbin.simulate(xmin.known = 16)
 
 Figure S.35 is then
 ```{r}
-MLEmid.MLEbin.hist(MLEbin.MEPS.cutoff16)
+MLEmid.MLEbin.hist(MLEbin.MEPS.xmin16)
 ```
 
 Figure S.36 shows the confidence intervals:
 ```{r}
-MLEmid.MLEbin.conf(MLEbin.MEPS.cutoff16)
+MLEmid.MLEbin.conf(MLEbin.MEPS.xmin16)
 ```
 
 And Table S.4 is:
 ```{r, echo=TRUE, results='asis'}
-knitr::kable(MLEmid.MLEbin.table(MLEbin.MEPS.cutoff16))
+knitr::kable(MLEmid.MLEbin.table(MLEbin.MEPS.xmin16))
 ```
 
-Note that any very minor differences in results to those in the published
-figures and tables are due to the original code that produced the published
-versions using up a random number (after I set the seed to 42) when doing
-`require(dplyr)`. Such differences are not important.
+## Setting $x_{min}=1$ but only sampling data above the cutoff value of 16 (Figures S.37 and S.38 and Table S.5)
+
+Similarly, the simulation results obtained from setting $x_{min}=1$ again but
+only sampling above the cutoff value of 16 are saved in
+the object `MLEbin.MEPS.cutoff16`, obtained by running the next line (which is not evaluated by
+this vignette but is run once in `data-raw/simulate-data2.R`):
+```{r, eval=FALSE}
+MLEbin.MEPS.cutoff16 <- MLEbin.simulate(cut.off = 16)
+```
+
+Figure S.37 is then
+```{r}
+MLEmid.MLEbin.hist(MLEbin.MEPS.cutoff16)
+```
+
+Figure S.38 shows the confidence intervals:
+```{r}
+MLEmid.MLEbin.conf(MLEbin.MEPS.cutoff16)
+```
+
+And Table S.5 is:
+```{r, echo=TRUE, results='asis'}
+knitr::kable(MLEmid.MLEbin.table(MLEbin.MEPS.cutoff16))
+```
