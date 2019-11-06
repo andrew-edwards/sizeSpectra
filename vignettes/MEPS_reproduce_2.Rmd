@@ -20,12 +20,13 @@ knitr::opts_chunk$set(
 library(sizeSpectra)
 ```
 
-## Reproducing Figures 4 and 5 of MEPS paper
+## Reproducing simulation results of MEPS paper (Figures 4 and 5 and Table S.3)
 
-The simulated data takes a while to generate, bin and fit (over an hour on a fast laptop), and so results are saved
+The simulated data over an hour (on a fast laptop) to generate, bin and fit.
+So results are saved within the package
 in the list `MLEbin.MEPS.default`. This list contains the fitted maximum likelihood
-value (and confidence interval) of $b$ for each simulated data set, binning
-method and fitting method (MLEmid or MLEbin).
+value (and confidence interval) of $b$ for each combination of 10,000 simulated
+data sets, four binning methods and two fitting methods (MLEmid or MLEbin).
 
 To create `MLEbin.MEPS.default` run the next line (which is not evaluated by
 this vignette but is run once in `data-raw/simulate-data2.R` to save
@@ -36,14 +37,12 @@ MLEbin.MEPS.default <- MLEbin.simulate()
 
 The list contains three items (see `?MLEbin.simulate`):
 ```{r}
-MLEbin.results <- MLEbin.MEPS.default   # just change this to use vignette for
-                                        # other results
-summary(MLEbin.results)
+summary(MLEbin.MEPS.default)
 ```
 
 Figure 4 shows histograms of the estimates of $b$ for the MLEs for both methods and all four binning types:
 ```{r}
-MLEmid.MLEbin.hist(MLEbin.results)
+MLEmid.MLEbin.hist(MLEbin.MEPS.default)
 ```
 
 Figure 5 gives the confidence intervals for the MLEs for both methods and all four binning types:
@@ -54,11 +53,11 @@ insetMat = matrix(rep(c(-0.01, -0.04), 4),
                   byrow=TRUE)
 insetMat[3, 1] = 0.3
 
-MLEmid.MLEbin.conf(MLEbin.results,
+MLEmid.MLEbin.conf(MLEbin.MEPS.default,
                    insetMat = insetMat)
 ```
 
 Make a dataframe of the results and show here, reproducing Table S.3:
 ```{r, echo=TRUE, results='asis'}
-knitr::kable(MLEmid.MLEbin.table(MLEbin.results))
+knitr::kable(MLEmid.MLEbin.table(MLEbin.MEPS.default))
 ```
