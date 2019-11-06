@@ -95,43 +95,10 @@ MLEmid.MLEbin.conf(MLEbin.results,
                    insetMat = insetMat)
 ```
 
-Table S.3 of related results TODO: fix the [1] bit, prob make dataframe.
-
-
-Make a dataframe of the results:
-```{r, echo=TRUE}
-# Taking from below, TODO then make into a function
-# Not generalised to more than two fitting methods
-MLEbin.table <- data.frame("Binning type" = NA,
-                           "Method" = NA,
-                           "Quantile.5" = NA,
-                           "Median" = NA,
-                           "Mean" = NA,
-                           "Quantile.95" = NA,
-                           "Percent.below.true" = NA)
-for(i in 1:MLEbin.results$MLE.array.parameters$binTypes)
-{
-  for(j in 1:2)
-  {
-    MLEbin.table[2*i + j - 2, ] =
-      c(MLEbin.results$MLE.array.parameters$binType.name[[i]],
-        names(MLEbin.MEPS.default$MLE.array[1,1,])[j],
-        qqtab(MLEbin.MEPS.default$MLE.array[ ,i,j],
-              quants=c(0.05, 0.95),
-              type="data.frame",
-              true = MLEbin.results$MLE.array.parameters$b.known)
-        )
-  }
-}
-
-MLEmid.MLEbin.table(MLEbin.results)
+Make a dataframe of the results and show here, reproducing Table S.3:
+```{r, echo=TRUE, results='asis'}
+knitr::kable(MLEmid.MLEbin.table(MLEbin.results))
 ```
-
-
-```{r results='asis'}
-knitr::kable(MLEbin.table)
-```
-
 
 ```{r, eval = FALSE}
 Original, copying to above and then editing:  kEEP ME AS example  TODO update

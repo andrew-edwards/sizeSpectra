@@ -860,9 +860,7 @@ for(binTypeInd in 1:binTypes)
 ##' @export
 ##' @author Andrew Edwards
 MLEmid.MLEbin.table = function(results.list)
-
-{  HERE - extract components and copy in what I need from the loop in
-  vignette*****HERE TODO
+{
   # Extract required components
   MLE.array = results.list$MLE.array
   num.reps = results.list$MLE.array.parameters$num.reps
@@ -870,90 +868,28 @@ MLEmid.MLEbin.table = function(results.list)
   binTypes = results.list$MLE.array.parameters$binTypes
   binType.name = results.list$MLE.array.parameters$binType.name
 
-  xbigticks = seq(xrange[1], xrange[2], by = xbigticks.by)
-  xsmallticks = seq(xrange[1], xrange[2], by = xsmallticks.by)
-
-  yBigTickLab = seq(0, num.reps, yBigTickLab.by)
-  yBigTickNoLab = seq(0, num.reps, yBigTickNoLab.by)
-  ySmallTick = seq(0, num.reps, ySmallTick.by)
-
-  # Want b.known (-2 for default) to be a midpoint of the Nth bin, which is yy above the minimum.
-  #  Say the 20th bin contains -2, so solve ((N+1)w + Nw)/2 = yy
-  #  gives  w = 2 * yy / (2*N + 1). Not flexible yet.
-  binwidth = 2 * (b.known - xrange[1]) / ( 2 * 10 + 1)
-  breakshist =  seq(xrange[1],
-                    length = ceiling( (xrange[2] - xrange[1])/binwidth ) + 1,
-                    by = binwidth)
-
-  par(omi = omi,
-      mfrow = mfrow,
-      mai = mai,
-      xaxs = xaxs,
-      yaxs = yaxs,
-      mgp = mgp,
-      cex = cex)
-
-  for(binTypeInd in 1:binTypes)
+  res.table <- data.frame("Binning type" = NA,
+                          "Method" = NA,
+                          "Quantile 5" = NA,
+                          "Median" = NA,
+                          "Mean" = NA,
+                          "Quantile 95" = NA,
+                          "Percent below true" = NA)
+  for(i in 1:binTypes)
+  {
+    for(j in 1:2)
     {
-      hist(MLE.array[ ,binTypeInd, "MLEmid"],
-           xlim=xrange,
-           breaks=breakshist,
-           xlab="",
-           ylab="",
-           main="",
-           axes=FALSE,
-           ylim = ylimA)
-      histAxes(yBigTickLab = yBigTickLab,
-               yBigTickNoLab = yBigTickNoLab,
-               ySmallTick = ySmallTick,
-               cexAxis = cexAxis,
-               xbigticks = xbigticks,
-               xsmallticks = xsmallticks,
-               vertCol = vertCol,
-               vertThick = vertThick)
-      legend("topright",
-             paste(legLabMid[binTypeInd], binType.name[binTypeInd]),
-             bty="n",
-             inset=inset)
-
-      hist(MLE.array[ , binTypeInd, "MLEbin"],
-           xlim=xrange,
-           breaks=breakshist,
-           xlab="",
-           ylab="",
-           main="",
-           axes=FALSE,
-           ylim = ylimA)
-      histAxes(yBigTickLab = yBigTickLab,
-               yBigTickNoLab = yBigTickNoLab,
-               ySmallTick = ySmallTick,
-               cexAxis = cexAxis,
-               xbigticks = xbigticks,
-               xsmallticks = xsmallticks,
-               vertCol = vertCol,
-               vertThick = vertThick)
-      legend("topright",
-             paste(legLabBin[binTypeInd], binType.name[binTypeInd]),
-             bty="n",
-             inset=inset)
+      res.table[2*i + j - 2, ] = c(binType.name[[i]],
+                                   names(MLE.array[1,1,])[j],
+                                   qqtab(MLE.array[ ,i,j],
+                                         quants=c(0.05, 0.95),
+                                         type="data.frame",
+                                         true = b.known)
+                                   )
+    }
   }
-
-  mtext(expression(paste("Estimate of ", italic(b))),
-        side=1,
-        outer=TRUE,
-        line=-1)
-  mtext("Frequency",
-        side=2,
-        outer=TRUE,
-        line=-1)
-
-  mtext("    MLEmid                                                MLEbin",
-        side=3,
-        outer=TRUE,
-        line=0)
+  return(res.table)
 }
-
-
 
 ##' Plot time series of estimated *b* with confidence intervals
 ##'

@@ -2,10 +2,9 @@
 % Please edit documentation in R/plotting.R
 \name{qqtab}
 \alias{qqtab}
-\title{Produce LaTeX or Rmarkdown table code for quantiles of results}
+\title{Produce row for a dataframe, LaTeX or Rmarkdown table code for quantiles of results.}
 \usage{
-qqtab(xx, dig = 2, true = b.known, quants = c(0.25, 0.75),
-  latex = TRUE)
+qqtab(xx, dig = 2, true = NA, quants = c(0.25, 0.75), type = "Rmd")
 }
 \arguments{
 \item{xx}{vector of values to give quantiles for}
@@ -18,15 +17,17 @@ depend on method}
 \item{quants}{quantiles to use, with defaults of 0.25 and 0.75 (25\% and
 75\%).}
 
-\item{latex}{if TRUE gives \code{latex} output to copy into a \code{.tex} file, else gives \code{Rmd} gives Rmarkdown output
-(see vignette TODO).}
+\item{type}{\code{data.frame} produces a row to put into a dataframe,
+\code{latex} gives output to copy into a \code{.tex} file, \code{Rmd} gives Rmarkdown
+output (see vignette TODO).}
 }
 \value{
-LaTeX output for table to copy into a .tex file
+row of a data.frame, line of LaTeX output for table to copy into a
+.tex file, or line of Rmarkdown to copy into an Rmarkdown document
 }
 \description{
-Quantile table function, to construct lines of quantiles to copy
-into LaTeX, or render directly in an Rmarkdown document. Does \code{quants[1]},
+Quantile table function, to construct row for a dataframe or a line of quantiles to copy
+into either LaTeX or render directly in an Rmarkdown document. Does \code{quants[1]},
 50\% (median), mean, \code{quants[2]} quantiles,
 and the \%age of values < the true value.
 }
