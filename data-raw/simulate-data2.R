@@ -2,8 +2,6 @@
 # Change filename of data when decided on a format for multiple data sets.
 
 
-Have done these two:
-
 MLEbin.MEPS.default <- MLEbin.simulate()
 usethis::use_data(MLEbin.MEPS.default, overwrite = TRUE)
 
