@@ -186,14 +186,14 @@ Table 2, summarising the results for each method:
 
 |Method | Slope represents | 5\% quantile |Median  |Mean  |95\% quantile |Percentage below true|
 |:----- | :--------------- | -----------: |-----:  |---:  |-----------:  |--------------------:|
-|Llin   | -                | `r qqtab(Llin.rep.df$slope, dig=2, quants=c(0.05, 0.95), latex=FALSE)` |
-|LT     | *b*              | `r qqtab(LT.rep.df$slope, quants=c(0.05, 0.95), latex=FALSE)` |
-|LTplus1| *b*              | `r qqtab(LTplus1.rep.df$slope, quants=c(0.05, 0.95), latex=FALSE)` |
-|LBmiz  | *b+1*            | `r qqtab(LBmiz.rep.df$slope - 1, quants=c(0.05, 0.95), latex=FALSE)` |
-|LBbiom | *b+2*            | `r qqtab(LBbiom.rep.df$slope - 2, quants=c(0.05, 0.95), latex=FALSE)` |
-|LBNbiom| *b+1*            | `r qqtab(LBNbiom.rep.df$slope - 1, quants=c(0.05, 0.95), latex=FALSE)` |
-|LCD    | *b+1*            | `r qqtab(LCD.rep.df$slope - 1, quants=c(0.05, 0.95), latex=FALSE)` |
-|MLE    | *b*              | `r qqtab(MLE.rep.df$b, quants=c(0.05, 0.95), latex=FALSE)` |
+|Llin   | -                | `r qqtab(Llin.rep.df$slope, dig=2, quants=c(0.05, 0.95))` |
+|LT     | *b*              | `r qqtab(LT.rep.df$slope, quants=c(0.05, 0.95))` |
+|LTplus1| *b*              | `r qqtab(LTplus1.rep.df$slope, quants=c(0.05, 0.95))` |
+|LBmiz  | *b+1*            | `r qqtab(LBmiz.rep.df$slope - 1, quants=c(0.05, 0.95))` |
+|LBbiom | *b+2*            | `r qqtab(LBbiom.rep.df$slope - 2, quants=c(0.05, 0.95))` |
+|LBNbiom| *b+1*            | `r qqtab(LBNbiom.rep.df$slope - 1, quants=c(0.05, 0.95))` |
+|LCD    | *b+1*            | `r qqtab(LCD.rep.df$slope - 1, quants=c(0.05, 0.95))` |
+|MLE    | *b*              | `r qqtab(MLE.rep.df$b, quants=c(0.05, 0.95))` |
 
 For MLEbin method see next vignette.TODO. And create data set with 10,000 reps.
 
