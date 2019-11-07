@@ -2,7 +2,7 @@
 #  Undocumented data sets:
 #    ''  'MLEbins.res' 'dataBin'
 #    'fullResults.MLE' 'fullResults'
-#    'specCodeNames' 'trendResults'
+#    '' 'trendResults'
 
 
 #' Results of fitting 10,000 data sets using eight methods (MEE paper)
@@ -131,4 +131,16 @@
 ##'   \item{bodyMass}{Estimated body mass (g) for an individual of that species,
 ##'   assuming `LngtClass` to be the length.}
 ##' }
+##' @source From preprocessing as per vignette `MEPS_IBTS_1`.
 "IBTS_data"
+
+
+##' Species codes and their scientific names
+##'
+##' @format Tibble with columns
+##' \describe{
+##'   \item{species}{Scientific name of species}
+##'   \item{speccode}{Species code used in the IBTS data for that species (maybe
+##'   not all species codes are here).}
+##' @source Aphia species codes, Julia obtained from DATRAS (the ICES DATRAS R packages likely have them all).
+"specCodeNames"

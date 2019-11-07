@@ -25,3 +25,5 @@ TODO: Install instructions
 TODO: Vignette instructions
 
 TODO: LInk to Issues
+
+Note that this code was written over several years, and then converted into a package. As such, I have not used consistent naming conventions (e.g. some column names are camelCase while others are not) like I would now if starting a package from scratch.
