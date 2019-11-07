@@ -192,7 +192,7 @@ diff(sort(unique(data$LngtClass)))
 The 0.5-cm length classes are only for two species, Atlantic Herring (code
  126417) and European Sprat (code 126425), as confirmed here (no differences of 0.5cm):
 ```{r halfcm}
-temp = dplyr::filter(IBTS.data, !(SpecCode %in% c(126417, 126425)))
+temp = dplyr::filter(data, !(SpecCode %in% c(126417, 126425)))
 unique(diff(sort(unique(temp$LngtClass))))
 ```
 
@@ -201,7 +201,7 @@ Need this to stop earlier groups being kept (can mess up later code):
 data = dplyr::ungroup(data)
 ```
 
-These next commands here (which are not run in this vignette) are to save `IBTS.data`
+These next commands here (which are not run in this vignette) are to save `IBTS_data`
 in the package (which has already been run once to build the package). Rename
 and save `data` with a meaningful name for your own data.
 ```{r eval=FALSE}
