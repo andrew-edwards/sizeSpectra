@@ -205,8 +205,8 @@ These next commands here (which are not run in this vignette) are to save `IBTS_
 in the package (which has already been run once to build the package). Rename
 and save `data` with a meaningful name for your own data.
 ```{r eval=FALSE}
-IBTS.data = data
-usethis::use_data(IBTS.data, overwrite = TRUE)
+IBTS_data = data
+usethis::use_data(IBTS_data, overwrite = TRUE)
 ```
 <!--  save(data, file="nSeaFungImport.RData")-->
 
@@ -221,7 +221,7 @@ individual of that species and length class.
 The resulting Table 1 is (more or less): [TODO: need last column]
 
 ```{r results='asis'}
-knitr::kable(rbind(IBTS.data[1:5,],
-                   IBTS.data[ (nrow(IBTS.data)-5):nrow(IBTS.data), ]),
+knitr::kable(rbind(IBTS_data[1:5,],
+                   IBTS_data[ (nrow(IBTS_data)-5):nrow(IBTS_data), ]),
              digits=c(0, 0, 0, 3, 4, 4, 2))
 ```
