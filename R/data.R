@@ -142,5 +142,23 @@
 ##'   \item{species}{Scientific name of species}
 ##'   \item{speccode}{Species code used in the IBTS data for that species (maybe
 ##'   not all species codes are here).}
+##' }
 ##' @source Aphia species codes, Julia obtained from DATRAS (the ICES DATRAS R packages likely have them all).
 "specCodeNames"
+
+##' Results from using MLEbins method on each year of IBTS data set, as in MEPS Table S.2
+##'
+##' @format Table data frame (`tbl_df`) with 30 rows (one for each year) and
+##'   corresponding columns for each year:
+##' \describe{
+##'   \item{Year}{Year of data}
+##'   \item{xmin}{Estimated $x_{min}$}
+##'   \item{xmax}{Estimated $x_{max}$}
+##'   \item{n}{Total number of individuals per hour}
+##'   \item{b}{Estimated size-spectrum exponent $b$}
+##'   \item{confMin, confMax}{Minimum and maximum of 95\% confidence interval of
+##'   $b$}
+##'   \item{C}{Calculated normalisation constant}
+##' }
+##' @source Aphia species codes, Julia obtained from DATRAS (the ICES DATRAS R packages likely have them all).
+"MLEbins.res"
