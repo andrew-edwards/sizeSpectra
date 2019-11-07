@@ -1,6 +1,6 @@
 #
 #  Undocumented data sets:
-#    ''  'MLEbins.res' 'dataBin'
+#    ''  '' 'dataBin'
 #    'fullResults.MLE' 'fullResults'
 #    '' 'trendResults'
 
@@ -146,6 +146,23 @@
 ##' @source Aphia species codes, Julia obtained from DATRAS (the ICES DATRAS R packages likely have them all).
 "specCodeNames"
 
+##' Results from using each fitting method on each year of IBTS data set.
+##'
+##' Used to make MEPS Figure 1.
+##'
+##' @format Data frame with 240 rows (one row for each of 30 years for each of
+##'   the 8 methods) and corresponding columns for each year-method combination:
+##' \describe{
+##'   \item{Year}{Year of data}
+##'   \item{Method}{Method used}
+##'   \item{b}{Estimated size-spectrum exponent $b$}
+##'   \item{confMin, confMax}{Minimum and maximum of 95\% confidence interval of
+##'   $b$}
+##'   \item{stdErr}{Standard error of estimate of $b$}
+##' }
+##' @source Vignette `MEPS_IBTS_2`. TODO tidy up IBTS-analysis.R
+"fullResults"
+
 ##' Results from using MLEbins method on each year of IBTS data set, as in MEPS Table S.2
 ##'
 ##' @format Table data frame (`tbl_df`) with 30 rows (one for each year) and
@@ -160,5 +177,5 @@
 ##'   $b$}
 ##'   \item{C}{Calculated normalisation constant}
 ##' }
-##' @source Aphia species codes, Julia obtained from DATRAS (the ICES DATRAS R packages likely have them all).
+##' @source Vignette `MEPS_IBTS_MLEbins`, TODO tidy up IBTS-MLEbins.R
 "MLEbins.res"
