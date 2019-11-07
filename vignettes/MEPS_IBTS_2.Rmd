@@ -27,7 +27,7 @@ This vignette analyses the IBTS data using the original eight methods, without a
 
 ```{r}
 library(sizeSpectra)
-data = IBTS.data
+data = IBTS_data
 data
 ```
 
