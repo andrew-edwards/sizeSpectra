@@ -18,7 +18,7 @@ The size spectrum of an ecological community characterizes how a property, such 
 
 TODO: include some figures
 
-The vignettes (TODO include links here, do an overview one) explain how to use the functions in the package to reproduce all results and to analyse new data sets. The vignettes are for implementing the methods (and the two papers should be consulted for full descriptions of all methods - I have tried to avoid repeat the papers in the vignettes; note that [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper').
+The vignettes (TODO include links here, do an overview one) explain how to use the functions in the package to reproduce all results and to analyse new data sets. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating text from the papers in the vignettes). In the vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
 
 TODO: Install instructions
 
