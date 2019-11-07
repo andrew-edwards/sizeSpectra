@@ -6,8 +6,8 @@
 \usage{
 histAxes(yBigTickLab = c(0, 2000, 4000), yBigTickNoLab = seq(0, 6500,
   1000), ySmallTick = seq(0, 6500, 500), cexAxis = 0.9,
-  xsmallticks = NA, xbigticks = seq(-3.5, 0.5, 0.5), vertCol = "red",
-  vertThick = 1, b.known = -2)
+  xsmallticks = seq(-3.5, 0.5, 0.1), xbigticks = seq(-3.5, 0.5, 0.5),
+  vertCol = "red", vertThick = 1, b.known = -2)
 }
 \arguments{
 \item{yBigTickLab}{y-axis big ticks to label}
