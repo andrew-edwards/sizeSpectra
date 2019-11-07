@@ -1,6 +1,6 @@
 #
 #  Undocumented data sets:
-#    'IBTS_data'  'MLEbins.res' 'dataBin' 'dataOrig'
+#    ''  'MLEbins.res' 'dataBin'
 #    'fullResults.MLE' 'fullResults'
 #    'specCodeNames' 'trendResults'
 
