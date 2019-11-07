@@ -1,9 +1,13 @@
 # The MLEbins analyses of the IBTS data in the MEPS paper.
 
+# dataBin is created (and saved once) in vignettes/MEPS_IBTS_MLEbins.Rmd
 
 load("nSeaMLEbins.RData")         # Output from nSeaMLEbins.Snw. TODO
                                   # should then become output from vignette maybe
-usethis::use_data(dataBin, overwrite = TRUE)
+
+
+
+
 
 # TODO some results also, so someone can compare them
 # Need MLEbins.res, but it's done in vignette. Well, it is saved in

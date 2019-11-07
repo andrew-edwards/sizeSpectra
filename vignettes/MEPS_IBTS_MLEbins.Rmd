@@ -121,6 +121,12 @@ range(dplyr::mutate(dataBin, wminCheck = LWa * LngtMin^LWb)$wminCheck - dataBin$
 length(unique(dataBin$SpecCode))
 ```
 
+This is the code to then save `dataBin` as a data set in the package, but is not
+run here:
+```{r dataBinsave, eval=FALSE}
+usethis::use_data(dataBin, overwrite = TRUE)
+```
+
 ## Plot the resulting body mass bins
 
 So there are `r length(unique(dataBin$SpecCode))` uniques species. Now going to

@@ -1,7 +1,5 @@
 #
 #  Undocumented data sets:
-#    ''  '' 'dataBin'
-#    'fullResults.MLE' 'fullResults'
 #    '' 'trendResults'
 
 
@@ -115,7 +113,7 @@
 
 #' The IBTS data after some processing as in vignette `MEPS_IBTS_1`
 #'
-#' @format Dataframe where each row is a unique combination of `Year`,
+#' @format Dataframe where each of 42,298 rows is a unique combination of `Year`,
 #' `SpecCode` and `LngtClass`. Columns are:
 ##' \describe{
 ##'   \item{Year}{Year of survey}
@@ -134,6 +132,32 @@
 ##' @source From preprocessing as per vignette `MEPS_IBTS_1`.
 "IBTS_data"
 
+#' The `IBTS_data` amended with explicit length and body mass ranges for each bin
+#'
+#'
+#' @format Dataframe where each of 42,298 rows is a unique combination of `Year`,
+#' `SpecCode` and `LngtMin`. Columns are:
+##' \describe{
+##'   \item{Year}{Year of survey}
+##'   \item{SpecCode}{Species code}
+##'   \item{LngtMin}{The minimum value (cm) of each length bin, same as
+#'   `LngtClass` in `IBTS_data`.}
+##'   \item{LngtMax}{The maximum value (cm) of each length bin, taking into
+##'   account that all bin widths are 1 cm except for Atlantic Herring and European
+##'   Sprat that are 0.5 cm.}
+##'   \item{LWa}{Length-weight coefficient $\alpha$ from Fung et al. (2012) for that
+##'   species, as per our MEPS equation (1).}
+##'   \item{LWb}{Length-weight coefficient $\beta$ from Fung et al. (2012) for that
+##'   species, as per our MEPS equation (1).}
+##'   \item{wmin}{The minimum value (g) of each body-mass bin, based on the
+##'   species-specific length-weight coefficients and `LngtMin`.}
+##'   \item{wmax}{The maximum value (g) of each body-mass bin, based on the
+##'   species-specific length-weight coefficients and `LngtMax`.}
+##' \item{Number}{Number of individuals per hour of trawling observed for that
+##'   combination of `Year`, `SpecCode` and `LngtMin`.
+##' }
+##' @source From amending `IBTS_data` as per vignette `MEPS_IBTS_MLEbins`.
+"dataBin"
 
 ##' Species codes and their scientific names
 ##'
