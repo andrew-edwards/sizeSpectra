@@ -52,7 +52,7 @@ list2env(eight.results.default, envir=.GlobalEnv)    # Extract previously saved
 xrange = c(-3.5, 0.5)         # range of x-axis for histograms - actually to define bins
 xbigticks = seq(-3.5, 0.5, 0.5) # NOW THE DEFAULT
 
-xsmallticks = seq(xrange[1], xrange[2], by=0.1)
+xsmallticks = seq(xrange[1], xrange[2], by=0.1)  # ALSO now default
 breakshist = seq(xrange[1], xrange[2], by=3/61)
          # bin ends at 0, 2 is centered. width of 4/81 from solving
          #  the mean of a bin equals 2, ((N+1)w + Nw)/2 = 2, and setting number
