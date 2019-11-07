@@ -9,14 +9,7 @@ dataOrig = tibble::as_tibble(q1)  # TODO - not run yet with as_tibble
 
 usethis::use_data(dataOrig, overwrite = TRUE)
 
-# See TODO vignette
-load("nSeaFungImport.RData") # TODO prob change me
-
-IBTS_data = tibble::as_tibble(data)
-
-IBTS_data = dplyr::ungroup(IBTS_data)   # Else some groups get kept
-
-usethis::use_data(IBTS_data, overwrite = TRUE)
+# The steps to convert the data into IBTS_data are now all in the vignette MEPS_IBTS_1.
 
 ## use_tibble() said to document a returned tibble like so: [maybe add when
 #doing documentation, TODO]

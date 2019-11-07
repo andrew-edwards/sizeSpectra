@@ -1,7 +1,6 @@
 #
 #  Undocumented data sets:
-#    'IBTS_data' 'MLEbin.MEPS.cutoff16' 'MLEbin.MEPS.default'
-#    'MLEbin.MEPS.xmin16' 'MLEbins.res' 'dataBin' 'dataOrig'
+#    'IBTS_data'  'MLEbins.res' 'dataBin' 'dataOrig'
 #    'fullResults.MLE' 'fullResults'
 #    'specCodeNames' 'trendResults'
 
@@ -77,3 +76,59 @@
 #'   `?sizeSpectra::MLEbin.simulate` for details.
 #' @source From running `MLEbin.simulate()` in `data-raw/simulate-data2.R`.
 "MLEbin.MEPS.cutoff16"
+
+#' Original IBTS dataset downloaded from DATRAS website
+#'
+#' Julia Blanchard downloaded this dataset as `ibtsQ1cpuelength.RData` that
+#' contained a dataframe `q1`, which has been saved here (in
+#' `data-raw/IBTS-data.R`) as `dataOrig = tibble::as_tibble(q1)`.
+#' See the MEPS paper for details of the queries she used (I have some original
+#' code).
+#' There is now an R package for extracting database at
+#' https://github.com/ices-tools-prod/icesDatras that should probably be used in
+#' future for reproducibility.
+#' The vignette `MEPS_IBTS_1` shows how `dataOrig` gets simplified (un-needed columns and rows are removed),
+#' column names are renamed, and units are standardised, to give the more useful `IBTS_data`.
+#' TODO see emails and DATRAS website for permission statement to include
+#' TODO change name of dataOrig
+#' @format Dataframe with 178,435 rows and 13 columns, which are (I think
+#' automatically named from the DATRAS database, with `a` and `b` added from Fung et
+#' al. by Julia, though see vignette for units):
+##' \describe{
+##'   \item{AphiaID}{}
+##'   \item{Survey}{}
+##'   \item{Year}{}
+##'   \item{Quarter}{}
+##'   \item{Area}{}
+##'   \item{Species}{}
+##'   \item{LngtClas}{}
+##'   \item{CPUE_number_per_hour}{}
+##'   \item{Taxonomic.group}{}
+##'   \item{a}{}
+##'   \item{b}
+##'   \item{weight_g}
+##'   \item{CPUE_bio_per_hour}
+##' }
+##' @source From running `data-raw/IBTS-data.R` on the original data file (that
+##' is too big to save in this package).
+"dataOrig"
+
+#' The IBTS data after some processing as in vignette `MEPS_IBTS_1`
+#'
+#' @format Dataframe where each row is a unique combination of `Year`,
+#' `SpecCode` and `LngtClass`. Columns are:
+##' \describe{
+##'   \item{Year}{Year of survey}
+##'   \item{SpecCode}{Species code}
+##'   \item{LngtClass}{The minimum value (cm) of the 1-cm length bin, or
+##'   the 0.5-cm bin for Atlantic Herring and European Sprat}
+##'   \item{Number}{Number of individuals per hour of trawling observed for that
+##'   combination of `Year`, `SpecCode` and `LngtClass`.
+##'   \item{LWa}{Length-weight coefficient $\alpha$ from Fung et al. (2012) for that
+##'   species, as per our MEPS equation (1).}
+##'   \item{LWb}{Length-weight coefficient $\beta$ from Fung et al. (2012) for that
+##'   species, as per our MEPS equation (1).}
+##'   \item{bodyMass}{Estimated body mass (g) for an individual of that species,
+##'   assuming `LngtClass` to be the length.}
+##' }
+"IBTS_data"
