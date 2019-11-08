@@ -461,6 +461,8 @@ fullResults.MLEbins = MLEbins.nSeaFung.new  # TODO should have just used
                                         # MLEbins..; and simplify
 trend.MLEbins.new = dplyr::filter(trendResultsMLEbinNew,
                                   Method == "MLEbins")
+fullResults.MLE = dplyr::filter(fullResults, Method == "MLE")
+
 bYears = fullResults.MLE$Year
 xLim = range(bYears)
 yLim = c(-1.82, -1.35)

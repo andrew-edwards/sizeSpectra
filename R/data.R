@@ -132,8 +132,8 @@
 ##' @source From preprocessing as per vignette `MEPS_IBTS_1`.
 "IBTS_data"
 
-#' The `IBTS_data` amended with explicit length and body mass ranges for each bin
-#'
+#' The `IBTS_data` amended with explicit length and body mass ranges for each
+#' bin for using the MLEbins method
 #'
 #' @format Dataframe where each of 42,298 rows is a unique combination of `Year`,
 #' `SpecCode` and `LngtMin`. Columns are:
@@ -170,7 +170,7 @@
 ##' @source Aphia species codes, Julia obtained from DATRAS (the ICES DATRAS R packages likely have them all).
 "specCodeNames"
 
-##' Results from using each fitting method on each year of IBTS data set.
+##' Full results from using each fitting method on each year of IBTS data set.
 ##'
 ##' Used to make MEPS Figure 1.
 ##'
@@ -186,6 +186,23 @@
 ##' }
 ##' @source Vignette `MEPS_IBTS_2`. TODO tidy up IBTS-analysis.R
 "fullResults"
+
+##' Regression fits from using each fitting method on each year of IBTS data set
+##' (for MEPS Table S.1)   TODO maybe not needed since calculated in vignette
+##'
+##' @format A dataframe with one row for each of the main eight methods, where
+##'   each row is an output from `timeSerPlot()` and so has columns:
+##'   * Method: method used
+##'   * Low: lower bound of 95\% confidence interval
+##'   * Trend: gradient of regression fit
+##'   * High: upper bound of 95\% confidence interval
+##'   * p: p-value of regression fit
+##'   * Rsquared: r-squared of regression fit
+##'   * adjRsquared: adjusted r-squared of regression fit
+##'
+##' @source Generated from running vignette `MEPS_IBTS_2`.
+"trendResults"
+
 
 ##' Results from using MLEbins method on each year of IBTS data set, as in MEPS Table S.2
 ##'

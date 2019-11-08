@@ -148,7 +148,10 @@ trendResults = rbind(trendResults, res)
 mtext("Year", side=1, outer=TRUE, line=-0.2, cex=0.8)
 ```
 
-TODO:
+The results are saved in the package (this is not run in the vignette though):
+```{r eval=FALSE}
+usethis::use_data(trendResults, overwrite = TRUE)
+```
 
 The results of the regression analyses (Table S.1) are:
 ```{r results='asis'}

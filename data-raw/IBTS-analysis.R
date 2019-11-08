@@ -4,4 +4,4 @@ load("nSeaFungAnalysis.RData")    # Output from nSeaFungAnalysis.Snw, TODO
                                   # should then become output from vignette.
 usethis::use_data(fullResults, overwrite = TRUE)
 
-usethis::use_data(trendResults, overwrite = TRUE)
+# trendResults is saved in vignette MEPS_IBTS_2.Rmd
