@@ -6,10 +6,12 @@ DESCRIPTION~
 
 inst/doc
 misc/*
-doc
+doc/
 Meta
 lib/*
 *.tex
 *.pdf
 
 fromOtherRepo/
+compress-test/
+data-raw/*.RData
