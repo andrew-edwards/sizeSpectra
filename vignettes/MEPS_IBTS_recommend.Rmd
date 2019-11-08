@@ -279,6 +279,9 @@ mass of individuals in that bin (horizontal span is the same as for the green
 lines). The text in (a) gives the year, the MLE for the size-spectrum exponent
 $b$, and the sample size $n$.
 
+TODO Commenting out for now since gifski R package is causing Travis to be
+upset.
+<!--
 ```{r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
 # fig.width is 0.67 * fig.height (which is 8)
 
@@ -294,6 +297,7 @@ for(i in 1:length(fullYears))   # TODO could make a function
                xRange = xRange.global)
 }
 ```
+-->
 
 ```{r}
   # To save each year as it's own figure add something like this within the loop:
