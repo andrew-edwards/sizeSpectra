@@ -46,7 +46,7 @@ lm.line = function(x.vector, lm.results, ...)
 ##'
 ##' This function modifies `plotrix::gap.barplot()`, between 2nd Sept 2014 and
 ##' finalised here in October 2019. `plotrix` was written by Jim Lemon and
-##' others and is available from CRAN at [https://cran.r-project.org/web/packages/plotrix/index.html].
+##' others and is available from CRAN at https://cran.r-project.org/web/packages/plotrix/index.html.
 ##'
 ##' @param y vector of data values
 ##' @param gap range of values to be left out

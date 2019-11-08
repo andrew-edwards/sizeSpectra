@@ -718,7 +718,7 @@ eightMethods = function(oneYear = 1980,
                       # b values in 95% confidence interval
   PLB.MLE.bConf = c(min(bIn95), max(bIn95))
   if(PLB.MLE.bConf[1] == min(bvec) | PLB.MLE.bConf[2] == max(bvec))
-    { windows()
+    { dev.new()
       plot(bvec, PLB.LLvals)
       abline(h = critVal, col="red")
       stop("Need to make bvec larger - see R window")   # Could automate
@@ -936,7 +936,7 @@ eightMethodsMEE <- function(x,
   PLB.MLE.bConf = c(min(bIn95), max(bIn95))
 
   if(PLB.MLE.bConf[1] == min(bvec) | PLB.MLE.bConf[2] == max(bvec))
-    { windows()
+    { dev.new()
       plot(bvec, PLB.LLvals)
       abline(h = critVal, col="red")
       stop("Need to make bvec larger - see R window")   # Could automate
@@ -1552,7 +1552,7 @@ eightMethods.count = function(data = data, oneYear = 1980,
                       # b values in 95% confidence interval
   PLB.MLE.bConf = c(min(bIn95), max(bIn95))
   if(PLB.MLE.bConf[1] == min(bvec) | PLB.MLE.bConf[2] == max(bvec))
-    { windows()
+    { dev.new()
       plot(bvec, PLB.LLvals)
       abline(h = critVal, col="red")
       stop("Need to make bvec larger - see R window")   # Could automate

@@ -4,12 +4,12 @@
 ##'
 ##' For the unbounded and bounded power-law distributions (PL and PLB
 ##' respectively), probability density function (`dPL` and `dPLB`),
-##' cumulative distribution function [P(X <= x)] (`pPL` and `pPLB`),
+##' cumulative distribution function P(X <= x) (`pPL` and `pPLB`),
 ##' and random generation of values (`rPL` and `rPLB`), with exponent `b`, minimum `xmin` and maximum
 ##' (for bounded distribution) `xmax` as described in Edwards et al. (2017, Methods in Ecology and
 ##' Evolution, 8:57-67). Random generation uses the inverse method (e.g. p1215 of Edwards
 ##' 2008, Journal of Animal Ecology, 77:1212-1222). Unbounded distribution
-##' included for completeness [TODO: may not get used in remaining code].
+##' included for completeness TODO: may not get used in remaining code.
 ##' @param x vector of values to compute the density and distribution functions.
 ##' @param n number of random numbers to be generated (if `length(n) > 1` then
 ##' generate `length(n)` values)

@@ -54,7 +54,7 @@ require some modifiying to use more generally.
 \details{
 This function modifies \code{plotrix::gap.barplot()}, between 2nd Sept 2014 and
 finalised here in October 2019. \code{plotrix} was written by Jim Lemon and
-others and is available from CRAN at \link{https://cran.r-project.org/web/packages/plotrix/index.html}.
+others and is available from CRAN at https://cran.r-project.org/web/packages/plotrix/index.html.
 }
 \author{
 Andrew Edwards

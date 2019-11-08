@@ -43,10 +43,10 @@ a vector (of length \code{n}) of independent random draws from the distribution.
 \description{
 For the unbounded and bounded power-law distributions (PL and PLB
 respectively), probability density function (\code{dPL} and \code{dPLB}),
-cumulative distribution function \link{P(X <= x)} (\code{pPL} and \code{pPLB}),
+cumulative distribution function P(X <= x) (\code{pPL} and \code{pPLB}),
 and random generation of values (\code{rPL} and \code{rPLB}), with exponent \code{b}, minimum \code{xmin} and maximum
 (for bounded distribution) \code{xmax} as described in Edwards et al. (2017, Methods in Ecology and
 Evolution, 8:57-67). Random generation uses the inverse method (e.g. p1215 of Edwards
 2008, Journal of Animal Ecology, 77:1212-1222). Unbounded distribution
-included for completeness \link{TODO: may not get used in remaining code}.
+included for completeness TODO: may not get used in remaining code.
 }
