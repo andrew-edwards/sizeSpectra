@@ -98,9 +98,9 @@
 ##'   \item{CPUE_number_per_hour}{}
 ##'   \item{Taxonomic.group}{}
 ##'   \item{a}{}
-##'   \item{b}
-##'   \item{weight_g}
-##'   \item{CPUE_bio_per_hour}
+##'   \item{b}{}
+##'   \item{weight_g}{}
+##'   \item{CPUE_bio_per_hour}{}
 ##' }
 ##' @source From running `data-raw/IBTS-data.R` on the original data file (that
 ##' is too big to save in this package).
@@ -116,7 +116,7 @@
 ##'   \item{LngtClass}{The minimum value (cm) of the 1-cm length bin, or
 ##'   the 0.5-cm bin for Atlantic Herring and European Sprat}
 ##'   \item{Number}{Number of individuals per hour of trawling observed for that
-##'   combination of `Year`, `SpecCode` and `LngtClass`.
+##'   combination of `Year`, `SpecCode` and `LngtClass`.}
 ##'   \item{LWa}{Length-weight coefficient $\alpha$ from Fung et al. (2012) for that
 ##'   species, as per our MEPS equation (1).}
 ##'   \item{LWb}{Length-weight coefficient $\beta$ from Fung et al. (2012) for that
@@ -149,7 +149,7 @@
 ##'   \item{wmax}{The maximum value (g) of each body-mass bin, based on the
 ##'   species-specific length-weight coefficients and `LngtMax`.}
 ##' \item{Number}{Number of individuals per hour of trawling observed for that
-##'   combination of `Year`, `SpecCode` and `LngtMin`.
+##'   combination of `Year`, `SpecCode` and `LngtMin`.}
 ##' }
 ##' @source From amending `IBTS_data` as per vignette `MEPS_IBTS_MLEbins`.
 "dataBin"

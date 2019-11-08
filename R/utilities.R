@@ -30,7 +30,7 @@ lengthToMass = function(lengths, LWa, LWb)
 ##'
 ##' @param x TODO
 ##' @param dec.points  TODO
-##' @return
+##' @return x with the specified number of decimal places, and comma for thousands
 ##' @export
 ##' @author Chris Grandin
 f <- function(x, dec.points = 0){
