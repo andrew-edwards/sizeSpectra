@@ -36,7 +36,7 @@ devtools::install_github("andrew-edwards/sizeSpectra", build_vignettes = TRUE)
 
 (May take a minute or so while building the vignettes). Then:
 ```
-library(eDNAcutoff)
+library(sizeSpectra)
 vignette("MEE_reproduce_1", package="sizeSpectra")
 ```
 to see the first vignette in an html browser. TODO create overview vignette? Test browseVignettes...
