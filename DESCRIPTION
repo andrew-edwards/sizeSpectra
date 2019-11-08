@@ -20,7 +20,8 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-    shape
+    shape,
+    gifski
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
