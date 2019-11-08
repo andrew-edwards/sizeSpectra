@@ -1,3 +1,5 @@
+# Think \describe can just be * like in R functions.
+
 ##' Results of fitting 10,000 data sets using eight methods (MEE paper)
 ##'
 ##' Default simulation results from generating 10,000 data sets from a bounded power law,
@@ -38,7 +40,7 @@
 ##' vignette for code for those figures and tables, and  All simulated data sets have
 ##' the same parameters for PLB and the same sample size 'n'.
 ##' Individual data sets are not saved as they quickly take up a lot
-##' of memory (would be 'num.reps' $\times$ 'n' random numbers, which
+##' of memory (would be 'num.reps' \eqn{\times} 'n' random numbers, which
 ##' for the default values is 10^7).
 ##'
 ##' @format List containing two arrays and a list of parameters. See
@@ -117,9 +119,9 @@
 ##'   the 0.5-cm bin for Atlantic Herring and European Sprat}
 ##'   \item{Number}{Number of individuals per hour of trawling observed for that
 ##'   combination of `Year`, `SpecCode` and `LngtClass`.}
-##'   \item{LWa}{Length-weight coefficient $\alpha$ from Fung et al. (2012) for that
+##'   \item{LWa}{Length-weight coefficient \eqn{\alpha} from Fung et al. (2012) for that
 ##'   species, as per our MEPS equation (1).}
-##'   \item{LWb}{Length-weight coefficient $\beta$ from Fung et al. (2012) for that
+##'   \item{LWb}{Length-weight coefficient \eqn{\beta} from Fung et al. (2012) for that
 ##'   species, as per our MEPS equation (1).}
 ##'   \item{bodyMass}{Estimated body mass (g) for an individual of that species,
 ##'   assuming `LngtClass` to be the length.}
@@ -140,9 +142,9 @@
 ##'   \item{LngtMax}{The maximum value (cm) of each length bin, taking into
 ##'   account that all bin widths are 1 cm except for Atlantic Herring and European
 ##'   Sprat that are 0.5 cm.}
-##'   \item{LWa}{Length-weight coefficient $\alpha$ from Fung et al. (2012) for that
+##'   \item{LWa}{Length-weight coefficient \eqn{\alpha} from Fung et al. (2012) for that
 ##'   species, as per our MEPS equation (1).}
-##'   \item{LWb}{Length-weight coefficient $\beta$ from Fung et al. (2012) for that
+##'   \item{LWb}{Length-weight coefficient \eqn{\beta} from Fung et al. (2012) for that
 ##'   species, as per our MEPS equation (1).}
 ##'   \item{wmin}{The minimum value (g) of each body-mass bin, based on the
 ##'   species-specific length-weight coefficients and `LngtMin`.}

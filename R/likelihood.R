@@ -55,7 +55,7 @@ calcLike = function(negLL.fn, p, vecDiff=0.5, vecInc=0.001, ...)
 ##' @param minNegLL the minimum of the negative log-likelihood function, at the
 ##'   MLE (by definition)
 ##' @param vecDiff value defining  range over which to test the negative log-likelihood
-##'   to construct the confidence interval; range is `MLE` $\pm$ `vecDiff`. Default is 0.5 and a symmetric
+##'   to construct the confidence interval; range is `MLE` \eqn{\pm} `vecDiff`. Default is 0.5 and a symmetric
 ##'   range is tested for fitting size spectra, since for movement data
 ##'   sets in Table 2 of Edwards (2011; 92(6):1247-1257) the intervals were
 ##'   symmetric, so symmetric seems a good start.

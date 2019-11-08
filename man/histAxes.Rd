@@ -18,6 +18,16 @@ histAxes(yBigTickLab = c(0, 2000, 4000), yBigTickNoLab = seq(0, 6500,
 
 \item{cexAxis}{font size for axis labels TODO defaults are for
 MEE_reproduce_2.Rmd. May have to check other figs}
+
+\item{xsmallticks}{where to put unlabelled small tick marks on x-axis}
+
+\item{xbigticks}{where to put big tick marks on x-axis}
+
+\item{vertCol}{vertCol colour of vertical line for \code{b.known}}
+
+\item{vertThick}{thickness of vertical line for \code{b.known}}
+
+\item{b.known}{known value of $b$}
 }
 \value{
 Adds axes to existing histogram TODO: check

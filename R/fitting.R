@@ -1042,7 +1042,7 @@ LBNbiom.method.counts = function(valCounts, binBreaks = NULL, lowerCutOff = 0)
         valCounts2 = dplyr::mutate(valCounts,
                                    binMin = binBreaks[findInterval(bodyMass,
                                                                    binBreaks,
-                                                                   rightmost.close=TRUE)],
+                                                                   rightmost.closed = TRUE)],
                                    biomass = bodyMass * Number)
                                         # need total biomass for each row
         if(max(valCounts2$binMin)  == binBreaks[length(binBreaks)])
@@ -1157,7 +1157,7 @@ Llin.method.counts = function(valCounts, num.bins = NULL, binBreaks = NULL)
 
         valCounts2 = dplyr::mutate(valCounts,
             binMid = hLlin.mids[findInterval(bodyMass, breaks,
-                rightmost.close=TRUE)])
+                rightmost.closed = TRUE)])
         binVals = dplyr::summarise(dplyr::group_by(valCounts2, binMid), binCount = sum(Number))
         # No guarantee that every binMid hLlin.mids shows up here (unlikely,
         #  given linear binning and long-tailed data). Even though need to

@@ -357,7 +357,7 @@ confPlot = function(repConf,
     points(repConf.sort$confMax, repConf.sort$num.sorted,
            col=repConf.sort$confCol, pch=pchVal, cex=cexVal)
     legend(legLoc, legName, bty="n", inset=insetVal)
-    legend(legLoc, paste(round(sum.inConf*100, dig=0), "%", sep=""),
+    legend(legLoc, paste(round(sum.inConf*100, digits = 0), "%", sep=""),
            bty="n", inset=insetVal2)
     # legend("topleft", "hello", bty="n", inset=c(-0.08, -0.2))
 
@@ -420,7 +420,11 @@ confPlot = function(repConf,
 ##' @param ySmallTick y-axis small ticks (unlabelled)
 ##' @param cexAxis font size for axis labels TODO defaults are for
 ##'   MEE_reproduce_2.Rmd. May have to check other figs
-##'
+##' @param xsmallticks where to put unlabelled small tick marks on x-axis
+##' @param xbigticks where to put big tick marks on x-axis
+##' @param vertCol vertCol colour of vertical line for `b.known`
+##' @param vertThick thickness of vertical line for `b.known`
+##' @param b.known known value of $b$
 ##' @return Adds axes to existing histogram TODO: check
 ##' @export
 ##' @author Andrew Edwards

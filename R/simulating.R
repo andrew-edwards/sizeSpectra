@@ -9,7 +9,7 @@
 ##' paper. See `MEPS_reproduce_2.Rmd` vignette for code for those figures and tables.
 ##' All simulated data sets have the same parameters for PLB and the same sample
 ##' size `n`. Individual data sets are not saved as they quickly take up a lot
-##' of memory (would be `num.reps` $\times$ `n` random numbers, which for the
+##' of memory (would be `num.reps` \eqn{\times} `n` random numbers, which for the
 ##' default values is 10^7).
 ##'
 ##' @param n sample size of each simulated data set (numeric)
@@ -25,7 +25,7 @@
 ##'   "2k" (the only other option for now) for bins that double in size. Values
 ##'   other than the defaults have not yet been tested but should work.
 ##' @param vecDiffVal value to go into `profLike()` to compute confidence intervals.
-##' @param cut.off cut-off value - data are only sampled $\geq$`cut.off`, for
+##' @param cut.off cut-off value - data are only sampled \eqn{\geq} `cut.off`, for
 ##'   Figure S.37 and S.38 and Table S.5 in MEPS paper. Each resulting sample still has
 ##'   size `n`.
 ##' @param full.mult multiplier to generate desired sample size when using a
@@ -34,7 +34,7 @@
 ##'
 ##'   * MLE.array: three-dimensional array with element `[i, j, k]` representing
 ##'     the estimate of *b* obtained from random sample `i`, bin type `j`, and MLE
-##'     method `k`. Size is `num.reps` $\times$ `length(binType)` $\times$ 2.
+##'     method `k`. Size is `num.reps` \eqn{\times} `length(binType)` \eqn{\times} 2.
 ##'
 ##'   * MLEconf.array: four-dimensional array with vector
 ##'     `MLEconf.array[i, j, k, ]` being the confidence interval
