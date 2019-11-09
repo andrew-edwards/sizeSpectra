@@ -14,3 +14,4 @@ lib/*
 fromOtherRepo/
 compress-test/
 data-raw/*.RData
+doc
