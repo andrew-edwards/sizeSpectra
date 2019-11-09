@@ -1,4 +1,3 @@
-
 ##' Example length-weight relationships for two species, demonstrating
 ##'  consequences of length bins
 ##'
@@ -28,27 +27,30 @@
 ##' @param inset Inset for the legend
 ##' @param xaxs,yaxs,mgp,lend standard options for `par()`,
 ##'   defaults are for Figure 2 of MEPS
-
-length_weight <- function(sp1 = "Common Ling",
-                          sp2 = "Lemon Sole",
-                          LWa = c(0.001, 0.0255),
-                          LWb = c(3.4362, 2.7643),
-                          col1 = c("red", "pink"),
-                          col2 = c("blue", "lightblue"),
-                          thick=7,
-                          curve_thick = 3,
-                          length = 10:50,
-                          lenBins = seq(10, 40, by=5),
-                          xlim=c(-6, 50),
-                          ylim=c(-60, 800),
-                          inset = c(0.1,-0.02),
-                          xlab="Length, cm",
-                          ylab="Body mass, g",
-                          xaxs = "i",
-                          yaxs = "i",
-                          mgp = c(2.0, 0.5, 0),
-                          lend = "butt")
+length_weight_plot <- function(sp1 = "Common Ling",
+                               sp2 = "Lemon Sole",
+                               LWa = c(0.001, 0.0255),
+                               LWb = c(3.4362, 2.7643),
+                               col1 = c("red", "pink"),
+                               col2 = c("blue", "lightblue"),
+                               thick=7,
+                               curve_thick = 3,
+                               length = 10:50,
+                               lenBins = seq(10, 40, by=5),
+                               xlim=c(-6, 50),
+                               ylim=c(-60, 800),
+                               inset = c(0.1,-0.02),
+                               xlab="Length, cm",
+                               ylab="Body mass, g",
+                               xaxs = "i",
+                               yaxs = "i",
+                               mgp = c(2.0, 0.5, 0),
+                               lend = "butt")
 {
+  par(xaxs = xaxs,
+      yaxs = yaxs,
+      mgp = mgp,
+      lend = lend)
   # Species specific body masses corresponding to each value of length
   mass = rbind(lengthToMass(length, LWa[1], LWb[1]),
                lengthToMass(length, LWa[2], LWb[2]))
@@ -69,15 +71,24 @@ length_weight <- function(sp1 = "Common Ling",
   # Switching sp1 and sp2 around in the legend (and thus the text), since
   #  looks more consistent:
   legend("topleft",
-         legend=c(sp2, sp1),
-         lty=1,
-         lwd=curve_thick,
-         col=c(col2[1], col1[1]),
-         bty="n",
+         legend = c(sp2, sp1),
+         lty = 1,
+         lwd = curve_thick,
+         col = c(col2[1], col1[1]),
+         bty = "n",
          inset = inset)
-  axis(1, at = seq(0, 50, by=5), labels=rep("", 11), tck=-0.02)
-  axis(2, at = seq(0, 800, by=100), labels=rep("", 9), tck=-0.02)
-  axis(2, at = seq(0, 800, by=50), labels=rep("", 17), tck=-0.01)
+  axis(1,
+       at = seq(0, 50, by=5),
+       labels = rep("", 11),
+       tck=-0.02)
+  axis(2,
+       at = seq(0, 800, by=100),
+       labels=rep("", 9),
+       tck=-0.02)
+  axis(2,
+       at = seq(0, 800, by=50),
+       labels=rep("", 17),
+       tck=-0.01)
 
   # Example bins:
   numBinBreaks = length(lenBins)
@@ -114,37 +125,77 @@ length_weight <- function(sp1 = "Common Ling",
            lwd = thick)
 
   # resulting mass bins:
-  segments(x0 = xMasses[1], y0 = lengthToMass(lenBinsStart, LWa[1], LWb[1]),
-         y1 = lengthToMass(lenBinsEnd, LWa[1], LWb[1]),
-         col = colBins[1,], lwd = thick)
-segments(x0 = xMasses[2], y0 = lengthToMass(lenBinsStart, LWa[2], LWb[2]),
-         y1 = lengthToMass(lenBinsEnd, LWa[2], LWb[2]),
-         col = colBins[2,], lwd = thick)
+  segments(x0 = xMasses[1],
+           y0 = lengthToMass(lenBinsStart, LWa[1], LWb[1]),
+           y1 = lengthToMass(lenBinsEnd, LWa[1], LWb[1]),
+           col = colBins[1,],
+           lwd = thick)
+  segments(x0 = xMasses[2],
+           y0 = lengthToMass(lenBinsStart, LWa[2], LWb[2]),
+           y1 = lengthToMass(lenBinsEnd, LWa[2], LWb[2]),
+           col = colBins[2,],
+           lwd = thick)
+  egBin = 5         # example bin number to highlight
+  offset = 0.1      # offset to shift species vertical lines so they show up
+  midOfBin = mean(lenBinsStart[c(egBin, egBin+1)])    # midpoint of example bin
+  massMidOfBin = rbind(lengthToMass(midOfBin, LWa[1], LWb[1]),
+                       lengthToMass(midOfBin, LWa[2], LWb[2]))
 
-egBin = 5         # example bin number to highlight
-offset = 0.1      # offset to shift species vertical lines so they show up
-midOfBin = mean(lenBinsStart[c(egBin, egBin+1)])    # midpoint of example bin
-massMidOfBin = rbind(lengthToMass(midOfBin, LWa[1], LWb[1]),
-    lengthToMass(midOfBin, LWa[2], LWb[2]))
-# example bin for species 1:
-lines(c(rep(lenBinsStart[egBin], 2), xMasses[1])-offset,
-       c(yLengths[1], rep(lengthToMass(lenBinsStart[egBin], LWa[1], LWb[1]), 2)),
-       lty = 3, lwd = 1, col = col1[1])
-lines(c(rep(lenBinsStart[egBin+1], 2), xMasses[1])-offset,
-       c(yLengths[1], rep(lengthToMass(lenBinsStart[egBin+1], LWa[1], LWb[1]),
-         2)), lty = 3, lwd = 1, col = col1[1])
-lines(c(rep(midOfBin, 2), xMasses[1]) - offset,
-       c(yLengths[1], rep(massMidOfBin[1,], 2)),
-       lty = 1, lwd = 1, col = col1[1])
+  # example bin for species 1:
+  lines(c(rep(lenBinsStart[egBin],
+              2),
+          xMasses[1]) - offset,
+        c(yLengths[1], rep(lengthToMass(lenBinsStart[egBin], LWa[1], LWb[1]),
+                           2)),
+        lty = 3,
+        lwd = 1,
+        col = col1[1])
+  lines(c(rep(lenBinsStart[egBin+1],
+              2),
+          xMasses[1]) - offset,
+        c(yLengths[1],
+          rep(lengthToMass(lenBinsStart[egBin+1], LWa[1], LWb[1]),
+              2)),
+        lty = 3,
+        lwd = 1,
+        col = col1[1])
+  lines(c(rep(midOfBin,
+              2),
+          xMasses[1]) - offset,
+        c(yLengths[1],
+          rep(massMidOfBin[1,],
+              2)),
+        lty = 1,
+        lwd = 1,
+        col = col1[1])
 
-# example bin for species 2:
-lines(c(rep(lenBinsStart[egBin], 2), xMasses[2]) + offset,
-       c(yLengths[2], rep(lengthToMass(lenBinsStart[egBin], LWa[2], LWb[2]), 2)),
-       lty = 3, lwd = 1, col = col2[1])
-lines(c(rep(lenBinsStart[egBin+1], 2), xMasses[2]) + offset,
-       c(yLengths[2], rep(lengthToMass(lenBinsStart[egBin+1], LWa[2], LWb[2]),
-         2)), lty = 3, lwd = 1, col = col2[1])
-lines(c(rep(midOfBin, 2), xMasses[2]) + offset,
-       c(yLengths[2], rep(massMidOfBin[2,], 2)),
-       lty = 1, lwd = 1, col = col2[1])
+  # example bin for species 2:
+  lines(c(rep(lenBinsStart[egBin],
+              2),
+          xMasses[2]) + offset,
+        c(yLengths[2],
+          rep(lengthToMass(lenBinsStart[egBin],
+                           LWa[2],
+                           LWb[2]),
+              2)),
+        lty = 3,
+        lwd = 1,
+        col = col2[1])
+  lines(c(rep(lenBinsStart[egBin+1],
+              2),
+          xMasses[2]) + offset,
+        c(yLengths[2],
+          rep(lengthToMass(lenBinsStart[egBin+1], LWa[2], LWb[2]),
+              2)),
+        lty = 3,
+        lwd = 1,
+        col = col2[1])
+  lines(c(rep(midOfBin, 2),
+          xMasses[2]) + offset,
+        c(yLengths[2],
+          rep(massMidOfBin[2,],
+              2)),
+        lty = 1,
+        lwd = 1,
+        col = col2[1])
 }
