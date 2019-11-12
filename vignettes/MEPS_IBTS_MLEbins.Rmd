@@ -371,14 +371,12 @@ axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)), tck=-smallTck)
 
 Now use the MLEbins method to fit each year of data in turn.
 
-```{r MLEbins, warning=FALSE}
+```{r MLEbins}
 # Do a loop for each year, saving the results in MLEbins.nSeaFung.new
-# Note that warnings have been suppressed in the .html output (they may get sent
-# to the console), as these are
-# common from the nlm() function. Specifically these are:
+# Note that warnings have been suppressed from calcLike(), these are
 #> Warning in nlm(f = negLL.fn, p = p, ...): NA/Inf replaced by maximum
 #> positive value
-# and are okay (the numerical optimisation is just hitting very large number).
+# and are okay (the numerical optimisation is just hitting a very large number).
 
 bstart = -1.9                   # just start close to -2,
 fullYears = sort(unique(dataBin$Year))
