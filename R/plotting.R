@@ -628,7 +628,7 @@ legJust = function(textVec,
 MLE.plot <- function(x,
                      b,
                      confVals = NULL,
-                     panel = NULL,
+                     panel = FALSE,
                      log.xy = "xy",
                      mgpVals = c(1.6,0.5,0),
                      inset = c(0, -0.04)
@@ -640,19 +640,45 @@ MLE.plot <- function(x,
   plot(sort(x, decreasing=TRUE),
        1:length(x),
        log = log.xy,
-       xlab=expression(paste("Values, ", italic(x))),
-       ylab=expression( paste("Number of ", values >= x), sep=""),
-       mgp=mgpVals,
+       xlab = expression(paste("Values, ", italic(x))),
+       ylab = expression( paste("Number of ", values >= x), sep=""),
+       mgp = mgpVals,
        xlim = c(min(x),
                 max(x)),
        ylim = c(1, length(x)),
-       axes=FALSE)
+       axes = FALSE)
   xLim = 10^par("usr")[1:2]
   yLim = 10^par("usr")[3:4]
 
-  logTicks(xLim,
-           yLim,
-           xLabelSmall = c(5, 50, 500))   # Tick marks.
+  if(log.xy == "xy"){
+    logTicks(xLim,
+             yLim,
+             xLabelSmall = c(5, 50, 500))   # Tick marks.
+  }
+
+  if(log.xy == "x"){
+    mgpVal = c(2, 0.5, 0)
+    logTicks(xLim,
+         yLim = NULL,
+         xLabelSmall = c(5, 50, 500),
+         mgp = mgpVal)
+    yBig = c(0, 500, 1000)
+    # Big labelled:
+    axis(2,
+         at = yBig,
+         labels = yBig,
+         mgp = mgpVal)
+    # Small unlabelled:
+    axis(2,
+         seq(yBig[1],
+             yBig[length(yBig)],
+             by = 100),
+     labels = rep("", 11),
+     tcl = -0.2,
+     mgp = mgpVal)
+    }
+
+
 
   x.PLB = seq(min(x),
               max(x),
