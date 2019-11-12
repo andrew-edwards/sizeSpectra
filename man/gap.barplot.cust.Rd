@@ -4,9 +4,12 @@
 \alias{gap.barplot.cust}
 \title{Customising \code{plotrix::gap.barplot} for a histogram with a gap in y-axis}
 \usage{
-gap.barplot.cust(y, gap, xaxlab, xtics, yaxlab, ytics, midpoints,
-  breakpoints, xlim, ylim = NA, xlab = NULL, ylab = NULL,
-  horiz = FALSE, col = NULL, N = n, ...)
+gap.barplot.cust(y, gap = c(9, 980), xaxlab, xtics, yaxlab,
+  ytics = c(seq(0, 8, by = 4), seq(980, 988, by = 4)), midpoints,
+  breakpoints, xlim, ylim = c(0, 17),
+  xlab = expression(paste("Values, ", italic(x))),
+  ylab = "Count in each bin", horiz = FALSE, col = NULL, N = n,
+  ...)
 }
 \arguments{
 \item{y}{vector of data values}
@@ -47,7 +50,7 @@ Barplot with a gap in the y-axis
 \description{
 For Figure 1 of MEE paper, to make a histogram (barplot) with a gap in the y-axis.
 Customising \code{gap.barplot()} from the package plotrix by Jim Lemon and others
-Several options here are customised for the particular plot (and to
+Several default options here are customised for the particular plot (and to
 change a few of the defaults in gap.barplot) so the code would
 require some modifiying to use more generally.
 }

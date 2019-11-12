@@ -603,6 +603,216 @@ legJust = function(textVec,
            pos = 2) }
 }
 
+##' Plotting fits of eight methods for a single data set (MEE Figure 2)
+##'
+##' Panel plot of all eight methods in MEE paper, showing fit of each one.
+##'  Function may need editing to make more general.
+##' @param eight.results Output list from `eightMethodsMEE()`
+##' @return Figure of eight panels, one for each method
+##' @export
+##' @author Andrew Edwards
+eight.methods.plot <- function(eight.results = eight.results
+                              )
+{
+  par(mfrow = c(4,2),
+      mai = c(0.4, 0.5, 0.05, 0.3))
+  mgpVals = c(1.6,0.5,0)
+
+  # Notation:
+  # hAAA - h(istrogram) for method AAA.
+
+  # Llin method
+  hLlin.list = eight.results$hLlin.list
+
+  plot(hLlin.list$mids,
+       hLlin.list$log.counts,
+       xlim=c(0, max(hLlin.list$breaks)),
+       xlab=expression(paste("Bin midpoints for data ", italic(x))),
+       ylab = "Log (count)", mgp=mgpVals)
+
+  lm.line(hLlin.list$mids, hLlin.list$lm)
+  inset = c(0, -0.04)     # inset distance of legend
+
+  legJust(c("(a) Llin",
+            paste("slope=",
+                  signif(hLlin.list$slope, 3),
+                  sep="")),
+          inset=inset)
+
+  # LT method - plotting binned data on log-log axes then fitting regression,
+  #  as done by Boldt et al. 2005, natural log of counts plotted against natural
+  #  log of size-class midpoints.
+  hLT.list = eight.results$hLT.list
+
+  plot(hLT.list$log.mids,
+       hLT.list$log.counts,
+       xlab=expression(paste("Log (bin midpoints for data ", italic(x), ")")),
+       ylab = "Log (count)",
+       mgp=mgpVals)
+
+  lm.line(hLT.list$log.mids, hLT.list$lm)
+
+  legJust(c("(b) LT",
+            paste("slope=", signif(hLT.list$slope, 3), sep=""),
+            paste("b=", signif(hLT.list$slope, 3), sep="")),
+          inset=inset)
+
+  # LTplus1 method - plotting linearly binned data on log-log axes then fitting
+  #  regression of log10(counts+1) vs log10(midpoint of bins), as done by
+  #  Dulvy et al. (2004).
+
+  hLTplus1.list = eight.results$hLTplus1.list
+
+  plot(hLTplus1.list$log10.mids,
+       hLTplus1.list$log10.counts,
+       xlab=expression(paste("Log10 (bin midpoints for data ", italic(x), ")")),
+       ylab = "Log10 (count+1)",
+       mgp=mgpVals,
+       yaxt="n")
+
+  if(min(hLTplus1.list$log10.counts) < par("usr")[3]
+        | max(hLTplus1.list$log10.counts) > par("usr")[4])
+     { stop("fix ylim for LTplus1 method")}
+
+  axis(2,
+       at = 0:3,
+       mgp=mgpVals)
+  axis(2,
+       at = c(0.5, 1.5, 2.5),
+       mgp=mgpVals,
+       tcl=-0.2,
+       labels=rep("", 3))
+
+  lm.line(hLTplus1.list$log10.mids, hLTplus1.list$lm)
+  legJust(c("(c) LTplus1",
+            paste("slope=", signif(hLTplus1.list$slope, 3), sep=""),
+            paste("b=", signif(hLTplus1.list$slope, 3), sep="")),
+          inset=inset)
+
+  # LBmiz method - binning data using log10 bins, plotting results on natural
+  #  log axes (as in mizer). Mizer does abundance size spectrum or biomass
+  #  size spectrum - the latter multiplies abundance by the min of each bin.
+
+  hLBmiz.list = eight.results$hLBmiz.list
+
+  plot(hLBmiz.list$log.min.of.bins,
+       hLBmiz.list$log.counts,
+       xlab=expression(paste("Log (minima of bins for data ", italic(x), ")")),
+       ylab = "Log (count)", mgp=mgpVals)
+
+  lm.line(hLBmiz.list$log.min.of.bins, hLBmiz.list$lm)
+  legJust(c("(d) LBmiz",
+            paste("slope=", signif(hLBmiz.list$slope, 3), sep=""),
+            paste("b=", signif(hLBmiz.list$slope - 1, 3), sep="")),
+          inset=inset)
+
+  # LBbiom method - binning data using log2 bins, calculating biomass (not counts)
+  #  in each bin, plotting log10(biomass in bin) vs log10(midpoint of bin)
+  #  as done by Jennings et al. (2007), who used bins defined by a log2 scale.
+
+  hLBNbiom.list = eight.results$hLBNbiom.list  # This does LBbiom and LBNbiom methods.
+
+  plot(hLBNbiom.list[["binVals"]]$log10binMid,
+       hLBNbiom.list[["binVals"]]$log10totalBiom,
+       xlab=expression(paste("Log10 (bin midpoints for data ", italic(x), ")")),
+       ylab = "Log10 (biomass)",
+       mgp=mgpVals,
+       xlim=c(0, 2.7),
+       ylim=c(2.5, 3.0),
+       yaxt="n")
+
+  if(min(hLBNbiom.list[["binVals"]]$log10binMid) < par("usr")[1]
+     | max(hLBNbiom.list[["binVals"]]$log10binMid) > par("usr")[2])
+     { stop("fix xlim for LBbiom method")}
+
+  if(min(hLBNbiom.list[["binVals"]]$log10totalBiom) < par("usr")[3]
+     | max(hLBNbiom.list[["binVals"]]$log10totalBiom) > par("usr")[4])
+     { stop("fix ylim for LBbiom method")}
+
+  axis(2, at = seq(2.5, 3, 0.25), mgp=mgpVals)
+  axis(2, at = seq(2.5, 3, 0.05), mgp=mgpVals, tcl=-0.2, labels=rep("", 11))
+
+  lm.line(hLBNbiom.list[["binVals"]]$log10binMid,
+          hLBNbiom.list[["unNorm.lm"]])
+
+  legJust(c("(e) LBbiom",
+            paste("slope=", signif(hLBNbiom.list[["unNorm.slope"]], 1), sep=""),
+            paste("b=", signif(hLBNbiom.list[["unNorm.slope"]] - 2, 3), sep="")),
+          inset=inset)
+
+  # LBNbiom method
+  plot(hLBNbiom.list[["binVals"]]$log10binMid,
+       hLBNbiom.list[["binVals"]]$log10totalBiomNorm,
+       xlab=expression(paste("Log10 (bin midpoints for data ", italic(x), ")")),
+       ylab = "Log10 (normalised biomass)",
+       mgp=mgpVals,
+       xlim=c(0,2.7),
+       ylim=c(0,3),
+       yaxt="n")
+
+  if(min(hLBNbiom.list[["binVals"]]$log10binMid) < par("usr")[1]
+     | max(hLBNbiom.list[["binVals"]]$log10binMid) > par("usr")[2])
+  { stop("fix xlim for LBNbiom method")}
+
+  if(min(hLBNbiom.list[["binVals"]]$log10totalBiomNorm) < par("usr")[3]
+     | max(hLBNbiom.list[["binVals"]]$log10totalBiomNorm) > par("usr")[4])
+     { stop("fix ylim for LBNbiom method")}
+
+  axis(2, at = 0:3, mgp=mgpVals)
+  axis(2, at = c(0.5, 1.5, 2.5), mgp=mgpVals, tcl=-0.2, labels=rep("", 3))
+
+  lm.line(hLBNbiom.list[["binVals"]]$log10binMid, hLBNbiom.list[["norm.lm"]])
+
+  legJust(c("(f) LBNbiom",
+            paste("slope=", signif(hLBNbiom.list[["norm.slope"]], 3), sep=""),
+            paste("b=", signif(hLBNbiom.list[["norm.slope"]] - 1, 3), sep="")),
+          inset=inset)
+
+  # Cumulative Distribution, LCD method
+  hLCD.list = eight.results$hLCD.list
+
+  plot(hLCD.list$logSorted,
+       hLCD.list$logProp,
+       main="",
+       xlab=expression(paste("Log ", italic(x))),
+       ylab=expression( paste("Log (prop. of ", values >= italic(x), ")")),
+       mgp=mgpVals)
+       #xlim=c(0.8, 1000), xaxs="i", ylim=c(0.0008, 1), yaxs="i",
+
+  lm.line(hLCD.list$logSorted, hLCD.list$lm, col="red")
+
+  legJust(c("(g) LCD",
+            paste("slope=", signif(hLCD.list$slope, 3), sep=""),
+            paste("b=", signif(hLCD.list$slope - 1, 3), sep="")),
+          inset=inset)
+
+  # MLE (maximum likelihood method) calculations.
+  hMLE.list = eight.results$hMLE.list
+
+  x = eight.results$hLBNbiom.list$indiv$x   # Original values are saved there
+  # To plot rank/frequency style plot:
+  plot(sort(x, decreasing=TRUE), 1:length(x), log="xy",
+       xlab=expression(paste("Values, ", italic(x))),
+       ylab=expression( paste("Number of ", values >= x), sep=""),
+       mgp=mgpVals, xlim = c(min(x), max(x)), ylim = c(1, n), axes=FALSE)
+  xLim = 10^par("usr")[1:2]
+  yLim = 10^par("usr")[3:4]
+
+  logTicks(xLim, yLim, xLabelSmall = c(5, 50, 500))   # Tick marks.
+
+  x.PLB = seq(min(x), max(x), length=1000)     # x values to plot PLB
+  y.PLB = (1 - pPLB(x = x.PLB,
+                    b = hMLE.list$b,
+                    xmin = min(x.PLB),
+                    xmax = max(x.PLB))) * length(x)
+  lines(x.PLB, y.PLB, col="red")     #, lty=5)
+  legJust(c("(h) MLE",
+            paste("b=", signif(hMLE.list$b, 3), sep="")),
+          inset=inset,
+          logxy=TRUE)
+}
+
+
 ##' One figure with eight histograms for each of  MLEmid and MLEbin methods and four binning types
 ##'
 ##' The default plot here reproduces Figure 4 of MEPS paper, showing the
