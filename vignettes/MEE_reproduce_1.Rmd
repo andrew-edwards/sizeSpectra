@@ -71,20 +71,12 @@ hLlin = Llin.method(x,
                     num.bins = num.bins)
 
 gap.barplot.cust(hLlin$counts,
-                 gap=c(9,980),
-                 ytics = c(seq(0, 8, by=4),
-                           seq(980, 988, by=4)),
                  midpoints = hLlin$mids,
                  breakpoints = hLlin$breaks,
                  xlim = c(-10,max(hLlin$breaks)+10),
-                 yaxs = "i",
-                 ylim = c(0, 17),  # max = max(y) - gap[2] + gap[1] + some space
                  col = rep("grey", length(hLlin$counts)),
                  xaxs = "i",
-                 xlab = expression(paste("Values, ", italic(x))),
-                 ylab = "Count in each bin",
-                 mgp=c(1.8,0.5,0)  # default: mgp=c(3,1,0)), margin line for axis
-                                   #  title, axis labels and axis line
+                 yaxs = "i"
                  )
 
 ```

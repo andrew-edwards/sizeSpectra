@@ -49,7 +49,7 @@ lm.line = function(x.vector, lm.results, ...)
 ##'
 ##'  For Figure 1 of MEE paper, to make a histogram (barplot) with a gap in the y-axis.
 ##'   Customising `gap.barplot()` from the package plotrix by Jim Lemon and others
-##'   Several options here are customised for the particular plot (and to
+##'   Several default options here are customised for the particular plot (and to
 ##'   change a few of the defaults in gap.barplot) so the code would
 ##'   require some modifiying to use more generally.
 ##'
@@ -77,27 +77,27 @@ lm.line = function(x.vector, lm.results, ...)
 ##' @export
 ##' @author Andrew Edwards
 gap.barplot.cust = function (y,
-                             gap,
+                             gap = c(9,980),
                              xaxlab,
                              xtics,
                              yaxlab,
-                             ytics,
+                             ytics = c(seq(0, 8, by=4), seq(980, 988, by=4)),
                              midpoints,
                              breakpoints,
                              xlim,
-                             ylim = NA,
-                             xlab = NULL,
-                             ylab = NULL,
+                             ylim = c(0, 17),  # max = max(y) - gap[2] + gap[1]
+                                               # + some space
+                             xlab = expression(paste("Values, ", italic(x))),
+                             ylab = "Count in each bin",
                              horiz = FALSE,
                              col = NULL,
                              N = n, ...)
-    {
+  {
     if (missing(y))
         stop("y values required")
-    # x <- 1:length(y)        # Original
-    x <- midpoints            # AE adding; midpoints is defined in raw1infexamp.r
-    if (missing(gap))
-        stop("gap must be specified")
+    x <- midpoints
+    # if (missing(gap))
+    #    stop("gap must be specified")
     if (is.null(ylab))
         ylab <- deparse(substitute(y))
     if (is.null(col))
@@ -115,8 +115,8 @@ gap.barplot.cust = function (y,
     xlim <- xlim
     if (is.na(ylim[1]))
         ylim <- c(min(y), max(y) - gapsize)
-    if (missing(ytics))
-        ytics <- pretty(y)
+    # if (missing(ytics))
+    #    ytics <- pretty(y)
     if (missing(yaxlab))
         yaxlab <- ytics
     littletics <- which(ytics < gap[1])
