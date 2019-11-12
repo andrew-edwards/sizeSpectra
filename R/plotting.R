@@ -1,9 +1,11 @@
-# Functions for plotting and customised functions for output for latex tables
+# Functions for plotting and customised functions for output for latex and
+#  Rmarkdown tables
 
 # lm.line - plot straight line of lm fit but restricted to the x values
 # gap.barplot.cust - customised version of Jim Lemon's gap.barplot for
 #  histograms with a break in an axis
-# qqtab - constructs automated LaTeX code for tables of quantiles
+# qqtab - constructs automated row of LaTeX or Rmarkdown code for tables of
+#  quantiles
 # confPlot - plotting of the confidence intervals for Figure 4
 # histAxes - histogram axes for histogram plots of estimated b values
 #  (Figure 3 and others)
@@ -11,6 +13,13 @@
 # logTicks - add axes and tick marks to a log-log plot to represent
 #  unlogged values (e.g. Figures 2(h) and 6(b))
 # legJust - add legend to a plot
+# MLEmid.MLEbin.hist - one figure with eight histograms for each of MLEmid and
+#  MLEbin methods and four binning types
+# MLEmid.MLEbin.conf - one figure with eight confidence interval plots for each
+#  of MLEmid and MLEbin methods and four binning types
+# MLEmid.MLEbin.table - make dataframe of results from MLEmid and MLEbin methods
+#  and four binning types
+# timeSerPlot - plot time series of estimated *b* with confidence intervals
 # ISD_bin_plot - recommended plotting for binned data (MEPS Figures 7 and
 #  S.5-S.34).
 
