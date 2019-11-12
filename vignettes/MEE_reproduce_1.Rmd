@@ -45,28 +45,17 @@ x = rPLB(n,
          xmin = xmin.known,
          xmax = xmax.known)
 
-log.x = log(x)                      # to avoid keep calculating
-sum.log.x = sum( log.x )
-xmin = min(x)
-xmax = max(x)
-
 head(x)
 ```
 
-Make the standard histogram with a break in the y-axis
+Make the standard histogram with a break in the y-axis (by first fitting using
+the Llin method since that returns the required bin breaks, counts etc.).
 ```{r}
-num.bins = 8    # number of bins for standard histogram and Llin method, though
-                #  this is only a suggestion (and can get overridden). Daan et
-                #  al. used 8 bins.
+num.bins = 8    # Suggested number of bins for standard histogram and Llin
+                #  method; Daan et al. used 8 bins.
 
-# Needs details on the bins, so fit first using the Llin method then use those
-#  to provide details of bins for the histogram
-
-# Notation:
-# hAAA - h(istrogram) for method AAA.
-
-# Llin method - plotting binned data on log-linear axes then fitting regression,
-#  as done by Daan et al. 2005.
+# hAAA is the h(istrogram) results for method AAA.
+# Llin method - plotting binned data on log-linear axes then fitting regression.
 hLlin = Llin.method(x,
                     num.bins = num.bins)
 
@@ -78,14 +67,13 @@ gap.barplot.cust(hLlin$counts,
                  xaxs = "i",
                  yaxs = "i"
                  )
-
 ```
 
 ## Figure 2 -- results from using eight methods to fit size spectra
 
 Calculate size spectra fits using all eight methods on the same data set.
 ```{r}
-eight.results = sizeSpectra::eightMethodsMEE(x, num.bins = num.bins)
+eight.results = eightMethodsMEE(x, num.bins = num.bins)
 ```
 
 The following code plots Figure 2, where each panel corresponds to one of the
@@ -276,6 +264,9 @@ legJust(c("(g) LCD",
 # MLE (maximum likelihood method) calculations.
 
 hMLE.list = eight.results$hMLE.list
+
+xmin = min(x)    # To avoid keep calculating
+xmax = max(x)
 
 # To plot rank/frequency style plot:
 plot(sort(x, decreasing=TRUE), 1:length(x), log="xy",

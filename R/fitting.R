@@ -775,6 +775,11 @@ eightMethods = function(oneYear = 1980,
 eightMethodsMEE <- function(x,
                             num.bins = 8,
                             b.only = FALSE){
+  xmin = min(x)    # To avoid keep calculating
+  xmax = max(x)
+  log.x = log(x)
+  sum.log.x = sum( log.x )
+
   # Notation:
   # hAAA - h(istrogram) for method AAA.
 
