@@ -13,6 +13,9 @@
 # logTicks - add axes and tick marks to a log-log plot to represent
 #  unlogged values (e.g. Figures 2(h) and 6(b))
 # legJust - add legend to a plot
+# MLE.plot - recommended plot of MLE results and ISD (Figure 2h and 6b)
+# eight.methods.plot - panel plot of eight methods fitted to one data set (MEE
+#  Figure 2).
 # MLEmid.MLEbin.hist - one figure with eight histograms for each of MLEmid and
 #  MLEbin methods and four binning types
 # MLEmid.MLEbin.conf - one figure with eight confidence interval plots for each
@@ -602,6 +605,76 @@ legJust = function(textVec,
            textVec,
            pos = 2) }
 }
+##' Recommended plot of ISD and MLE results
+##'
+##' Gives Figure 2h and 6b of MEE.
+##'
+##' @param x Vector of data values
+##' @param b Estimate of b
+##' @param confVals Confidence interval for estimate of b (two-component vector
+##'   for bounds of confidence interval)
+##' @param panel Which panel number for multi-panel plots. `"h"` gives the
+##'   method and MLE estimate (as in MEE Figure 2(h)), `"b"` gives just (b) as
+##'   in Figure 6(b), and NULL gives nothing.
+##' @param log.xy Which axes to log, for `plot(..., log = log.xy)`. So "xy" for
+##'   log-log axes, "x" for only x-axis logged.
+##' @param mgpVals mgp values to use, as in `plot(..., mgp = mgpVals)`.
+##' @param inset inset distance for legend
+##' @return Single figure of ISD on log-log plot (or log-linear depending on the
+##'   options given).
+##'
+##' @export
+##' @author Andrew Edwards
+MLE.plot <- function(x,
+                     b,
+                     confVals = NULL,
+                     panel = NULL,
+                     log.xy = "xy",
+                     mgpVals = c(1.6,0.5,0),
+                     inset = c(0, -0.04)
+                     )
+{
+  # MLE (maximum likelihood method) plot.
+
+  # To plot rank/frequency style plot:
+  plot(sort(x, decreasing=TRUE),
+       1:length(x),
+       log = log.xy,
+       xlab=expression(paste("Values, ", italic(x))),
+       ylab=expression( paste("Number of ", values >= x), sep=""),
+       mgp=mgpVals,
+       xlim = c(min(x),
+                max(x)),
+       ylim = c(1, length(x)),
+       axes=FALSE)
+  xLim = 10^par("usr")[1:2]
+  yLim = 10^par("usr")[3:4]
+
+  logTicks(xLim,
+           yLim,
+           xLabelSmall = c(5, 50, 500))   # Tick marks.
+
+  x.PLB = seq(min(x),
+              max(x),
+              length=1000)     # x values to plot PLB
+  y.PLB = (1 - pPLB(x = x.PLB,
+                    b = b,
+                    xmin = min(x.PLB),
+                    xmax = max(x.PLB))) * length(x)
+  lines(x.PLB,
+        y.PLB,
+        col="red")
+  if(panel == "a"){
+    stop("not done me yet")
+  }
+  if(panel == "h"){
+    legJust(c("(h) MLE",
+            paste("b=", signif(b, 3), sep="")),
+            inset=inset,
+            logxy=TRUE)
+  }
+}
+
 
 ##' Plotting fits of eight methods for a single data set (MEE Figure 2)
 ##'
@@ -786,30 +859,12 @@ eight.methods.plot <- function(eight.results = eight.results
             paste("b=", signif(hLCD.list$slope - 1, 3), sep="")),
           inset=inset)
 
-  # MLE (maximum likelihood method) calculations.
-  hMLE.list = eight.results$hMLE.list
-
-  x = eight.results$hLBNbiom.list$indiv$x   # Original values are saved there
-  # To plot rank/frequency style plot:
-  plot(sort(x, decreasing=TRUE), 1:length(x), log="xy",
-       xlab=expression(paste("Values, ", italic(x))),
-       ylab=expression( paste("Number of ", values >= x), sep=""),
-       mgp=mgpVals, xlim = c(min(x), max(x)), ylim = c(1, n), axes=FALSE)
-  xLim = 10^par("usr")[1:2]
-  yLim = 10^par("usr")[3:4]
-
-  logTicks(xLim, yLim, xLabelSmall = c(5, 50, 500))   # Tick marks.
-
-  x.PLB = seq(min(x), max(x), length=1000)     # x values to plot PLB
-  y.PLB = (1 - pPLB(x = x.PLB,
-                    b = hMLE.list$b,
-                    xmin = min(x.PLB),
-                    xmax = max(x.PLB))) * length(x)
-  lines(x.PLB, y.PLB, col="red")     #, lty=5)
-  legJust(c("(h) MLE",
-            paste("b=", signif(hMLE.list$b, 3), sep="")),
-          inset=inset,
-          logxy=TRUE)
+  # MLE plot
+  MLE.plot(x = eight.results$hLBNbiom.list$indiv$x,
+           b = eight.results$hMLE.list$b,
+           confVals = eight.results$hMLE.list$confVals,
+           panel = "h",
+           inset = inset)
 }
 
 

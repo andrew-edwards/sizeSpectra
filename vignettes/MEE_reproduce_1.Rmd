@@ -93,6 +93,7 @@ why the red curve on log-log axes in (h) above does not pass through the maximum
 data point.
 
 ```{r, fig.height = 5.4}
+
 par(mai=c(0.8, 0.8, 0.2, 0.3))
 mgpVal = c(2, 0.5, 0)
 plot(sort(x,
