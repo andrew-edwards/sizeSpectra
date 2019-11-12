@@ -5,7 +5,8 @@
 \title{Calculate maximum likelihood estimate and 95\% confidence
 interval}
 \usage{
-calcLike(negLL.fn, p, vecDiff = 0.5, vecInc = 0.001, ...)
+calcLike(negLL.fn, p, vecDiff = 0.5, vecInc = 0.001,
+  suppress.warnings = FALSE, ...)
 }
 \arguments{
 \item{negLL.fn}{negative log-likelihood function that take arguments
@@ -26,6 +27,12 @@ will depend on this. Note that a resulting interval of, say,
 true 95\% interval, which is itself contained within (-2.124, -1.986).
 The true bounds lie between the stated lower bounds and between
 the stated upper bounds. So reduce \code{vecInc} if further accuracy is needed.}
+
+\item{suppress.warnings}{If TRUE then suppress warnings from the \code{nlm()}
+calculations; for the \code{MEPS_IBTS_MLEbins} vignette these occur a lot, and
+are always:
+\code{Warning in nlm(f = negLL.fn, p = p, ...) : NA/Inf replaced by maximum positive value}. The same warning often happens in other
+situations also.}
 
 \item{...}{further arguments (including parameters and data) to \code{negLL.fn()}}
 }

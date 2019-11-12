@@ -22,6 +22,12 @@
 ##'  true 95\% interval, which is itself contained within (-2.124, -1.986).
 ##'  The true bounds lie between the stated lower bounds and between
 ##'  the stated upper bounds. So reduce `vecInc` if further accuracy is needed.
+##' @param suppress.warnings If TRUE then suppress warnings from the `nlm()`
+##'   calculations; for the `MEPS_IBTS_MLEbins` vignette these occur a lot, and
+##'   are always:
+##'   `Warning in nlm(f = negLL.fn, p = p, ...) :
+##'    NA/Inf replaced by maximum positive value`. The same warning often happens in other
+##'   situations also.
 ##'
 ##' @param ... further arguments (including parameters and data) to `negLL.fn()`
 ##' @return       list containing:
@@ -29,9 +35,23 @@
 ##'   * conf: the 95\% confidence interval of the MLE
 ##' @export
 ##' @author Andrew Edwards
-calcLike = function(negLL.fn, p, vecDiff=0.5, vecInc=0.001, ...)
-    {
-    minLL = nlm(f=negLL.fn, p=p, ...)
+calcLike = function(negLL.fn,
+                    p,
+                    vecDiff=0.5,
+                    vecInc=0.001,
+                    suppress.warnings = FALSE,
+                    ...)
+  {
+    if(suppress.warnings){
+      minLL = suppressWarnings(nlm(f=negLL.fn,
+                                   p=p, ...)
+                               )
+      } else {
+    minLL = nlm(f = negLL.fn,
+                p = p,
+                ...)
+  }
+
     MLE = minLL$estimate
     conf = profLike(negLL.fn=negLL.fn,
                     MLE=MLE,

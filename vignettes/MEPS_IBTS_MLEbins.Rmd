@@ -398,6 +398,7 @@ for(iii in 1:length(fullYears))
 
     MLEbins.nSeaFung.oneyear.new  = calcLike(negLL.fn = negLL.PLB.bins.species,
                                              p = bstart,
+                                             suppress.warnings = TRUE,
                                              dataBinForLike = dataBinForLike,
                                              n = n,
                                              xmin = xmin,
