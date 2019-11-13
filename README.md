@@ -39,20 +39,18 @@ devtools::install_github("andrew-edwards/sizeSpectra", build_vignettes = TRUE)
 (May take a minute or so while building the vignettes). Then:
 ```
 library(sizeSpectra)
-vignette("MEE_reproduce_1", package="sizeSpectra")
+vignette("Vignettes_overview", package="sizeSpectra")
 ```
-to see the first vignette in an html browser, and
+to see an overview vignette in an html browser (with descriptions of each one), or
 ```
 browseVignettes("sizeSpectra")
 ```
-to see the available ones.
+to just list them.
 
-TODO create overview vignette? Test browseVignettes...
-
-TODO: Vignette instructions. Improve names of them.
+TODO Test browseVignettes...
 
 ## Issues, problems
 
 Please report any problems as a [GitHub Issue](https://github.com/andrew-edwards/sizeSpectra/issues), using a minimal working example if possible (and please check the closed issues first).
 
-Note that this code was written over several years, and then converted into a package. As such, I have not used consistent naming conventions (e.g. some column names are camelCase while others are not) like I would now if starting a package from scratch - these may be partly corrected.
+Note that this code was written over several years, and then converted into a package. As such, I have not used consistent naming conventions (e.g. some column names are camelCase while others are not) like I would now if starting a package from scratch -- these may be partly corrected if time permits.

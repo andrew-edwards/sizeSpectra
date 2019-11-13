@@ -21,29 +21,24 @@ knitr::opts_chunk$set(
 library(sizeSpectra)
 ```
 
-# Reproduce Figures 3, ....TODO.... of MEE paper
-
-This vignette reproduces figures and tables in TODO: ref paper. See the
-paper for details, the aim of the vignette is to enable users to reproduce the
-results so that they can see what functions are appropriate for their own data,
-and perform further analyses as required.
-
-COPIES FIRST ONE FOR NOW (as template)
+Simulate 10,000 data sets and fit them using eight methods, then plot histograms
+  and confidence  intervals of the estimates of the size-spectra exponent $b$. Reproduces MEE
+  Figures 3 (TODO including gold?), 4 and Table 2. Also for the MLEfix method
+  (Figures A.3 and A.4).
 
 ```{r}
 library(sizeSpectra)
 ```
 
-## Figure 3 - Histograms of estimated exponent *b* for simulated data
+## Figure 3 -- Histograms of estimated exponent *b* for simulated data
 
-Fit histograms of 10,000 simulated data sets each with .....
+The simulation of 10,000 data sets and fitting using the eight methods takes a
+while, and so results are saved within the package in `eight.results.default`. To
+re-run from scratch use the code in `data-raw/simulate-data.R`.
 
-The fitting takes a while, so results are saved in `eight.results.default`. To
-run from scratch use the code in `data-raw/simulate-data.R`.
 ```{r, fig.height=7}
+list2env(eight.results.default, envir=.GlobalEnv)    # Extract previously saved results
 
-list2env(eight.results.default, envir=.GlobalEnv)    # Extract previously saved
-                                        # results. To obtain from scratch see data-raw/simulate-data.R
 
 # Plotting
 # brange = range( c( Llin.rep, LT.rep, LTplus1.rep, LBmiz.rep,
