@@ -17,11 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(sizeSpectra)
-```
-
-# Analyses of IBTS data using the original eight methods
+## Analyses of IBTS data using the original eight methods
 
 This vignette analyses the IBTS data using the original eight methods, without accounting for the bin structure.
 
@@ -30,8 +26,6 @@ library(sizeSpectra)
 data = IBTS_data
 data
 ```
-
-<!-- From nSeaFungAnalysis.Snw, removing what isn't needed -->
 
 Each row of `data` is a unique combination of year, species code and length
 class. The `Number` column is the number of observed individuals of that species
@@ -73,7 +67,8 @@ Doesn't look to be any serious issue with this (no drastic changes in, for
 The following code calculates, using `eightMethods.count()`, the slope or
 exponent for each of the original eight methods for each year in turn, and saves a `.png` plot
  for each year that shows the fit of each method. It is
-not run here because it takes a few hours (results are saved in TODO).
+not run here because it takes a few hours (results are saved as the data object
+`fullResults`).
 ```{r doEachYear, echo=TRUE, eval=FALSE}
 fullYears = unique(data$Year)
 fullResults = data.frame()
@@ -83,69 +78,14 @@ for(ii in fullYears){
                                        figName = "nSeaFung")
   fullResults = rbind(fullResults, eightMethodsRes)
 }
+# usethis::use_data(fullResults, overwrite = TRUE)    # Run this to save the data.
 ```
-
 
 Now to plot Figure 1, time series of each estimate of `b` for each method, and
 fit regression.
 
 ```{r, fig.height = 7.5}
-# , caption= "For each method in turn, the estimated exponents $b$ (circles) and 95\% confidence intervals (vertical bars) are shown for every year. The fit of a weighted linear regression with 95\% confidence interval is shown as red lines if the trend can be considered statistically significant from 0 ($p<0.05$), and in grey if the trend is not statistically significantly different from 0 ($p \geq 0.05$). The y-axes are the same for (d)-(h)."}
-par(omi = c(0.14, 0, 0.1, 0.15))      # outer margins in inches
-par(mfrow=c(4,2))
-
-oldmai = par("mai")
-par(mai=c(0.3, 0.5, 0.08, 0))  # Affects all four figures if don't change agaiin
-par(mgp=c(2.0, 0.5, 0))
-par(cex = 0.8)
-vertThick = 1                  # Thickness for vertical lines
-
-fullResFive = dplyr::filter(fullResults,
-                            Method %in% c("LBmiz", "LBbiom", "LBNbiom",
-                                          "LCD", "MLE"))
-yLim = c(min(fullResFive$confMin), max(fullResFive$confMax))
-
-# Each of these plots a panel for one method. Define xLim if the default
-#  (integer-based calculation) is not suitable
-
-trendResults = data.frame()  # Will have one row of trend results for each method
-
-# Could make into a loop, but this works
-res = timeSerPlot(dplyr::filter(fullResults, Method == "Llin"), legName = "(a) Llin",
-            method = "Llin", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LT"), legName = "(b) LT",
-            yLab="", method = "LT", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LTplus1"),
-    legName = "(c) LTplus1", method = "LTplus1", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LBmiz"), legName = "(d) LBmiz",
-            yLim=yLim, yLab="", method = "LBmiz", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LBbiom"),
-    legName = "(e) LBbiom", yLim=yLim, method = "LBbiom", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LBNbiom"),
-    legName = "(f) LBNbiom", yLim=yLim, yLab="", method = "LBNbiom",
-    weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::filter(fullResults, Method == "LCD"), legName = "(g) LCD",
-    yLim=yLim, method = "LCD", weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-res = timeSerPlot(dplyr::filter(fullResults, Method == "MLE"), legName = "(h) MLE",
-    yLim=yLim, yLab="", method = "MLE", legPos = "bottomleft",
-    weightReg=TRUE)
-trendResults = rbind(trendResults, res)
-
-mtext("Year", side=1, outer=TRUE, line=-0.2, cex=0.8)
+timeSerPlot.eight()
 ```
 
 The results are saved in the package (this is not run in the vignette though):

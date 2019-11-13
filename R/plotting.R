@@ -1458,6 +1458,123 @@ timeSerPlot = function(bForYears, legName, method, weightReg = FALSE,
                      row.names=NULL)
     return(res)
 }
+##' Call `timeSerPlot()` eight times to create MEPS Figure 1, eight methods
+##'  applied to 30 years of data
+##'
+##' For each of the eight methods in turn, call `timeSerPlot()` to add a panel
+##' with the estimated $b$ and 95\% confidence interval for the method for each
+##' year of IBTS data, and then fit a regression through the estimates. Called
+##' in vignette `MEPS_IBTS_2.Rmd`.
+##'
+##' @param fullResults.local Results from applying eight methods to a
+##'   dataset. Must be in same format as `fullResults` which is for the IBTS
+##'   data. Not tested yet with other data sets.
+##'
+##' @return trendResults Dataframe of regression fits from using each fitting
+##'   method on each year of IBTS data set (for MEPS Table S.1). See `?trendResults`
+##'   for saved version and details of columns.
+##' @export
+##' @author Andrew Edwards
+timeSerPlot.eight <- function(fullResults.local = fullResults
+                              ){
+
+  par(omi = c(0.14, 0, 0.1, 0.15),
+      mfrow = c(4, 2),
+      mai = c(0.3, 0.5, 0.08, 0),
+      mgp = c(2.0, 0.5, 0),
+      cex = 0.8)
+
+  vertThick = 1                  # Thickness for vertical lines
+
+  fullResFive = dplyr::filter(fullResults.local,
+                              Method %in% c("LBmiz", "LBbiom", "LBNbiom",
+                                            "LCD", "MLE"))
+  yLim = c(min(fullResFive$confMin),
+           max(fullResFive$confMax))
+
+  # Each of these plots a panel for one method. Define xLim if the default
+  #  (integer-based calculation) is not suitable
+
+  trendResults = data.frame()  # Will have one row of trend results for each method
+
+  # Could make into a loop, but this works
+  res = timeSerPlot(dplyr::filter(fullResults.local,
+                                  Method == "Llin"),
+                    legName = "(a) Llin",
+                    method = "Llin",
+                    weightReg = TRUE)
+  trendResults = rbind(trendResults, res)
+
+
+  res = timeSerPlot(dplyr::filter(fullResults.local,
+                                  Method == "LT"),
+                    legName = "(b) LT",
+                    yLab = "",
+                    method = "LT",
+                    weightReg = TRUE)
+  trendResults = rbind(trendResults, res)
+
+  res = timeSerPlot(dplyr::filter(fullResults.local,
+                                  Method == "LTplus1"),
+                    legName = "(c) LTplus1",
+                    method = "LTplus1",
+                    weightReg = TRUE)
+  trendResults = rbind(trendResults, res)
+
+  res = timeSerPlot(dplyr::filter(fullResults.local,
+                                  Method == "LBmiz"),
+                    legName = "(d) LBmiz",
+                    yLim = yLim,
+                    yLab = "",
+                    method = "LBmiz",
+                    weightReg = TRUE)
+  trendResults = rbind(trendResults, res)
+
+  res = timeSerPlot(dplyr::filter(fullResults.local,
+                                  Method == "LBbiom"),
+                    legName = "(e) LBbiom",
+                    yLim = yLim,
+                    method = "LBbiom",
+                    weightReg = TRUE)
+  trendResults = rbind(trendResults, res)
+
+  res = timeSerPlot(dplyr::filter(fullResults.local,
+                                  Method == "LBNbiom"),
+                    legName = "(f) LBNbiom",
+                    yLim = yLim,
+                    yLab = "",
+                    method = "LBNbiom",
+                    weightReg = TRUE)
+  trendResults = rbind(trendResults, res)
+
+  res = timeSerPlot(dplyr::filter(fullResults.local,
+                                  Method == "LCD"),
+                    legName = "(g) LCD",
+                    yLim = yLim,
+                    method = "LCD",
+                    weightReg = TRUE)
+  trendResults = rbind(trendResults, res)
+
+  res = timeSerPlot(dplyr::filter(fullResults.local,
+                                  Method == "MLE"),
+                    legName = "(h) MLE",
+                    yLim = yLim,
+                    yLab = "",
+                    method = "MLE",
+                    legPos = "bottomleft",
+                    weightReg = TRUE)
+  trendResults = rbind(trendResults, res)
+
+  mtext("Year",
+        side = 1,
+        outer = TRUE,
+        line = -0.2,
+        cex = 0.8)
+
+  return(trendResults)
+}
+
+
 
 ##' Recommended plots of individual size distribution and fit for binned data
 ##'

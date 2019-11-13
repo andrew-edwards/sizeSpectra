@@ -1,7 +1,8 @@
 # The main analyses of the IBTS data in the MEPS paper.
 
-load("nSeaFungAnalysis.RData")    # Output from nSeaFungAnalysis.Snw, TODO
-                                  # should then become output from vignette.
+# Run the vignette MEPS_IBTS_2.Rmd up to the doEachYear chunk, run that chunk
+# (to calculate the results, takes a while) and then do:
+
 usethis::use_data(fullResults, overwrite = TRUE)
 
 # trendResults is saved in vignette MEPS_IBTS_2.Rmd

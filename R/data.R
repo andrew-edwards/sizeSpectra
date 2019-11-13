@@ -1,4 +1,5 @@
-# Think \describe can just be * like in R functions.
+# Think \describe can just be * like in R functions. - has to be. TODO change
+# them all to like I have in trendResults. Ugh.
 
 ##' Results of fitting 10,000 data sets using eight methods (MEE paper)
 ##'
