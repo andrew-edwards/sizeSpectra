@@ -17,34 +17,27 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Pre-processing of IBTS data
+## Pre-processing of IBTS data to get desired data for MEPS Table 1
 
-This vignette steps through the pre-processing steps of the IBTS data as presented in the
-MEPS paper to retain just the desired parts. May be useful for anyone wanting to
-extract data and do similar analyses.
+These are the steps for pre-processing the IBTS data to retain just the desired
+elements for the analyses in the MEPS paper. Should be useful for repeating the
+analyses with updated data (if so it would be good to use the `icesDATRAS` to
+automate the downloading of the data. This may also be useful for anyone wanting to
+extract data and do similar analyses. This is not functionalised, but is better
+work through the steps in an Rmarkdown-type format to understand and check what
+is going on.
 
 ```{r setup}
 library(sizeSpectra)
 ```
 
-<!-- From nSeaFungImport.Snw:-->
+Data were extracted from the IBTS DATRAS website by Julia Blanchard who then
+undertook some initial processing, as detailed in Supplementary
+Material of MEPS paper, and also included with the species-specific length-weight
+parameters from Fung et al. (2012). The data are saved within this package as `dataOrig` (see
+data-raw/IBTS-data.R).
 
-Data extracted from IBTS DATRAS website TODO: copy details from paper and put
-some of Julia's earlier code in; may want to use the even raw-er data; just
-getting this working for now. This may
-already include some extra steps from Julia - check her earlier code. Fairly sure a
-and b are from Fung et al. (I have that .csv file also).
-
-
-```{r, eval=FALSE}
-# This is done in package in data-raw/IBTS-data.R to save the data more
-#  efficiently as dataOrig within the package. Code is not evaluated here.
-load("ibtsQ1cpuelength.RData") # 2.2 Mb dataset, just contains
-                               #  "q1" which is a data.frame
-dataOrig = tbl_df(q1)        # for dplyr
-```
-
-Understand the raw data:
+First, understand the data:
 ```{r}
 dim(dataOrig)
 names(dataOrig)
@@ -96,8 +89,8 @@ sum(data$CPUE_number_per_hour == 0)
 ```
 
 Want to end up with `data` in a standard format (based on some original
-analysis). Need to rename some of the headings, make the lengths in cm not mm,
-and (for helpfulness) order by `Year`, `SpecCode` and then `Lgnt`.
+analysis I did when writing the code). Need to rename some of the headings, make
+the lengths in cm not mm, and (for helpfulness) order by `Year`, `SpecCode` and then `Lgnt`:
 
 1. Rename the columns:
 ```{r rename}
@@ -165,8 +158,7 @@ data = dplyr::select(data, -bodyMass2)              # don't keep the confirming 
 ```
 
 Now only include body-mass classes above 4 g, following Blanchard et
-al. (2005), since data are unreliable for smaller organisms [TODO: look at
-sensitivity if time].
+al. (2005), since data are unreliable for smaller organisms:
 ```{r}
 range(data$LngtClass)
 range(data$bodyMass)
@@ -213,15 +205,18 @@ usethis::use_data(IBTS_data, overwrite = TRUE)
 So we have the following, where each row is a unique combination of `Year`,
 `SpecCode` and `LngtClass` (cm, the minimum value of the 1-cm length bin [or
 0.5-cm bin for Atlantic Herring and European Sprat]), and `Number` gives the number of individuals per hour
-of trawling observed for the combination. Parameters `LWa` and `LWb` [TODO:
-change to alpha, beta] are the length-weight cofficients for that species from
+of trawling observed for the combination. Parameters `LWa` and `LWb`
+are the length-weight cofficients for that species from
 Fung et al. (2012), `bodyMass` (g) is the resulting estimated body mass for an
-individual of that species and length class.
+individual of that species and length class and `Biomass` (g h^-1^) is calculated here as
+the total biomass caught per hour of trawling for each row.
 
-The resulting Table 1 is (more or less): [TODO: need last column]
-
+The resulting Table 1 is:
 ```{r results='asis'}
-knitr::kable(rbind(IBTS_data[1:5,],
-                   IBTS_data[ (nrow(IBTS_data)-5):nrow(IBTS_data), ]),
-             digits=c(0, 0, 0, 3, 4, 4, 2))
+IBTS_data_biomass <- dplyr::mutate(IBTS_data,
+                                   Biomass = Number * bodyMass)
+knitr::kable(rbind(IBTS_data_biomass[1:6,],
+                   IBTS_data_biomass[(nrow(IBTS_data_biomass)-5):nrow(IBTS_data_biomass),
+                                     ]),
+             digits=c(0, 0, 0, 3, 4, 4, 2, 2))
 ```
