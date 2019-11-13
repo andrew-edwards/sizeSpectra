@@ -1,0 +1,51 @@
+---
+title: "Vignettes_overview"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignettes_overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+```{r setup}
+library(sizeSpectra)
+```
+
+# Overview of vignettes for sizeSpectra package
+
+This R package contains functions for fitting size spectra to ecological
+data. In particular, it contains functionalised code to reproduce all the
+results in [1] and [2], and for users to apply the methods to their own data.
+
+[1] **Testing and recommending methods for fitting size spectra to data** by
+Andrew M. Edwards, James P. W. Robinson, Michael J. Plank, Julia K. Baum and
+Julia L. Blanchard. ***Methods in Ecology and Evolution*** (2017,
+8:57-67). Freely available at
+<http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12641/full>.
+
+[2] **TODO** by Andrew M. Edwards, James P. W. Robinson, Julia L. Blanchard,
+Julia K. Baum and Michael J. Plank. **TODO**
+
+The vignettes explain how to use the functions in the package to reproduce the
+results in both papers, to then enable users to see what functions are required
+to analyse their own data.
+The vignettes are descriptions of how to use the code to implement the
+methods. The two papers should be consulted first to understand the methods (I
+have tried to avoid repeating explanatory text from the papers in the vignettes). In the
+vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
+
+The vignettes are:
+
+* [MEE_reproduce_1.html](MEE_reproduce_1.html): reproduces the figures in the
+MEE paper that are based on the original single simulated data set, namely
+Figures 1, 2, 6 and A.1.
