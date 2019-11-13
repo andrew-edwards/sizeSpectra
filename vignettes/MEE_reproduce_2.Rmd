@@ -351,7 +351,3 @@ save.image(file = "fitting2.RData")
 # Figure 5 - MLEbin
 
 Come back to once done from binning paper as likely more functionalised.
-
-# Figure 6 - recommend
-
-TODO see t'other vignette.

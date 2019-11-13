@@ -91,12 +91,11 @@ eight.methods.plot(eight.results)
 Recommended plots of (a) biomass size spectrum and (b) abundance size spectrum,
 fitted using MLE.
 
-```{r}
+```{r, fig.height=9.4}
 MLE.plots.recommend(x = x,
                     b.MLE = eight.results$hMLE.list$b,
                     confVals.MLE = eight.results$hMLE.list$confVals,
                     hLBN.biom.list = eight.results$hLBN.biom.list)
-
 ```
 
 ## Figure A.1
@@ -107,7 +106,8 @@ data point.
 
 ```{r, fig.height = 5.4}
 par(mai=c(0.8, 0.8, 0.2, 0.3))
-MLE.plot(x, b = eight.results$hMLE.list$b,
+MLE.plot(x,
+         b = eight.results$hMLE.list$b,
          log="x")
 ```
 

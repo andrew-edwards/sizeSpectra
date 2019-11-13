@@ -14,6 +14,8 @@
 #  unlogged values (e.g. Figures 2(h) and 6(b))
 # legJust - add legend to a plot
 # MLE.plot - recommended plot of MLE results and ISD (Figure 2h and 6b)
+# MLE.plots.recommended - recommended two-panel plot of MLE results and LBN plot
+#  (MEE Figure 6)
 # eight.methods.plot - panel plot of eight methods fitted to one data set (MEE
 #  Figure 2).
 # MLEmid.MLEbin.hist - one figure with eight histograms for each of MLEmid and
@@ -617,7 +619,7 @@ legJust = function(textVec,
 ##'   for bounds of confidence interval)
 ##' @param panel Which panel number for multi-panel plots. `"h"` gives the
 ##'   method and MLE estimate (as in MEE Figure 2(h)), `"b"` gives just (b) as
-##'   in Figure 6(b), and NULL gives nothing.
+##'   in Figure 6(b) and plots confidence interval curves, and NULL gives nothing.
 ##' @param log.xy Which axes to log, for `plot(..., log = log.xy)`. So "xy" for
 ##'   log-log axes, "x" for only x-axis logged.
 ##' @param mgpVals mgp values to use, as in `plot(..., mgp = mgpVals)`.
@@ -632,7 +634,7 @@ MLE.plot <- function(x,
                      confVals = NULL,
                      panel = FALSE,
                      log.xy = "xy",
-                     mgpVals = c(1.6,0.5,0),
+                     mgpVals = c(1.6, 0.5, 0),
                      inset = c(0, -0.04)
                      )
 {
@@ -680,8 +682,6 @@ MLE.plot <- function(x,
      mgp = mgpVal)
     }
 
-
-
   x.PLB = seq(min(x),
               max(x),
               length=1000)     # x values to plot PLB
@@ -692,8 +692,21 @@ MLE.plot <- function(x,
   lines(x.PLB,
         y.PLB,
         col="red")
-  if(panel == "a"){
-    stop("not done me yet")
+  if(panel == "b"){
+    for(i in c(1, length(confVals)))
+    {
+      lines(x.PLB,
+            (1 - pPLB(x = x.PLB,
+                      b = confVals[i],
+                      xmin = min(x.PLB),
+                      xmax = max(x.PLB))) * length(x),
+            col="red",
+            lty=2)
+    }
+    legend("topright",
+           "(b)",
+           bty = "n",
+           inset = inset)
   }
   if(panel == "h"){
     legJust(c("(h) MLE",
@@ -721,7 +734,7 @@ MLE.plot <- function(x,
 ##' @author Andrew Edwards
 MLE.plots.recommend <- function(x,
                                 b.MLE,
-                                confVals.MLE = NULL,
+                                confVals.MLE,
                                 hLBN.biom.list = NULL,
                                 inset = c(0, -0.04),
                                 mgpVals = c(1.6, 0.5, 0),
@@ -731,8 +744,10 @@ MLE.plots.recommend <- function(x,
                                 ySmallTicks = c(0.5, 1.5, 2.5)
                                 )
 {
-  par(mai=c(0.4, 0.5, 0.05, 0.3),
-      cex=0.7)
+  par(mai=c(0.6, 0.5, 0.05, 0.3),
+      cex=0.7,
+      mfrow = c(2,1),
+      mgp = mgpVals)
 
   if(is.null(hLBN.biom.list)){
     hLBNbiom.list = LBNbiom.method(x)
@@ -796,8 +811,13 @@ MLE.plots.recommend <- function(x,
       }
 
   legend("topright", "(a)", bty="n", inset=inset)
-}
 
+  MLE.plot(x,
+           b = b.MLE,
+           confVals = confVals.MLE,
+           panel = "b",
+           mgpVals = mgpVals)
+}
 
 ##' Plotting fits of eight methods for a single data set (MEE Figure 2)
 ##'
