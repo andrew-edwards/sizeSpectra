@@ -17,19 +17,15 @@ knitr::opts_chunk$set(
 )
 ```
 
+This vignette simulates the original single data set from the MEE paper, fits it
+using the eight different methods and produces the resulting figures.
+Fitting and plotting functions can be used on a user's own data set.
+
 ```{r setup}
 library(sizeSpectra)
 ```
 
-# Reproduce Figures 1, 2 and A.1 of MEE paper
-
-This vignette reproduces the figures and tables in the MEE paper that are based
-on the original single simulated data set. See the paper for details. The aim of the vignette is
-to enable users to reproduce the results so that they can see what functions are
-appropriate for their own data, and perform further analyses as required.
-
-
-## Figure 1 - standard histogram of a random sample from a bounded power-law distribution
+## Figure 1 -- standard histogram of a random sample from a bounded power-law distribution
 
 Generate random sample from bounded power-law distribution, where the resulting
 `x` is a vector of individual fish sizes (usually body masses).
@@ -71,25 +67,23 @@ gap.barplot.cust(hLlin$counts,
 
 ## Figure 2 -- results from using eight methods to fit size spectra
 
-Calculate size spectra fits using all eight methods on the same data set.
+Calculate size spectra fits using all eight methods on the same data set:
 ```{r}
 eight.results = eightMethodsMEE(x, num.bins = num.bins)
 ```
 
-The following code plots Figure 2, where each panel corresponds to one of the
-methods. Most of this code involves details of the plots to make good figures,
-and so might somewhat tailored for this explicit data set. So it may need
-tweaking for another dataset. (Could be made into a function with lots of
-arguments).
+Now plot Figure 2, where each panel corresponds to one of the methods. Most of the
+function code involves tailoring the plots to make good figures, and may need
+tweaking for another dataset.
 
 ```{r, fig.height = 8}
 eight.methods.plot(eight.results)
 ```
 
-## Figure 6
+## Figure 6 -- recommended plot of MLE fit to a single data set
 
 Recommended plots of (a) biomass size spectrum and (b) abundance size spectrum,
-fitted using MLE.
+fitted using MLE:
 
 ```{r, fig.height=9.4}
 MLE.plots.recommend(x = x,
@@ -98,10 +92,10 @@ MLE.plots.recommend(x = x,
                     hLBN.biom.list = eight.results$hLBN.biom.list)
 ```
 
-## Figure A.1
+## Figure A.1 -- individual size distribution plot with linear y-axis
 
-Same as (h) above (Figure 2(h) in paper), but on linear-log axes, to help explain in the
-why the red curve on log-log axes in (h) above does not pass through the maximum
+Same as (h) above (Figure 2(h) in paper), but with a non-logarithmic y-axis, to help explain
+why the red curve on log-log axes in (h) does not pass through the maximum
 data point.
 
 ```{r, fig.height = 5.4}
@@ -110,39 +104,3 @@ MLE.plot(x,
          b = eight.results$hMLE.list$b,
          log="x")
 ```
-
-
-<!--
-CHECK THIS:   load(file="fitting2.RData")    # or load in data for x
-From readMeCode.txt:
-
-The resulting figures (as .eps postscript files) are also included so that
- code can be independnetly re-run and the results easily compared with my
- original figures. I have included the .RData file for the results for
- the main simulation of 10,000 data sets (multiple/fitting3rep.r)
- and for the xmax=10000 simulation (multiple/xmax10000/fitting3rep10000.r)
- because the code can take a while to run and the two resulting .RData files
- are used to produce Figure 3. The remainaing .RData files are have
- not been included because they are generally large.
-
-The main figures in the manuscript can be found in the following directories:
-
-Figures 1 and 2 - code/single/
-Figures 3 and 4 - code/multiple/
-Figure 5 - code/MLEbin/
-Figure 6 - code/recommend/
-
-So to use the MLE method to analyse your own data and plot results as per
- our Figure 6, see code/recommend/ . If your data are binned then you will
- need some of code/MLEbin/ .
-
-code/fitting2.r  (only r file there):
-
-# fitting2.r - replacing the fitting methods with functions, that are all
-#  in PLBfunctions.r. 5th June 2015.
-
-
-dev.off()
-
-save.image(file = "fitting2.RData")
--->
