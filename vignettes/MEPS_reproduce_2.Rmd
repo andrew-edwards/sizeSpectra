@@ -62,9 +62,9 @@ Make a dataframe of the results and show here, reproducing Table S.3:
 knitr::kable(MLEmid.MLEbin.table(MLEbin.MEPS.default))
 ```
 
-## Setting $x_{min}=16$ (Figures S.35 and S.36 and Table S.4)
+## Setting $x$~min~$=16$ (Figures S.35 and S.36 and Table S.4)
 
-Similarly, the simulation results obtained from setting $x_{min}=16$ are saved in
+Similarly, the simulation results obtained from setting $x$~min~$=16$ are saved in
 the object `MLEbin.MEPS.xmin16`, obtained by running the next line (which is not evaluated by
 this vignette but is run once in `data-raw/simulate-data2.R`):
 ```{r, eval=FALSE}
@@ -86,9 +86,9 @@ And Table S.4 is:
 knitr::kable(MLEmid.MLEbin.table(MLEbin.MEPS.xmin16))
 ```
 
-## Setting $x_{min}=1$ but only sampling data above the cutoff value of 16 (Figures S.37 and S.38 and Table S.5)
+## Setting $x$~min~$=1$ but only sampling data above the cutoff value of 16 (Figures S.37 and S.38 and Table S.5)
 
-Similarly, the simulation results obtained from setting $x_{min}=1$ again but
+Similarly, the simulation results obtained from setting $x$~min~$=1$ again but
 only sampling above the cutoff value of 16 are saved in
 the object `MLEbin.MEPS.cutoff16`, obtained by running the next line (which is not evaluated by
 this vignette but is run once in `data-raw/simulate-data2.R`):

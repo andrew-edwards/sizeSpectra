@@ -47,8 +47,8 @@ vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
 The vignettes are:
 
 * [MEE_reproduce_1.html](MEE_reproduce_1.html): Simulate and fit a single data
-set using eight methods, and create recommended likelihood-based
-plot. Reproduces MEE Figures 1, 2, 6 and A.1.
+  set using eight methods, and create recommended likelihood-based
+  plot. Reproduces MEE Figures 1, 2, 6 and A.1.
 
 * [MEE_reproduce_2.html](MEE_reproduce_2.html): Simulate and fit 10,000
   simulated data sets using eight methods, and plot histograms and confidence
@@ -65,9 +65,27 @@ plot. Reproduces MEE Figures 1, 2, 6 and A.1.
   logarithimic size-class bins by some methods (Figure 3).
 
 * [MEPS_reproduce_2.html](MEPS_reproduce_2.html): Main simulation results, from
-fitting maximum likelihood value (and confidence interval) of $b$ for each
-combination of 10,000 simulated data sets, four binning methods and two fitting
-methods (MLEmid or MLEbin). Reproduces MEPS Figures 4 and 5 and Table S.3. Then
-does the same analyses with $x_{min} = 16$ (Figures S.35 and S.36 and Table S.4),
-and with with $x_{min} = 1$ but only sampling above a cutoff value of 16
-(Figures S.37 and S.38 and Table S.5).
+  fitting maximum likelihood value (and confidence interval) of $b$ for each
+  combination of 10,000 simulated data sets, four binning methods and two fitting
+  methods (MLEmid or MLEbin). Reproduces MEPS Figures 4 and 5 and Table S.3. Then
+  does the same analyses with $x$~min~$ = 16$ (Figures S.35 and S.36 and Table S.4),
+  and with with $x$~min~$ = 1$ but only sampling above a cutoff value of 16
+  (Figures S.37 and S.38 and Table S.5).
+
+* [MEPS_IBTS_1.html](MEPS_IBTS_1.html): Pre-processing of International Bottom
+  Trawl Survey (IBTS) data to extract the required elements. Gives MEPS Table 1.
+
+* [MEPS_IBTS_2.html](MEPS_IBTS_2.html): Analyses of the IBTS data using the
+  original eight methods. Gives MEPS Figure 1 and Table S.1.
+
+* [MEPS_IBTS_MLEbins.html](MEPS_IBTS_MLEbins.html): Analyse the IBTS data using
+  the MLEbins method. Gives Figure 6 (and related Figures S.1, S.2 and S.3)
+  showing species-specific body mass bins resulting from the length bins, Figure
+  8 (comparison of MLE and MLEbins values of b through time), MLEbins row of
+  Table S.1, and Table S.2. Also some extra figures that helped understanding
+  but didn't need to go into the paper.
+
+* [MEPS_IBTS_recommend.html](MEPS_IBTS_recommend.html): Calculations and schematic diagram
+  (Figure S.4, somewhat automated for any species) to help explain the
+  recommended plotting approach. The recommended Figures 7, and S.5 to S.34 for
+  each year of the IBTS data. TODO: either as movie or just a load of figures.
