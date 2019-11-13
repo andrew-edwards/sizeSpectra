@@ -810,13 +810,14 @@ MLE.plots.recommend <- function(x,
               lty=2)
       }
 
-  legend("topright", "(a)", bty="n", inset=inset)
+  legend("topright", "(a)", bty="n", inset = inset)
 
   MLE.plot(x,
            b = b.MLE,
            confVals = confVals.MLE,
            panel = "b",
-           mgpVals = mgpVals)
+           mgpVals = mgpVals,
+           inset = inset)
 }
 
 ##' Plotting fits of eight methods for a single data set (MEE Figure 2)
