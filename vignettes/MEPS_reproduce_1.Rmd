@@ -25,13 +25,13 @@ Calculations of length-weight relationships for (any) two species and the result
 library(sizeSpectra)
 ```
 
-## Figure 2 - example length-weight relationships for two species
+## Figure 2 -- example length-weight relationships for two species
 
 ```{r}
 length_weight_plot()
 ```
 
-## Figure 3 - how binned body-mass values get assigned to logarithmic size-class bins
+## Figure 3 -- how binned body-mass values get assigned to logarithmic size-class bins
 
 
 ```{r, fig.width=7.5, fig.height = 6}
