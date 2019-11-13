@@ -604,8 +604,10 @@ legJust = function(textVec,
            leg$text$y,
            textVec,
            pos = 2) }
+
 }
-##' Recommended plot of ISD and MLE results
+
+##' Recommended single plot of ISD and MLE results
 ##'
 ##' Gives Figure 2h and 6b of MEE.
 ##'
@@ -619,7 +621,7 @@ legJust = function(textVec,
 ##' @param log.xy Which axes to log, for `plot(..., log = log.xy)`. So "xy" for
 ##'   log-log axes, "x" for only x-axis logged.
 ##' @param mgpVals mgp values to use, as in `plot(..., mgp = mgpVals)`.
-##' @param inset inset distance for legend
+##' @param inset Inset distance for legend
 ##' @return Single figure of ISD on log-log plot (or log-linear depending on the
 ##'   options given).
 ##'
@@ -699,6 +701,101 @@ MLE.plot <- function(x,
             inset=inset,
             logxy=TRUE)
   }
+}
+
+##' Recommended LBN-type plot with ISD for fitted MLE (MEE Figure 6)
+##'
+##' Only valid when `x` is biomass, since LBN plot calculates the biomass.
+##'
+##' @param x Raw data, must be body-mass values (else LBN plot is meaningless).
+##' @param b.MLE MLE estimate of $b$
+##' @param confVals.MLE Confidence interval for estimate of b (two-component vector
+##'   for bounds of confidence interval)
+##' @param LBNbiom.list Results from LBNbiom.method(x). If NULL then calculate
+##'   them here.
+##' @param inset Inset distance for legend
+##'
+##' @return Panel plot with LBN plot at top and ISD with fitted MLE and
+##'   confidence intervals at the bottom.
+##' @export
+##' @author Andrew Edwards
+MLE.plots.recommend <- function(x,
+                                b.MLE,
+                                confVals.MLE = NULL,
+                                hLBN.biom.list = NULL,
+                                inset = c(0, -0.04),
+                                mgpVals = c(1.6, 0.5, 0),
+                                xLim = c(0, 2.7),
+                                yLim = c(0, 3),
+                                yBigTicks = 0:3,
+                                ySmallTicks = c(0.5, 1.5, 2.5)
+                                )
+{
+  par(mai=c(0.4, 0.5, 0.05, 0.3),
+      cex=0.7)
+
+  if(is.null(hLBN.biom.list)){
+    hLBNbiom.list = LBNbiom.method(x)
+  }
+
+  plot(hLBNbiom.list[["binVals"]]$log10binMid,
+       hLBNbiom.list[["binVals"]]$log10totalBiomNorm,
+       xlab = expression(paste("Log10 (bin midpoints for data ", italic(x), ")")),
+       ylab = "Log10 (normalised biomass)",
+       mgp = mgpVals,
+       xlim = xLim,
+       ylim = yLim,
+       yaxt="n")
+
+  if(min(hLBNbiom.list[["binVals"]]$log10binMid) < par("usr")[1]
+     | max(hLBNbiom.list[["binVals"]]$log10binMid) > par("usr")[2])
+     { stop("fix xLim in MLE.plots.recommend() for LBNbiom plot")}
+  if(min(hLBNbiom.list[["binVals"]]$log10totalBiomNorm) < par("usr")[3]
+     | max(hLBNbiom.list[["binVals"]]$log10totalBiomNorm) > par("usr")[4])
+     { stop("fix yLim in MLE.plots.recommend() for LBNbiom plot")}
+
+  axis(2, at = yBigTicks,
+       mgp = mgpVals)
+  axis(2, at = ySmallTicks,
+       mgp = mgpVals,
+       tcl = -0.2,
+       labels = rep("", length(ySmallTicks)))
+
+  x.PLB = seq(min(x), max(x), length=1000)     # x values to plot PLB. Note
+                             # that these encompass the data, and are not based
+                             # on the binning (in MEE Figure 6 the line starts as
+                             # min(x), not the first bin.
+
+  B.PLB = dPLB(x.PLB,
+               b = b.MLE,
+               xmin=min(x.PLB),
+               xmax=max(x.PLB)) * length(x) * x.PLB
+         # The biomass density, from MEE equation (4), using the MLE for b.
+
+  lines(log10(x.PLB),
+        log10(B.PLB),
+        col="red")
+
+  # To see all curves for b within the confidence interval:
+  #for(i in 1:length(bIn95))
+  #    {
+  #        lines(log10(x.PLB), log10( dPLB(x.PLB, b = bIn95[i], xmin=min(x.PLB),
+  #            xmax=max(x.PLB)) * length(x) * x.PLB), col="blue", lty=2)
+  #    }
+
+  # To add just the curves at the limits of the 95% confidence interval of b:
+  for(i in c(1, length(confVals.MLE)))
+      {
+        lines(log10(x.PLB),
+              log10( dPLB(x.PLB,
+                          b = confVals.MLE[i],
+                          xmin = min(x.PLB),
+                          xmax=max(x.PLB)) * length(x) * x.PLB),
+              col="red",
+              lty=2)
+      }
+
+  legend("topright", "(a)", bty="n", inset=inset)
 }
 
 
