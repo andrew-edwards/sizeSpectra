@@ -182,39 +182,20 @@
 ##'   $b$}
 ##'   \item{stdErr}{Standard error of estimate of $b$}
 ##' }
-##' @source Vignette `MEPS_IBTS_2`. TODO tidy up IBTS-analysis.R
+##' @source Vignette `MEPS_IBTS_2`.
 "fullResults"
-
-##' Regression fits from using each fitting method on each year of IBTS data set
-##' (for MEPS Table S.1)   TODO maybe not needed since calculated in vignette
-##'
-##' @format A dataframe with one row for each of the main eight methods, where
-##'   each row is an output from `timeSerPlot()` and so has columns:
-##'   * Method: method used
-##'   * Low: lower bound of 95\% confidence interval
-##'   * Trend: gradient of regression fit
-##'   * High: upper bound of 95\% confidence interval
-##'   * p: p-value of regression fit
-##'   * Rsquared: r-squared of regression fit
-##'   * adjRsquared: adjusted r-squared of regression fit
-##'
-##' @source Generated from running vignette `MEPS_IBTS_2`.
-"trendResults"
-
 
 ##' Results from using MLEbins method on each year of IBTS data set, as in MEPS Table S.2
 ##'
 ##' @format Table data frame (`tbl_df`) with 30 rows (one for each year) and
 ##'   corresponding columns for each year:
-##' \describe{
-##'   \item{Year}{Year of data}
-##'   \item{xmin}{Estimated $x_{min}$}
-##'   \item{xmax}{Estimated $x_{max}$}
-##'   \item{n}{Total number of individuals per hour}
-##'   \item{b}{Estimated size-spectrum exponent $b$}
-##'   \item{confMin, confMax}{Minimum and maximum of 95\% confidence interval of
-##'   $b$}
-##'   \item{C}{Calculated normalisation constant}
-##' }
+##'  * Year: Year of data
+##'  *  xmin: Estimated $x_{min}$
+##'  *  xmax: Estimated $x_{max}$
+##'  *  n: Total number of individuals per hour
+##'  *  b: Estimated size-spectrum exponent $b$
+##'  *  confMin,confMax: Minimum and maximum of 95\% confidence interval of
+##'     $b$
+##'  *  C: Calculated normalisation constant
 ##' @source Vignette `MEPS_IBTS_MLEbins`, TODO tidy up IBTS-MLEbins.R
 "MLEbins.res"

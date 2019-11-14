@@ -1470,9 +1470,15 @@ timeSerPlot = function(bForYears, legName, method, weightReg = FALSE,
 ##'   dataset. Must be in same format as `fullResults` which is for the IBTS
 ##'   data. Not tested yet with other data sets.
 ##'
-##' @return trendResults Dataframe of regression fits from using each fitting
-##'   method on each year of IBTS data set (for MEPS Table S.1). See `?trendResults`
-##'   for saved version and details of columns.
+##' @return Dataframe with one row for each of the main eight methods, where
+##'   each row is an output from `timeSerPlot()` and so has columns:
+##'   * Method: method used
+##'   * Low: lower bound of 95\% confidence interval
+##'   * Trend: gradient of regression fit
+##'   * High: upper bound of 95\% confidence interval
+##'   * p: p-value of regression fit
+##'   * Rsquared: r-squared of regression fit
+##'   * adjRsquared: adjusted r-squared of regression fit
 ##' @export
 ##' @author Andrew Edwards
 timeSerPlot.eight <- function(fullResults.local = fullResults

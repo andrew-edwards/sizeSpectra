@@ -61,8 +61,8 @@ plot(dataSumm$Year, dataSumm$uniqSpec, xlab="Year",
      ylab="No. unique species", type="o", ylim=c(0, max(dataSumm$uniqSpec)))
 ```
 
-Doesn't look to be any serious issue with this (no drastic changes in, for
-     example, species identification through time).
+There do not look to be any serious issue with this (no drastic changes in, for
+example, species identification through time).
 
 The following code calculates, using `eightMethods.count()`, the slope or
 exponent for each of the original eight methods for each year in turn, and saves a `.png` plot
@@ -82,15 +82,9 @@ for(ii in fullYears){
 ```
 
 Now to plot Figure 1, time series of each estimate of `b` for each method, and
-fit regression.
-
+fit regression:
 ```{r, fig.height = 7.5}
-timeSerPlot.eight()
-```
-
-The results are saved in the package (this is not run in the vignette though):
-```{r eval=FALSE}
-usethis::use_data(trendResults, overwrite = TRUE)
+trendResults = timeSerPlot.eight()
 ```
 
 The results of the regression analyses (Table S.1) are:

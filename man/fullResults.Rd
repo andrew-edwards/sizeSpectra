@@ -15,7 +15,7 @@ $b$}
 \item{stdErr}{Standard error of estimate of $b$}
 }}
 \source{
-Vignette \code{MEPS_IBTS_2}. TODO tidy up IBTS-analysis.R
+Vignette \code{MEPS_IBTS_2}.
 }
 \usage{
 fullResults
