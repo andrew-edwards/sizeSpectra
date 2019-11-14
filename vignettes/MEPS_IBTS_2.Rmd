@@ -92,23 +92,3 @@ The results of the regression analyses (Table S.1) are:
 knitr::kable(dplyr::select(trendResults, -adjRsquared),
              digits=c(0, 4, 4, 4, 2, 2))
 ```
-
-
-
-TODO: put this earlier somewhere, likely be done when tidying up initial data
-extraction stuff
-
-```{r, eval=FALSE}
-# To get particular species names:
-# load("ibtsQ1cpuelength.RData")
-# dataOrig = tbl_df(q1)
-# dplyr::filter(dataOrig, AphiaID == 105814)
-# Gives:
-# 105814 NS-IBTS 2012       1    3 Sciliorhinus caniculus      340
-# 105814 NS-IBTS 1999       1    3  Scyliorhinus canicula      580
-# 105814 NS-IBTS 2014       1    5  Scyliorhinus canicula      370
-# Great, two names. Go with Scyliorhinus canicula (Smallspotted Catshark
-#  [Sharks of the world, Compagno et al.])
-# 154675: Lumpenus lampretaeformis  (Snakeblenny)
-# 274304: Microchirus variegatus (Thickback SOle
-```
