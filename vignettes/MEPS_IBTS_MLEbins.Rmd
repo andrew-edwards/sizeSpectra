@@ -107,45 +107,23 @@ different values of the length-weight coefficients. Even with 1-cm length bins
 (and 0.5-cm for herring and sprat) the resulting body-mass bins can span a large
 range. See paper for further details.
 
-```{r}
-if(specCodeMaxRatio != 127251) stop("Need common name; not Blackbelly Rosefish")
-if(specCodeMaxWidth != 126436) stop("Need common name; not Atlantic Cod")
-
-specNameHighlight = dplyr::filter(specCodeNames, speccode %in% specCodeHighlight)
-specNameHighlight
-```
-
-TODO: *Triglops murrayi* is Moustache Sculpin (code 127205). *Lumpenus lampretaeformis* is Snakeblenny (code 154675). Data for these are
+Two species are highlighted: *Triglops murrayi* is Moustache Sculpin (code 127205). *Lumpenus lampretaeformis* is Snakeblenny (code 154675). Data for these are:
 ```{r highlight}
-dataHighlight = dplyr::filter(data, SpecCode %in% specCodeHighlight)
-dataHighlightSumm = dplyr::summarise(dplyr::group_by(dataHighlight, SpecCode),
-    minLngt = min(LngtClass),
-    maxLngt = max(LngtClass),
-    LWa = unique(LWa),
-    LWb = unique(LWb))
+dataHighlight = dplyr::filter(data,
+                              SpecCode %in% c(127205, 154675))
+dataHighlightSumm = dplyr::summarise(dplyr::group_by(dataHighlight,
+                                                     SpecCode),
+                                     minLngt = min(LngtClass),
+                                     maxLngt = max(LngtClass),
+                                     LWa = unique(LWa),
+                                     LWb = unique(LWb))
 dataHighlightSumm
 ```
 
+The widest resulting body-mass bin occurs for Atlantic Cod (`r res$specNameMaxWidth`), which is
+the rightmost species in the final figure above figure. The widest bin
+has a width of `r round(res$maxWidth, dig=0)` g.
 
-<!-- TODO: The body-mass bin with the biggest ratio of width to lower bound of the bin occurs for the Blackbelly Rosefish (\emph{\Sexpr{specNameMaxRatio}}) which is species code \Sexpr{specCodeMaxRatio}, indicated by $\times$ in Figure~\ref{fig:nSeaFungBins4} [not any more]. The bin goes from \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wmin, dig=2)} to \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wmax, dig=2)}~g, such that the ratio of bin-width to the lower bound is \Sexpr{round(dataBinSpec[rowMaxRatio, ]$wWidthRatio, dig=2)} (though this is hard to see in Figure~\ref{fig:nSeaFungBins4}). Consequently, in the earlier  analyses, all individuals of this species with a body-length of \Sexpr{dataBinMaxRatio$LngtMin}-\Sexpr{dataBinMaxRatio$LngtMax}~cm would get assigned a body length of \Sexpr{dataBinMaxRatio$LngtMin}~cm, and consequently a body mass of \Sexpr{round(dataBinMaxRatio$wmin, dig=2)}. However, the true possible range of body masses is \Sexpr{round(dataBinMaxRatio$wmin, dig=2)}-\Sexpr{round(dataBinMaxRatio$wmax, dig=2)}~g. Thus, individuals at the upper end of this range are being assigned body masses of about half of their actual body mass.-->
-
-The widest resulting body-mass bin occurs for Atlantic Cod (`r
-specNameMaxWidth`), which is species code `r specCodeMaxWidth`, the rightmost
-species in the final figure above figure. The widest bin goes from `r
-round(dataBinSpec[rowMaxWidth, ]$wmin, dig=0)` to `r
-round(dataBinSpec[rowMaxWidth, ]$wmax, dig=0)` g, with a width of `r
-round(dataBinSpec[rowMaxWidth, ]$wWidth, dig=0)` g.
-
-
-
-<!-- \onefig{nSeaFungBins1}{Vertical blue bars show the body-mass bins that result from converting the 1-cm length bins into body-mass bins using the species-specific length-weight parameters. These are the first 45 species, ordered by the maximum value of the highest bin. Herring and sprat use 0.5-cm length bins, and their resulting body-mass bins are given by crosses (sprat is code \Sexpr{spratCode}). The vertical gaps between vertical bars indicate that there were no body masses of that species in that range (i.e. there were no individuals in the length bin that would result in the body-mass bin(s) that would fill the gap). The two red columns indicate two species that are explicitly discussed in the text.}
-
-\onefig{nSeaFungBins2}{As for Figure~\ref{fig:nSeaFungBins1} but for the next 45 species -- note the different vertical axis scale from Figure~\ref{fig:nSeaFungBins1}.}
-
-\onefig{nSeaFungBins3}{As for Figure~\ref{fig:nSeaFungBins1} but for the final 45 species -- note the different vertical axis scale from Figure~\ref{fig:nSeaFungBins1}. In some sense the tail containing rare large organisms, characteristic of a power-law distribution, shows up if you rotate the figure clockwise 90 degrees -- it somewhat resembles a power-law distribution.}
-
-\onefig{nSeaFungBins4}{As for Figure~\ref{fig:nSeaFungBins3} but just for species with maximum body mass up to 10~kg to more clearly show their body-mass bins.}
--->
 
 ```{r echo=FALSE, eval=FALSE}
 # Plot of wmax for each species. I think it's a metric used somewhere.
