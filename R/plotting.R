@@ -1383,7 +1383,7 @@ timeSerPlot = function(bForYears,
                        bCol="black",
                        pchVal = 20,
                        cexVal = 1,
-                       confCol="black",
+                       confCol = "black",
                        confThick = 1,
                        xLim = NULL,
                        yLim = NULL,
@@ -1432,16 +1432,31 @@ timeSerPlot = function(bForYears,
                 tck=-xTicksSmallTck)
            }
        # Confidence intervals (instead of plotCI from regress2.Snw):
-       segments(x0=bForYears$Year+xJitter, y0=bForYears$confMin,
-                x1=bForYears$Year+xJitter, y1=bForYears$confMax)
-       if(!is.null(legExtra)) legend(legExtraPos, legExtra, bty="n",
-                                     col=legExtraCol, pch=pchVal, cex=cexVal)
+       segments(x0=bForYears$Year+xJitter,
+                y0=bForYears$confMin,
+                x1=bForYears$Year+xJitter,
+                y1=bForYears$confMax,
+                col = confCol)
+       if(!is.null(legExtra)){
+         legend(legExtraPos,
+                legExtra,
+                bty = "n",
+                col = legExtraCol,
+                pch = pchVal,
+                cex = cexVal)
+         }
        } else    # Add to existing plot
        {
-       points(bForYears$Year+xJitter, bForYears$b, col=bCol,
-         pch=pchVal, cex=cexVal)
-       segments(x0=bForYears$Year+xJitter, y0=bForYears$confMin,
-                x1=bForYears$Year+xJitter, y1=bForYears$confMax)
+         points(bForYears$Year+xJitter,
+                bForYears$b,
+                col=bCol,
+                pch=pchVal,
+                cex=cexVal)
+         segments(x0=bForYears$Year+xJitter,
+                  y0=bForYears$confMin,
+                  x1=bForYears$Year+xJitter,
+                  y1=bForYears$confMax,
+                  col = confCol)
        }
 
 
