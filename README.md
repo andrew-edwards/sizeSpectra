@@ -3,7 +3,7 @@ R package for fitting size spectra to ecological data (including binned data)
 
  <!-- badges: start -->
   [![Travis build status](https://travis-ci.org/andrew-edwards/sizeSpectra.svg?branch=master)](https://travis-ci.org/andrew-edwards/sizeSpectra)
-  [![Codecov test coverage](https://codecov.io/gh/andrew-edwards/sizeSpectra/branch/master/graph/badge.svg)](https://codecov.io/gh/andrew-edwards/sizeSpectra?branch=master)
+ <!-- [![Codecov test coverage](https://codecov.io/gh/andrew-edwards/sizeSpectra/branch/master/graph/badge.svg)](https://codecov.io/gh/andrew-edwards/sizeSpectra?branch=master) -->
   <!-- badges: end -->
 
 In development - not usable yet (though is downloadable if it says 'build passing' above)
@@ -21,7 +21,7 @@ Here is a movie showing fits to 30 years of International Bottom Trawl Survey da
 
 ![IBTS 30 years of data](vignettes/IBTS_movie.gif)
 
-The vignettes (TODO include links here, do an overview one) explain how to use the functions in the package to reproduce all results in both papers, and to analyse new data sets using our functions. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating text from the papers in the vignettes). In the vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
+The vignettes (TODO include links here if I end up committing them) explain how to use the functions in the package to reproduce all results in both papers, and to analyse new data sets using our functions. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating text from the papers in the vignettes). In the vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
 
 ## Install instructions
 
@@ -39,18 +39,15 @@ devtools::install_github("andrew-edwards/sizeSpectra", build_vignettes = TRUE)
 (May take a minute or so while building the vignettes). Then:
 ```
 library(sizeSpectra)
-vignette("Vignettes_overview", package="sizeSpectra")
-```
-to see an overview vignette in an html browser (with descriptions of each one), or
-```
 browseVignettes("sizeSpectra")
 ```
-to just list them.
-
-TODO Test browseVignettes...
+to list the vignettes (and links to their Rmarkdown, R and html versions). `Vignettes_overview` gives an overview of all vignettes, and is available either from the previous command or by just running
+```
+vignette("Vignettes_overview")
+```
 
 ## Issues, problems
 
 Please report any problems as a [GitHub Issue](https://github.com/andrew-edwards/sizeSpectra/issues), using a minimal working example if possible (and please check the closed issues first).
 
-Note that this code was written over several years, and then converted into a package. As such, I have not used consistent naming conventions (e.g. some column names are camelCase while others are not) like I would now if starting a package from scratch -- these may be partly corrected if time permits.
+Note that this code was written over several years, and then converted into a proper R package. As such, I have not used consistent naming conventions (e.g. some column names are camelCase while others are not) like I would now if starting a package from scratch -- these may be partly corrected if time permits.
