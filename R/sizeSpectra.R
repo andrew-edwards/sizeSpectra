@@ -13,8 +13,9 @@
 NULL
 
 # As for gfiphc repo, need these to avoid warnings related to dplyr
-# commands (e.g. referring to the column names withing dplyr::filter().
-# Copied from the warning given by check() (that puts them alphabetical).
+# commands (e.g. referring to the column names withing dplyr::filter()).
+# Copied from the warning given by check() (that puts them alphabetical, then
+# had some more to add at the end).
 if (getRversion() >= "2.15.1") utils::globalVariables(c("."))
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
@@ -60,6 +61,18 @@ if (getRversion() >= "2.15.1") {
            "xbigticks",
            "xmax",
            "xmin",
-           "xsmallticks"
+           "xsmallticks",
+           "Method",
+           "SpecCode",
+           "fullResults",
+           "lenEnd",
+           "lenMid",
+           "lenStart",
+           "massEnd",
+           "massStart",
+           "maxWmax",
+           "speccode",
+           "species",
+           "wWidth"
   ))
 }

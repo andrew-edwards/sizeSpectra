@@ -89,7 +89,7 @@ fitted using MLE:
 MLE.plots.recommend(x = x,
                     b.MLE = eight.results$hMLE.list$b,
                     confVals.MLE = eight.results$hMLE.list$confVals,
-                    hLBN.biom.list = eight.results$hLBN.biom.list)
+                    hLBNbiom.list = eight.results$hLBNbiom.list)
 ```
 
 ## Figure A.1 -- individual size distribution plot with linear y-axis

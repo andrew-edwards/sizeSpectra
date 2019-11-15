@@ -726,10 +726,14 @@ MLE.plot <- function(x,
 ##' @param b.MLE MLE estimate of $b$
 ##' @param confVals.MLE Confidence interval for estimate of b (two-component vector
 ##'   for bounds of confidence interval)
-##' @param LBNbiom.list Results from LBNbiom.method(x). If NULL then calculate
-##'   them here.
 ##' @param inset Inset distance for legend
-##'
+##' @param mgpVals mpg values
+##' @param xLim x-axis limits
+##' @param yLim y-axis limits
+##' @param yBigTicks Large tick marks for y-axis
+##' @param ySmallTicks Small tick marks for y-axis
+##' @param hLBNbiom.list Results from LBNbiom.method(x). If NULL then calculate
+##'   them here.
 ##' @return Panel plot with LBN plot at top and ISD with fitted MLE and
 ##'   confidence intervals at the bottom.
 ##' @export
@@ -737,7 +741,7 @@ MLE.plot <- function(x,
 MLE.plots.recommend <- function(x,
                                 b.MLE,
                                 confVals.MLE,
-                                hLBN.biom.list = NULL,
+                                hLBNbiom.list = NULL,
                                 inset = c(0, -0.04),
                                 mgpVals = c(1.6, 0.5, 0),
                                 xLim = c(0, 2.7),
@@ -751,7 +755,7 @@ MLE.plots.recommend <- function(x,
       mfrow = c(2,1),
       mgp = mgpVals)
 
-  if(is.null(hLBN.biom.list)){
+  if(is.null(hLBNbiom.list)){
     hLBNbiom.list = LBNbiom.method(x)
   }
 

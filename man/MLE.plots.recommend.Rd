@@ -4,7 +4,7 @@
 \alias{MLE.plots.recommend}
 \title{Recommended LBN-type plot with ISD for fitted MLE (MEE Figure 6)}
 \usage{
-MLE.plots.recommend(x, b.MLE, confVals.MLE, hLBN.biom.list = NULL,
+MLE.plots.recommend(x, b.MLE, confVals.MLE, hLBNbiom.list = NULL,
   inset = c(0, -0.04), mgpVals = c(1.6, 0.5, 0), xLim = c(0, 2.7),
   yLim = c(0, 3), yBigTicks = 0:3, ySmallTicks = c(0.5, 1.5, 2.5))
 }
@@ -16,10 +16,20 @@ MLE.plots.recommend(x, b.MLE, confVals.MLE, hLBN.biom.list = NULL,
 \item{confVals.MLE}{Confidence interval for estimate of b (two-component vector
 for bounds of confidence interval)}
 
+\item{hLBNbiom.list}{Results from LBNbiom.method(x). If NULL then calculate
+them here.}
+
 \item{inset}{Inset distance for legend}
 
-\item{LBNbiom.list}{Results from LBNbiom.method(x). If NULL then calculate
-them here.}
+\item{mgpVals}{mpg values}
+
+\item{xLim}{x-axis limits}
+
+\item{yLim}{y-axis limits}
+
+\item{yBigTicks}{Large tick marks for y-axis}
+
+\item{ySmallTicks}{Small tick marks for y-axis}
 }
 \value{
 Panel plot with LBN plot at top and ISD with fitted MLE and
