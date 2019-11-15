@@ -249,6 +249,7 @@ res.MLE = timeSerPlot(fullResults.MLE,
                       legPos = "bottomleft",
                       weightReg = TRUE,
                       bCol = MLE.col,
+                      confCol = MLE.col,
                       pchVal = 19,
                       regPlot = FALSE,
                       regColNotSig = "lightblue",
@@ -273,105 +274,6 @@ res.MLEbins.new = timeSerPlot(fullResults.MLEbins,
                               regColSig = "darkred",
                               xJitter = 0.03)
 ```
-
-Finally, some further calculations to compare trends. This gives the ratio of
-the estimates of *b* between the two methods:
-```{r bRatio, fig.width=7.5, fig.height=6.3}
-bRatio = fullResults.MLE$b / fullResults.MLEbins$b
-xLim = range(bYears)
-yLim = c(1, max(bRatio))
-smallTck = 0.01
-
-lm.bRatio = lm(bRatio ~ bYears)
-yearInc = seq(xLim[1], xLim[2], 0.1)
-p.conf.bRatio = predict(lm.bRatio,
-                        newdata=data.frame(Year=bYears),
-                        interval="confidence")
-pVal.bRatio = summary(lm.bRatio)$coeff["bYears", 4]
-
-plot( bYears,
-     bRatio,
-     xlab="Year",
-     pch=19,
-     ylab= expression(paste("(",
-                            italic(b),
-                            " from MLE)/(",
-                            italic(b),
-                            " from MLEbins)"),
-                      sep=""),
-     ylim = yLim)
-xTicksSmall = seq(xLim[1], xLim[-1], by=1)
-axis(1,
-     at = xTicksSmall,
-     labels = rep("", length(xTicksSmall)),
-     tck=-smallTck)
-yTicksSmall = seq(yLim[1], yLim[-1], by=0.05)
-axis(2,
-     at = yTicksSmall,
-     labels = rep("", length(yTicksSmall)),
-     tck=-smallTck)
-
-if (pVal.bRatio > 0.05) regCol = "darkgrey" else regCol = "red"
-lm.line(xLim, lm.bRatio, col=regCol)
-matlines(bYears,
-         p.conf.bRatio[ ,c("lwr", "upr")],
-         col=regCol,
-         lty=2)
-confVals = confint(lm.bRatio, "bYears", level=0.95)
-```
-Above figure shows the annual ratio of the estimate of *b* using the original
-MLE method to the estimate of *b* using the MLEbins method. The linear
-regression slope is `r round(lm.bRatio$coeff[2],dig=5)` with 95\% confidence
-interval `r round(confVals[1],dig=5)` to `r round(confVals[2],dig=5)`, *p*=`r
-round(pVal.bRatio, dig=5)`, *R*^2=`r round(summary(lm.bRatio)$r.squared, dig=3)`.
-
-
-And this shows the difference of the estimates of *b* between the two methods.
-```{r bDiff, fig.width=7.5, fig.height=6.3}
-bDiff = fullResults.MLEbins$b - fullResults.MLE$b
-yLim = range(pretty(bDiff))
-
-lm.bDiff = lm(bDiff ~ bYears)
-p.conf.bDiff = predict(lm.bDiff,
-                       newdata=data.frame(Year=bYears),
-                       interval="confidence")
-pVal.bDiff = summary(lm.bDiff)$coeff["bYears",4]
-
-plot(bYears,
-     bDiff,
-     xlab="Year",
-     pch=19,
-     ylab= expression(paste("(",
-                            italic(b),
-                            " from MLEbins) - (",
-                            italic(b),
-                            " from MLE)"),
-                      sep=""),
-     ylim = yLim)
-xTicksSmall = seq(xLim[1], xLim[-1], by=1)
-axis(1,
-     at = xTicksSmall,
-     labels = rep("", length(xTicksSmall)),
-     tck=-smallTck)
-yTicksSmall = seq(yLim[1], yLim[-1], by=0.01)
-axis(2,
-     at = yTicksSmall,
-     labels = rep("", length(yTicksSmall)),
-     tck=-smallTck)
-
-if (pVal.bDiff > 0.05) regCol = "darkgrey" else regCol = "red"
-lm.line(xLim, lm.bDiff, col=regCol)
-matlines(bYears,
-         p.conf.bDiff[ ,c("lwr", "upr")],
-         col = regCol,
-         lty=2)
-confVals = confint(lm.bDiff, "bYears", level=0.95)
-```
-The above figure shows the annual difference of the estimate of *b* using
-MLEbins to the estimate of *b* using the original MLE method. The linear
-regression slope is `r round(lm.bDiff$coeff[2],dig=5)` with 95\% confidence
-interval `r round(confVals[1],dig=5)` to `r round(confVals[2],dig=5)`, *p*=`r
-round(pVal.bDiff, dig=5)`, *R*^2=`r round(summary(lm.bDiff)$r.squared, dig=3)`.
 
 TODO: THINK this can all go, S.2 done belowFinally, the actual results for each method, with the MLEbins table being Table
 S.2:
