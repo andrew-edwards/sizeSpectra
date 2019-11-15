@@ -153,11 +153,12 @@
 ##' Species codes and their scientific names
 ##'
 ##' @format Tibble with columns
-##'   * species: Scientific name of species
-##'   * speccode: Species code used in the IBTS data for that species (maybe
-##'   not all species codes are here).
+##'  * species: Scientific name of species
+##'  * speccode: Species code used in the IBTS data for that species (maybe
+##'    not all species codes are here).
 ##'
-##' @source Aphia species codes, Julia obtained from DATRAS (the ICES DATRAS R packages likely have them all).
+##' @source Aphia species codes, Julia obtained them from DATRAS (the ICES
+##'  DATRAS R packages likely has them all).
 "specCodeNames"
 
 ##' Full results from using each fitting method on each year of IBTS data set.
