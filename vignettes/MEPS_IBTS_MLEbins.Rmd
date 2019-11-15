@@ -228,34 +228,35 @@ knitr::kable(dplyr::select(trendResultsMLEbinsNew, Method, Low, Trend, High, p, 
              digits=c(NA, 4, 4, 4, 2, 2))
 ```
 
+And use the results to plot Figure 8, comparing results from the original MLE
+method with those from the MLEbins method.
 ```{r fig.width=7.5, fig.height=6.3}
-fullResults.MLEbins = MLEbins.nSeaFung.new  # TODO should have just used
-                                        # MLEbins..; and simplify
+fullResults.MLEbins = MLEbins.nSeaFung.new  # Should really have just used
+                                        # MLEbins..; happened to include nSeaFung early on
 trend.MLEbins.new = dplyr::filter(trendResultsMLEbinsNew,
                                   Method == "MLEbins")
 fullResults.MLE = dplyr::filter(fullResults, Method == "MLE")
 
 bYears = fullResults.MLE$Year
-xLim = range(bYears)
-yLim = c(-1.82, -1.35)
 MLE.col = "blue"
 MLEbins.col = "red"
 res.MLE = timeSerPlot(fullResults.MLE,
                       legName = "",
-                      xLim=xLim,
-                      yLim=yLim,
+                      xLim = range(bYears),
+                      yLim = c(-1.82, -1.35),
                       xLab = "Year",
                       method = "MLE",
                       legPos = "bottomleft",
-                      weightReg=TRUE,
-                      bCol=MLE.col,
+                      weightReg = TRUE,
+                      bCol = MLE.col,
+                      pchVal = 20,
                       regPlot = FALSE,
                       regColNotSig = "lightblue",
-                      regColSig="darkblue",
+                      regColSig = "darkblue",
                       xTicksSmallInc = 1,
                       yTicksSmallInc = 0.02,
                       legExtra = c("MLEbins", "MLE"),
-                      legExtraCol=c(MLEbins.col, MLE.col),
+                      legExtraCol = c(MLEbins.col, MLE.col),
                       legExtraPos = "topleft",
                       xJitter = -0.03)       # MLEbins on top as values are higher in figure
 
@@ -265,6 +266,7 @@ res.MLEbins.new = timeSerPlot(fullResults.MLEbins,
                               weightReg=TRUE,
                               newPlot=FALSE,
                               bCol=MLEbins.col,
+                              pchVal = 1,
                               regPlot = FALSE,
                               regColNotSig = "pink",
                               regColSig="darkred",

@@ -1376,19 +1376,35 @@ MLEmid.MLEbin.table = function(results.list)
 ##'   * adjRsquared: adjusted r-squared of regression fit
 ##' @export
 ##' @author Andrew Edwards
-timeSerPlot = function(bForYears, legName, method, weightReg = FALSE,
-    bCol="black",
-    pchVal = 20, cexVal = 1, confCol="black", confThick = 1,
-    xLim = NULL, yLim = NULL, xLab="",
-    yLab = expression(paste("Estimate of ", italic(b)), sep=""),
-    xTicksSmallInc = NULL, xTicksSmallTck = 0.01,
-    yLabels = TRUE, yTicksSmallInc = NULL, yTicksSmallTck = 0.01,
-    legPos = "topleft", newPlot = TRUE,
-    regPlot = TRUE,
-    regColNotSig = "darkgrey", regColSig = "red",
-    legExtra = NULL, legExtraPos = "topleft", legExtraCol = "",
-    insetVal = c(-0.08, -0.06),
-    xJitter = 0)
+timeSerPlot = function(bForYears,
+                       legName,
+                       method,
+                       weightReg = FALSE,
+                       bCol="black",
+                       pchVal = 20,
+                       cexVal = 1,
+                       confCol="black",
+                       confThick = 1,
+                       xLim = NULL,
+                       yLim = NULL,
+                       xLab="",
+                       yLab = expression(paste("Estimate of ", italic(b)),
+                                         sep=""),
+                       xTicksSmallInc = NULL,
+                       xTicksSmallTck = 0.01,
+                       yLabels = TRUE,
+                       yTicksSmallInc = NULL,
+                       yTicksSmallTck = 0.01,
+                       legPos = "topleft",
+                       newPlot = TRUE,
+                       regPlot = TRUE,
+                       regColNotSig = "darkgrey",
+                       regColSig = "red",
+                       legExtra = NULL,
+                       legExtraPos = "topleft",
+                       legExtraCol = "",
+                       insetVal = c(-0.08, -0.06),
+                       xJitter = 0)
     {
     if(is.null(xLim))
         {
