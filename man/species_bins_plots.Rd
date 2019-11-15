@@ -4,7 +4,8 @@
 \alias{species_bins_plots}
 \title{Plot the species-specific bins for all species, as in Figures 6, S.1, S.2 and S.3}
 \usage{
-species_bins_plots(dataBin_vals = dataBin, postscript = FALSE)
+species_bins_plots(dataBin_vals = dataBin, postscript = FALSE,
+  specCodeHighlight = c(127205, 154675))
 }
 \arguments{
 \item{dataBin_vals}{dataframe in the same format as the saved dataset \code{dataBin}
@@ -12,6 +13,9 @@ species_bins_plots(dataBin_vals = dataBin, postscript = FALSE)
 
 \item{postscript}{If TRUE then save four separate postscript figures, else
 just plot the four figures to the active device}
+
+\item{specCodeHighlight}{Species to highlight in red in Figure 6 (species
+127251 for Figure A.4 is done within the function).}
 }
 \value{
 list containing:

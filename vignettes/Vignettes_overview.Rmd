@@ -82,8 +82,7 @@ The vignettes are:
   the MLEbins method. Gives Figure 6 (and related Figures S.1, S.2 and S.3)
   showing species-specific body mass bins resulting from the length bins, Figure
   8 (comparison of MLE and MLEbins values of b through time), MLEbins row of
-  Table S.1, and Table S.2. Also some extra figures that helped understanding
-  but didn't need to go into the paper.
+  Table S.1, and Table S.2.
 
 * [MEPS_IBTS_recommend.html](MEPS_IBTS_recommend.html): Calculations and schematic diagram
   (Figure S.4, somewhat automated for any species) to help explain the
