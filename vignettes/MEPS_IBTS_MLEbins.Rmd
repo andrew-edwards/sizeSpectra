@@ -150,7 +150,7 @@ axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)), tck=-smallTck)
 # points(2011, dplyr::filter(maxWmaxByYear, Year == 2011)$maxWmax, col="red", pch=19)
 ```
 
-## Likelihood calculations using new MLEbins method}
+## Likelihood calculations using new MLEbins method
 
 Now use the MLEbins method to fit each year of data in turn.
 
