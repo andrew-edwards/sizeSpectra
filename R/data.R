@@ -1,6 +1,3 @@
-# Think \describe can just be * like in R functions. - has to be. TODO change
-# them all to like I have in trendResults. Ugh.
-
 ##' Results of fitting 10,000 data sets using eight methods (MEE paper)
 ##'
 ##' Default simulation results from generating 10,000 data sets from a bounded power law,
@@ -9,23 +6,22 @@
 ##' of estimated exponent $b$ in MEE Figures 3 and 4, and statistics in Table 2
 ##' (except for MLEbin method).
 ##' @format A list with elements:
-##' \describe{
-##'   \item{Llin.rep.df}{Dataframe with columns `slope`, `confMin` and `confMax`,
+##'   * Llin.rep.df: Dataframe with columns `slope`, `confMin` and `confMax`,
 ##'   giving the estimated slope, min and max of 95% confidence intervals from
-##' the Llin method, with each row representing the values for one of the 10,000 simulated data sets}
-##'   \item{LT.rep.df, LTplus1.rep.df, LBmiz.rep.df, LBbiom.rep.df, LBNbiom.rep.df, LCD.rep.df}{
-##'   Corresponding respective data frames for the next six methods}
-##'   \item{MLE.rep.df}{Corresponding dataframe for the MLE method but with the
-##' first column estimating $b$ not a slope}
-##'   \item{MLEfix.rep.df}{Same as `MLE.rep.df` but for the MLEfix method, fixing $x_{max}$ to the known
+##' the Llin method, with each row representing the values for one of the 10,000 simulated data sets
+##'   * LT.rep.df, LTplus1.rep.df, LBmiz.rep.df, LBbiom.rep.df, LBNbiom.rep.df, LCD.rep.df:
+##'   Corresponding respective data frames for the next six methods
+##'   * MLE.rep.df: Corresponding dataframe for the MLE method but with the
+##' first column estimating $b$ not a slope
+##'   * MLEfix.rep.df: Same as `MLE.rep.df` but for the MLEfix method, fixing $x_{max}$ to the known
 ##'   value of 1000 for each simulated data set (for Figures A.3, A.4 and A.5 of
-##'   MEE).}
-##'   \item{MLE.rep.xmax}{The corresponding estimate of $x_max$ for the MLE
-##' method (namely `max(x)`) for each simulated data set.}
-##'   \item{b}{Default value of `b` (namely -2) for simulations.}
-##'   \item{xmin}{Default value of `xmin` (namely 1) for simulations.}
-##'   \item{xmax}{Default value of `xmax` (namely 1000) for simulations.}
-##' }
+##'   MEE).
+##'   * MLE.rep.xmax: The corresponding estimate of $x_max$ for the MLE
+##' method (namely `max(x)`) for each simulated data set.
+##'   * b: Default value of `b` (namely -2) for simulations.
+##'   * xmin: Default value of `xmin` (namely 1) for simulations.
+##'   * xmax: Default value of `xmax` (namely 1000) for simulations.
+##'
 ##' @source Generated from running `data-raw/simulate-data.R`.
 "eight.results.default"
 
@@ -90,21 +86,20 @@
 ##' @format Dataframe with 178,435 rows and 13 columns, which are (I think
 ##' automatically named from the DATRAS database, with `a` and `b` added from Fung et
 ##' al. by Julia, though see vignette for units):
-##' \describe{
-##'   \item{AphiaID}{}
-##'   \item{Survey}{}
-##'   \item{Year}{}
-##'   \item{Quarter}{}
-##'   \item{Area}{}
-##'   \item{Species}{}
-##'   \item{LngtClas}{}
-##'   \item{CPUE_number_per_hour}{}
-##'   \item{Taxonomic.group}{}
-##'   \item{a}{}
-##'   \item{b}{}
-##'   \item{weight_g}{}
-##'   \item{CPUE_bio_per_hour}{}
-##' }
+##'   * AphiaID
+##'   * Survey
+##'   * Year
+##'   * Quarter
+##'   * Area
+##'   * Species
+##'   * LngtClas
+##'   * CPUE_number_per_hour
+##'   * Taxonomic.group
+##'   * a
+##'   * b
+##'   * weight_g
+##'   * CPUE_bio_per_hour
+##'
 ##' @source From running `data-raw/IBTS-data.R` on the original data file (that
 ##' is too big to save in this package).
 "dataOrig"
@@ -113,20 +108,19 @@
 ##'
 ##' @format Dataframe where each of 42,298 rows is a unique combination of `Year`,
 ##' `SpecCode` and `LngtClass`. Columns are:
-##' \describe{
-##'   \item{Year}{Year of survey}
-##'   \item{SpecCode}{Species code}
-##'   \item{LngtClass}{The minimum value (cm) of the 1-cm length bin, or
-##'   the 0.5-cm bin for Atlantic Herring and European Sprat}
-##'   \item{Number}{Number of individuals per hour of trawling observed for that
-##'   combination of `Year`, `SpecCode` and `LngtClass`.}
-##'   \item{LWa}{Length-weight coefficient \eqn{\alpha} from Fung et al. (2012) for that
-##'   species, as per our MEPS equation (1).}
-##'   \item{LWb}{Length-weight coefficient \eqn{\beta} from Fung et al. (2012) for that
-##'   species, as per our MEPS equation (1).}
-##'   \item{bodyMass}{Estimated body mass (g) for an individual of that species,
-##'   assuming `LngtClass` to be the length.}
-##' }
+##'   * Year: Year of survey
+##'   * SpecCode: Species code
+##'   * LngtClass: The minimum value (cm) of the 1-cm length bin, or
+##'   the 0.5-cm bin for Atlantic Herring and European Sprat
+##'   * Number: Number of individuals per hour of trawling observed for that
+##'   combination of `Year`, `SpecCode` and `LngtClass`.
+##'   * LWa: Length-weight coefficient \eqn{\alpha} from Fung et al. (2012) for that
+##'   species, as per our MEPS equation (1).
+##'   * LWb: Length-weight coefficient \eqn{\beta} from Fung et al. (2012) for that
+##'   species, as per our MEPS equation (1).
+##'   * bodyMass: Estimated body mass (g) for an individual of that species,
+##'   assuming `LngtClass` to be the length.
+##'
 ##' @source From preprocessing as per vignette `MEPS_IBTS_1`.
 "IBTS_data"
 
@@ -135,36 +129,34 @@
 ##'
 ##' @format Dataframe where each of 42,298 rows is a unique combination of `Year`,
 ##' `SpecCode` and `LngtMin`. Columns are:
-##' \describe{
-##'   \item{Year}{Year of survey}
-##'   \item{SpecCode}{Species code}
-##'   \item{LngtMin}{The minimum value (cm) of each length bin, same as
-##'   `LngtClass` in `IBTS_data`.}
-##'   \item{LngtMax}{The maximum value (cm) of each length bin, taking into
+##'   * Year: Year of survey
+##'   * SpecCode: Species code
+##'   * LngtMin: The minimum value (cm) of each length bin, same as
+##'   `LngtClass` in `IBTS_data`.
+##'   * LngtMax: The maximum value (cm) of each length bin, taking into
 ##'   account that all bin widths are 1 cm except for Atlantic Herring and European
-##'   Sprat that are 0.5 cm.}
-##'   \item{LWa}{Length-weight coefficient \eqn{\alpha} from Fung et al. (2012) for that
-##'   species, as per our MEPS equation (1).}
-##'   \item{LWb}{Length-weight coefficient \eqn{\beta} from Fung et al. (2012) for that
-##'   species, as per our MEPS equation (1).}
-##'   \item{wmin}{The minimum value (g) of each body-mass bin, based on the
-##'   species-specific length-weight coefficients and `LngtMin`.}
-##'   \item{wmax}{The maximum value (g) of each body-mass bin, based on the
-##'   species-specific length-weight coefficients and `LngtMax`.}
-##' \item{Number}{Number of individuals per hour of trawling observed for that
-##'   combination of `Year`, `SpecCode` and `LngtMin`.}
-##' }
+##'   Sprat that are 0.5 cm.
+##'   * LWa: Length-weight coefficient \eqn{\alpha} from Fung et al. (2012) for that
+##'   species, as per our MEPS equation (1).
+##'   * LWb: Length-weight coefficient \eqn{\beta} from Fung et al. (2012) for that
+##'   species, as per our MEPS equation (1).
+##'   * wmin: The minimum value (g) of each body-mass bin, based on the
+##'   species-specific length-weight coefficients and `LngtMin`.
+##'   * wmax: The maximum value (g) of each body-mass bin, based on the
+##'   species-specific length-weight coefficients and `LngtMax`.
+##' * Number: Number of individuals per hour of trawling observed for that
+##'   combination of `Year`, `SpecCode` and `LngtMin`.
+##'
 ##' @source From amending `IBTS_data` as per vignette `MEPS_IBTS_MLEbins`.
 "dataBin"
 
 ##' Species codes and their scientific names
 ##'
 ##' @format Tibble with columns
-##' \describe{
-##'   \item{species}{Scientific name of species}
-##'   \item{speccode}{Species code used in the IBTS data for that species (maybe
-##'   not all species codes are here).}
-##' }
+##'   * species: Scientific name of species
+##'   * speccode: Species code used in the IBTS data for that species (maybe
+##'   not all species codes are here).
+##'
 ##' @source Aphia species codes, Julia obtained from DATRAS (the ICES DATRAS R packages likely have them all).
 "specCodeNames"
 
@@ -174,14 +166,13 @@
 ##'
 ##' @format Data frame with 240 rows (one row for each of 30 years for each of
 ##'   the 8 methods) and corresponding columns for each year-method combination:
-##' \describe{
-##'   \item{Year}{Year of data}
-##'   \item{Method}{Method used}
-##'   \item{b}{Estimated size-spectrum exponent $b$}
-##'   \item{confMin, confMax}{Minimum and maximum of 95\% confidence interval of
-##'   $b$}
-##'   \item{stdErr}{Standard error of estimate of $b$}
-##' }
+##'   * Year: Year of data
+##'   * Method: Method used
+##'   * b: Estimated size-spectrum exponent $b$
+##'   * confMin, confMax: Minimum and maximum of 95\% confidence interval of
+##'   $b$
+##'   * stdErr: Standard error of estimate of $b$
+##'
 ##' @source Vignette `MEPS_IBTS_2`.
 "fullResults"
 
