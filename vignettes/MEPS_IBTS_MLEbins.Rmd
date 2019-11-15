@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Analyses of IBTS data using the MLEbins method
+## Analyses of IBTS data using the MLEbins method
 
 This vignette analyses the IBTS data using the MLEbins method that explicitly accounts for
 the species-specific body-mass bins.
@@ -33,61 +33,23 @@ library(tibble)  # Else prints all of a tibble
 data = IBTS_data
 data
 ```
-<!-- From nSeaMLEbins.Snw, removing what isn't needed. Took this from -->
-<!-- fitting-size-spectra repo, think I took earlier ones from manuscript2 -->
-
-TODO: And see what to save in data-raw/IBTS-MLEbins.R, copy those lines to end of here
-
-
-```{r}
-# require(xtable)
-# require(gplots)                 # for plotCI
-```
-
-TODO - put into earlier vignette
-```{r}
-specCodeNames                  # species names and id's. But there are more
-                               #  species in the data than here (see later)
-length(unique(specCodeNames$speccode))   # checking speccode are unique
-```
 
 ## Determining which rows are 0.5 cm bins
 
 `LngtClass` for all species is the minimum value of a 1-cm-width bin, except for
 herring (*Clupea harengus*) and sprat (*Sprattus sprattus*) for which lengths
 are rounded down to 0.5 cm values (so the bins are 0.5-cm wide). The `SpecCode`
-values for these:
+values for these are:
 
 ```{r speciesNames}
 herringCode = dplyr::filter(specCodeNames, species == "Clupea harengus")$speccode
 herringCode
 spratCode = dplyr::filter(specCodeNames, species == "Sprattus sprattus")$speccode
 spratCode
-```
-
-TODO: this may have been done in earlier vignette - delete one or the other,
-this seems concise and is appropriate here.
-
-Verify that: (i) these species codes do have 0.5 cm values for `LngtClass`, and
-(ii) that no other species codes have 0.5 cm values for `LngtClass`.
-
-```{r verify}
-herring = dplyr::filter(data, SpecCode == herringCode)
-unique(herring$LngtClass)
-sprat = dplyr::filter(data, SpecCode == spratCode)
-unique(sprat$LngtClass)
-```
-
-So, yes, both have 0.5 cm length classes.
-
-```{r verify2}
 specCode05 = c(herringCode, spratCode)      # species codes with 0.5cm length bins
-others = dplyr::filter(data, !SpecCode %in% specCode05)
-sort(unique(others$LngtClass))
 ```
 
-Can visually see that there are no 0.5 values, confirming that just the two
-species have the 0.5-cm length bins.
+Verified earlier that only these two species have 0.5 cm values for `LngtClass`.
 
 ## Append the max of the bin breaks for each row
 
@@ -115,7 +77,8 @@ dataBin = dplyr::rename(dataBin, wmin = bodyMass)
 dataBin = dataBin[ , c("Year", "SpecCode", "LngtMin", "LngtMax",
                        "LWa", "LWb", "wmin", "wmax", "Number")]     # Reorder columns
 
-range(dplyr::mutate(dataBin, wminCheck = LWa * LngtMin^LWb)$wminCheck - dataBin$wmin)
+range(dplyr::mutate(dataBin,
+                    wminCheck = LWa * LngtMin^LWb)$wminCheck - dataBin$wmin)
                                               # Verifying that wmin is correct
                                               # (was calculated independently)
 length(unique(dataBin$SpecCode))
@@ -131,170 +94,12 @@ usethis::use_data(dataBin, overwrite = TRUE)
 
 So there are `r length(unique(dataBin$SpecCode))` uniques species. Now going to
 plot the resulting body mass bins for each species, with 45 on each figure. This
-gives Figures 6, S.1, S.2 and S.3. First wrangle the data and calculate some
-useful values:
+gives Figures 6, S.1, S.2 and S.3. This function wrangles the data, calculates
+some useful values and plots all four figures:
 
-```{r}
-# Just need the species-specific bodymass bins, don't need
-#  Year, length info or Number.
-dataBinSpec = dplyr::summarise(dplyr::group_by(dataBin, SpecCode, wmin),
-                               wmax = unique(wmax))
-# Arrange species in order of their max(wmax)
-
-dataBinSpecWmax = dplyr::summarise(dplyr::group_by(dataBinSpec, SpecCode),
-                                   maxWmax = max(wmax))
-dataBinSpecWmax = dplyr::ungroup(dataBinSpecWmax)
-dataBinSpecWmax = dplyr::arrange(dataBinSpecWmax, maxWmax)   # Species in order of maxWmax
-dataBinSpec = dplyr::ungroup(dataBinSpec)
-# http://stackoverflow.com/questions/26548495/reorder-rows-using-custom-order
-# Create levels in the desired order
-dataBinSpec = dplyr::mutate(dataBinSpec,
-                            SpecCode = factor(SpecCode,
-                                              levels = dataBinSpecWmax$SpecCode))
-dataBinSpec = dplyr::arrange(dataBinSpec, SpecCode)
-
-uniqBinSpecCode = levels(dataBinSpec$SpecCode) # species codes in
-                                               #  the desired order
-
-# species in the data (in order of figures) but with no name (just to avoid
-#  highlighting in figures):
-specIDnoName = setdiff(uniqBinSpecCode, specCodeNames$speccode)
-# species with names but not in data (not so important):
-# specNotInData = setdiff(specCodeNames$speccode, uniqBinSpecCode)
-
-# max number of bins for any species:
-maxNumBins = max(dplyr::summarise(dplyr::group_by(dataBinSpec,
-                                                  SpecCode),
-                                  numBins = length(unique(wmin)))$numBins)
-
-dataBinSpec = dplyr::mutate(dataBinSpec,
-                            wWidth = wmax - wmin,
-                            wWidthRatio = wWidth/wmin)
-          # wWidth is width of body-mass bin, wWidthRatio is ratio to wmin
-rowMaxWidth = which.max(dataBinSpec$wWidth)
-specCodeMaxWidth = dataBinSpec[rowMaxWidth, ]$SpecCode
-specNameMaxWidth = dplyr::filter(specCodeNames, speccode ==  specCodeMaxWidth)$species
-
-rowMaxRatio = which.max(dataBinSpec$wWidthRatio)
-specCodeMaxRatio = dataBinSpec[rowMaxRatio, ]$SpecCode
-specNameMaxRatio = dplyr::filter(specCodeNames, speccode ==  specCodeMaxRatio)$species
-dataBinMaxRatio = dplyr::filter(dataBin,
-                                SpecCode == specCodeMaxRatio,
-                                wmin == dataBinSpec[rowMaxRatio, ]$"wmin")
-                                   # original data row(s) for maxRatio. "wmin"
-                                   #  needed since wmin appears in dataBin also
-```
-
-Now create the figures:
 ```{r fig.width=7.5, fig.height=6}
-col = c("blue", "lightblue")     # Colours for bins
-colHighlight = c("red", "pink")  # Colours for herring and sprat
-
-thick = 7                           # thickness of bins
-
-# Doing 3 figures, each with 135/3 = 45 species. Then a fourth that is
-#  just some of the third one.
-numSpec = 45                   # Number of species in a figure
-specVecStart = c(1, 1 + numSpec, 1 + 2*numSpec, 1 + 2*numSpec)  # start species for fig
-specVecEnd = specVecStart + numSpec - 1
-specVecEnd[4] = specVecStart[4] + 37 - 1
-                               # species 126447, as seen in Fig S.2 (not automated)
-                               #  is the largest one below 10kg, to make Fig S.3
-
-smallTicks = c(2, 20, 1000, 200)        # location of small ticks for fig.num
-medTicks = c(10, 100, 5000, 1000)       # location of medium (unlabelled) ticks
-
-xLimMax = c(10, 10, 10, specVecEnd/numSpec * 10)
-
-specCodeHighlight = c(127205, 154675)
-                                   #  now doing two for first figure for
-                                   #  manuscript. Plus 127251 for Figure A.4 done
-                                   #  within loop.
-
-for(fig.num in 1:4)      # doing 3 figures
-    {
-    specForFig = uniqBinSpecCode[ specVecStart[fig.num]:specVecEnd[fig.num] ]
-    xVals = seq(0.2,
-                xLimMax[fig.num]-0.2,
-                length=length(specForFig))  # xvals for vertical mass bins
-
-    yLim = 1.02*max(dplyr::filter(dataBinSpec,
-                                  SpecCode %in% specForFig)$wmax)
-    # postscript(paste("nSeaFungBins", fig.num, ".eps", sep=""),
-    #        height = 6, width = 7.5,
-    #        horizontal=FALSE,  paper="special")
-
-    par(xaxs="i", yaxs="i")
-    par(mgp=c(2.0, 0.5, 0))    # puts axes labels closer
-    par(lend="butt")           # To have butted line caps, need for thick lines.
-
-    plot(0,
-         0,
-         xlab="",
-         ylab="Body mass, g",
-         xlim=c(0, xLimMax[fig.num]),
-         ylim=c(0, yLim),
-         xaxt="n",
-         type="n")      # dummy points to set up axes.
-
-    # Adding horizontal grey lines:
-    axis(2,
-         at = seq(0, yLim, by=medTicks[fig.num]),
-         labels=rep("", length(seq(0, yLim, by=medTicks[fig.num]))),
-         tck=1,
-         col="lightgrey")
-    # Add extra tick marks:
-    axis(2,
-         at = seq(0, yLim, by=smallTicks[fig.num]),
-         labels=rep("", length(seq(0, yLim, by=smallTicks[fig.num]))),
-         tck=-0.01)
-    axis(2,
-         at = seq(0, yLim, by=medTicks[fig.num]),
-         labels=rep("", length(seq(0, yLim, by=medTicks[fig.num]))),
-         tck=-0.02)
-    # Add species codes:
-    axis(1,
-         at = xVals,
-         labels = as.numeric(specForFig),
-         las = 2,
-         tck = -0.005, cex.axis=0.8)
-    mtext("Species Code", side=1, line=3, cex.lab=1)
-    # abline(h=0)      # works when saving each figure to a file, not so well in
-                       #  vignette so use:
-    lines(c(0, xLimMax[fig.num]), c(0,0))
-
-    for(ii in 1:length(specForFig))   # loop over species, plot bins for each
-        {
-        xVal = xVals[ii]         # where to have vertical bars
-        if(as.numeric(specForFig[ii]) %in% specCodeHighlight)
-            { colSpec = colHighlight } else { colSpec = col}
-
-        segments(x0 = xVal,
-                 y0 = dplyr::filter(dataBinSpec,
-                                    SpecCode == specForFig[ii])$wmin,
-                 y1 = dplyr::filter(dataBinSpec,
-                                    SpecCode == specForFig[ii])$wmax,
-                 col=colSpec,       # recycles colours
-                 lwd=thick)
-        }
-    par(xpd=TRUE)                   # allow plotting outside main region
-    if(fig.num == 1)
-      {
-        points( xVals[which(as.numeric(specForFig) %in% specCode05)],
-               -rep(0.015, length(specCode05))*yLim,
-               pch=4,
-               cex=0.96)            # indicate two species in Fig 6
-      }
-
-    if(fig.num == 4)
-      {
-        points( xVals[which(as.numeric(specForFig) == 127251)],
-           -0.015*yLim, pch=4, cex=0.96) # indicate one species in Fig S.3
-      }
-    # dev.off()
-}
+res <- species_bins_plots()
 ```
-
 
 Those four figures show how the length bins for each species get converted to
 body mass bins. The conversions are different for each species because of the
@@ -648,3 +453,5 @@ knitr::kable(dplyr::select(MLEbins.res, Year, xmin, xmax, n, confMin, b,
 # MLEbins.res and dataBin saved in data-raw/IBTS-MLEbins.R
 
 ```
+TODO: And see what to save in data-raw/IBTS-MLEbins.R, copy those lines to end
+of here. maybe

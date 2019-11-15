@@ -188,6 +188,14 @@ temp = dplyr::filter(data, !(SpecCode %in% c(126417, 126425)))
 unique(diff(sort(unique(temp$LngtClass))))
 ```
 
+Aside -- species names and codes are in `specCodeNames` (though it needs updating as more species in the data than
+listed here):
+```{r}
+specCodeNames
+length(unique(specCodeNames$speccode))   # checking speccode are unique
+```
+
+
 Need this to stop earlier groups being kept (can mess up later code):
 ```{r}
 data = dplyr::ungroup(data)
