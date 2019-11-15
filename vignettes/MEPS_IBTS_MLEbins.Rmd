@@ -208,13 +208,11 @@ MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
 MLEbins.nSeaFung.new
 ```
 
-Now for Figure 8, comparing the results with the original MLE method: TODO don't
-think this one is needed...
+Now to plot the results and obtain the regression fit:
 ```{r timeseries, fig.width=7.5, fig.height=6}
-yLim=c(-2.2, -0.9)
 res = timeSerPlot(MLEbins.nSeaFung.new,
                   legName = "(a) MLEbins",
-                  yLim = yLim,
+                  yLim = c(-2.2, -0.9),
                   xLab = "Year",
                   method = "MLEbins",
                   legPos = "bottomleft",
@@ -224,17 +222,16 @@ res = timeSerPlot(MLEbins.nSeaFung.new,
 ```
 
 The statistics for the regression fit, the final row in Table S.1 are:
-TODO - change MLEbin to MLEbins in the following
 ```{r}
-trendResultsMLEbinNew = dplyr::tbl_df(res)
-knitr::kable(dplyr::select(trendResultsMLEbinNew, Method, Low, Trend, High, p, Rsquared),
+trendResultsMLEbinsNew = dplyr::tbl_df(res)
+knitr::kable(dplyr::select(trendResultsMLEbinsNew, Method, Low, Trend, High, p, Rsquared),
              digits=c(NA, 4, 4, 4, 2, 2))
 ```
 
 ```{r fig.width=7.5, fig.height=6.3}
 fullResults.MLEbins = MLEbins.nSeaFung.new  # TODO should have just used
                                         # MLEbins..; and simplify
-trend.MLEbins.new = dplyr::filter(trendResultsMLEbinNew,
+trend.MLEbins.new = dplyr::filter(trendResultsMLEbinsNew,
                                   Method == "MLEbins")
 fullResults.MLE = dplyr::filter(fullResults, Method == "MLE")
 
