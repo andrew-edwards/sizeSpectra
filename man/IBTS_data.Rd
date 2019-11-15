@@ -6,19 +6,19 @@
 \title{The IBTS data after some processing as in vignette \code{MEPS_IBTS_1}}
 \format{Dataframe where each of 42,298 rows is a unique combination of \code{Year},
 \code{SpecCode} and \code{LngtClass}. Columns are:
-\describe{
-\item{Year}{Year of survey}
-\item{SpecCode}{Species code}
-\item{LngtClass}{The minimum value (cm) of the 1-cm length bin, or
-the 0.5-cm bin for Atlantic Herring and European Sprat}
-\item{Number}{Number of individuals per hour of trawling observed for that
-combination of \code{Year}, \code{SpecCode} and \code{LngtClass}.}
-\item{LWa}{Length-weight coefficient \eqn{\alpha} from Fung et al. (2012) for that
-species, as per our MEPS equation (1).}
-\item{LWb}{Length-weight coefficient \eqn{\beta} from Fung et al. (2012) for that
-species, as per our MEPS equation (1).}
-\item{bodyMass}{Estimated body mass (g) for an individual of that species,
-assuming \code{LngtClass} to be the length.}
+\itemize{
+\item Year: Year of survey
+\item SpecCode: Species code
+\item LngtClass: The minimum value (cm) of the 1-cm length bin, or
+the 0.5-cm bin for Atlantic Herring and European Sprat
+\item Number: Number of individuals per hour of trawling observed for that
+combination of \code{Year}, \code{SpecCode} and \code{LngtClass}.
+\item LWa: Length-weight coefficient \eqn{\alpha} from Fung et al. (2012) for that
+species, as per our MEPS equation (1).
+\item LWb: Length-weight coefficient \eqn{\beta} from Fung et al. (2012) for that
+species, as per our MEPS equation (1).
+\item bodyMass: Estimated body mass (g) for an individual of that species,
+assuming \code{LngtClass} to be the length.
 }}
 \source{
 From preprocessing as per vignette \code{MEPS_IBTS_1}.

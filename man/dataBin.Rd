@@ -7,24 +7,24 @@
 bin for using the MLEbins method}
 \format{Dataframe where each of 42,298 rows is a unique combination of \code{Year},
 \code{SpecCode} and \code{LngtMin}. Columns are:
-\describe{
-\item{Year}{Year of survey}
-\item{SpecCode}{Species code}
-\item{LngtMin}{The minimum value (cm) of each length bin, same as
-\code{LngtClass} in \code{IBTS_data}.}
-\item{LngtMax}{The maximum value (cm) of each length bin, taking into
+\itemize{
+\item Year: Year of survey
+\item SpecCode: Species code
+\item LngtMin: The minimum value (cm) of each length bin, same as
+\code{LngtClass} in \code{IBTS_data}.
+\item LngtMax: The maximum value (cm) of each length bin, taking into
 account that all bin widths are 1 cm except for Atlantic Herring and European
-Sprat that are 0.5 cm.}
-\item{LWa}{Length-weight coefficient \eqn{\alpha} from Fung et al. (2012) for that
-species, as per our MEPS equation (1).}
-\item{LWb}{Length-weight coefficient \eqn{\beta} from Fung et al. (2012) for that
-species, as per our MEPS equation (1).}
-\item{wmin}{The minimum value (g) of each body-mass bin, based on the
-species-specific length-weight coefficients and \code{LngtMin}.}
-\item{wmax}{The maximum value (g) of each body-mass bin, based on the
-species-specific length-weight coefficients and \code{LngtMax}.}
-\item{Number}{Number of individuals per hour of trawling observed for that
-combination of \code{Year}, \code{SpecCode} and \code{LngtMin}.}
+Sprat that are 0.5 cm.
+\item LWa: Length-weight coefficient \eqn{\alpha} from Fung et al. (2012) for that
+species, as per our MEPS equation (1).
+\item LWb: Length-weight coefficient \eqn{\beta} from Fung et al. (2012) for that
+species, as per our MEPS equation (1).
+\item wmin: The minimum value (g) of each body-mass bin, based on the
+species-specific length-weight coefficients and \code{LngtMin}.
+\item wmax: The maximum value (g) of each body-mass bin, based on the
+species-specific length-weight coefficients and \code{LngtMax}.
+\item Number: Number of individuals per hour of trawling observed for that
+combination of \code{Year}, \code{SpecCode} and \code{LngtMin}.
 }}
 \source{
 From amending \code{IBTS_data} as per vignette \code{MEPS_IBTS_MLEbins}.

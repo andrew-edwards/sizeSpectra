@@ -7,20 +7,20 @@
 \format{Dataframe with 178,435 rows and 13 columns, which are (I think
 automatically named from the DATRAS database, with \code{a} and \code{b} added from Fung et
 al. by Julia, though see vignette for units):
-\describe{
-\item{AphiaID}{}
-\item{Survey}{}
-\item{Year}{}
-\item{Quarter}{}
-\item{Area}{}
-\item{Species}{}
-\item{LngtClas}{}
-\item{CPUE_number_per_hour}{}
-\item{Taxonomic.group}{}
-\item{a}{}
-\item{b}{}
-\item{weight_g}{}
-\item{CPUE_bio_per_hour}{}
+\itemize{
+\item AphiaID
+\item Survey
+\item Year
+\item Quarter
+\item Area
+\item Species
+\item LngtClas
+\item CPUE_number_per_hour
+\item Taxonomic.group
+\item a
+\item b
+\item weight_g
+\item CPUE_bio_per_hour
 }}
 \source{
 From running \code{data-raw/IBTS-data.R} on the original data file (that

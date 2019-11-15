@@ -667,7 +667,7 @@ MLE.plot <- function(x,
     logTicks(xLim,
          yLim = NULL,
          xLabelSmall = c(5, 50, 500),
-         mgp = mgpVal)
+         mgpVal = mgpVal)
     yBig = c(0, 500, 1000)
     # Big labelled:
     axis(2,

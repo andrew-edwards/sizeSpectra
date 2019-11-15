@@ -5,22 +5,22 @@
 \alias{eight.results.default}
 \title{Results of fitting 10,000 data sets using eight methods (MEE paper)}
 \format{A list with elements:
-\describe{
-\item{Llin.rep.df}{Dataframe with columns \code{slope}, \code{confMin} and \code{confMax},
+\itemize{
+\item Llin.rep.df: Dataframe with columns \code{slope}, \code{confMin} and \code{confMax},
 giving the estimated slope, min and max of 95% confidence intervals from
-the Llin method, with each row representing the values for one of the 10,000 simulated data sets}
-\item{LT.rep.df, LTplus1.rep.df, LBmiz.rep.df, LBbiom.rep.df, LBNbiom.rep.df, LCD.rep.df}{
-Corresponding respective data frames for the next six methods}
-\item{MLE.rep.df}{Corresponding dataframe for the MLE method but with the
-first column estimating $b$ not a slope}
-\item{MLEfix.rep.df}{Same as \code{MLE.rep.df} but for the MLEfix method, fixing $x_{max}$ to the known
+the Llin method, with each row representing the values for one of the 10,000 simulated data sets
+\item LT.rep.df, LTplus1.rep.df, LBmiz.rep.df, LBbiom.rep.df, LBNbiom.rep.df, LCD.rep.df:
+Corresponding respective data frames for the next six methods
+\item MLE.rep.df: Corresponding dataframe for the MLE method but with the
+first column estimating $b$ not a slope
+\item MLEfix.rep.df: Same as \code{MLE.rep.df} but for the MLEfix method, fixing $x_{max}$ to the known
 value of 1000 for each simulated data set (for Figures A.3, A.4 and A.5 of
-MEE).}
-\item{MLE.rep.xmax}{The corresponding estimate of $x_max$ for the MLE
-method (namely \code{max(x)}) for each simulated data set.}
-\item{b}{Default value of \code{b} (namely -2) for simulations.}
-\item{xmin}{Default value of \code{xmin} (namely 1) for simulations.}
-\item{xmax}{Default value of \code{xmax} (namely 1000) for simulations.}
+MEE).
+\item MLE.rep.xmax: The corresponding estimate of $x_max$ for the MLE
+method (namely \code{max(x)}) for each simulated data set.
+\item b: Default value of \code{b} (namely -2) for simulations.
+\item xmin: Default value of \code{xmin} (namely 1) for simulations.
+\item xmax: Default value of \code{xmax} (namely 1000) for simulations.
 }}
 \source{
 Generated from running \code{data-raw/simulate-data.R}.
