@@ -1590,6 +1590,8 @@ timeSerPlot.eight <- function(fullResults.local = fullResults
 ##'   -- see `?dataBin` for structure
 ##' @param postscript If TRUE then save four separate postscript figures, else
 ##'   just plot the four figures to the active device
+##' @param specCodeHighlight Species to highlight in red in Figure 6 (species
+##'   127251 for Figure A.4 is done within the function).
 ##' @return list containing:
 ##'   * maxWidth: maximum width of any bin
 ##'   * specNameMaxWidth: species name corresponding to `maxWidth`
@@ -1599,7 +1601,8 @@ timeSerPlot.eight <- function(fullResults.local = fullResults
 ##' @export
 ##' @author Andrew Edwards
 species_bins_plots <- function(dataBin_vals = dataBin,
-                               postscript = FALSE
+                               postscript = FALSE,
+                               specCodeHighlight = c(127205, 154675)
                                ){
 
   herringCode = dplyr::filter(specCodeNames, species == "Clupea harengus")$speccode
@@ -1685,11 +1688,6 @@ species_bins_plots <- function(dataBin_vals = dataBin,
   medTicks = c(10, 100, 5000, 1000)       # location of medium (unlabelled) ticks
 
   xLimMax = c(10, 10, 10, specVecEnd/numSpec * 10)
-
-  specCodeHighlight = c(127205, 154675)
-                                   #  now doing two for first figure for
-                                   #  manuscript. Plus 127251 for Figure A.4 done
-                                   #  within loop.
 
   for(fig.num in 1:4)      # doing 4 figures
     {
