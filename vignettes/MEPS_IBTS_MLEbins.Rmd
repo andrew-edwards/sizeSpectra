@@ -155,15 +155,8 @@ axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)), tck=-smallTck)
 Now use the MLEbins method to fit each year of data in turn.
 
 ```{r MLEbins}
-# Do a loop for each year, saving the results in MLEbins.nSeaFung.new
-# Note that warnings have been suppressed from calcLike(), these are
-#> Warning in nlm(f = negLL.fn, p = p, ...): NA/Inf replaced by maximum
-#> positive value
-# and are okay (the numerical optimisation is just hitting a very large number).
-
-bstart = -1.9                   # just start close to -2,
 fullYears = sort(unique(dataBin$Year))
-
+# Do a loop for each year, saving all the results in MLEbins.nSeaFung.new
 for(iii in 1:length(fullYears))
   {
     dataBinForLike = dplyr::filter(dataBin,
@@ -178,7 +171,7 @@ for(iii in 1:length(fullYears))
     xmax = max(dataBinForLike$wmax)
 
     MLEbins.nSeaFung.oneyear.new  = calcLike(negLL.fn = negLL.PLB.bins.species,
-                                             p = bstart,
+                                             p = -1.9,
                                              suppress.warnings = TRUE,
                                              dataBinForLike = dataBinForLike,
                                              n = n,
@@ -207,12 +200,12 @@ for(iii in 1:length(fullYears))
 }
 
 # Need the standard error for weighted linear regression,
-#  see eightMethods.count() for details.
-
+#  see eightMethods.count() for details:
 MLEbins.nSeaFung.new = dplyr::tbl_df(MLEbins.nSeaFung.new)
 MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
                                      stdErr = (abs(confMin-b) +
                                                abs(confMax-b))/(2*1.96) )
+MLEbins.nSeaFung.new
 ```
 
 Now for Figure 8, comparing the results with the original MLE method: TODO don't
