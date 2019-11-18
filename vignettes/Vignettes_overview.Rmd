@@ -68,8 +68,8 @@ The vignettes are:
   fitting maximum likelihood value (and confidence interval) of $b$ for each
   combination of 10,000 simulated data sets, four binning methods and two fitting
   methods (MLEmid or MLEbin). Reproduces MEPS Figures 4 and 5 and Table S.3. Then
-  does the same analyses with $x$~min~$ = 16$ (Figures S.35 and S.36 and Table S.4),
-  and with with $x$~min~$ = 1$ but only sampling above a cutoff value of 16
+  does the same analyses with $x$~min~$=16$ (Figures S.35 and S.36 and Table S.4),
+  and with with $x$~min~$=1$ but only sampling above a cutoff value of 16
   (Figures S.37 and S.38 and Table S.5).
 
 * [MEPS_IBTS_1.html](MEPS_IBTS_1.html): Pre-processing of International Bottom
