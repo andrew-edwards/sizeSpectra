@@ -45,7 +45,7 @@ to list the vignettes (and links to their Rmarkdown, R and html versions). `Vign
 ```
 vignette("Vignettes_overview")
 ```
-[Note that if you are using Rstudio there is a [known issue](https://github.com/rstudio/rstudio/issues/2253) that equations don't render properly in the viewer; they are fine in a usual html viewer. Also `browseVignettes("sizeSpectra")` didn't seem to work in Rstudio also. Running from a different R console (e.g. the default non-Rstudio version) should work fine.]
+[Note that if you are using Rstudio there is a [known issue](https://github.com/rstudio/rstudio/issues/2253) that equations don't render properly in the viewer; they are fine in a usual html viewer. Also `browseVignettes("sizeSpectra")` didn't seem to work in Rstudio either. Running from a different R console (e.g. the default non-Rstudio version) should work fine.]
 
 ## Issues, problems
 
