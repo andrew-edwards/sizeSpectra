@@ -394,29 +394,33 @@ xlim.global = c(min(dataRecommend.isd$wmin),
                 max(dataRecommend.isd$wmax))
 ```
 
-TODO Commenting out for now since gifski R package is causing Travis to be
-upset.
-```{r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
-# fig.width is 0.67 * fig.height (which is 8)
+Here is the code to build the movie, but is commented out (since causes Travis
+to fail). Trick is to run it, save the resulting .html aas
+`MESP_IBTS_all_animate.html`, then comment this and re-run and push to GitHub.
+```{r, eval=FALSE}
 
-for(i in 1:length(fullYears))   # TODO could make a function
-  {
-  ISD_bin_plot(data.year = data.year.list[[i]],
-               b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
-               b.confMin = dplyr::filter(MLEbins.res, Year ==
-                                                    fullYears[i])$confMin,
-               b.confMax = dplyr::filter(MLEbins.res, Year ==
-                                                    fullYears[i])$confMax,
-               year = fullYears[i],
-               xlim = xlim.global,
-               xmin = dplyr::filter(MLEbins.res, Year ==
-                                                    fullYears[i])$xmin,
-               xmax = dplyr::filter(MLEbins.res, Year ==
-                                                 fullYears[i])$xmax,
-               yBig.inc = 500,
-               ySmall.inc = 100)
-               # yScaling = 0.05)
-}
+# ```
+# {r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
+## fig.width is 0.67 * fig.height (which is 8)
+#
+#for(i in 1:length(fullYears))
+#  {
+#  ISD_bin_plot(data.year = data.year.list[[i]],
+#              b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+#              b.confMin = dplyr::filter(MLEbins.res, Year ==
+#                                                   fullYears[i])$confMin,
+#              b.confMax = dplyr::filter(MLEbins.res, Year ==
+#                                                   fullYears[i])$confMax,
+#              year = fullYears[i],
+#              xlim = xlim.global,
+#              xmin = dplyr::filter(MLEbins.res, Year ==
+#                                                   fullYears[i])$xmin,
+#              xmax = dplyr::filter(MLEbins.res, Year ==
+#                                                fullYears[i])$xmax,
+#             yBig.inc = 500,
+#              ySmall.inc = 100)
+# }
+# ```
 ```
 
 ```{r}
