@@ -338,8 +338,6 @@ dataRecommend.isd = dplyr::select(dataBin,
                                   wmax,
                                   Number)
 
-xRange.global = c(min(dataRecommend.isd$wmin),
-                  max(dataRecommend.isd$wmax))
 data.year.list = list()                # to save results for each year
 diff.ivec = vector()                   # to save i that have any cumSum !=
                                        # verify TODO
@@ -391,6 +389,11 @@ mass of individuals in that bin (horizontal span is the same as for the green
 lines). The text in (a) gives the year, the MLE for the size-spectrum exponent
 $b$, and the sample size $n$.
 
+```{r plotparams}
+xlim.global = c(min(dataRecommend.isd$wmin),
+                max(dataRecommend.isd$wmax))
+```
+
 TODO Commenting out for now since gifski R package is causing Travis to be
 upset.
 ```{r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
@@ -405,7 +408,14 @@ for(i in 1:length(fullYears))   # TODO could make a function
                b.confMax = dplyr::filter(MLEbins.res, Year ==
                                                     fullYears[i])$confMax,
                year = fullYears[i],
-               xRange = xRange.global)
+               xlim = xlim.global,
+               xmin = dplyr::filter(MLEbins.res, Year ==
+                                                    fullYears[i])$xmin,
+               xmax = dplyr::filter(MLEbins.res, Year ==
+                                                 fullYears[i])$xmax,
+               yBig.inc = 500,
+               ySmall.inc = 100)
+               # yScaling = 0.05)
 }
 ```
 

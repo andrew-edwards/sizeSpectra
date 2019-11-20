@@ -1835,13 +1835,17 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' @param b.confMin lower 95\% confidence limits of *b*
 ##' @param b.confMax upper 95\% confidence limits of *b*
 ##' @param year year of data to go into legend (use NA if not applicable)
-##' @param xRange limits of x-axis
+##' @param xlim (soft) limits of x-axis. If NA then automatically uses the minimum
+##'   `wmin` and maximum `wmax` for that data set (so good to set globally when
+##'   doing multiple years).
+##' @param xmin,xmax: values of `xmin` and `xmax` to plot the PLB curve
 ##' @param yScaling Scaling of y-minimum of y-axis. Axis can't go to zero on
-##'   log-log plot, but goes to `yScaling` (which is less than 1) of the minimum
-##'   value of counts greater than the highest `wmin` value.
+##'   log-log plot, but goes to the proportion `yScaling` (which is less than 1)
+##'   of the minimum value of counts greater than the highest `wmin` value. Do
+##'   such that can see the right-most bin in all plots.
 ##' @param MLE.round number of decimal places to show MLE of b on the top plot
 ##' @param xLabel.small which small tickmarks to label on the x-axis
-##' @param yBig.inc increment for big tickmarks on the y-axis
+##' @param yBig.inc increment for labelled big tickmarks on the unlogged y-axis
 ##' @param ySmall.inc increment for small unlabelled tickmarks on the y-axis
 ##' @param ySmall.tcl length of small y-axis tick marks - only for (a)??TODO
 ##' @param xLab label for x-axis
@@ -1869,7 +1873,9 @@ ISD_bin_plot <- function(data.year,
                          b.confMin,
                          b.confMax,
                          year = NA,
-                         xRange = NA,
+                         xlim = NA,
+                         xmin = NA,
+                         xmax = NA,
                          yScaling = 0.75,
                          MLE.round = 2,
                          xLabel.small = c(5, 50, 500, 5000),
@@ -1896,13 +1902,13 @@ ISD_bin_plot <- function(data.year,
   par(mfrow = par.mfrow)
   par(mai = par.mai, cex = par.cex)  # Affects all figures   TODO put into one
 
-  if(is.na(xRange[1])){
-    xRange = c(min(data.year$wmin),
-               max(data.year$wmax))  # For PLB line
+  if(is.na(xlim[1])){
+    xlim = c(min(data.year$wmin),
+             max(data.year$wmax))  # Range of axis
     }
 
-  x.PLB = seq(xRange[1],
-              xRange[2],
+  x.PLB = seq(xmin,
+              xmax,
               length=10000)
           # x values to plot PLB, need high resolution for both plots, but
           #  insert value close to xmax to make log-log curve go down further
@@ -1937,7 +1943,7 @@ ISD_bin_plot <- function(data.year,
        log="x",
        xlab=xLab,
        ylab=yLab,
-       xlim = xRange,
+       xlim = xlim,
        ylim = yRange,
        type = "n",
        axes = FALSE,
@@ -2005,7 +2011,7 @@ ISD_bin_plot <- function(data.year,
        log = "xy",
        xlab = xLab,
        ylab = yLab,
-       xlim = xRange,
+       xlim = xlim,
        ylim = yRange,
        type = "n",
        axes = FALSE,

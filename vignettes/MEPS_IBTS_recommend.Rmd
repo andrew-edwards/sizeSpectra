@@ -222,8 +222,7 @@ dataRecommend.isd = dplyr::select(dataBin,
                                   wmax,
                                   Number)
 
-xRange.global = c(min(dataRecommend.isd$wmin),
-                  max(dataRecommend.isd$wmax))
+
 data.year.list = list()                # to save results for each year
 diff.ivec = vector()                   # to save i that have any cumSum !=
                                        # verify TODO
@@ -266,6 +265,9 @@ for(i in 1:length(fullYears))
     data.year.list[[i]] = data.year
 }
 
+xlim.global = c(min(dataRecommend.isd$wmin),
+                max(dataRecommend.isd$wmax))   # x-axis limits to be common for
+                                               # all plots
 ```
 
 Here is the code to give an animation for Figures 7 and S.5-S.34 for the IBTS data. For each year
@@ -285,7 +287,7 @@ upset.
 <!-- fig.height = 8} -->
 <!-- # fig.width is 0.67 * fig.height (which is 8)
 
-for(i in 1:length(fullYears))   # TODO could make a function
+for(i in 1:length(fullYears))  # Not tested new options here (from _all vignette)
   {
   ISD_bin_plot(data.year = data.year.list[[i]],
                b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
@@ -294,7 +296,15 @@ for(i in 1:length(fullYears))   # TODO could make a function
                b.confMax = dplyr::filter(MLEbins.res, Year ==
                                                     fullYears[i])$confMax,
                year = fullYears[i],
-               xRange = xRange.global)
+               xlim = xlim.global,
+               xmin = dplyr::filter(MLEbins.res, Year ==
+                                                    fullYears[i])$xmin,
+               xmax = dplyr::filter(MLEbins.res, Year ==
+                                                 fullYears[i])$xmax
+               )
+
+
+
 } -->
 <!-- ```-->
 
