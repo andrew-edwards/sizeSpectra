@@ -21,11 +21,11 @@ knitr::opts_chunk$set(
 
 These are the steps for pre-processing the IBTS data to retain just the desired
 elements for the analyses in the MEPS paper. Should be useful for repeating the
-analyses with updated data (if so it would be good to use the `icesDATRAS` to
-automate the downloading of the data. This may also be useful for anyone wanting to
-extract data and do similar analyses. This is not functionalised, but is better
-work through the steps in an Rmarkdown-type format to understand and check what
-is going on.
+analyses with updated data (if so it would be good to use the `icesDATRAS`
+package to automate the downloading of the data). This may also be useful for
+anyone wanting to extract data and do similar analyses. This is not
+functionalised, but is better to work through the steps in an Rmarkdown-type
+format to understand and check what is going on.
 
 ```{r setup}
 library(sizeSpectra)
@@ -221,10 +221,10 @@ the total biomass caught per hour of trawling for each row.
 
 The resulting Table 1 is:
 ```{r results='asis'}
-IBTS_data_biomass <- dplyr::mutate(IBTS_data,
-                                   Biomass = Number * bodyMass)
-knitr::kable(rbind(IBTS_data_biomass[1:6,],
-                   IBTS_data_biomass[(nrow(IBTS_data_biomass)-5):nrow(IBTS_data_biomass),
+data_biomass <- dplyr::mutate(data,
+                              Biomass = Number * bodyMass)
+knitr::kable(rbind(data_biomass[1:6,],
+                   data_biomass[(nrow(data_biomass)-5):nrow(data_biomass),
                                      ]),
              digits=c(0, 0, 0, 3, 4, 4, 2, 2))
 ```

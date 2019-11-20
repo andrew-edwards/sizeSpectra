@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Recommended plotting approach from the MLEbins method
+## Recommended plotting approach from the MLEbins method
 
 This vignette has some of the calculations used to explain the recommended
 plotting approach, reproduces Figure S.4, Figure 7 [TODO check] and presents
