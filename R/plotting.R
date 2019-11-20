@@ -1836,6 +1836,9 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' @param b.confMax upper 95\% confidence limits of *b*
 ##' @param year year of data to go into legend (use NA if not applicable)
 ##' @param xRange limits of x-axis
+##' @param yScaling Scaling of y-minimum of y-axis. Axis can't go to zero on
+##'   log-log plot, but goes to `yScaling` (which is less than 1) of the minimum
+##'   value of counts greater than the highest `wmin` value.
 ##' @param MLE.round number of decimal places to show MLE of b on the top plot
 ##' @param xLabel.small which small tickmarks to label on the x-axis
 ##' @param yBig.inc increment for big tickmarks on the y-axis
@@ -1867,6 +1870,7 @@ ISD_bin_plot <- function(data.year,
                          b.confMax,
                          year = NA,
                          xRange = NA,
+                         yScaling = 0.75,
                          MLE.round = 2,
                          xLabel.small = c(5, 50, 500, 5000),
                          yBig.inc = 1000,
@@ -1925,8 +1929,7 @@ ISD_bin_plot <- function(data.year,
   #  log axis. Which also means that the rectangle that goes to 0 has to be
   #  added manually (below). Picking the y-axis to go down to 0.75 of the
   #  minimum value of CountGTEwmin.
-  yRange = c(0.75*min(data.year$countGTEwmin), max(data.year$highCount))   # TODO
-                                        # still don't quite get this
+  yRange = c(yScaling * min(data.year$countGTEwmin), max(data.year$highCount))
 
   # y-axis not logged
   plot(data.year$wmin,
