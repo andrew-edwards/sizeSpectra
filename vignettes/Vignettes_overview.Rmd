@@ -87,4 +87,9 @@ The vignettes are:
 * [MEPS_IBTS_recommend.html](MEPS_IBTS_recommend.html): Calculations and schematic diagram
   (Figure S.4, somewhat automated for any species) to help explain the
   recommended plotting approach. The recommended Figures 7, and S.5 to S.34 for
-  each year of the IBTS data. TODO: either as movie or just a load of figures.
+  each year of the IBTS data (with code for doing separate figures and as a movie).
+
+* [MEPS_IBTS_all_min_100.html](MEPS_IBTS_all_min_100.html): Combines the
+  essential aspects of the above four IBTS vignettes into one, and repeats the
+  analysis but setting the minimum body mass to be 100 g. Less for understanding
+  everything and more for redoing the analyses with different assumptions (or data).

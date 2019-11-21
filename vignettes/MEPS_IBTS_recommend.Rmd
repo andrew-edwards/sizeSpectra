@@ -369,5 +369,5 @@ time, like in our Supporting Information.
         {\isdfig{\arabic{loop}}{Individual size distribution and MLEbins fit
             with 95\% confidence intervals for IBTS data in \arabic{loop}.
             Details as in Figure~\ref{fig:ISD-1986}.
-        }}
+}}
 ```
