@@ -15,3 +15,5 @@ fromOtherRepo/
 compress-test/
 data-raw/*.RData
 doc
+
+IBTS-min-100/
