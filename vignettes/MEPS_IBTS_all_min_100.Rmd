@@ -430,40 +430,31 @@ The resulting animation is
 
 ![IBTS_100_movie.gif](IBTS_100_movie.gif).
 
-```{r}
-  # To save each year as it's own figure add something like this within the loop:
-  # postscript(paste0(dirToSaveFigs, "/IBTS-ISD", fullYears[i], ".eps"),
-  #             height = figheight, width = figwidth,
-  #             horizontal=FALSE, paper="special")
-  # ISD_bin_plot(...)     # include options like those above
-  # dev.off()
-  # See commented out latex code in vignette to give a loop to include each
-  # figure, for example as done in our Supporting Information.
-```
+To save each year as it's own figure do this (not it running here; you have to
+make the `IBTS-min-100` directory first):
+```{r, eval=FALSE}
+for(i in 1:length(fullYears))
+  {
+  postscript(paste0("../IBTS-min-100/IBTS-ISD", fullYears[i], ".eps"),
+           height = 8, width = 5.36,
+           horizontal=FALSE, paper="special")
 
-<!--
-% Include this in latex preamble:
-\newcommand\isdfig[2]{    % filename is #1, text is #2
-  \begin{figure}[tp]
-  \begin{center}
-  \epsfbox{IBTS-ISDfigs/IBTS-ISD#1.eps}
-  \end{center}
-  \vspace{-5mm}
-  \caption{#2}
-  \label{fig:ISD-#1}
-  \end{figure}
-  \clearpage
+  ISD_bin_plot(data.year = data.year.list[[i]],
+               b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+               b.confMin = dplyr::filter(MLEbins.res, Year ==
+                                                     fullYears[i])$confMin,
+               b.confMax = dplyr::filter(MLEbins.res, Year ==
+                                                     fullYears[i])$confMax,
+               year = fullYears[i],
+               xlim = xlim.global,
+               xmin = dplyr::filter(MLEbins.res, Year ==
+                                                    fullYears[i])$xmin,
+               xmax = dplyr::filter(MLEbins.res, Year ==
+                                                 fullYears[i])$xmax,
+               yBig.inc = 500,
+               ySmall.inc = 100)
+  dev.off()
 }
-
-% Include this after the figures have already been created in an R loop
-\isdfig{\Sexpr{fullYears[1]}}{Include caption as above for year \Sexpr{fullYears[i]}}
-
-\newcounter{loop}
-
-\newcommand{\loopMax}{\Sexpr{max(fullYears)+1}}
-\forloop{loop}{\Sexpr{fullYears[2]}}{\value{loop} < \loopMax}
-        {\isdfig{\arabic{loop}}{Individual size distribution and MLEbins fit
-            with 95\% confidence intervals for IBTS data in \arabic{loop}.
-            Details as in Figure~\ref{fig:ISD-1986}.
-        }}
--->
+```
+See [MEPS_IBTS_recommend.html](MEPS_IBTS_recommend.html) for inserting all the
+figures into a LaTeX document using a loop.
