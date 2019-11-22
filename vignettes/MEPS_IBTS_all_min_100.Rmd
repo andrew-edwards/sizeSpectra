@@ -292,25 +292,28 @@ MLEbins.nSeaFung.new
 
 Now to plot the results and obtain the regression fit:
 ```{r timeseries, fig.width=7.5, fig.height=6}
+postscript("../IBTS-min-100/trends100.eps",
+           height = 6, width = 7.5, horizontal = FALSE, paper = "special")
 res = timeSerPlot(MLEbins.nSeaFung.new,
                   legName = "(a) MLEbins",
                   yLim = c(-3.4, -2.1),
                   xLab = "Year",
-                  method = "MLEbins",
+                  method = "",
                   legPos = "bottomleft",
                   weightReg = TRUE,
                   xTicksSmallInc = 1,
                   yTicksSmallInc = 0.05)
+dev.off()
 ```
 
-The statistics for the regression fit, the final row in Table S.1 are:
+The statistics for the regression fit (like those in Table S.1) are:
 ```{r}
 trendResultsMLEbinsNew = dplyr::tbl_df(res)
 knitr::kable(dplyr::select(trendResultsMLEbinsNew, Method, Low, Trend, High, p, Rsquared),
              digits=c(NA, 4, 4, 4, 2, 2))
 ```
 
-For Table S.2 (results for each year for the MLEbins method), need the constant
+For an equivalent to Table S.2 (results for each year for the MLEbins method), need the constant
 *C* for each year, so calculate it here:
 ```{r}
 MLEbins.res = MLEbins.nSeaFung.new

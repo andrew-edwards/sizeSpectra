@@ -93,3 +93,8 @@ The vignettes are:
   essential aspects of the above four IBTS vignettes into one, and repeats the
   analysis but setting the minimum body mass to be 100 g. Less for understanding
   everything and more for redoing the analyses with different assumptions (or data).
+
+The source code written in `Rmarkdown`, the R code that gets extracted from the
+  `Rmarkdown` code, and the resulting .html files are all found within your library
+  folder (where all your R libraries get saved), in
+  `library\sizeSpectra\doc\`. TODO check when build with vignettes.
