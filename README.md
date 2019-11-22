@@ -9,7 +9,7 @@ R package for fitting size spectra to ecological data (including binned data)
 In development - not usable yet (though is downloadable if it says 'build passing' above)
 
 ## Description
-This R package contains functions for fitting size spectra to ecological data. In particular, it contains functionalised code to reproduce all the results in [1] and [2], and for users to apply the methods to their own data.
+This R package contains functions for fitting size spectra to ecological data. In particular, it contains functionalised code to reproduce all the results in [1] and [2], and for users to apply the methods to their own data. See the [vignettes](http://htmlpreview.github.io/?https://github.com/andrew-edwards/sizeSpectra/blob/master/doc/vignettes_overview.html) to see what the package can do.
 
 [1] **Testing and recommending methods for fitting size spectra to data** by Andrew M. Edwards, James P. W. Robinson, Michael J. Plank, Julia K. Baum and Julia L. Blanchard. ***Methods in Ecology and Evolution*** (2017, 8:57-67). Freely available at <http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12641/full>
 
@@ -23,7 +23,7 @@ Here is a movie showing fits to 30 years of International Bottom Trawl Survey da
 
 ## Vignettes
 
-See the [overview vignette](http://htmlpreview.github.io/?https://github.com/andrew-edwards/sizeSpectra/blob/master/doc/vignettes_overview.html) for a summary of all vignettes. They are available on the GitHub site, and also within the package in the usual way (see below).
+See the [overview vignette](http://htmlpreview.github.io/?https://github.com/andrew-edwards/sizeSpectra/blob/master/doc/vignettes_overview.html) for a summary of all vignettes. They are available on this GitHub site, and also within the package in the usual way (see below).
 
 The vignettes explain how to use the functions in the package to reproduce all results in both papers, and to analyse new data sets using our functions. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating text from the papers in the vignettes). In the vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
 
