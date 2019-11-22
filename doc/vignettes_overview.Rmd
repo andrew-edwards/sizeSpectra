@@ -1,0 +1,100 @@
+---
+title: "Vignettes_overview"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignettes_overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+```{r setup}
+library(sizeSpectra)
+```
+
+## Overview of vignettes for sizeSpectra package
+
+This R package contains functions for fitting size spectra to ecological
+data. In particular, it contains functionalised code to reproduce all the
+results in [1] and [2], and for users to apply the methods to their own data.
+
+[1] **Testing and recommending methods for fitting size spectra to data** by
+Andrew M. Edwards, James P. W. Robinson, Michael J. Plank, Julia K. Baum and
+Julia L. Blanchard. ***Methods in Ecology and Evolution*** (2017,
+8:57-67). Freely available at
+<http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12641/full>.
+
+[2] **TODO** by Andrew M. Edwards, James P. W. Robinson, Julia L. Blanchard,
+Julia K. Baum and Michael J. Plank. **TODO**
+
+The vignettes explain how to use the functions in the package to reproduce the
+results in both papers, to then enable users to see what functions are required
+to analyse their own data.
+The vignettes are descriptions of how to use the code to implement the
+methods. The two papers should be consulted first to understand the methods (I
+have tried to avoid repeating explanatory text from the papers in the vignettes). In the
+vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
+
+The vignettes are:
+
+* [MEE_reproduce_1.html](MEE_reproduce_1.html): Simulate and fit a single data
+  set using eight methods, and create recommended likelihood-based
+  plot. Reproduces MEE Figures 1, 2, 6 and A.1.
+
+* [MEE_reproduce_2.html](MEE_reproduce_2.html): Simulate 10,000
+  data sets and fit them using eight methods, then plot histograms and confidence
+  intervals of the estimates of the size-spectra exponent $b$. Reproduces MEE
+  Figures 3 (TODO including gold?), 4 and Table 2. Also for the MLEfix method
+  (Figures A.3 and A.4).
+
+* [MEE_reproduce_3.html](MEE_reproduce_2.html): TODO not done yet, will
+  be 3. Once 2 is functionalised, just repeat for different configurations.
+
+* [MEPS_reproduce_1.html](MEPS_reproduce_1.html): Example length-weight
+  relationships for two species and the effect of binned length data (MEPS
+  Figure 2). And how consequent binned body-mass values get assigned to
+  logarithimic size-class bins by some methods (Figure 3).
+
+* [MEPS_reproduce_2.html](MEPS_reproduce_2.html): Main simulation results, from
+  fitting maximum likelihood value (and confidence interval) of $b$ for each
+  combination of 10,000 simulated data sets, four binning methods and two fitting
+  methods (MLEmid or MLEbin). Reproduces MEPS Figures 4 and 5 and Table S.3. Then
+  does the same analyses with $x$~min~$=16$ (Figures S.35 and S.36 and Table S.4),
+  and with with $x$~min~$=1$ but only sampling above a cutoff value of 16
+  (Figures S.37 and S.38 and Table S.5).
+
+* [MEPS_IBTS_1.html](MEPS_IBTS_1.html): Pre-processing of International Bottom
+  Trawl Survey (IBTS) data to extract the required elements. Gives MEPS Table 1.
+
+* [MEPS_IBTS_2.html](MEPS_IBTS_2.html): Analyses of the IBTS data using the
+  original eight methods. Gives MEPS Figure 1 and Table S.1.
+
+* [MEPS_IBTS_MLEbins.html](MEPS_IBTS_MLEbins.html): Analyse the IBTS data using
+  the MLEbins method. Gives Figure 6 (and related Figures S.1, S.2 and S.3)
+  showing species-specific body mass bins resulting from the length bins, Figure
+  8 (comparison of MLE and MLEbins values of b through time), MLEbins row of
+  Table S.1, and Table S.2.
+
+* [MEPS_IBTS_recommend.html](MEPS_IBTS_recommend.html): Calculations and schematic diagram
+  (Figure S.4, somewhat automated for any species) to help explain the
+  recommended plotting approach. The recommended Figures 7, and S.5 to S.34 for
+  each year of the IBTS data (with code for doing separate figures and as a movie).
+
+* [MEPS_IBTS_all_min_100.html](MEPS_IBTS_all_min_100.html): Combines the
+  essential aspects of the above four IBTS vignettes into one, and repeats the
+  analysis but setting the minimum body mass to be 100 g. Less for understanding
+  everything and more for redoing the analyses with different assumptions (or data).
+
+The source code written in `Rmarkdown`, the R code that gets extracted from the
+  `Rmarkdown` code, and the resulting .html files are all found within your library
+  folder (where all your R libraries get saved), in
+  `library\sizeSpectra\doc\`. TODO check when build with vignettes.

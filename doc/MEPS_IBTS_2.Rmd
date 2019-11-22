@@ -1,0 +1,94 @@
+---
+title: "MEPS_IBTS_2"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MEPS_IBTS_2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+## Analyses of IBTS data using the original eight methods
+
+This vignette analyses the IBTS data using the original eight methods, without accounting for the bin structure.
+
+```{r}
+library(sizeSpectra)
+data = IBTS_data
+data
+```
+
+Each row of `data` is a unique combination of year, species code and length
+class. The `Number` column is the number of observed individuals of that species
+in that length class in that year, `bodyMass` is the body mass of such an
+individual, and `LWa` and `LWb` are the length-weight coefficients, used to
+calculate `bodyMass`. To verify that each row is a unique combination of year,
+species code and length class:
+```{r}
+data
+unique = dim(dplyr::summarise(dplyr::group_by(data,
+                                              Year,
+                                              SpecCode,
+                                              LngtClass),
+                              count=dplyr::n()))[1]
+unique
+
+if( unique != dim(data)[1]) stop("something wrong with 'data'")
+```
+
+
+
+See if the number of length classes or species seems to change over time:
+```{r, dataSumm}
+dataSumm = dplyr::summarise(dplyr::group_by(data, Year),
+                            uniqLngtClass = length(unique(LngtClass)),
+                            uniqSpec = length(unique(SpecCode)))
+par(mfrow=c(2,1)) #7,1))
+
+plot(dataSumm$Year, dataSumm$uniqLngtClass, xlab="Year",
+     ylab="No. unique length classes", type="o",
+     ylim=c(0, max(dataSumm$uniqLngtClass)))
+plot(dataSumm$Year, dataSumm$uniqSpec, xlab="Year",
+     ylab="No. unique species", type="o", ylim=c(0, max(dataSumm$uniqSpec)))
+```
+
+There do not look to be any serious issue with this (no drastic changes in, for
+example, species identification through time).
+
+The following code calculates, using `eightMethods.count()`, the slope or
+exponent for each of the original eight methods for each year in turn, and saves a `.png` plot
+ for each year that shows the fit of each method. It is
+not run here because it takes a few hours (results are saved as the data object
+`fullResults`).
+```{r doEachYear, echo=TRUE, eval=FALSE}
+fullYears = unique(data$Year)
+fullResults = data.frame()
+for(ii in fullYears){
+  eightMethodsRes = eightMethods.count(data = data,
+                                       oneYear = ii,
+                                       figName = "nSeaFung")
+  fullResults = rbind(fullResults, eightMethodsRes)
+}
+# usethis::use_data(fullResults, overwrite = TRUE)    # Run this to save the data.
+```
+
+Now to plot Figure 1, time series of each estimate of `b` for each method, and
+fit regression:
+```{r, fig.height = 7.5}
+trendResults = timeSerPlot.eight()
+```
+
+The results of the regression analyses (Table S.1) are:
+```{r results='asis'}
+knitr::kable(dplyr::select(trendResults, -adjRsquared),
+             digits=c(0, 4, 4, 4, 2, 2))
+```

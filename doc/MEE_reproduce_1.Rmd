@@ -1,0 +1,106 @@
+---
+title: "MEE_reproduce_1"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MEE_reproduce_1}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+This vignette simulates the original single data set from the MEE paper, fits it
+using the eight different methods and produces the resulting figures.
+Fitting and plotting functions can be used on a user's own data set.
+
+```{r setup}
+library(sizeSpectra)
+```
+
+## Figure 1 -- standard histogram of a random sample from a bounded power-law distribution
+
+Generate random sample from bounded power-law distribution, where the resulting
+`x` is a vector of individual fish sizes (usually body masses).
+```{r}
+n = 1000                  # sample size
+b.known = -2              # known fixed value of b
+xmin.known = 1            # known fixed value of xmin
+xmax.known = 1000         # known fixed value of xmax
+set.seed(42)              # To get the same observations for each run of code.
+
+x = rPLB(n,
+         b = b.known,
+         xmin = xmin.known,
+         xmax = xmax.known)
+
+head(x)
+```
+
+Make the standard histogram with a break in the y-axis (by first fitting using
+the Llin method since that returns the required bin breaks, counts etc.).
+```{r}
+num.bins = 8    # Suggested number of bins for standard histogram and Llin
+                #  method; Daan et al. used 8 bins.
+
+# hAAA is the h(istrogram) results for method AAA.
+# Llin method - plotting binned data on log-linear axes then fitting regression.
+hLlin = Llin.method(x,
+                    num.bins = num.bins)
+
+gap.barplot.cust(hLlin$counts,
+                 midpoints = hLlin$mids,
+                 breakpoints = hLlin$breaks,
+                 xlim = c(-10,max(hLlin$breaks)+10),
+                 col = rep("grey", length(hLlin$counts)),
+                 xaxs = "i",
+                 yaxs = "i"
+                 )
+```
+
+## Figure 2 -- results from using eight methods to fit size spectra
+
+Calculate size spectra fits using all eight methods on the same data set:
+```{r}
+eight.results = eightMethodsMEE(x, num.bins = num.bins)
+```
+
+Now plot Figure 2, where each panel corresponds to one of the methods. Most of the
+function code involves tailoring the plots to make good figures, and may need
+tweaking for another dataset.
+
+```{r, fig.height = 8}
+eight.methods.plot(eight.results)
+```
+
+## Figure 6 -- recommended plot of MLE fit to a single data set
+
+Recommended plots of (a) biomass size spectrum and (b) abundance size spectrum,
+fitted using MLE:
+
+```{r, fig.height=9.4}
+MLE.plots.recommend(x = x,
+                    b.MLE = eight.results$hMLE.list$b,
+                    confVals.MLE = eight.results$hMLE.list$confVals,
+                    hLBNbiom.list = eight.results$hLBNbiom.list)
+```
+
+## Figure A.1 -- individual size distribution plot with linear y-axis
+
+Same as (h) above (Figure 2(h) in paper), but with a non-logarithmic y-axis, to help explain
+why the red curve on log-log axes in (h) does not pass through the maximum
+data point.
+
+```{r, fig.height = 5.4}
+par(mai=c(0.8, 0.8, 0.2, 0.3))
+MLE.plot(x,
+         b = eight.results$hMLE.list$b,
+         log="x")
+```

@@ -1,0 +1,274 @@
+## ---- include = FALSE----------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 5.7,
+  fig.height = 7
+)
+
+## ------------------------------------------------------------------------
+library(sizeSpectra)
+# library(tibble)  # Else prints all of a tibble
+
+## ------------------------------------------------------------------------
+sculpin = 127205
+snakeblenny = 154675
+specForFig = c(snakeblenny, sculpin)
+
+dataTwoSpec = dplyr::filter(dataBin, SpecCode %in% specForFig)
+
+## ----combine-------------------------------------------------------------
+dataComb = dplyr::summarise(dplyr::group_by(dataTwoSpec,
+                                            SpecCode,
+                                            wmin),
+                            wmax = unique(wmax),
+                            number = round(sum(Number), dig=4))
+dataComb = dplyr::mutate(dataComb, j = min_rank(wmin))   # works since they're grouped
+dataComb[nrow(dataComb), "j"] = 25                       # manually, because there's a gap
+dataComb = dplyr::mutate(dataComb, wmid = (wmin + wmax)/2)  # midpoint for plotting
+
+## ----fig.width=6.5, fig.height=4-----------------------------------------
+target = 7                 # target bin (for species 2)    # TODO 7 to target in
+                           # next two lines
+target.wmin = dplyr::filter(dataComb,
+                            SpecCode == specForFig[2],
+                            j == 7)$wmin
+target.wmax = dplyr::filter(dataComb,
+                            SpecCode == specForFig[2],
+                            j == 7)$wmax
+# Smallest and then largest possible inclusions of being > target bin:
+dataComb = dplyr::mutate(dataComb,
+                         wmin.gt.tmax = (wmin >= target.wmax))
+dataComb = dplyr::mutate(dataComb,
+                         wmax.gt.tmin = (wmax > target.wmin))
+
+xLim = c(15, 43)           # range to show, must be integers
+dataComb = dplyr::filter(dataComb,
+                         wmin > xLim[1])  # only show complete bins
+
+numSpec = length(specForFig)
+yLimMax = 1
+yVals = c(0.3, 0.7)        # y values for horizontal mass bins
+
+colSpec = c("red", "pink")
+thick = 30                 # y thickness of bins
+cex.sub = 0.7              # font size for subscripts
+
+#postscript("binCountRangeSchematic.eps",
+#           height = 4, width = 6.5,
+#           horizontal=FALSE,  paper="special")
+par(mgp=c(2.0, 0.5, 0))    # puts axes labels closer I think
+par(lend="butt")           # To have butted line caps, need for thick lines.
+par(mar = c(4, 2.5, 3, 2)) # outer margins
+
+plot(0, 0, xlab="Body mass, g", ylab="", xlim=xLim,
+     ylim=c(0, yLimMax), yaxt="n", type="n", xaxs="i") # set up axes.
+
+axis(1, at = xLim[1]:xLim[2], labels = rep("", xLim[2]-xLim[1]+1), tck=-0.01)
+
+mtext("Species Code", side=2, line=1.5, cex.lab=1)
+axis(2, at = yVals, labels = c(1,2), las = 2,
+        tck = -0.005, cex.axis=0.8)
+
+abline(v = target.wmin, col = "grey")
+abline(v = target.wmax, col = "grey")
+
+for(ii in 1:length(specForFig))   # loop over species, plot bins for each
+  {
+    yVal = yVals[ii]         # where to have horizontal bars
+    bins.wmin = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmin  # for this sp
+    bins.wmax = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmax
+    bins.wmid = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmid
+    # bins for which wmin >= target.wmax
+    bins.wmin.gt.tmax = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmin.gt.tmax
+    bins.wmin.gt.tmax.yn = ifelse(bins.wmin.gt.tmax,"Y", "N")
+    # bins for which wmax > target.wmin
+    bins.wmax.gt.tmin = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmax.gt.tmin
+    bins.wmax.gt.tmin.yn = ifelse(bins.wmax.gt.tmin,"Y", "N")
+
+    segments(y0 = yVal,
+             x0 = bins.wmin,
+             x1 = bins.wmax,
+             col=colSpec, lwd=thick)    # recycles col
+    # Bin break labels (cannot do , with vector for labels, it seems):
+    for(iiii in 1:length(bins.wmin))
+      {
+        text(x = bins.wmin[iiii],
+             y = yVal,
+             labels = bquote(paste(w[.(ii)*","*
+                    .(dplyr::filter(dataComb, SpecCode == specForFig[ii])$j[iiii])])),
+             pos = 1,
+             offset = 0.03*thick,
+             cex = cex.sub)
+      }
+    # Do final wmax manually:
+    text(x = bins.wmax[length(bins.wmax)],
+         y = yVal,
+         labels = bquote(paste(w[.(ii)*","*
+                     .(max(dplyr::filter(dataComb, SpecCode == specForFig[ii])$j)+1)])),
+         pos = 1,
+         offset = 0.03*thick,
+         cex = cex.sub)
+    # Put counts for each bin
+    text(x = bins.wmid,
+         y = yVal,
+         labels = f(dplyr::filter(dataComb, SpecCode == specForFig[ii])$number, ii+1),
+                  # ii+1 happens to give 3 d.p.s for species 2 and 2 for species 1,
+                  #  as needed on figure
+         pos = NULL,
+         offset = 0.03*thick,
+         cex = cex.sub*1.2)
+    # Whether to include in counts
+    eps = 0.23                  # Offset from wmid for Y's and N's
+    text(x = bins.wmid - eps,
+         y = yVal,
+         labels = bins.wmin.gt.tmax.yn,
+         pos = 3,
+         offset = 0.03*thick,
+         cex = cex.sub*1.2)
+    text(x = bins.wmid + eps,
+         y = yVal,
+         labels = bins.wmax.gt.tmin.yn,
+         pos = 3,
+         offset = 0.03*thick,
+         cex = cex.sub*1.2)
+  }
+
+# Need w_1,24 manually, assumes this is the only one with j=23
+text(x = dplyr::filter(dataComb, j==23)$wmax,
+     y = yVals[1],
+     labels = bquote(paste(w[.(1)*","*24])),
+     pos = 1,
+     offset = 0.03*thick,
+     cex = cex.sub)
+
+# Calculations for the caption:
+lowCount = sum(dataComb$wmin.gt.tmax * dataComb$number)
+highCount = sum(dataComb$wmax.gt.tmin * dataComb$number)
+
+
+## ----recommended---------------------------------------------------------
+dataRecommend.isd = dplyr::select(dataBin,
+                                  Year,
+                                  wmin,
+                                  wmax,
+                                  Number)
+
+
+data.year.list = list()                # to save results for each year
+diff.ivec = vector()                   # to save i that have any cumSum !=
+                                       # verify TODO
+fullYears = sort(unique(dataBin$Year))
+for(i in 1:length(fullYears))
+  {
+    data.year = dplyr::filter(dataRecommend.isd,
+                              Year == fullYears[i])
+
+    data.year = dplyr::arrange(data.year,
+                               desc(wmin))
+    sumNumber = sum(data.year$Number)
+
+    # data.year = dplyr::mutate(data.year,
+    #                          cumSum = cumsum(Number))
+    # This is wrong when we have two species with the same
+    #  length-weight coefficients in the same year, use countGTEwmin then change it to
+    #                          cumSum in one go TODO since clearer
+    # Have to do not with dplyr:
+    wmin.vec = data.year$wmin
+    wmax.vec = data.year$wmax
+    num.vec  = data.year$Number
+
+    countGTEwmin = rep(NA, length(num.vec)) # to do a manual count
+    lowCount = countGTEwmin
+    highCount = countGTEwmin
+
+    for(iii in 1:length(countGTEwmin))
+    {
+      countGTEwmin[iii]    = sum( (wmin.vec >= wmin.vec[iii]) * num.vec)
+      lowCount[iii]  = sum( (wmin.vec >= wmax.vec[iii]) * num.vec)
+      highCount[iii] = sum( (wmax.vec >  wmin.vec[iii]) * num.vec)
+    }
+    data.year = cbind(data.year,
+                      "countGTEwmin" = countGTEwmin,
+                      "lowCount" = lowCount,
+                      "highCount" = highCount)
+    data.year = dplyr::tbl_df(data.year)
+
+    data.year.list[[i]] = data.year
+}
+
+xlim.global = c(min(dataRecommend.isd$wmin),
+                max(dataRecommend.isd$wmax))   # x-axis limits to be common for
+                                               # all plots
+
+## ---- eval=FALSE---------------------------------------------------------
+#  # ```{r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
+#  # fig.width is 0.67 * fig.height (which is 8)
+#  #
+#  # for(i in 1:length(fullYears))  # Not tested new options here (from _all vignette)
+#  #    {
+#  #    ISD_bin_plot(data.year = data.year.list[[i]],
+#  #                 b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+#  #                 b.confMin = dplyr::filter(MLEbins.res, Year ==
+#  #                                                      fullYears[i])$confMin,
+#  #                 b.confMax = dplyr::filter(MLEbins.res, Year ==
+#  #                                                      fullYears[i])$confMax,
+#  #                 year = fullYears[i],
+#  #                 xlim = xlim.global,
+#  #                 xmin = dplyr::filter(MLEbins.res, Year ==
+#  #                                                      fullYears[i])$xmin,
+#  #                 xmax = dplyr::filter(MLEbins.res, Year ==
+#  #                                                   fullYears[i])$xmax
+#  #                 )
+#  #  }
+#  # ```
+
+## ---- eval=FALSE---------------------------------------------------------
+#  for(i in 1:length(fullYears))
+#    {
+#    postscript(paste0("../IBTS-ISD-figs/IBTS-ISD", fullYears[i], ".eps"),
+#             height = 8, width = 5.36,
+#             horizontal=FALSE, paper="special")
+#  
+#    ISD_bin_plot(data.year = data.year.list[[i]],
+#                 b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+#                 b.confMin = dplyr::filter(MLEbins.res, Year ==
+#                                                       fullYears[i])$confMin,
+#                 b.confMax = dplyr::filter(MLEbins.res, Year ==
+#                                                       fullYears[i])$confMax,
+#                 year = fullYears[i],
+#                 xlim = xlim.global,
+#                 xmin = dplyr::filter(MLEbins.res, Year ==
+#                                                      fullYears[i])$xmin,
+#                 xmax = dplyr::filter(MLEbins.res, Year ==
+#                                                   fullYears[i])$xmax
+#                 )
+#    dev.off()
+#  }
+
+## ---- eval=FALSE---------------------------------------------------------
+#  % Include this in latex preamble:
+#  \newcommand\isdfig[2]{    % filename is #1, text is #2
+#    \begin{figure}[tp]
+#    \begin{center}
+#    \epsfbox{IBTS-ISD-figs/IBTS-ISD#1.eps}
+#    \end{center}
+#    \vspace{-5mm}
+#    \caption{#2}
+#    \label{fig:ISD-#1}
+#    \end{figure}
+#    \clearpage
+#  }
+#  
+#  % Include this after the figures have already been created in an R loop
+#  \isdfig{\Sexpr{fullYears[1]}}{Include caption as above for year \Sexpr{fullYears[i]}}
+#  
+#  \newcounter{loop}
+#  
+#  \newcommand{\loopMax}{\Sexpr{max(fullYears)+1}}
+#  \forloop{loop}{\Sexpr{fullYears[2]}}{\value{loop} < \loopMax}
+#          {\isdfig{\arabic{loop}}{Individual size distribution and MLEbins fit
+#              with 95\% confidence intervals for IBTS data in \arabic{loop}.
+#              Details as in Figure~\ref{fig:ISD-1986}.
+#  }}
+

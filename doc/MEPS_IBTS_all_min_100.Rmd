@@ -1,0 +1,464 @@
+---
+title: "MEPS_IBTS_all_min_100"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MEPS_IBTS_all}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+## Combining the four MEPS\_IBTS\_ vignettes into one to repeat the analyses
+
+Here we combine the essential elements of the four vignettes
+
+* [MEPS_IBTS_1.html](MEPS_IBTS_1.html)
+
+* [MEPS_IBTS_2.html](MEPS_IBTS_2.html)
+
+* [MEPS_IBTS_MLEbins.html](MEPS_IBTS_MLEbins.html)
+
+* [MEPS_IBTS_recommend.html](MEPS_IBTS_recommend.html)
+
+to repeat the analyses with an alternative value for the minimum body size
+(100 g, as opposed to the original 4 g), as suggested by a reviewer. This is to see
+if the larger fish can be fit well TODO bit more explanation. We retain only the necessary
+details of the four vignettes; the four vignettes should be used for initial
+understanding, this one is to repeat the analysis with alternate assumptions (or
+data). We simplify much of the text here as well, to focus on the code.
+
+## Pre-processing of IBTS data to get desired data for MEPS Table 1
+
+This is simplified from [MEPS_IBTS_1.html](MEPS_IBTS_1.html) -- see that
+vignette for full explanations.
+
+```{r setup}
+library(sizeSpectra)
+```
+
+Use the saved original data set:
+```{r}
+dim(dataOrig)
+names(dataOrig)
+```
+
+Keep the desired columns, noting that `data` will change a lot in the following
+code and will end up in a standard format:
+```{r}
+numAreas = length(unique(dataOrig$Area))
+colsKeep = c("Year",
+             "AphiaID",
+             "LngtClas",
+             "CPUE_number_per_hour",
+             "a",
+             "b",
+             "weight_g",
+             "CPUE_bio_per_hour")
+colsDiscard = setdiff(names(dataOrig), colsKeep)
+
+data = sizeSpectra::s_select(dataOrig, colsKeep)   # uses Sebastian Kranz's s_dplyr_funcs.r
+```
+
+1. Rename the columns:
+```{r rename}
+if(sum( colsKeep != c("Year", "AphiaID", "LngtClas", "CPUE_number_per_hour",
+    "a", "b", "weight_g", "CPUE_bio_per_hour")) > 0)
+       { stop("Need to adjust renaming") }
+names(data) = c("Year", "SpecCode", "LngtClass", "Number", "LWa", "LWb",
+         "bodyMass", "CPUE_bio_per_hour")
+# CPUE_bio_per_hour is Number * bodyMass
+```
+
+2. Make cm not mm:
+```{r cm}
+data$LngtClass = data$LngtClass/10
+```
+
+3. Rearrange the order to be more intuitive:
+```{r arrange}
+data = dplyr::arrange(data, Year, SpecCode, LngtClass)
+```
+
+Aggregate multiple counts of the same length fish of the same species in the
+same year:
+```{r, aggregating}
+data = dplyr::summarise(dplyr::group_by(data,
+                                        Year,
+                                        SpecCode,
+                                        LngtClass),
+                        "Number" = sum(Number)/numAreas,
+                        "LWa" = unique(LWa),
+                        "LWb" = unique(LWb),
+                        "bodyMass" = unique(bodyMass))
+```
+
+`Number` is the average number (of each species and length) caught per
+hour of trawling across all seven areas.
+
+Up until here `data` is the same as it was in [MEPS_IBTS_1.html](MEPS_IBTS_1.html).
+
+Now, instead of only including body-mass classes above 4 g (which we did following Blanchard et
+al., 2005), we set the cut-off to be 100 g to see if the larger fish are fit
+well with the bounded power-law fit only to the larger fish:
+```{r}
+range(data$LngtClass)
+range(data$bodyMass)
+sum(data$bodyMass == 0)
+sum(data$bodyMass < 100 )
+data = dplyr::filter(data, bodyMass >= 100)
+range(data$bodyMass)
+data
+summary(data)
+```
+
+Total number of fish in this dataset is
+```{r}
+sum(data$Number)
+```
+
+The unique length classes are:
+```{r lengths}
+sort(unique(data$LngtClass))
+ ```
+
+Need this to stop earlier groups being kept (can mess up later code):
+```{r}
+data = dplyr::ungroup(data)
+```
+
+The equivalent Table 1 (first six and last six rows of the data) is now as
+follows, where the last six rows of the original Table 1 are no longer in the
+data as they had body masses $<$100 g:
+```{r results='asis'}
+data_biomass <- dplyr::mutate(data,
+                              Biomass = Number * bodyMass)
+knitr::kable(rbind(data_biomass[1:6,],
+                   data_biomass[(nrow(data_biomass)-5):nrow(data_biomass),
+                                     ]),
+             digits=c(0, 0, 0, 3, 4, 4, 2, 2))
+```
+
+## Analyses of data using the original eight methods
+
+This is simplified from [MEPS_IBTS_2.html](MEPS_IBTS_1.html) -- see that
+vignette for full explanations.
+
+See if the number of length classes or species seems to change over time:
+```{r, dataSumm}
+dataSumm = dplyr::summarise(dplyr::group_by(data, Year),
+                            uniqLngtClass = length(unique(LngtClass)),
+                            uniqSpec = length(unique(SpecCode)))
+par(mfrow=c(2,1)) #7,1))
+
+plot(dataSumm$Year, dataSumm$uniqLngtClass, xlab="Year",
+     ylab="No. unique length classes", type="o",
+     ylim=c(0, max(dataSumm$uniqLngtClass)))
+plot(dataSumm$Year, dataSumm$uniqSpec, xlab="Year",
+     ylab="No. unique species", type="o", ylim=c(0, max(dataSumm$uniqSpec)))
+```
+
+As for the original full data set, there do not look to be any serious issue with this (no drastic changes in, for
+example, species identification through time).
+
+The remaining `eightMethods.count()` and plotting code from
+[MEPS_IBTS_2.html](MEPS_IBTS_1.html) is not repeated here since it takes a few
+hours to run, and our focus is on repeating the MLEbins method.
+
+## Analyses of IBTS data using the MLEbins method
+
+This section analyses the IBTS data using the MLEbins method, using the
+essential calculations from [MEPS_IBTS_MLEbins.html](MEPS_IBTS_MLEbins.html).
+
+### Determining which rows are 0.5 cm bins
+
+`LngtClass` for all species is the minimum value of a 1-cm-width bin, except for
+herring (*Clupea harengus*) and sprat (*Sprattus sprattus*) for which lengths
+are rounded down to 0.5 cm values (so the bins are 0.5-cm wide). The `SpecCode`
+values for these are:
+
+```{r speciesNames}
+herringCode = dplyr::filter(specCodeNames, species == "Clupea harengus")$speccode
+herringCode
+spratCode = dplyr::filter(specCodeNames, species == "Sprattus sprattus")$speccode
+spratCode
+specCode05 = c(herringCode, spratCode)      # species codes with 0.5cm length bins
+```
+
+Verified earlier that only these two species have 0.5 cm values for `LngtClass`.
+
+### Append the max of the bin breaks for each row
+
+So `LngtClass` is the minimum of each length bin. Need to work out the maximum
+of each length bin `LengthMax`, and then use the species-specific length-weight
+relationships to give the min (`wmin`) and max (`wmax`) of each body-mass bin.
+So create `dataBin` table dataframe that has `LengthMax`, `wmin` and `wmax` as
+extra columns for each row:
+
+```{r dataBin}
+dataBin = dplyr::mutate(data,
+                        LngtMax = LngtClass + 1)
+aa = which(dataBin$SpecCode %in% specCode05)           # row numbers for herring, sprat
+dataBin[aa, "LngtMax"] = dataBin[aa, "LngtMax"] - 0.5  # subtract 0.5 cm to
+                                                       # give 0.5-cm wide bins
+unique(dataBin$LngtMax - dataBin$LngtClass)            # correctly just has 0.5 and 1
+unique( dplyr::filter(dataBin, LngtMax - LngtClass == 0.5)$SpecCode)  # just herring,sprat
+
+dataBin = dplyr::mutate(dataBin, wmax = LWa * LngtMax^LWb)  # calculate max body mass
+                                                            # for each bin (min
+                                                            # is currently bodyMass)
+dataBin = dplyr::rename(dataBin, LngtMin = LngtClass)       # For consistency
+dataBin = dplyr::rename(dataBin, wmin = bodyMass)
+
+dataBin = dataBin[ , c("Year", "SpecCode", "LngtMin", "LngtMax",
+                       "LWa", "LWb", "wmin", "wmax", "Number")]     # Reorder columns
+
+range(dplyr::mutate(dataBin,
+                    wminCheck = LWa * LngtMin^LWb)$wminCheck - dataBin$wmin)
+                                              # Verifying that wmin is correct
+                                              # (was calculated independently)
+length(unique(dataBin$SpecCode))
+```
+
+No need to re-plot the body-mass bins for each species, since they won't have
+changed from the MEPS paper (there will just be no bins below 100 g, and so some
+species will be omitted).
+
+### Likelihood calculations using MLEbins method
+
+Now use the MLEbins method to fit each year of data in turn.
+
+```{r MLEbins}
+fullYears = sort(unique(dataBin$Year))
+# Do a loop for each year, saving all the results in MLEbins.nSeaFung.new
+for(iii in 1:length(fullYears))
+  {
+    dataBinForLike = dplyr::filter(dataBin,
+                                   Year == fullYears[iii])
+    dataBinForLike = dplyr::select(dataBinForLike,
+                                   SpecCode,
+                                   wmin,
+                                   wmax,
+                                   Number)
+    n = sum(dataBinForLike$Number)
+    xmin = min(dataBinForLike$wmin)
+    xmax = max(dataBinForLike$wmax)
+
+    MLEbins.nSeaFung.oneyear.new  = calcLike(negLL.fn = negLL.PLB.bins.species,
+                                             p = -1.9,
+                                             suppress.warnings = TRUE,
+                                             dataBinForLike = dataBinForLike,
+                                             n = n,
+                                             xmin = xmin,
+                                             xmax = xmax)
+
+    if(iii == 1)
+    {
+      MLEbins.nSeaFung.new = data.frame(Year = fullYears[iii],
+                                        xmin=xmin,
+                                        xmax=xmax,
+                                        n=n,
+                                        b=MLEbins.nSeaFung.oneyear.new$MLE,
+                                        confMin=MLEbins.nSeaFung.oneyear.new$conf[1],
+                                        confMax=MLEbins.nSeaFung.oneyear.new$conf[2])
+    } else {
+      MLEbins.nSeaFung.new = rbind(MLEbins.nSeaFung.new,
+                                   c(fullYears[iii],
+                                     xmin,
+                                     xmax,
+                                     n,
+                                     MLEbins.nSeaFung.oneyear.new$MLE,
+                                     MLEbins.nSeaFung.oneyear.new$conf[1],
+                                     MLEbins.nSeaFung.oneyear.new$conf[2]))
+   }
+}
+
+# Need the standard error for weighted linear regression,
+#  see eightMethods.count() for details:
+MLEbins.nSeaFung.new = dplyr::tbl_df(MLEbins.nSeaFung.new)
+MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
+                                     stdErr = (abs(confMin-b) +
+                                               abs(confMax-b))/(2*1.96) )
+MLEbins.nSeaFung.new
+```
+
+Now to plot the results and obtain the regression fit (uncomment the commented
+lines to save an explicit file):
+```{r timeseries, fig.width=7.5, fig.height=6}
+# postscript("../IBTS-min-100/trends100.eps",
+#           height = 6, width = 7.5, horizontal = FALSE, paper = "special")
+res = timeSerPlot(MLEbins.nSeaFung.new,
+                  legName = "(a) MLEbins",
+                  yLim = c(-3.4, -2.1),
+                  xLab = "Year",
+                  method = "",
+                  legPos = "bottomleft",
+                  weightReg = TRUE,
+                  xTicksSmallInc = 1,
+                  yTicksSmallInc = 0.05)
+# dev.off()
+```
+
+The statistics for the regression fit (like those in Table S.1) are:
+```{r}
+trendResultsMLEbinsNew = dplyr::tbl_df(res)
+knitr::kable(dplyr::select(trendResultsMLEbinsNew, Method, Low, Trend, High, p, Rsquared),
+             digits=c(NA, 4, 4, 4, 2, 2))
+```
+
+For an equivalent to Table S.2 (results for each year for the MLEbins method), need the constant
+*C* for each year, so calculate it here:
+```{r}
+MLEbins.res = MLEbins.nSeaFung.new
+MLEbins.res = dplyr::mutate(MLEbins.res,
+                            C = (b != -1 ) * (b+1) / ( xmax^(b+1) - xmin^(b+1) ) +
+                                (b == -1) * 1 / ( log(xmax) - log(xmin) )
+                           )
+MLEbins.res = dplyr::select(MLEbins.res, -stdErr)
+knitr::kable(dplyr::select(MLEbins.res, Year, xmin, xmax, n, confMin, b,
+                           confMax, C),
+             digits=c(0, rep(2, 7)))
+```
+
+## Recommended plotting approach from the MLEbins method
+
+Recommended plotting approach of results for each year, as in
+[MEPS_IBTS_recommend.html](MEPS_IBTS_recommend.html).
+
+First just get what's needed for the calculations for the recommended plot:
+TODO - replace with functionalised code if that gets done:
+```{r recommended}
+dataRecommend.isd = dplyr::select(dataBin,
+                                  Year,
+                                  wmin,
+                                  wmax,
+                                  Number)
+
+data.year.list = list()                # to save results for each year
+diff.ivec = vector()                   # to save i that have any cumSum !=
+                                       # verify TODO
+fullYears = sort(unique(dataBin$Year))
+for(i in 1:length(fullYears))
+  {
+    data.year = dplyr::filter(dataRecommend.isd,
+                              Year == fullYears[i])
+
+    data.year = dplyr::arrange(data.year,
+                               desc(wmin))
+    sumNumber = sum(data.year$Number)
+
+    # Have to do not with dplyr:
+    wmin.vec = data.year$wmin
+    wmax.vec = data.year$wmax
+    num.vec  = data.year$Number
+
+    countGTEwmin = rep(NA, length(num.vec)) # to do a manual count
+    lowCount = countGTEwmin
+    highCount = countGTEwmin
+
+    for(iii in 1:length(countGTEwmin))
+    {
+      countGTEwmin[iii]    = sum( (wmin.vec >= wmin.vec[iii]) * num.vec)
+      lowCount[iii]  = sum( (wmin.vec >= wmax.vec[iii]) * num.vec)
+      highCount[iii] = sum( (wmax.vec >  wmin.vec[iii]) * num.vec)
+    }
+    data.year = cbind(data.year,
+                      "countGTEwmin" = countGTEwmin,
+                      "lowCount" = lowCount,
+                      "highCount" = highCount)
+    data.year = dplyr::tbl_df(data.year)
+
+    data.year.list[[i]] = data.year
+}
+
+```
+
+Here is the code to give an animation for the equivalent Figures 7 and S.5-S.34
+for the IBTS data (now with minimum body size set to 100 g). For each year
+(given in top-right corner) the plot shows the individual size distribution and
+MLEbins fit (red solid curve) with 95\% confidence intervals (red dashed curves, may be hard to see).
+For each bin, the horizontal green line shows the range of body sizes, with value on the y-axis
+corresponding to the total number of individuals in bins whose minima are $\geq$
+the bin's minimum.  For each bin, the vertical span of the grey rectangle shows
+the possible range of the number of individuals with body mass $\geq$ the body
+mass of individuals in that bin (horizontal span is the same as for the green
+lines). The text in (a) gives the year, the MLE for the size-spectrum exponent
+$b$, and the sample size $n$.
+
+```{r plotparams}
+xlim.global = c(min(dataRecommend.isd$wmin),
+                max(dataRecommend.isd$wmax))
+```
+
+Here is the code to build the movie, but it is commented out since it causes Travis
+to fail -- Travis is the continuous integration service that automatically
+checks the packages builds every time a change is committed to GitHub, giving the
+little green symbol `passing` icon on the main page. The trick to showing the
+movie is to run the code uncommented (you need to install the `gifski` package), right-click on the animation in the
+html viewer and save it. I've done that and so am leaving this code commented,
+and will just refer to the saved animation file.
+```{r, eval=FALSE}
+# ```
+# {r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
+## fig.width is 0.67 * fig.height (which is 8)
+#
+#for(i in 1:length(fullYears))
+#  {
+#  ISD_bin_plot(data.year = data.year.list[[i]],
+#              b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+#              b.confMin = dplyr::filter(MLEbins.res, Year ==
+#                                                   fullYears[i])$confMin,
+#              b.confMax = dplyr::filter(MLEbins.res, Year ==
+#                                                   fullYears[i])$confMax,
+#              year = fullYears[i],
+#              xlim = xlim.global,
+#              xmin = dplyr::filter(MLEbins.res, Year ==
+#                                                   fullYears[i])$xmin,
+#              xmax = dplyr::filter(MLEbins.res, Year ==
+#                                                fullYears[i])$xmax,
+#             yBig.inc = 500,
+#              ySmall.inc = 100)
+# }
+# ```
+```
+
+The resulting animation is
+
+![IBTS_100_movie.gif](IBTS_100_movie.gif).
+
+To save each year as it's own figure do this (not it running here; you have to
+make the `IBTS-min-100` directory first):
+```{r, eval=FALSE}
+for(i in 1:length(fullYears))
+  {
+  postscript(paste0("../IBTS-min-100/IBTS-ISD", fullYears[i], ".eps"),
+           height = 8, width = 5.36,
+           horizontal=FALSE, paper="special")
+
+  ISD_bin_plot(data.year = data.year.list[[i]],
+               b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+               b.confMin = dplyr::filter(MLEbins.res, Year ==
+                                                     fullYears[i])$confMin,
+               b.confMax = dplyr::filter(MLEbins.res, Year ==
+                                                     fullYears[i])$confMax,
+               year = fullYears[i],
+               xlim = xlim.global,
+               xmin = dplyr::filter(MLEbins.res, Year ==
+                                                    fullYears[i])$xmin,
+               xmax = dplyr::filter(MLEbins.res, Year ==
+                                                 fullYears[i])$xmax,
+               yBig.inc = 500,
+               ySmall.inc = 100)
+  dev.off()
+}
+```
+See [MEPS_IBTS_recommend.html](MEPS_IBTS_recommend.html) for inserting all the
+figures into a LaTeX document using a loop.

@@ -1,0 +1,295 @@
+---
+title: "MEPS_IBTS_MLEbins"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MEPS_IBTS_MLEbins}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 5.7,
+  fig.height = 7
+)
+```
+
+## Analyses of IBTS data using the MLEbins method
+
+This vignette analyses the IBTS data using the MLEbins method that explicitly accounts for
+the species-specific body-mass bins.
+
+Creates Figure 6 (and related Figures S.1, S.2 and S.3) showing
+species-specific body mass bins resulting from the length bins, Figure 8
+(comparison of MLE and MLEbins values of b through time) and MLEbins row of
+Table S.1.
+
+```{r}
+library(sizeSpectra)
+library(tibble)  # Else prints all of a tibble
+data = IBTS_data
+data
+```
+
+## Determining which rows are 0.5 cm bins
+
+`LngtClass` for all species is the minimum value of a 1-cm-width bin, except for
+herring (*Clupea harengus*) and sprat (*Sprattus sprattus*) for which lengths
+are rounded down to 0.5 cm values (so the bins are 0.5-cm wide). The `SpecCode`
+values for these are:
+
+```{r speciesNames}
+herringCode = dplyr::filter(specCodeNames, species == "Clupea harengus")$speccode
+herringCode
+spratCode = dplyr::filter(specCodeNames, species == "Sprattus sprattus")$speccode
+spratCode
+specCode05 = c(herringCode, spratCode)      # species codes with 0.5cm length bins
+```
+
+Verified earlier that only these two species have 0.5 cm values for `LngtClass`.
+
+## Append the max of the bin breaks for each row
+
+So `LngtClass` is the minimum of each length bin. Need to work out the maximum
+of each length bin `LengthMax`, and then use the species-specific length-weight
+relationships to give the min (`wmin`) and max (`wmax`) of each body-mass bin.
+So create `dataBin` table dataframe that has `LengthMax`, `wmin` and `wmax` as
+extra columns for each row:
+
+```{r dataBin}
+dataBin = dplyr::mutate(data,
+                        LngtMax = LngtClass + 1)
+aa = which(dataBin$SpecCode %in% specCode05)           # row numbers for herring, sprat
+dataBin[aa, "LngtMax"] = dataBin[aa, "LngtMax"] - 0.5  # subtract 0.5 cm to
+                                                       # give 0.5-cm wide bins
+unique(dataBin$LngtMax - dataBin$LngtClass)            # correctly just has 0.5 and 1
+unique( dplyr::filter(dataBin, LngtMax - LngtClass == 0.5)$SpecCode)  # just herring,sprat
+
+dataBin = dplyr::mutate(dataBin, wmax = LWa * LngtMax^LWb)  # calculate max body mass
+                                                            # for each bin (min
+                                                            # is currently bodyMass)
+dataBin = dplyr::rename(dataBin, LngtMin = LngtClass)       # For consistency
+dataBin = dplyr::rename(dataBin, wmin = bodyMass)
+
+dataBin = dataBin[ , c("Year", "SpecCode", "LngtMin", "LngtMax",
+                       "LWa", "LWb", "wmin", "wmax", "Number")]     # Reorder columns
+
+range(dplyr::mutate(dataBin,
+                    wminCheck = LWa * LngtMin^LWb)$wminCheck - dataBin$wmin)
+                                              # Verifying that wmin is correct
+                                              # (was calculated independently)
+length(unique(dataBin$SpecCode))
+```
+
+This is the code to then save `dataBin` as a data set in the package, but is not
+run here:
+```{r dataBinsave, eval=FALSE}
+usethis::use_data(dataBin, overwrite = TRUE)
+```
+
+## Plot the resulting body mass bins
+
+So there are `r length(unique(dataBin$SpecCode))` uniques species. Now going to
+plot the resulting body mass bins for each species, with 45 on each figure. This
+gives Figures 6, S.1, S.2 and S.3. This function wrangles the data, calculates
+some useful values and plots all four figures:
+
+```{r fig.width=7.5, fig.height=6}
+res <- species_bins_plots()
+```
+
+Those four figures show how the length bins for each species get converted to
+body mass bins. The conversions are different for each species because of the
+different values of the length-weight coefficients. Even with 1-cm length bins
+(and 0.5-cm for herring and sprat) the resulting body-mass bins can span a large
+range. See paper for further details.
+
+Two species are highlighted: *Triglops murrayi* is Moustache Sculpin (code 127205). *Lumpenus lampretaeformis* is Snakeblenny (code 154675). Data for these are:
+```{r highlight}
+dataHighlight = dplyr::filter(data,
+                              SpecCode %in% c(127205, 154675))
+dataHighlightSumm = dplyr::summarise(dplyr::group_by(dataHighlight,
+                                                     SpecCode),
+                                     minLngt = min(LngtClass),
+                                     maxLngt = max(LngtClass),
+                                     LWa = unique(LWa),
+                                     LWb = unique(LWb))
+dataHighlightSumm
+```
+
+The widest resulting body-mass bin occurs for Atlantic Cod (`r res$specNameMaxWidth`), which is
+the rightmost species in the final figure above figure. The widest bin
+has a width of `r round(res$maxWidth, dig=0)` g.
+
+
+```{r echo=FALSE, eval=FALSE}
+# Plot of wmax for each species. I think it's a metric used somewhere.
+plot(1:(dim(dataBinSpecWmax)[1]),
+     dataBinSpecWmax$maxWmax,
+     log="y",
+     xlab="Species index",
+     ylab="Wmax for each species")
+
+# Plot of maximum overall body size (max of max(wmax)) each year
+maxWmaxByYear = dplyr::summarise(dplyr::group_by(dataBin, Year),
+                                 maxWmax = max(wmax))
+smallTck=0.01
+yLimWmaxByYear = range(pretty(c(0, max(maxWmaxByYear$maxWmax))))
+plot(maxWmaxByYear$Year,
+     maxWmaxByYear$maxWmax,
+     xlab="Year",
+     ylab="Wmax for each year",
+     ylim=yLimWmaxByYear)
+xTicksSmall = maxWmaxByYear$Year
+axis(1, at = xTicksSmall, labels = rep("", length(xTicksSmall)), tck=-smallTck)
+yTicksSmall = seq(yLimWmaxByYear[1], yLimWmaxByYear[2], by=2000)
+axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)), tck=-smallTck)
+# points(2011, dplyr::filter(maxWmaxByYear, Year == 2011)$maxWmax, col="red", pch=19)
+```
+
+## Likelihood calculations using MLEbins method
+
+Now use the MLEbins method to fit each year of data in turn.
+
+```{r MLEbins}
+fullYears = sort(unique(dataBin$Year))
+# Do a loop for each year, saving all the results in MLEbins.nSeaFung.new
+for(iii in 1:length(fullYears))
+  {
+    dataBinForLike = dplyr::filter(dataBin,
+                                   Year == fullYears[iii])
+    dataBinForLike = dplyr::select(dataBinForLike,
+                                   SpecCode,
+                                   wmin,
+                                   wmax,
+                                   Number)
+    n = sum(dataBinForLike$Number)
+    xmin = min(dataBinForLike$wmin)
+    xmax = max(dataBinForLike$wmax)
+
+    MLEbins.nSeaFung.oneyear.new  = calcLike(negLL.fn = negLL.PLB.bins.species,
+                                             p = -1.9,
+                                             suppress.warnings = TRUE,
+                                             dataBinForLike = dataBinForLike,
+                                             n = n,
+                                             xmin = xmin,
+                                             xmax = xmax)
+
+    if(iii == 1)
+    {
+      MLEbins.nSeaFung.new = data.frame(Year = fullYears[iii],
+                                        xmin=xmin,
+                                        xmax=xmax,
+                                        n=n,
+                                        b=MLEbins.nSeaFung.oneyear.new$MLE,
+                                        confMin=MLEbins.nSeaFung.oneyear.new$conf[1],
+                                        confMax=MLEbins.nSeaFung.oneyear.new$conf[2])
+    } else {
+      MLEbins.nSeaFung.new = rbind(MLEbins.nSeaFung.new,
+                                   c(fullYears[iii],
+                                     xmin,
+                                     xmax,
+                                     n,
+                                     MLEbins.nSeaFung.oneyear.new$MLE,
+                                     MLEbins.nSeaFung.oneyear.new$conf[1],
+                                     MLEbins.nSeaFung.oneyear.new$conf[2]))
+   }
+}
+
+# Need the standard error for weighted linear regression,
+#  see eightMethods.count() for details:
+MLEbins.nSeaFung.new = dplyr::tbl_df(MLEbins.nSeaFung.new)
+MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
+                                     stdErr = (abs(confMin-b) +
+                                               abs(confMax-b))/(2*1.96) )
+MLEbins.nSeaFung.new
+```
+
+Now to plot the results and obtain the regression fit:
+```{r timeseries, fig.width=7.5, fig.height=6}
+res = timeSerPlot(MLEbins.nSeaFung.new,
+                  legName = "(a) MLEbins",
+                  yLim = c(-2.2, -0.9),
+                  xLab = "Year",
+                  method = "MLEbins",
+                  legPos = "bottomleft",
+                  weightReg = TRUE,
+                  xTicksSmallInc = 1,
+                  yTicksSmallInc = 0.05)
+```
+
+The statistics for the regression fit, the final row in Table S.1 are:
+```{r}
+trendResultsMLEbinsNew = dplyr::tbl_df(res)
+knitr::kable(dplyr::select(trendResultsMLEbinsNew, Method, Low, Trend, High, p, Rsquared),
+             digits=c(NA, 4, 4, 4, 2, 2))
+```
+
+And use the results to plot Figure 8, comparing results from the original MLE
+method with those from the MLEbins method.
+```{r fig.width=7.5, fig.height=6.3}
+fullResults.MLEbins = MLEbins.nSeaFung.new  # Should really have just used
+                                        # MLEbins..; happened to include nSeaFung early on
+trend.MLEbins.new = dplyr::filter(trendResultsMLEbinsNew,
+                                  Method == "MLEbins")
+fullResults.MLE = dplyr::filter(fullResults, Method == "MLE")
+
+bYears = fullResults.MLE$Year
+MLE.col = "blue"
+MLEbins.col = "red"
+res.MLE = timeSerPlot(fullResults.MLE,
+                      legName = "",
+                      xLim = range(bYears),
+                      yLim = c(-1.82, -1.35),
+                      xLab = "Year",
+                      method = "MLE",
+                      legPos = "bottomleft",
+                      weightReg = TRUE,
+                      bCol = MLE.col,
+                      confCol = MLE.col,
+                      pchVal = 19,
+                      regPlot = FALSE,
+                      regColNotSig = "lightblue",
+                      regColSig = "darkblue",
+                      xTicksSmallInc = 1,
+                      yTicksSmallInc = 0.02,
+                      legExtra = c("MLEbins", "MLE"),
+                      legExtraCol = c(MLEbins.col, MLE.col),
+                      legExtraPos = "topleft",
+                      xJitter = -0.03)       # MLEbins on top as values are higher in figure
+
+res.MLEbins.new = timeSerPlot(fullResults.MLEbins,
+                              legName = "",
+                              method = "MLEbins",
+                              weightReg = TRUE,
+                              newPlot = FALSE,
+                              bCol = MLEbins.col,
+                              confCol = MLEbins.col,
+                              pchVal = 19,
+                              regPlot = FALSE,
+                              regColNotSig = "pink",
+                              regColSig = "darkred",
+                              xJitter = 0.03)
+```
+
+For Table S.2 (results for each year for the MLEbins method), need the constant
+*C* for each year, so calculate it here:
+```{r}
+MLEbins.res = MLEbins.nSeaFung.new
+MLEbins.res = dplyr::mutate(MLEbins.res,
+                            C = (b != -1 ) * (b+1) / ( xmax^(b+1) - xmin^(b+1) ) +
+                                (b == -1) * 1 / ( log(xmax) - log(xmin) )
+                           )
+MLEbins.res = dplyr::select(MLEbins.res, -stdErr)
+knitr::kable(dplyr::select(MLEbins.res, Year, xmin, xmax, n, confMin, b,
+                           confMax, C),
+             digits=c(0, rep(2, 7)))
+```
+
+This is saved (but not run here in vignette):
+```{r save, eval=FALSE}
+usethis::use_data(MLEbins.res, overwrite = TRUE)
+```
