@@ -290,10 +290,11 @@ MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
 MLEbins.nSeaFung.new
 ```
 
-Now to plot the results and obtain the regression fit:
+Now to plot the results and obtain the regression fit (uncomment the commented
+lines to save an explicit file):
 ```{r timeseries, fig.width=7.5, fig.height=6}
-postscript("../IBTS-min-100/trends100.eps",
-           height = 6, width = 7.5, horizontal = FALSE, paper = "special")
+# postscript("../IBTS-min-100/trends100.eps",
+#           height = 6, width = 7.5, horizontal = FALSE, paper = "special")
 res = timeSerPlot(MLEbins.nSeaFung.new,
                   legName = "(a) MLEbins",
                   yLim = c(-3.4, -2.1),
@@ -303,7 +304,7 @@ res = timeSerPlot(MLEbins.nSeaFung.new,
                   weightReg = TRUE,
                   xTicksSmallInc = 1,
                   yTicksSmallInc = 0.05)
-dev.off()
+# dev.off()
 ```
 
 The statistics for the regression fit (like those in Table S.1) are:
