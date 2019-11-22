@@ -21,7 +21,11 @@ Here is a movie showing fits to 30 years of International Bottom Trawl Survey da
 
 ![IBTS 30 years of data](vignettes/IBTS_movie.gif)
 
-The vignettes (TODO include links here if I end up committing them) explain how to use the functions in the package to reproduce all results in both papers, and to analyse new data sets using our functions. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating text from the papers in the vignettes). In the vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
+## Vignettes
+
+See the [overview vignette](doc/vignettes_overview.html) for a summary of all vignettes. They are available on the GitHub site, and also within the package in the usual way (see below).
+
+The vignettes explain how to use the functions in the package to reproduce all results in both papers, and to analyse new data sets using our functions. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating text from the papers in the vignettes). In the vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
 
 ## Install instructions
 
@@ -33,10 +37,10 @@ install.packages("devtools")
 
 To install the latest version of `sizeSpectra`:
 ```
-devtools::install_github("andrew-edwards/sizeSpectra", build_vignettes = TRUE)
+devtools::install_github("andrew-edwards/sizeSpectra")
 ```
 
-(May take a minute or so while building the vignettes). Then:
+Then:
 ```
 library(sizeSpectra)
 browseVignettes("sizeSpectra")
