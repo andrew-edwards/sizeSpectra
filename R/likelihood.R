@@ -227,15 +227,16 @@ negLL.PLB.binned = function(b, w, d, J=length(d), xmin=min(w), xmax=max(w))
   }
 
 ##' Calculate the negative log-likelihood of `b` for the PLB model, given
-##'  species-specific binned data (MLEbins method)
+##'  species-specific binned data (MLEbins method). Deprected -- `use negLL.PLB.bins.species()`
 ##'
 ##' Calculate the negative log-likelihood of *b* for the PLB model,
 ##'  given binned data where the bins can be different for each species.
-##'  Returns the negative log-likelihood. TODO understand this: USES ANDY'S ORIGINAL LIKELIHOOD
-##'  FUNCTION -- SEE `negLL.PLB.bins.species()` to use Mike's simpler one.
+##'  Returns the negative log-likelihood. This was Andy's original likelihood
+##'  function but we replaced it with Mike's simpler one, so use
+##'  `negLL.PLB.bins.species()`. Documented this one first, so keeping.
 ##'  Will be called by `nlm()` or similar, but `xmin` and `xmax` will just be estimated
 ##'  as the min of lowest bin and max of the largest bin (i.e. their MLEs),
-##'  no need to do numerically. See Appendix of MEPS paper for derivation.
+##'  no need to do numerically.
 ##'
 ##' @param b value of `b` for which to calculate the negative log-likelihood
 ##' @param dataBinForLike table data frame (tbl_df) where each row is the count in a bin
@@ -281,52 +282,46 @@ negLL.PLB.binned.species = function(b, dataBinForLike, dataBinForLikeSummary)
       }
     return(neglogLL)
   }
-##' TODO DOCUMENT ME IF NECESSARY - YES, is called from MLEbins vignette
+
+##' Calculate the negative log-likelihood of `b` for the PLB model, given
+##'  species-specific binned data (MLEbins method)
 ##'
-##' TODO Need to clarify how this differs from `negLL.PLB.binned.species()`
+##' Calculate the negative log-likelihood of *b* for the PLB model,
+##'  given binned data where the bins can be different for each species, namely
+##'  the MLEbins method derived as equations (S.18) and (S.26) in MEPS paper.
+##'  Returns the negative log-likelihood.
+##'  Will be called by `nlm()` or similar, but `xmin` and `xmax` will just be estimated
+##'  as the min of lowest bin and max of the largest bin (i.e. their MLEs),
+##'  no need to do numerically. See Supplementary Material of MEPS paper for derivation, and
+##'  the vignettes for example use.
 ##'
-##' @param b temp
-##' @param dataBinForLike temp
-##' @param n temp
-##' @param xmin temp
-##' @param xmax temp
-##' @return temp
-##' @export
+##' @param b value of `b` for which to calculate the negative log-likelihood
+##' @param dataBinForLike table data frame (tbl_df) where each row is the count in a bin
+##'  of a species, and columns (and corresponding mathematical notation in MEPS
+##'   Supplementary Material) are:
+##'  * `SpecCode`: code for each species, `s`
+##'  * `wmin`: lower bound of the bin, `w_\{sj\}` where `j` is the bin number
+##'  * `wmax`: upper bound of the bin, `w_\{s, j+1\}`
+##'  * `Number`: count in that bin for that species, `d_\{sj\}`
+##'  For each species the first and last bins must be non-empty, i.e.
+##'   `w_\{s1\}, w_\{s,J_s +1\} > 0`.
+##' @param n total number of counts `n = \Sum_\{sj\} d_\{sj\}` over all `s` and `j`
+##' @param xmin maximum likelihood estimate for `xmin`, `xmin = min_\{sj\}
+##'   w_\{s, 1\}`
+##' @param xmax maximum likelihood estimate for `xmax`, `xmax = max_\{sj\}
+##'   w_\{s, J_s+1\}`
+##' @return  negative log-likelihood of the parameters given the data
 ##' @author Andrew Edwards
+##' @export
 negLL.PLB.bins.species = function(b, dataBinForLike, n, xmin, xmax)
   {
-  # Calculates the negative log-likelihood of b for the PLB model,
-  #  given binned data where the bins can be different for each species -- i.e.
-  #  the MLEbins method. Returns the negative log-likelihood.
-  #  Will be called by nlm or similar, but xmin and xmax will just be estimated
-  #  as the min of lowest bin and max of the largest bin (that is their MLEs),
-  #  no need to do numerically. See Appendix of MEPS paper for derivation.
-  #
-  # COPIED FROM negLL.PLB.binned.species, for which b=-1 may need correcting
-  #
-  # Args:
-  #   b: value of b for which to calculate the negative log-likelihood
-  #   dataBinForLike: table data frame where each row is the count in a bin
-  #      of a species, where the columns (and corresponding mathematical
-  #      notation in Appendix) are:
-  #          SpecCode: code for each species, $s$
-  #          wmin: lower bound of the bin, $w_{sj}$ where $j$ is the bin number
-  #          wmax: upper bound of the bin, $w_{s,j+1}$
-  #          Number: count in that bin for that species, $d_{sj}.
-  #   n: total number of counts $n = \Sum_{sj} d_{sj}$ over all $s$ and $j$
-  #   xmin: maximum likelihood estimate for xmin, xmin = $min_{sj} w_{s,1}$
-  #   xmax: maximum likelihood estimate for xmax, xmax = $max_{sj} w_{s,J_s+1}$
-  #
-  # Returns:
-  #   negative log-likelihood of the parameters given the data.
-  #
-  # Useful to have in pre-processing function:
+  # Would be useful to put into a pre-processing function:
   #    if(xmin <= 0 | xmin >= xmax | length(d) != J | length(w) != J+1 |
   #       d[1] == 0 | d[J] == 0 | min(d) < 0)
-  #       stop("Parameters out of bounds in negLL.PLB")
+  #       stop("Parameters out of bounds in negLL.PLB.bins.species")
   if(b != -1)
-      {  # From updated equation (A.63** number will change):
-
+      {  # From MEPS equation (S.18), first calculate each component in the
+         # summations and then sum them:
          temp2 = dplyr::mutate(dataBinForLike,
                         comp2 = Number * log( abs( wmax^(b+1) - wmin^(b+1) ) ) )
          comp2Sum = sum(temp2$comp2)
@@ -334,7 +329,14 @@ negLL.PLB.bins.species = function(b, dataBinForLike, n, xmin, xmax)
          logLL = - n * log( abs( xmax^(b+1) - xmin^(b+1) ) ) + comp2Sum
          neglogLL = - logLL      # Negative log-likelihood
       } else
-      { stop("NOT DONE b=-1 yet; adapt, but first correct, negLL.PLB.binned")
+      {
+        # Not fully tested, but should work:
+         temp2 = dplyr::mutate(dataBinForLike,
+                        comp2 = Number * log( log(wmax) - log(wmin) ) )
+         comp2Sum = sum(temp2$comp2)
+
+         logLL = - n * log( log(xmax) - log(xmin) ) + comp2Sum
+         neglogLL = - logLL      # Negative log-likelihood
       }
     return(neglogLL)
   }
