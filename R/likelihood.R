@@ -194,9 +194,8 @@ negLL.PLB.counts = function(b, x, c, K=length(c), xmin=min(x), xmax=max(x),
 ##' will just be estimated as the minimum of lowest bin and maximum of the
 ##' largest bin, respectively, (since they are the MLEs), no need to do
 ##' numerically. Specifically this is the negative of the log-likelihood
-##' function given in (A.70) of Edwards et al. (2017) and (S.27) of Edwards et
-##' al. (TODO), where the latter fixed a minor error in (A.75) of Edwards et
-##' al. (2017).
+##' function given in (A.70) of the MEE paper and (S.27) of the MEPS paper,
+##' , where the latter fixed a minor error in (A.75) of the MEE paper.
 ##'
 ##' @param b value of b for which to calculate the negative log-likelihood
 ##' @param w vector of length `J+1` giving the bin breaks `w_1, w_2, ..., w_{J+1}`
@@ -257,7 +256,6 @@ negLL.PLB.binned = function(b, w, d, J=length(d), xmin=min(w), xmax=max(w))
 ##'  * `wmaxSpecies: maximum upper bound `w_\{s,J_s +1\}`
 ##'  * `n_s`: total number of counts for species `s` `n_s`
 ##' @return  negative log-likelihood of the parameters given the data
-##' @export
 ##' @author Andrew Edwards
 negLL.PLB.binned.species = function(b, dataBinForLike, dataBinForLikeSummary)
   {
