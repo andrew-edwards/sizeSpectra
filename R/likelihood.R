@@ -302,7 +302,7 @@ negLL.PLB.bins.species = function(b, dataBinForLike, n, xmin, xmax)
   #  the MLEbins method. Returns the negative log-likelihood.
   #  Will be called by nlm or similar, but xmin and xmax will just be estimated
   #  as the min of lowest bin and max of the largest bin (that is their MLEs),
-  #  no need to do numerically. See Appendix of second manuscript for derivation.
+  #  no need to do numerically. See Appendix of MEPS paper for derivation.
   #
   # COPIED FROM negLL.PLB.binned.species, for which b=-1 may need correcting
   #
