@@ -163,6 +163,9 @@ fullResults.MLE = dplyr::filter(fullResults, Method == "MLE")
 bYears = fullResults.MLE$Year
 MLE.col = "blue"
 MLEbins.col = "red"
+# postscript("nSeaFungCompareTrendsCol.eps", height = 6.3,
+#            width = 7.5,
+#            horizontal=FALSE,  paper="special")
 res.MLE = timeSerPlot(fullResults.MLE,
                       legName = "",
                       xLim = range(bYears),
@@ -196,6 +199,7 @@ res.MLEbins.new = timeSerPlot(fullResults.MLEbins,
                               regColNotSig = "pink",
                               regColSig = "darkred",
                               xJitter = 0.03)
+# dev.off()
 
 ## ------------------------------------------------------------------------
 MLEbins.res = MLEbins.nSeaFung.new

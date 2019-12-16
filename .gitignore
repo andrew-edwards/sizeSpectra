@@ -14,3 +14,4 @@ compress-test/
 data-raw/*.RData
 
 IBTS-min-100/
+doc

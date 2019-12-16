@@ -227,7 +227,7 @@ negLL.PLB.binned = function(b, w, d, J=length(d), xmin=min(w), xmax=max(w))
   }
 
 ##' Calculate the negative log-likelihood of `b` for the PLB model, given
-##'  species-specific binned data (MLEbins method). Deprected -- `use negLL.PLB.bins.species()`
+##'  species-specific binned data (MLEbins method). DEPRECATED -- `use negLL.PLB.bins.species()`
 ##'
 ##' Calculate the negative log-likelihood of *b* for the PLB model,
 ##'  given binned data where the bins can be different for each species.
