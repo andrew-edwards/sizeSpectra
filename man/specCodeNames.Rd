@@ -11,7 +11,8 @@
 not all species codes are here).
 }}
 \source{
-Aphia species codes, Julia obtained from DATRAS (the ICES DATRAS R packages likely have them all).
+Aphia species codes, Julia obtained them from DATRAS (the ICES
+DATRAS R packages likely has them all).
 }
 \usage{
 specCodeNames

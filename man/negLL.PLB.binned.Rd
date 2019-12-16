@@ -31,9 +31,8 @@ log-likelihood. Will be called by \code{nlm()} or similar, but \code{xmin} and \
 will just be estimated as the minimum of lowest bin and maximum of the
 largest bin, respectively, (since they are the MLEs), no need to do
 numerically. Specifically this is the negative of the log-likelihood
-function given in (A.70) of Edwards et al. (2017) and (S.27) of Edwards et
-al. (TODO), where the latter fixed a minor error in (A.75) of Edwards et
-al. (2017).
+function given in (A.70) of the MEE paper and (S.27) of the MEPS paper,
+, where the latter fixed a minor error in (A.75) of the MEE paper.
 }
 \author{
 Andrew Edwards

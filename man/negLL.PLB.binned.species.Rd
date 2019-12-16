@@ -3,7 +3,7 @@
 \name{negLL.PLB.binned.species}
 \alias{negLL.PLB.binned.species}
 \title{Calculate the negative log-likelihood of \code{b} for the PLB model, given
-species-specific binned data (MLEbins method)}
+species-specific binned data (MLEbins method). Deprected -- \code{use negLL.PLB.bins.species()}}
 \usage{
 negLL.PLB.binned.species(b, dataBinForLike, dataBinForLikeSummary)
 }
@@ -39,11 +39,12 @@ negative log-likelihood of the parameters given the data
 \description{
 Calculate the negative log-likelihood of \emph{b} for the PLB model,
 given binned data where the bins can be different for each species.
-Returns the negative log-likelihood. TODO understand this: USES ANDY'S ORIGINAL LIKELIHOOD
-FUNCTION -- SEE \code{negLL.PLB.bins.species()} to use Mike's simpler one.
+Returns the negative log-likelihood. This was Andy's original likelihood
+function but we replaced it with Mike's simpler one, so use
+\code{negLL.PLB.bins.species()}. Documented this one first, so keeping.
 Will be called by \code{nlm()} or similar, but \code{xmin} and \code{xmax} will just be estimated
 as the min of lowest bin and max of the largest bin (i.e. their MLEs),
-no need to do numerically. See Appendix of MEPS paper for derivation.
+no need to do numerically.
 }
 \author{
 Andrew Edwards

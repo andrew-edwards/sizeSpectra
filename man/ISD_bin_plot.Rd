@@ -5,8 +5,9 @@
 \title{Recommended plots of individual size distribution and fit for binned data}
 \usage{
 ISD_bin_plot(data.year, b.MLE, b.confMin, b.confMax, year = NA,
-  xRange = NA, MLE.round = 2, xLabel.small = c(5, 50, 500, 5000),
-  yBig.inc = 1000, ySmall.inc = 250, ySmall.tcl = -0.2,
+  xlim = NA, xmin = NA, xmax = NA, yScaling = 0.75,
+  MLE.round = 2, xLabel.small = c(5, 50, 500, 5000), yBig.inc = 1000,
+  ySmall.inc = 250, ySmall.tcl = -0.2,
   xLab = expression(paste("Body mass (", italic(x), "), g")),
   yLab = expression(paste("Number of ", values >= italic(x))),
   inset.a = c(0, 0), inset.year = c(0, 0.04), seg.col = "green",
@@ -26,13 +27,22 @@ countGTEwmin, lowCount, highCount}
 
 \item{year}{year of data to go into legend (use NA if not applicable)}
 
-\item{xRange}{limits of x-axis}
+\item{xlim}{(soft) limits of x-axis. If NA then automatically uses the minimum
+\code{wmin} and maximum \code{wmax} for that data set (so good to set globally when
+doing multiple years).}
+
+\item{xmin, xmax:}{values of \code{xmin} and \code{xmax} to plot the PLB curve}
+
+\item{yScaling}{Scaling of y-minimum of y-axis. Axis can't go to zero on
+log-log plot, but goes to the proportion \code{yScaling} (which is less than 1)
+of the minimum value of counts greater than the highest \code{wmin} value. Do
+such that can see the right-most bin in all plots.}
 
 \item{MLE.round}{number of decimal places to show MLE of b on the top plot}
 
 \item{xLabel.small}{which small tickmarks to label on the x-axis}
 
-\item{yBig.inc}{increment for big tickmarks on the y-axis}
+\item{yBig.inc}{increment for labelled big tickmarks on the unlogged y-axis}
 
 \item{ySmall.inc}{increment for small unlabelled tickmarks on the y-axis}
 
