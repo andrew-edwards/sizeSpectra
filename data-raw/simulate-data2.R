@@ -1,5 +1,5 @@
 # Simulated data for Figures 4 and 5 for MEPS paper that take too long to produce when building a vignette.
-#  See ?sizeSpectra::MLEbin.MEPS.default  etc. for details
+#  See ?sizeSpectra::MLEbin.MEPS.default  (and for other objects saved below) for details
 
 MLEbin.MEPS.default <- MLEbin.simulate()
 usethis::use_data(MLEbin.MEPS.default, overwrite = TRUE)
