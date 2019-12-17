@@ -311,7 +311,7 @@ negLL.PLB.binned.species = function(b, dataBinForLike, dataBinForLikeSummary)
 ##'  * `Number`: count in that bin for that species, `d_\{sj\}`
 ##'  For each species the first and last bins must be non-empty, i.e.
 ##'   `w_\{s1\}, w_\{s,J_s +1\} > 0`.
-##' @param n total number of counts `n = \Sum_\{sj\} d_\{sj\}` over all `s` and `j`
+##' @param n total number of counts `n = \sum_\{sj\} d_\{sj\}` over all `s` and `j`
 ##' @param xmin maximum likelihood estimate for `xmin`, `xmin = min_\{sj\}
 ##'   w_\{s, 1\}`
 ##' @param xmax maximum likelihood estimate for `xmax`, `xmax = max_\{sj\}

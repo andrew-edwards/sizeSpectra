@@ -22,7 +22,7 @@ For each species the first and last bins must be non-empty, i.e.
 \code{w_\{s1\}, w_\{s,J_s +1\} > 0}.
 }}
 
-\item{n}{total number of counts \code{n = \Sum_\{sj\} d_\{sj\}} over all \code{s} and \code{j}}
+\item{n}{total number of counts \code{n = \sum_\{sj\} d_\{sj\}} over all \code{s} and \code{j}}
 
 \item{xmin}{maximum likelihood estimate for \code{xmin}, \code{xmin = min_\{sj\} w_\{s, 1\}}}
 
