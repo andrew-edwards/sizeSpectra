@@ -69,7 +69,7 @@ abline(v=b.known, col=vertCol, lwd=vertThick)
 inset = c(-0.08, -0.08)     # inset distance of legend
 legend("topleft", "(a) Llin", bty="n", inset=inset)
 
-# TODO think these three lines can be deleted
+# Think these three lines can be deleted
 figlabpos = 0.93    # proportion of x and y axis lengths to put (a) in etc.
 xlabpos = 0.75       # just play with a number, as now using pos=4 in text
 text( xlabpos, figlabpos * 1100, "(a) Llin", pos=4)
