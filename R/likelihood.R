@@ -195,7 +195,7 @@ negLL.PLB.counts = function(b, x, c, K=length(c), xmin=min(x), xmax=max(x),
 ##' largest bin, respectively, (since they are the MLEs), no need to do
 ##' numerically. Specifically this is the negative of the log-likelihood
 ##' function given in (A.70) of the MEE paper and (S.27) of the MEPS paper,
-##' , where the latter fixed a minor error in (A.75) of the MEE paper.
+##' where the latter fixed a minor error in (A.75) of the MEE paper.
 ##'
 ##' @param b value of b for which to calculate the negative log-likelihood
 ##' @param w vector of length `J+1` giving the bin breaks `w_1, w_2, ..., w_{J+1}`
@@ -207,11 +207,16 @@ negLL.PLB.counts = function(b, x, c, K=length(c), xmin=min(x), xmax=max(x),
 ##' @return negative log-likelihood of the parameters given the data
 ##' @export
 ##' @author Andrew Edwards
-negLL.PLB.binned = function(b, w, d, J=length(d), xmin=min(w), xmax=max(w))
-                                        # sumlogx)
+negLL.PLB.binned = function(b,
+                            w,
+                            d,
+                            J = length(d),
+                            xmin = min(w),
+                            xmax = max(w))
+
   {
-   # TODO fix those J=length(d) type things in args, that messed me up in
-   # another project
+   # Ideally should fix those J=length(d) type things in args, that messed me up in
+   # another project.
     if(xmin <= 0 | xmin >= xmax | length(d) != J | length(w) != J+1 |
          d[1] == 0 | d[J] == 0 | min(d) < 0)
          stop("Parameters out of bounds in negLL.PLB")
@@ -246,8 +251,8 @@ negLL.PLB.binned = function(b, w, d, J=length(d), xmin=min(w), xmax=max(w))
 ##'  * `wmax`: upper bound of the bin, `w_\{s,j+1\}`
 ##'  * `Number`: count in that bin for that species, `d_\{sj\}`
 ##'  For each species the first and last bins must be non-empty, i.e.
-##'   `w_\{s1\}, w_\{s,J_s +1\} > 0`. TODO-CHECK: Write code to check that before
-##'    calling this function (since this gets repeatedly called). TODO math properly
+##'   `w_\{s1\}, w_\{s,J_s +1\} > 0`. Should ideally write code to check that before
+##'    calling this function (since this gets repeatedly called).
 ##' @param dataBinForLikeSummary tbl_df with one row for each species, giving
 ##'  the minimum lower bound `w_\{s1\}` and maximum upper bound `w_\{s,J_s +1\}`
 ##'  and the number of counts for that species, where `J_s` is the number of
@@ -260,9 +265,7 @@ negLL.PLB.binned = function(b, w, d, J=length(d), xmin=min(w), xmax=max(w))
 ##' @author Andrew Edwards
 negLL.PLB.binned.species = function(b, dataBinForLike, dataBinForLikeSummary)
   {
-  # TODO - think done: COPIED FROM negLL.PLB.binned for now, for which b=-1 needs correcting
-  #
-  # TODO - check if done MOVE THESE TO PRE-PROCESS function:
+  # Should put these in a pre-process function:
   #    if(xmin <= 0 | xmin >= xmax | length(d) != J | length(w) != J+1 |
   #       d[1] == 0 | d[J] == 0 | min(d) < 0)
   #       stop("Parameters out of bounds in negLL.PLB")
@@ -278,7 +281,10 @@ negLL.PLB.binned.species = function(b, dataBinForLike, dataBinForLikeSummary)
          #
          neglogLL = - comp1Sum - comp2Sum
       } else
-      { stop("NOT DONE b=-1 yet; adapt, but first correct, negLL.PLB.binned")
+      {
+        stop("NOT DONE b=-1 yet; adapt, but first correct, negLL.PLB.binned;
+              though negLL.PLB.binned.species is deprecated, use
+              negLL.PLB.bins.species")
       }
     return(neglogLL)
   }

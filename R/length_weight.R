@@ -201,7 +201,7 @@ length_weight_plot <- function(sp1 = "Common Ling",
 }
 
 ##' Demonstration of how binned body-mass values get assigned to logarithmic
-##'  size-class bins (Figure 3 of MEPS)TODO this is original version
+##'  size-class bins (Figure 3 of MEPS)
 ##'
 ##' @param num2 Number of log2 bin breaks
 ##' @param lenBins Example length bin breaks to use for the example body-mass bins
@@ -238,7 +238,7 @@ bins_assignment_plot <- function(num2 = 11,
 
   log2bins = 2^(0:(num2-1))    # on unlogged axes
   log2binsStart = log2bins[-num2]
-  log2binsEnd = log2bins[-1]   # see segments in next figure TODO eh??
+  log2binsEnd = log2bins[-1]   # see segments in next figure
   log2binsMid = colMeans(rbind(log2binsStart,
                                log2binsEnd))  # midpoints (unlogged)
 

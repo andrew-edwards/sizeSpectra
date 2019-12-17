@@ -11,7 +11,7 @@
 #  (Figure 3 and others)
 # histAxes2 - histAxes adapted for fitting3rep-n10000.r, for n=10,000 sample size
 # logTicks - add axes and tick marks to a log-log plot to represent
-#  unlogged values (e.g. Figures 2(h) and 6(b))
+#  unlogged values (e.g. Figures 2(h) and 6(b) of MEE paper)
 # legJust - add legend to a plot
 # MLE.plot - recommended plot of MLE results and ISD (Figure 2h and 6b)
 # MLE.plots.recommended - recommended two-panel plot of MLE results and LBN plot
@@ -70,15 +70,15 @@ lm.line = function(x.vector, lm.results, ...)
 ##' @param xtics position of the x axis ticks
 ##' @param yaxlab labels for the y axis ticks
 ##' @param ytics position of the y axis ticks
-##' @param midpoints TODO
-##' @param breakpoints TODO
+##' @param midpoints midpoints of the bins
+##' @param breakpoints breaks of the bins
 ##' @param xlim optional x limits for the plot
 ##' @param ylim optional y limits for the plot
 ##' @param xlab label for the x axis
 ##' @param ylab label for the y axis
 ##' @param horiz whether to have vertical or horizontal bars
 ##' @param col color(s) in which to plot the values
-##' @param N TODO: to do with ticks I think
+##' @param N value of highest top short tickmark
 ##' @param ... arguments passed to 'barplot'.
 ##' @return Barplot with a gap in the y-axis
 ##' @export
@@ -98,7 +98,8 @@ gap.barplot.cust = function (y,
                              ylab = "Count in each bin",
                              horiz = FALSE,
                              col = NULL,
-                             N = n, ...)
+                             N = 1000,
+                             ...)
   {
     if (missing(y))
         stop("y values required")
@@ -200,7 +201,7 @@ gap.barplot.cust = function (y,
 ##'   75\%).
 ##' @param type `data.frame` produces a row to put into a dataframe,
 ##'   `latex` gives output to copy into a `.tex` file, `Rmd` gives Rmarkdown
-##'    output (see vignette TODO).
+##'    output (see vignette `MEE_reproduce_2`).
 ##' @return row of a data.frame, line of LaTeX output for table to copy into a
 ##'   .tex file, or line of Rmarkdown to copy into an Rmarkdown document
 ##'
@@ -264,14 +265,14 @@ qqtab = function(xx,
 ##' Plot confidence intervals of repeated estimates for one method
 ##'
 ##' Plot confidence intervals of the repeated estimates of `b` for one
-##' method. Gets called eight times to produce Figure 4 of MEE paper and TODO of
+##' method. Gets called eight times to produce Figure 4 of MEE paper and Figure 5 of
 ##' MEPS paper. Plots
 ##' horizontal lines for the intervals, colour coded as to whether or not they
 ##' include the true value of b.
 ##'
 ##' @param repConf data frame with columns `confMin` and `confMax`, the
 ##'   minimum and maximum of the 95\% confidence interval for b, and rows
-##'   corresponding to each (TODO a, yes?) simulated data set. When `confPlot` is called, for
+##'   corresponding to each simulated data set. When `confPlot` is called, for
 ##'   some methods `b = slope - 1` or `b = slope - 2`, which gets done in the
 ##'   call.
 ##' @param legName legend name for that panel
@@ -282,7 +283,7 @@ qqtab = function(xx,
 ##' @param pchVal `pch` for points at endpoints of intervals
 ##' @param cexVal size of points (default of 0 does not plot them)
 ##' @param xLim x-axis range
-##' @param colourCode colour code the figure (may not completely work TODO)
+##' @param colourCode colour code the figure
 ##' @param vertThick thickness of vertical line for `b.true`
 ##' @param horizThick thickness of horizontal lines
 ##' @param thin number of values to thin the values for plotting. Only works for
@@ -302,7 +303,7 @@ qqtab = function(xx,
 ##' @param insetVal2 inset shift for printing observed coverage percentage
 ##' @param xsmallticks where to put unlabelled small tick marks on x-axis
 ##' @param legLoc where to put the legend, as the first argument in `legend()`
-##' @return plots a panel and returns what is plotted as a sorted data frame TODO
+##' @return plots a panel and returns what is plotted as a sorted data frame
 ##' @export
 ##' @author Andrew Edwards
 confPlot = function(repConf,
@@ -423,25 +424,23 @@ confPlot = function(repConf,
     return(repConf.sort.full)     # repConf.sort is what's plotted though
 }
 
-##' Histogram axes for figures TODO
+##' Histogram axes for figures as in Figure 3 of MEE paper
 ##'
-##' Do the histogram axes in `fitting3rep.r` TODO and later, since almost all
-##' panels will have same axes. Not very flexible, use `histAxes2()`
-##' to plot up to 10,000. TODO Note that `xbsmallticks` and `xbigticks` need to be
-##' prespecified, but
-##' they haven't yet been made arguments here.
+##' Do the histogram axes in vignette `MEE_reproduce_2.Rmd` and later, since almost all
+##' panels will have same axes. Not very flexible, so may need `histAxes2()`
+##' to plot up to 10,000 (though that needs working on, or adapt this one).
 ##'
 ##' @param yBigTickLab y-axis big ticks to label
 ##' @param yBigTickNoLab y-axis big ticks to not label
 ##' @param ySmallTick y-axis small ticks (unlabelled)
-##' @param cexAxis font size for axis labels TODO defaults are for
-##'   MEE_reproduce_2.Rmd. May have to check other figs
+##' @param cexAxis font size for axis labels, defaults are for
+##'   `MEE_reproduce_2.Rmd`.
 ##' @param xsmallticks where to put unlabelled small tick marks on x-axis
 ##' @param xbigticks where to put big tick marks on x-axis
 ##' @param vertCol vertCol colour of vertical line for `b.known`
 ##' @param vertThick thickness of vertical line for `b.known`
 ##' @param b.known known value of $b$
-##' @return Adds axes to existing histogram TODO: check
+##' @return Adds axes to existing histogram
 ##' @export
 ##' @author Andrew Edwards
 histAxes = function(yBigTickLab = c(0, 2000, 4000),
@@ -469,15 +468,17 @@ histAxes = function(yBigTickLab = c(0, 2000, 4000),
       abline(v=b.known, col=vertCol, lwd=vertThick)
 }
 
-##' Do histogram axes for Figure TODO
+##' Do histogram axes for Figure  - not used, but may need to generalise axes
+##' from what `histAxes()` can do (?)
 ##'
-##' Do the histogram axes for, in particular, TODO `fitting3rep-n10000.r`,
-##' since the larger n sample size means affects the resulting histograms
-##' of estimated b. Not very flexible, just doing for the one figure.
+##' Do the histogram axes for, in particular, old code `fitting3rep-n10000.r`,
+##' for `n=1000` sample size,
+##' since the larger sample size means affects the resulting histograms
+##' of estimated `b`. Not very flexible, just doing for the one figure.
 ##' Copying what is used for Llin method (so could go back and use this function
 ##'   throughout earlier code).
 ##'
-##' @return Adds axes to existing histogram TODO: check
+##' @return Adds axes to existing histogram, but not very general
 ##' @export
 ##' @author Andrew Edwards
 histAxes2 = function()
@@ -498,7 +499,8 @@ histAxes2 = function()
 
 ##' Add axes and tick marks to a log-log plot to represent unlogged values
 ##'
-##' Useful because you can then interpret the unlogged, e.g. Figure TODO
+##' Useful because you can then interpret the unlogged values, e.g. Figures 2(h)
+##' and 6(b) of MEE paper and Figure 7 of MEPS paper.
 ##'
 ##' @param xLim the x limits for the plot (unlogged scale); if NULL then do not
 ##'   add anything to x-axis
@@ -513,7 +515,7 @@ histAxes2 = function()
 ##' @return Adds axes and big and small tick marks to the plot. Returns NULL
 ##' @examples
 ##' \dontrun{
-##' # Adapt the following:   TODO make explicit
+##' # Adapt the following (could make an explicit example):
 ##'   plot(..., log="xy", xlab=..., ylab=..., xlim=..., ylim=..., axes=FALSE)
 ##'   xLim = 10^par("usr")[1:2]
 ##'   yLim = 10^par("usr")[3:4]
@@ -583,8 +585,8 @@ logTicks = function(xLim,
 ##' @return Adds legend to exiting plot. Returns NULL.
 ##' @export
 ##' @examples
-##' \dontrun{ TODO check
-##'   plot(10:1)
+##' \dontrun{
+##'  plot(10:1)
 ##'  legJust(c("Method", paste("value=", mean(1:10), sep=""), "x=7.0"))
 ##' }
 ##' @author Andrew Edwards
@@ -1028,7 +1030,7 @@ eight.methods.plot <- function(eight.results = eight.results
 ##'   `?MLEbin.simulate()` for details
 ##' @param vertCol colour for vertical line at true value of `b`
 ##' @param vertThick thickness of vertical line at true value of `b`
-##' @param xrange range of x values TODO can change to xlimA for consistency
+##' @param xrange range of x values (should change to xlimA for consistency)
 ##' @param xbigticks.by increment between big tick marks on x-axis (all labelled)
 ##' @param xsmallticks.by increment between small tick marks on x-axis
 ##' @param ylimA range of y values
@@ -1171,7 +1173,7 @@ MLEmid.MLEbin.hist = function(results.list,
 ##'   `?MLEbin.simulate()` for details
 ##' @param vertCol colour for vertical line at true value of `b`
 ##' @param vertThick thickness of vertical line at true value of `b`
-##' @param xrange range of x values TODO can change to xlimA for consistency
+##' @param xrange range of x values (should change to xlimA for consistency)
 ##' @param xbigticks.by increment between big tick marks on x-axis (all labelled)
 ##' @param xsmallticks.by increment between small tick marks on x-axis
 ##' @param legLabMid character vector of length 4 for labelling each panel in
@@ -1252,11 +1254,11 @@ for(binTypeInd in 1:binTypes)
                    b.true = b.known,
                    xLim = xrange,
                    xsmallticks = xsmallticks,
-                   insetVal=inset,  # TODO could be wrong
-                   insetVal2=inset + c(0, 0.12),
-                   yLabels=FALSE,
-                   legLoc="topright",
-                   yLab="",
+                   insetVal = inset,
+                   insetVal2 = inset + c(0, 0.12),
+                   yLabels = FALSE,
+                   legLoc = "topright",
+                   yLab = "",
                    vertCol = vertCol,
                    vertThick = vertThick)
   }
@@ -1347,8 +1349,6 @@ MLEmid.MLEbin.table = function(results.list)
 ##' @param yLim y-axis limits
 ##' @param xLab label for x-axis
 ##' @param yLab label for y-axis
-##' @param sep TODO: not needed, make the value if yLab is NULL - expect will
-##'   fail sometimes
 ##' @param xTicksSmallInc increments for where to have small (unlabelled)
 ##'   tickmarks on x-axis
 ##' @param xTicksSmallTck tick length for small (unlabelled) tickmarks on x-axis
@@ -1370,7 +1370,7 @@ MLEmid.MLEbin.table = function(results.list)
 ##' @param insetVal inset shift for naming the panel
 ##' @param xJitter value to jitter the x-values by (for comparison plot the
 ##'   confidence intervals overlap)
-##' @return dataframe of just one row (TODO: check) with columns:
+##' @return dataframe of just one row with columns:
 ##'   * Method: method used
 ##'   * Low: lower bound of 95\% confidence interval
 ##'   * Trend: gradient of regression fit
@@ -1847,7 +1847,7 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' @param xLabel.small which small tickmarks to label on the x-axis
 ##' @param yBig.inc increment for labelled big tickmarks on the unlogged y-axis
 ##' @param ySmall.inc increment for small unlabelled tickmarks on the y-axis
-##' @param ySmall.tcl length of small y-axis tick marks - only for (a)??TODO
+##' @param ySmall.tcl length of small y-axis tick marks - only for (a) maybe
 ##' @param xLab label for x-axis
 ##' @param yLab label for y-axis
 ##' @param inset.a how far to inset (a) and (b)
@@ -1865,7 +1865,7 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' @param mgp.vals margin line for axis title, axis labels and axis line
 ##' @return two-panel figure of the recommended plot of binned data and the
 ##'   fitted individual size distribution, like Figures 7 and S.5-S.34 of the
-##'   MEPS paper. See the vignette TODO for explicit example.
+##'   MEPS paper. See the vignette `MEPS_IBTS_recommend` for explicit example.
 ##' @export
 ##' @author Andrew Edwards
 ISD_bin_plot <- function(data.year,
@@ -1900,7 +1900,7 @@ ISD_bin_plot <- function(data.year,
   sumNumber = sum(data.year$Number)
 
   par(mfrow = par.mfrow)
-  par(mai = par.mai, cex = par.cex)  # Affects all figures   TODO put into one
+  par(mai = par.mai, cex = par.cex)  # Affects all figures
 
   if(is.na(xlim[1])){
     xlim = c(min(data.year$wmin),
