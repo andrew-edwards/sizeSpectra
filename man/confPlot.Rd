@@ -15,7 +15,7 @@ confPlot(repConf, legName, b.true = b.known, inCol = "darkgrey",
 \arguments{
 \item{repConf}{data frame with columns \code{confMin} and \code{confMax}, the
 minimum and maximum of the 95\% confidence interval for b, and rows
-corresponding to each (TODO a, yes?) simulated data set. When \code{confPlot} is called, for
+corresponding to each simulated data set. When \code{confPlot} is called, for
 some methods \code{b = slope - 1} or \code{b = slope - 2}, which gets done in the
 call.}
 
@@ -35,7 +35,7 @@ call.}
 
 \item{xLim}{x-axis range}
 
-\item{colourCode}{colour code the figure (may not completely work TODO)}
+\item{colourCode}{colour code the figure}
 
 \item{vertThick}{thickness of vertical line for \code{b.true}}
 
@@ -71,11 +71,11 @@ the horizontal lines better (for LCD plot)}
 \item{legLoc}{where to put the legend, as the first argument in \code{legend()}}
 }
 \value{
-plots a panel and returns what is plotted as a sorted data frame TODO
+plots a panel and returns what is plotted as a sorted data frame
 }
 \description{
 Plot confidence intervals of the repeated estimates of \code{b} for one
-method. Gets called eight times to produce Figure 4 of MEE paper and TODO of
+method. Gets called eight times to produce Figure 4 of MEE paper and Figure 5 of
 MEPS paper. Plots
 horizontal lines for the intervals, colour coded as to whether or not they
 include the true value of b.

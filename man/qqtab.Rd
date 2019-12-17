@@ -19,7 +19,7 @@ depend on method}
 
 \item{type}{\code{data.frame} produces a row to put into a dataframe,
 \code{latex} gives output to copy into a \code{.tex} file, \code{Rmd} gives Rmarkdown
-output (see vignette TODO).}
+output (see vignette \code{MEE_reproduce_2}).}
 }
 \value{
 row of a data.frame, line of LaTeX output for table to copy into a

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fitting.R
 \name{eightMethodsMEE}
 \alias{eightMethodsMEE}
-\title{Use all eight methods to fit a simple vector of body masses}
+\title{Use all eight methods to fit a simple vector of body masses as in the MEE paper}
 \usage{
 eightMethodsMEE(x, num.bins = 8, b.only = FALSE)
 }
@@ -15,12 +15,16 @@ eightMethodsMEE(x, num.bins = 8, b.only = FALSE)
 return full details}
 }
 \value{
-TODO Bunch of lists
+If \code{b.only} is TRUE then return a list with each element (one for
+each method) being a
+vector the slope or b followed by its confidence interval.
+If \code{b.only} is FALSE then return list of full results (need to specify
+here -- see example in vignette \code{MEE_reproduce_1}).
 }
 \description{
 Use all eight of the methods described in MEE paper to fit size spectra to a
 vector of body masses. Data could be lengths but then the LBmiz, LBbiom and
-LBNbiom methods are meaningless (TODO think).
+LBNbiom methods are meaningless.
 }
 \author{
 Andrew Edwards

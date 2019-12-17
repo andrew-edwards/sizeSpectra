@@ -46,7 +46,7 @@ such that can see the right-most bin in all plots.}
 
 \item{ySmall.inc}{increment for small unlabelled tickmarks on the y-axis}
 
-\item{ySmall.tcl}{length of small y-axis tick marks - only for (a)??TODO}
+\item{ySmall.tcl}{length of small y-axis tick marks - only for (a) maybe}
 
 \item{xLab}{label for x-axis}
 
@@ -79,7 +79,7 @@ number of columns)}
 \value{
 two-panel figure of the recommended plot of binned data and the
 fitted individual size distribution, like Figures 7 and S.5-S.34 of the
-MEPS paper. See the vignette TODO for explicit example.
+MEPS paper. See the vignette \code{MEPS_IBTS_recommend} for explicit example.
 }
 \description{
 Plots the individual size distribution and the fit from the MLEbins method,

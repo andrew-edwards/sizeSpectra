@@ -2,17 +2,19 @@
 % Please edit documentation in R/plotting.R
 \name{histAxes2}
 \alias{histAxes2}
-\title{Do histogram axes for Figure TODO}
+\title{Do histogram axes for Figure  - not used, but may need to generalise axes
+from what \code{histAxes()} can do (?)}
 \usage{
 histAxes2()
 }
 \value{
-Adds axes to existing histogram TODO: check
+Adds axes to existing histogram, but not very general
 }
 \description{
-Do the histogram axes for, in particular, TODO \code{fitting3rep-n10000.r},
-since the larger n sample size means affects the resulting histograms
-of estimated b. Not very flexible, just doing for the one figure.
+Do the histogram axes for, in particular, old code \code{fitting3rep-n10000.r},
+for \code{n=1000} sample size,
+since the larger sample size means affects the resulting histograms
+of estimated \code{b}. Not very flexible, just doing for the one figure.
 Copying what is used for Llin method (so could go back and use this function
 throughout earlier code).
 }

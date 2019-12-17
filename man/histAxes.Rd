@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting.R
 \name{histAxes}
 \alias{histAxes}
-\title{Histogram axes for figures TODO}
+\title{Histogram axes for figures as in Figure 3 of MEE paper}
 \usage{
 histAxes(yBigTickLab = c(0, 2000, 4000), yBigTickNoLab = seq(0, 6500,
   1000), ySmallTick = seq(0, 6500, 500), cexAxis = 0.9,
@@ -16,8 +16,8 @@ histAxes(yBigTickLab = c(0, 2000, 4000), yBigTickNoLab = seq(0, 6500,
 
 \item{ySmallTick}{y-axis small ticks (unlabelled)}
 
-\item{cexAxis}{font size for axis labels TODO defaults are for
-MEE_reproduce_2.Rmd. May have to check other figs}
+\item{cexAxis}{font size for axis labels, defaults are for
+\code{MEE_reproduce_2.Rmd}.}
 
 \item{xsmallticks}{where to put unlabelled small tick marks on x-axis}
 
@@ -30,14 +30,12 @@ MEE_reproduce_2.Rmd. May have to check other figs}
 \item{b.known}{known value of $b$}
 }
 \value{
-Adds axes to existing histogram TODO: check
+Adds axes to existing histogram
 }
 \description{
-Do the histogram axes in \code{fitting3rep.r} TODO and later, since almost all
-panels will have same axes. Not very flexible, use \code{histAxes2()}
-to plot up to 10,000. TODO Note that \code{xbsmallticks} and \code{xbigticks} need to be
-prespecified, but
-they haven't yet been made arguments here.
+Do the histogram axes in vignette \code{MEE_reproduce_2.Rmd} and later, since almost all
+panels will have same axes. Not very flexible, so may need \code{histAxes2()}
+to plot up to 10,000 (though that needs working on, or adapt this one).
 }
 \author{
 Andrew Edwards

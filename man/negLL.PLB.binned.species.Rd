@@ -18,8 +18,8 @@ of a species, and columns (and corresponding mathematical notation in MEPS Appen
 \item \code{wmax}: upper bound of the bin, \code{w_\{s,j+1\}}
 \item \code{Number}: count in that bin for that species, \code{d_\{sj\}}
 For each species the first and last bins must be non-empty, i.e.
-\code{w_\{s1\}, w_\{s,J_s +1\} > 0}. TODO-CHECK: Write code to check that before
-calling this function (since this gets repeatedly called). TODO math properly
+\code{w_\{s1\}, w_\{s,J_s +1\} > 0}. Should ideally write code to check that before
+calling this function (since this gets repeatedly called).
 }}
 
 \item{dataBinForLikeSummary}{tbl_df with one row for each species, giving

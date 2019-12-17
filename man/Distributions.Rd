@@ -48,5 +48,5 @@ and random generation of values (\code{rPL} and \code{rPLB}), with exponent \cod
 (for bounded distribution) \code{xmax} as described in Edwards et al. (2017, Methods in Ecology and
 Evolution, 8:57-67). Random generation uses the inverse method (e.g. p1215 of Edwards
 2008, Journal of Animal Ecology, 77:1212-1222). Unbounded distribution
-included for completeness TODO: may not get used in remaining code.
+included for completeness but is not used in remaining code.
 }

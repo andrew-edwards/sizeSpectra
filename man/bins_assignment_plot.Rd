@@ -3,7 +3,7 @@
 \name{bins_assignment_plot}
 \alias{bins_assignment_plot}
 \title{Demonstration of how binned body-mass values get assigned to logarithmic
-size-class bins (Figure 3 of MEPS)TODO this is original version}
+size-class bins (Figure 3 of MEPS)}
 \usage{
 bins_assignment_plot(num2 = 11, lenBins = seq(10, 40, by = 5),
   LWa = c(0.001, 0.0255), LWb = c(3.4362, 2.7643), col1 = c("red",
@@ -37,7 +37,7 @@ Plots figure, default is Figure 3 of MEPS
 }
 \description{
 Demonstration of how binned body-mass values get assigned to logarithmic
-size-class bins (Figure 3 of MEPS)TODO this is original version
+size-class bins (Figure 3 of MEPS)
 }
 \author{
 Andrew Edwards

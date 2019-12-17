@@ -80,12 +80,9 @@ sets of results)}
 
 \item{xJitter}{value to jitter the x-values by (for comparison plot the
 confidence intervals overlap)}
-
-\item{sep}{TODO: not needed, make the value if yLab is NULL - expect will
-fail sometimes}
 }
 \value{
-dataframe of just one row (TODO: check) with columns:
+dataframe of just one row with columns:
 \itemize{
 \item Method: method used
 \item Low: lower bound of 95\% confidence interval

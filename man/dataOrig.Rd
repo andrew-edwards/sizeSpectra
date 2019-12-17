@@ -30,17 +30,19 @@ is too big to save in this package).
 dataOrig
 }
 \description{
-Julia Blanchard downloaded this dataset as \code{ibtsQ1cpuelength.RData} that
-contained a dataframe \code{q1}, which has been saved here (in
+Julia Blanchard downloaded this dataset as \code{ibtsQ1cpuelength.RData} (in
+November 2015) that contained a dataframe \code{q1}, which has been saved here (in
 \code{data-raw/IBTS-data.R}) as \code{dataOrig = tibble::as_tibble(q1)}.
-See the MEPS paper for details of the queries she used (I have some original
-code).
+See the MEPS paper for details of the queries she used (I also have some original
+code). The DATRAS website is
+http://www.ices.dk/marine-data/data-portals/Pages/DATRAS.aspx .
 There is now an R package for extracting database at
 https://github.com/ices-tools-prod/icesDatras that should probably be used in
 future for reproducibility.
 The vignette \code{MEPS_IBTS_1} shows how \code{dataOrig} gets simplified (un-needed columns and rows are removed),
 column names are renamed, and units are standardised, to give the more useful \code{IBTS_data}.
-TODO see emails and DATRAS website for permission statement to include
-TODO change name of dataOrig
+Dataset included here with permission under ICES Data Policy
+http://www.ices.dk/marine-data/Documents/ICES-Data-policy.pdf
+and confirmation by ICES Data Officer.
 }
 \keyword{datasets}

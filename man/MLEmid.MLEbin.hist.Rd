@@ -21,7 +21,7 @@ MLEmid.MLEbin.hist(results.list, vertCol = "red", vertThick = 1,
 
 \item{vertThick}{thickness of vertical line at true value of \code{b}}
 
-\item{xrange}{range of x values TODO can change to xlimA for consistency}
+\item{xrange}{range of x values (should change to xlimA for consistency)}
 
 \item{xbigticks.by}{increment between big tick marks on x-axis (all labelled)}
 

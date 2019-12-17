@@ -27,8 +27,8 @@ example in \code{?legend}. Really a way of adding text automatically in
 the corner (which \code{legend()} works out the positioning for).
 }
 \examples{
-\dontrun{ TODO check
-  plot(10:1)
+\dontrun{
+ plot(10:1)
  legJust(c("Method", paste("value=", mean(1:10), sep=""), "x=7.0"))
 }
 }

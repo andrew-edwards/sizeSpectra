@@ -17,7 +17,7 @@ $b$
 \item C: Calculated normalisation constant
 }}
 \source{
-Vignette \code{MEPS_IBTS_MLEbins}, TODO tidy up IBTS-MLEbins.R
+Vignette \code{MEPS_IBTS_MLEbins}.
 }
 \usage{
 MLEbins.res

@@ -2,16 +2,17 @@
 % Please edit documentation in R/fitting.R
 \name{eightMethods}
 \alias{eightMethods}
-\title{Compute size-spectra exponents for a dataset using all eight methods}
+\title{Compute size-spectra exponents for a dataset using all eight methods -
+deprecated, see eightMethods.count()}
 \usage{
 eightMethods(oneYear = 1980, dataForYear = dplyr::filter(data, Year ==
   oneYear), figName = "eightMethods")
 }
 \arguments{
 \item{oneYear}{the year of data to use, from that in the multiple years contained
-in \code{data}. TODO: that should presumably be \code{dataForYear}}
+in \code{dataForYear}.}
 
-\item{dataForYear}{TODO: I had this for \code{data}: local data frame that has a
+\item{dataForYear}{local data frame that has a
 unique row for every combination of \code{Year}, \code{SpecCode} and \code{LngtClass},
 with columns:
 \itemize{
@@ -38,9 +39,9 @@ Also saves a \code{.png} figure called \code{paste(figName, "-", oneYear, ".png"
 fits for each of the eight methods.
 }
 \description{
-TODO: Developed and is called in \code{nSea15analysis.Snw}, which was modified
-from what was in fitting2.r. May be specific to the IBTS data set. MAY only
-be for one year and may not be needed - subsumed in eightMethods.count() ???TODO
+Originally developed and called in \code{nSea15analysis.Snw}, which was modified
+from what was in fitting2.r. May be specific to the IBTS data set, only for
+one year and I think subsumed in \code{eightMethods.count()}
 }
 \author{
 Andrew Edwards

@@ -29,11 +29,12 @@ do not add anything to y-axis}
 Adds axes and big and small tick marks to the plot. Returns NULL
 }
 \description{
-Useful because you can then interpret the unlogged, e.g. Figure TODO
+Useful because you can then interpret the unlogged values, e.g. Figures 2(h)
+and 6(b) of MEE paper and Figure 7 of MEPS paper.
 }
 \examples{
 \dontrun{
-# Adapt the following:   TODO make explicit
+# Adapt the following (could make an explicit example):
   plot(..., log="xy", xlab=..., ylab=..., xlim=..., ylim=..., axes=FALSE)
   xLim = 10^par("usr")[1:2]
   yLim = 10^par("usr")[3:4]

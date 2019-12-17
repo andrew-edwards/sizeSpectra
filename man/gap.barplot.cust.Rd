@@ -8,7 +8,7 @@ gap.barplot.cust(y, gap = c(9, 980), xaxlab, xtics, yaxlab,
   ytics = c(seq(0, 8, by = 4), seq(980, 988, by = 4)), midpoints,
   breakpoints, xlim, ylim = c(0, 17),
   xlab = expression(paste("Values, ", italic(x))),
-  ylab = "Count in each bin", horiz = FALSE, col = NULL, N = n,
+  ylab = "Count in each bin", horiz = FALSE, col = NULL, N = 1000,
   ...)
 }
 \arguments{
@@ -24,9 +24,9 @@ gap.barplot.cust(y, gap = c(9, 980), xaxlab, xtics, yaxlab,
 
 \item{ytics}{position of the y axis ticks}
 
-\item{midpoints}{TODO}
+\item{midpoints}{midpoints of the bins}
 
-\item{breakpoints}{TODO}
+\item{breakpoints}{breaks of the bins}
 
 \item{xlim}{optional x limits for the plot}
 
@@ -40,7 +40,7 @@ gap.barplot.cust(y, gap = c(9, 980), xaxlab, xtics, yaxlab,
 
 \item{col}{color(s) in which to plot the values}
 
-\item{N}{TODO: to do with ticks I think}
+\item{N}{value of highest top short tickmark}
 
 \item{...}{arguments passed to 'barplot'.}
 }
