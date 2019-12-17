@@ -1,6 +1,6 @@
 Package: sizeSpectra
 Title: Fitting Size Spectra to Ecological Data Using Maximum Likelihood
-Version: 0.0.0.9000
+Version: 1.0.0.0
 Authors@R:
     person(given = "Andrew",
            family = "Edwards",
