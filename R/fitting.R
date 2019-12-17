@@ -383,15 +383,16 @@ log2bins = function(x = NULL, counts = NULL)
           }
         return(y)
        }
-##' Compute size-spectra exponents for a dataset using all eight methods
+##' Compute size-spectra exponents for a dataset using all eight methods -
+##'  deprecated, see eightMethods.count()
 ##'
-##' TODO: Developed and is called in `nSea15analysis.Snw`, which was modified
-##' from what was in fitting2.r. May be specific to the IBTS data set. MAY only
-##' be for one year and may not be needed - subsumed in eightMethods.count() ???TODO
+##' Originally developed and called in `nSea15analysis.Snw`, which was modified
+##' from what was in fitting2.r. May be specific to the IBTS data set, only for
+##' one year and I think subsumed in `eightMethods.count()`
 ##'
 ##' @param oneYear the year of data to use, from that in the multiple years contained
-##'   in `data`. TODO: that should presumably be `dataForYear`
-##' @param dataForYear  TODO: I had this for `data`: local data frame that has a
+##'   in `dataForYear`.
+##' @param dataForYear  local data frame that has a
 ##'   unique row for every combination of `Year`, `SpecCode` and `LngtClass`,
 ##'   with columns:
 ##' * `Number`: number of observed individuals of that species in that
@@ -414,7 +415,6 @@ log2bins = function(x = NULL, counts = NULL)
 eightMethods = function(oneYear = 1980,
   dataForYear = dplyr::filter(data, Year == oneYear), figName = "eightMethods" )
   {
-  # TODO: move this to help if necessary
   # Need x, a vector of individual fish sizes (lengths or weights), which is how
   #  the original methods functions are written.
   # Now adding explicit methods in eightMethods.counts, such as
@@ -756,20 +756,21 @@ eightMethods = function(oneYear = 1980,
   return(eightMethodsRes)
 }
 
-# Copying from .Rmd the calculations for all eight methods for MEE
-# approach. Need to make a function to then use in other simulations and look at
-# sensitivities. And separate from the plotting
-##' Use all eight methods to fit a simple vector of body masses
+##' Use all eight methods to fit a simple vector of body masses as in the MEE paper
 ##'
 ##' Use all eight of the methods described in MEE paper to fit size spectra to a
 ##' vector of body masses. Data could be lengths but then the LBmiz, LBbiom and
-##' LBNbiom methods are meaningless (TODO think).
+##' LBNbiom methods are meaningless.
 ##'
 ##' @param x vector of individual body masses
 ##' @param num.bins suggested number of bins for Llin, LT and LTplus1 methods
 ##' @param b.only TRUE only returns slope or b plus confidence intervals, else
 ##'   return full details
-##' @return TODO Bunch of lists
+##' @return If `b.only` is TRUE then return a list with each element (one for
+##'   each method) being a
+##'   vector the slope or b followed by its confidence interval.
+##'   If `b.only` is FALSE then return list of full results (need to specify
+##'   here -- see example in vignette `MEE_reproduce_1`).
 ##' @export
 ##' @author Andrew Edwards
 eightMethodsMEE <- function(x,
@@ -785,7 +786,7 @@ eightMethodsMEE <- function(x,
 
   # Llin method
   hLlin.list = Llin.method(x,
-                           num.bins = num.bins)    #**RETURN ME**TODO
+                           num.bins = num.bins)
 
   # LT method - plotting binned data on log-log axes then fitting regression,
   #  as done by Boldt et al. 2005, natural log of counts plotted against natural
@@ -1815,11 +1816,11 @@ binData = function(x = NULL, counts = NULL, binWidth = NULL, binBreaks = NULL,
                                 log10binCount = log10(binCount),
                                 log10binSum = log10(binSum),
                                 log10binCountNorm = log10(binCountNorm),
-                                # TODO think that last line is needed to avoid
+                                # Had thought that last line is needed to avoid
                                 # warnings (e.g. simulate-data2.R) and whole
                                 # column being NA's. Maybe don't actually use it
-                                # in results, but have put it on, may need to
-                                # test it.
+                                # in results, but have put it in, may need to
+                                # test it more.
                                 log10binSumNorm = log10(binSumNorm))
         binVals[is.infinite(binVals$log10binCount),
                 "log10binCount"] = NA
