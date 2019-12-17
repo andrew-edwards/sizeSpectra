@@ -1,4 +1,4 @@
----
+]---
 title: "MEPS_IBTS_all_min_100"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
@@ -30,8 +30,8 @@ Here we combine the essential elements of the four vignettes
 * [MEPS_IBTS_recommend.html](MEPS_IBTS_recommend.html)
 
 to repeat the analyses with an alternative value for the minimum body size
-(100 g, as opposed to the original 4 g), as suggested by a reviewer. This is to see
-if the larger fish can be fit well TODO bit more explanation. We retain only the necessary
+(100 g, as opposed to the original 4 g), as suggested by a reviewer (see
+Supplementary Material). We retain only the necessary
 details of the four vignettes; the four vignettes should be used for initial
 understanding, this one is to repeat the analysis with alternate assumptions (or
 data). We simplify much of the text here as well, to focus on the code.
@@ -334,7 +334,6 @@ Recommended plotting approach of results for each year, as in
 [MEPS_IBTS_recommend.html](MEPS_IBTS_recommend.html).
 
 First just get what's needed for the calculations for the recommended plot:
-TODO - replace with functionalised code if that gets done:
 ```{r recommended}
 dataRecommend.isd = dplyr::select(dataBin,
                                   Year,
@@ -343,8 +342,7 @@ dataRecommend.isd = dplyr::select(dataBin,
                                   Number)
 
 data.year.list = list()                # to save results for each year
-diff.ivec = vector()                   # to save i that have any cumSum !=
-                                       # verify TODO
+
 fullYears = sort(unique(dataBin$Year))
 for(i in 1:length(fullYears))
   {

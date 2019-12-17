@@ -212,8 +212,7 @@ dataRecommend.isd = dplyr::select(dataBin,
                                   Number)
 
 data.year.list = list()                # to save results for each year
-diff.ivec = vector()                   # to save i that have any cumSum !=
-                                       # verify TODO
+
 fullYears = sort(unique(dataBin$Year))
 for(i in 1:length(fullYears))
   {

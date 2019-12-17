@@ -58,9 +58,6 @@ The vignettes are:
   Figures 3 (except currently for the gold histograms), 4 and Table 2. Also for
   the MLEfix method (Figures A.3 and A.4).
 
-* [MEE_reproduce_3.html](MEE_reproduce_2.html): TODO not done yet, will
-  be 3. Once 2 is functionalised, just repeat for different configurations.
-
 * [MEPS_reproduce_1.html](MEPS_reproduce_1.html): Example length-weight
   relationships for two species and the effect of binned length data (MEPS
   Figure 2). And how consequent binned body-mass values get assigned to
@@ -99,4 +96,4 @@ The vignettes are:
 The source code written in `Rmarkdown`, the R code that gets extracted from the
   `Rmarkdown` code, and the resulting .html files are all found within your library
   folder (where all your R libraries get saved), in
-  `library\sizeSpectra\doc\`. TODO check when build with vignettes.
+  `library\sizeSpectra\doc\`.

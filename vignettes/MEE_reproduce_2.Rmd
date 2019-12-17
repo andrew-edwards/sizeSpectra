@@ -219,8 +219,10 @@ save.image(file = "fitting3rep.RData")
 
 -->
 
-# From fitting3conf.r
+## Figure 4 -- Confidence intervals of estimated exponent *b* for simulated data
 
+Note that [MEPS_reproduce_2.html](MEPS_reproduce_2.html) uses a single function
+for a similar plot; that could be modified for this plot if desired.
 ```{r, fig.height=7}
 par(omi = c(0.14, 0, 0.1, 0.15))      # outer margins in inches
 par(mfrow=c(4,2)) #7,1))
@@ -267,7 +269,7 @@ mtext(expression(paste("Estimate of ", italic(b)), sep=""),
       side=1, outer=TRUE, line=-0.2, cex=0.8)
 ```
 
-And Figures TODO for the MLE and MLEfix methods
+And Figure A.4 for the MLE and MLEfix methods:
 
 ```{r}
 # Confidence intervals for MLE and MLEfix methods.
@@ -301,10 +303,10 @@ mtext(expression(paste("Estimate of ", italic(b)), sep=""),
 
 
 Range of widths of confidence intervals for MLE method is
-`r range(MLE.rep.df$confMax - MLE.rep.df$confMax)`.
+`r round(range(MLE.rep.df$confMax - MLE.rep.df$confMin), dig=3)`.
 
 Range of widths of confidence intervals for MLEfix method is
-`r range(MLEfix.rep.df$confMax - MLEfix.rep.df$confMax)`.
+`r range(MLEfix.rep.df$confMax - MLEfix.rep.df$confMin)`.
 
 <!--
 CHECK THIS:   load(file="fitting2.RData")    # or load in data for x
@@ -341,6 +343,5 @@ dev.off()
 save.image(file = "fitting2.RData")
 -->
 
-# Figure 5 - MLEbin
-
-Come back to once done from binning paper as likely more functionalised.
+Figure 5 for the MLEbin is somewhat superceded by the more general results in
+the MEPS paper.
