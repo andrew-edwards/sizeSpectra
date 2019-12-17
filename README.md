@@ -6,7 +6,7 @@ R package for fitting size spectra to ecological data (including binned data)
  <!-- [![Codecov test coverage](https://codecov.io/gh/andrew-edwards/sizeSpectra/branch/master/graph/badge.svg)](https://codecov.io/gh/andrew-edwards/sizeSpectra?branch=master) -->
   <!-- badges: end -->
 
-In development - not usable yet (though is downloadable if it says 'build passing' above)
+Now downloadable and usable (unless there is no 'build passing' badge above).
 
 ## Description
 This R package contains functions for fitting size spectra to ecological data. In particular, it contains functionalised code to reproduce all the results in [1] and [2], and for users to apply the methods to their own data. See the [vignettes](http://htmlpreview.github.io/?https://github.com/andrew-edwards/sizeSpectra/blob/master/doc/vignettes_overview.html) to see what the package can do.
