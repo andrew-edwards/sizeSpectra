@@ -1,5 +1,5 @@
 Package: sizeSpectra
-Title: Fits Size Spectra to Ecological Data Using Maximum Likelihood
+Title: Fitting Size Spectra to Ecological Data Using Maximum Likelihood
 Version: 0.0.0.9000
 Authors@R:
     person(given = "Andrew",
@@ -7,7 +7,8 @@ Authors@R:
            role = c("aut", "cre"),
            email = "andrew.edwards@dfo-mpo.gc.ca",
            comment = c(ORCID = "0000-0003-2749-8198"))
-Description: Provides code for fitting size spectra to ecological data using maximum likelihood methods. Reproduces the results of TODO and TODO and provides documented functions and vignettes for users to fit size spectra to their own data.
+Description: Provides code for fitting size spectra to ecological data using maximum likelihood methods. Reproduces the results of [1] Edwards et al. (Testing and recommending methods for fitting size spectra to data, Methods in Ecology and Evolution, 2017, 8:57-67) and [2] Edwards et al. (Accounting for the bin structure of data removes bias when fitting size spectra, submitted to Marine Ecology Progress Series). Also provides documented functions and vignettes for users to fit size spectra to their own data.
+URL: https://github.com/andrew-edwards/sizeSpectra
 BugReports: https://github.com/andrew-edwards/sizeSpectra/issues
 License: GPL (>= 2)
 Encoding: UTF-8
