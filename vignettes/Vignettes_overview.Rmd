@@ -39,8 +39,8 @@ K. Baum and Michael J. Plank. Submitted to ***Marine Ecology Progress
 Series***.
 
 The vignettes explain how to use the functions in the package to reproduce the
-results in both papers, to then enable users to see what functions are required
-to analyse their own data.
+results in both papers. Users should look over the vignettes to determine which
+functions and code are best suited for analysing their own data.
 The vignettes are descriptions of how to use the code to implement the
 methods. The two papers should be consulted first to understand the methods (I
 have tried to avoid repeating explanatory text from the papers in the vignettes). In the
