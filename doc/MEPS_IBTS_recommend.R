@@ -28,14 +28,14 @@ dataComb[nrow(dataComb), "j"] = 25                       # manually, because the
 dataComb = dplyr::mutate(dataComb, wmid = (wmin + wmax)/2)  # midpoint for plotting
 
 ## ----fig.width=6.5, fig.height=4-----------------------------------------
-target = 7                 # target bin (for species 2)    # TODO 7 to target in
-                           # next two lines
+target = 7                 # target bin (for species 2)
+
 target.wmin = dplyr::filter(dataComb,
                             SpecCode == specForFig[2],
-                            j == 7)$wmin
+                            j == target)$wmin
 target.wmax = dplyr::filter(dataComb,
                             SpecCode == specForFig[2],
-                            j == 7)$wmax
+                            j == target)$wmax
 # Smallest and then largest possible inclusions of being > target bin:
 dataComb = dplyr::mutate(dataComb,
                          wmin.gt.tmax = (wmin >= target.wmax))
@@ -156,8 +156,7 @@ dataRecommend.isd = dplyr::select(dataBin,
 
 
 data.year.list = list()                # to save results for each year
-diff.ivec = vector()                   # to save i that have any cumSum !=
-                                       # verify TODO
+
 fullYears = sort(unique(dataBin$Year))
 for(i in 1:length(fullYears))
   {
@@ -171,8 +170,7 @@ for(i in 1:length(fullYears))
     # data.year = dplyr::mutate(data.year,
     #                          cumSum = cumsum(Number))
     # This is wrong when we have two species with the same
-    #  length-weight coefficients in the same year, use countGTEwmin then change it to
-    #                          cumSum in one go TODO since clearer
+    #  length-weight coefficients in the same year, so need countGTEwmin below
     # Have to do not with dplyr:
     wmin.vec = data.year$wmin
     wmax.vec = data.year$wmax
@@ -192,7 +190,8 @@ for(i in 1:length(fullYears))
                       "countGTEwmin" = countGTEwmin,
                       "lowCount" = lowCount,
                       "highCount" = highCount)
-    data.year = dplyr::tbl_df(data.year)
+    data.year = dplyr::tbl_df(data.year) # This is one of the desired input for
+                                         #  the plotting function below
 
     data.year.list[[i]] = data.year
 }

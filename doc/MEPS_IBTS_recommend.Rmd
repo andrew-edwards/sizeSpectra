@@ -20,22 +20,13 @@ knitr::opts_chunk$set(
 ## Recommended plotting approach from the MLEbins method
 
 This vignette has some of the calculations used to explain the recommended
-plotting approach, reproduces Figure S.4, Figure 7 [TODO check] and presents
-Figures S.5 to S.34 as a movie [TODO: hopefully].
+plotting approach, reproduces Figures S.4 and Figure 7 and presents
+Figures S.5 to S.34 as a movie.
 
 ```{r}
 library(sizeSpectra)
 # library(tibble)  # Else prints all of a tibble
 ```
-
-
-
-TODO: And see what to save in data-raw/??.R, copy those lines to end of here,
-may not need to save anything new
-
-Copying nSeaMLEbins-recommend.Snw, some already in other vignette so deleting
-that out:
-
 
 ## Schematic diagram for two species
 
@@ -63,16 +54,16 @@ dataComb[nrow(dataComb), "j"] = 25                       # manually, because the
 dataComb = dplyr::mutate(dataComb, wmid = (wmin + wmax)/2)  # midpoint for plotting
 ```
 
-Now create Figures S.4, with semi-automated text for the caption:
+Now create Figure S.4, with semi-automated text for the caption:
 ```{r fig.width=6.5, fig.height=4}
-target = 7                 # target bin (for species 2)    # TODO 7 to target in
-                           # next two lines
+target = 7                 # target bin (for species 2)
+
 target.wmin = dplyr::filter(dataComb,
                             SpecCode == specForFig[2],
-                            j == 7)$wmin
+                            j == target)$wmin
 target.wmax = dplyr::filter(dataComb,
                             SpecCode == specForFig[2],
-                            j == 7)$wmax
+                            j == target)$wmax
 # Smallest and then largest possible inclusions of being > target bin:
 dataComb = dplyr::mutate(dataComb,
                          wmin.gt.tmax = (wmin >= target.wmax))
@@ -185,36 +176,29 @@ highCount = sum(dataComb$wmax.gt.tmin * dataComb$number)
 
 ```
 
-Caption: Schematic diagram to explain how we calculate
+Figure S.4 caption: Schematic diagram to explain how we calculate
   the range of counts of individuals that are larger than those in a given bin.
   Red and pink body-mass bins are those for Snakeblenny and Moustache Sculpin
   (labelled species 1 and 2, respectively) from Figure 5 in the paper.
   Bin breaks are denoted by $w_{s,j}$
   and the number inside each bin is the number observed per hour of trawling.
-  For illustration data are combined across all years and only bins with
+  For illustration the data are combined across all years and only bins with
   minima $>15$ g are shown. The target bin has $s=2$ and $j=7$ and therefore
   has bin breaks $w_{2,7}$ and $w_{2,8}$ and is indicated by the vertical grey
   lines.
-  The first letter in each pair (`NN', `NY', or `YY') denotes whether or not
+  The first letter in each pair (NN, NY or YY) denotes whether or not
   each bin is included in the low count $E_{2,7,1}$, i.e. its lower bound is
   $\geq$ the upper bound of the target bin. Similarly, the second letter denotes
   whether or not each bin is included in the high count $E_{2,7,2}$, i.e.
   its upper bound is $>$ the lower bound of the target bin. Summing the
-  respective counts as per (TODO ref{Esj1}) and (TODO ref{Esj1}) gives
-  $E_{2,7,1} =$`r f(lowCount,2)` and $E_{2,7,2} =$ `r f(highCount,2)`.
-
-TODO:
-Figure~ref{fig:binCountRangeSchematic} shows these calculations for
-one `target' bin ($s=2, j=7$) and two
-example species namely Moustache Sculpin and Snakeblenny (which are highlighted
-as 127205 and 154675, respectively, in red in Figure~5). Remaining text already
-copied into Supp Material.
+  respective counts as per (S.30) and (S.31) gives
+  $E_{2,7,1} =$ `r f(lowCount,2)` and $E_{2,7,2} =$ `r f(highCount,2)`.
 
 ## Results plotted for each year
 
-First just get what's needed for the calculations for the recommended plot:
-TODO - should probably functionalise this if possible, would make input to
-figure plotting consistent, and be easier for others to use:
+These calculations are to get the required input for the recommended plot (see
+`?sizeSpectra::ISD_bin_plot` for the structure). This could maybe be
+functionalised like the plotting function `ISD_bin_plot()`.
 ```{r recommended}
 dataRecommend.isd = dplyr::select(dataBin,
                                   Year,
@@ -224,8 +208,7 @@ dataRecommend.isd = dplyr::select(dataBin,
 
 
 data.year.list = list()                # to save results for each year
-diff.ivec = vector()                   # to save i that have any cumSum !=
-                                       # verify TODO
+
 fullYears = sort(unique(dataBin$Year))
 for(i in 1:length(fullYears))
   {
@@ -239,8 +222,7 @@ for(i in 1:length(fullYears))
     # data.year = dplyr::mutate(data.year,
     #                          cumSum = cumsum(Number))
     # This is wrong when we have two species with the same
-    #  length-weight coefficients in the same year, use countGTEwmin then change it to
-    #                          cumSum in one go TODO since clearer
+    #  length-weight coefficients in the same year, so need countGTEwmin below
     # Have to do not with dplyr:
     wmin.vec = data.year$wmin
     wmax.vec = data.year$wmax
@@ -260,7 +242,8 @@ for(i in 1:length(fullYears))
                       "countGTEwmin" = countGTEwmin,
                       "lowCount" = lowCount,
                       "highCount" = highCount)
-    data.year = dplyr::tbl_df(data.year)
+    data.year = dplyr::tbl_df(data.year) # This is one of the desired input for
+                                         #  the plotting function below
 
     data.year.list[[i]] = data.year
 }

@@ -3,7 +3,7 @@
 \name{negLL.PLB.binned.species}
 \alias{negLL.PLB.binned.species}
 \title{Calculate the negative log-likelihood of \code{b} for the PLB model, given
-species-specific binned data (MLEbins method). Deprected -- \code{use negLL.PLB.bins.species()}}
+species-specific binned data (MLEbins method). DEPRECATED -- \code{use negLL.PLB.bins.species()}}
 \usage{
 negLL.PLB.binned.species(b, dataBinForLike, dataBinForLikeSummary)
 }
