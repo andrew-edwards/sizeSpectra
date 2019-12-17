@@ -5,13 +5,14 @@ usethis::use_tibble()
 
 load("ibtsQ1cpuelength.RData")    # Original file as downloaded by Julia
                                   # Blanchard. Contains data frame q1.
-dataOrig = tibble::as_tibble(q1)  # TODO - not run yet with as_tibble
+dataOrig = tibble::as_tibble(q1)  # Thought I hadn't run this but
+                                  # tibble::is_tibble(dataOrig) is TRUE.
 
 usethis::use_data(dataOrig, overwrite = TRUE)
 
 # The steps to convert the data into IBTS_data are now all in the vignette MEPS_IBTS_1.
 
 ## use_tibble() said to document a returned tibble like so: [maybe add when
-#doing documentation, TODO]
-#' @return a [tibble][tibble::tibble-package]
-#'
+##  doing documentation]
+#  #' @return a [tibble][tibble::tibble-package]
+#  #'

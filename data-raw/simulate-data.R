@@ -1,5 +1,7 @@
-# TODO... that take too long to produce when building a vignette. Code here ensures reproducibility.
-# Change filename of data when decided on a format for multiple data sets.
+# Creates default simulation and fitting results (the list data object
+#  eight.results.default) for 10,000 data sets for the MEE paper data. Running
+#  as part of the vignette takes too long when building the vignette.
+#  See ?sizeSpectra::eight.results.default for details.
 
 n = 1000                  # sample size
 b.known = -2              # known fixed value of b
@@ -41,7 +43,7 @@ for(iii in 1:num.reps)
   log.x = log(x)                      # to avoid keep calculating
   sum.log.x = sum( log.x )
   xmin = min(x)
-  xmax = max(x)   #TODO check, should go in function presumably
+  xmax = max(x)
 
   eight.results = sizeSpectra::eightMethodsMEE(x,
                                                num.bins = num.bins,
@@ -76,7 +78,7 @@ for(iii in 1:num.reps)
   MLE.rep.xmax[iii] = xmax
 
   # MLE (maximum likelihood method) calculations, but fix xmax=xmax.known
-  # TODO make a function for MLE, then take it out of eightMethodsMEE function
+  # Think there is now a function for MLE, so could take it out of eightMethodsMEE function
 
   # Use analytical value of MLE b for PL model (Box 1, Edwards et al. 2007)
   #  as a starting point for nlm for MLE of b for PLB model.

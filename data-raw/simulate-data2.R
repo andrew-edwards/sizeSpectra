@@ -1,6 +1,5 @@
-# Figures 4 and 5 for MEPS paper TODO... that take too long to produce when building a vignette. Code here ensures reproducibility.
-# Change filename of data when decided on a format for multiple data sets.
-
+# Simulated data for Figures 4 and 5 for MEPS paper that take too long to produce when building a vignette.
+#  See ?sizeSpectra::MLEbin.MEPS.default  etc. for details
 
 MLEbin.MEPS.default <- MLEbin.simulate()
 usethis::use_data(MLEbin.MEPS.default, overwrite = TRUE)
