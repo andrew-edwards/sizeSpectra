@@ -71,18 +71,21 @@
 
 ##' Original IBTS dataset downloaded from DATRAS website
 ##'
-##' Julia Blanchard downloaded this dataset as `ibtsQ1cpuelength.RData` that
-##' contained a dataframe `q1`, which has been saved here (in
+##' Julia Blanchard downloaded this dataset as `ibtsQ1cpuelength.RData` (in
+##' November 2015) that contained a dataframe `q1`, which has been saved here (in
 ##' `data-raw/IBTS-data.R`) as `dataOrig = tibble::as_tibble(q1)`.
-##' See the MEPS paper for details of the queries she used (I have some original
-##' code).
+##' See the MEPS paper for details of the queries she used (I also have some original
+##' code). The DATRAS website is
+##' http://www.ices.dk/marine-data/data-portals/Pages/DATRAS.aspx .
 ##' There is now an R package for extracting database at
 ##' https://github.com/ices-tools-prod/icesDatras that should probably be used in
 ##' future for reproducibility.
 ##' The vignette `MEPS_IBTS_1` shows how `dataOrig` gets simplified (un-needed columns and rows are removed),
 ##' column names are renamed, and units are standardised, to give the more useful `IBTS_data`.
-##' TODO see emails and DATRAS website for permission statement to include
-##' TODO change name of dataOrig
+##' Dataset included here with permission under ICES Data Policy
+##' http://www.ices.dk/marine-data/Documents/ICES-Data-policy.pdf
+##' and confirmation by ICES Data Officer.
+##'
 ##' @format Dataframe with 178,435 rows and 13 columns, which are (I think
 ##' automatically named from the DATRAS database, with `a` and `b` added from Fung et
 ##' al. by Julia, though see vignette for units):
@@ -189,5 +192,5 @@
 ##'  *  confMin,confMax: Minimum and maximum of 95\% confidence interval of
 ##'     $b$
 ##'  *  C: Calculated normalisation constant
-##' @source Vignette `MEPS_IBTS_MLEbins`, TODO tidy up IBTS-MLEbins.R
+##' @source Vignette `MEPS_IBTS_MLEbins`.
 "MLEbins.res"
