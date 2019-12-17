@@ -18,3 +18,19 @@ lengthToMass = function(lengths, LWa, LWb)
             { stop("Need positive arguments in lengthToMass")  }
         return(LWa * lengths^LWb)
     }
+
+##' Format x to have the specified number of decimal places
+##'
+##' Format x to have supplied number of decimal places, have
+##'  thousands seperated by commas.
+##' Taken from our Pacific Hake assessment:
+##' https://github.com/cgrandin/hake-assessment/blob/master/doc/r/r-functions/utilities.r
+##'
+##' @param x valuesTODO
+##' @param dec.points number of decimal places
+##' @return x with the specified number of decimal places, and comma for thousands
+##' @export
+##' @author Chris Grandin
+f <- function(x, dec.points = 0){
+  return(format(round(x,dec.points), big.mark = ",", nsmall = dec.points))
+}
