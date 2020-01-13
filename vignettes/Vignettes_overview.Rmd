@@ -35,8 +35,8 @@ Julia L. Blanchard. ***Methods in Ecology and Evolution*** (2017,
 
 [2] **Accounting for the bin structure of data removes bias when fitting size
 spectra** by Andrew M. Edwards, James P. W. Robinson, Julia L. Blanchard, Julia
-K. Baum and Michael J. Plank. Submitted to ***Marine Ecology Progress
-Series***.
+K. Baum and Michael J. Plank. ***Marine Ecology Progress Series*** (in press).
+Will be at <http://www.int-res.com/prepress/m13230.html>.
 
 The vignettes explain how to use the functions in the package to reproduce the
 results in both papers. Users should look over the vignettes to determine which
