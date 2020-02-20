@@ -1,4 +1,4 @@
-## ---- include = FALSE----------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -6,14 +6,14 @@ knitr::opts_chunk$set(
   fig.height = 6
 )
 
-## ----setup---------------------------------------------------------------
+## ----setup--------------------------------------------------------------------
 library(sizeSpectra)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 dim(dataOrig)
 names(dataOrig)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 numAreas = length(unique(dataOrig$Area))
 colsKeep = c("Year",
              "AphiaID",
@@ -27,7 +27,7 @@ colsDiscard = setdiff(names(dataOrig), colsKeep)
 
 data = sizeSpectra::s_select(dataOrig, colsKeep)   # uses Sebastian Kranz's s_dplyr_funcs.r
 
-## ----rename--------------------------------------------------------------
+## ----rename-------------------------------------------------------------------
 if(sum( colsKeep != c("Year", "AphiaID", "LngtClas", "CPUE_number_per_hour",
     "a", "b", "weight_g", "CPUE_bio_per_hour")) > 0)
        { stop("Need to adjust renaming") }
@@ -35,13 +35,13 @@ names(data) = c("Year", "SpecCode", "LngtClass", "Number", "LWa", "LWb",
          "bodyMass", "CPUE_bio_per_hour")
 # CPUE_bio_per_hour is Number * bodyMass
 
-## ----cm------------------------------------------------------------------
+## ----cm-----------------------------------------------------------------------
 data$LngtClass = data$LngtClass/10
 
-## ----arrange-------------------------------------------------------------
+## ----arrange------------------------------------------------------------------
 data = dplyr::arrange(data, Year, SpecCode, LngtClass)
 
-## ---- aggregating--------------------------------------------------------
+## ---- aggregating-------------------------------------------------------------
 data = dplyr::summarise(dplyr::group_by(data,
                                         Year,
                                         SpecCode,
@@ -51,7 +51,7 @@ data = dplyr::summarise(dplyr::group_by(data,
                         "LWb" = unique(LWb),
                         "bodyMass" = unique(bodyMass))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 range(data$LngtClass)
 range(data$bodyMass)
 sum(data$bodyMass == 0)
@@ -61,16 +61,16 @@ range(data$bodyMass)
 data
 summary(data)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 sum(data$Number)
 
-## ----lengths-------------------------------------------------------------
+## ----lengths------------------------------------------------------------------
 sort(unique(data$LngtClass))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data = dplyr::ungroup(data)
 
-## ----results='asis'------------------------------------------------------
+## ----results='asis'-----------------------------------------------------------
 data_biomass <- dplyr::mutate(data,
                               Biomass = Number * bodyMass)
 knitr::kable(rbind(data_biomass[1:6,],
@@ -78,7 +78,7 @@ knitr::kable(rbind(data_biomass[1:6,],
                                      ]),
              digits=c(0, 0, 0, 3, 4, 4, 2, 2))
 
-## ---- dataSumm-----------------------------------------------------------
+## ---- dataSumm----------------------------------------------------------------
 dataSumm = dplyr::summarise(dplyr::group_by(data, Year),
                             uniqLngtClass = length(unique(LngtClass)),
                             uniqSpec = length(unique(SpecCode)))
@@ -90,14 +90,14 @@ plot(dataSumm$Year, dataSumm$uniqLngtClass, xlab="Year",
 plot(dataSumm$Year, dataSumm$uniqSpec, xlab="Year",
      ylab="No. unique species", type="o", ylim=c(0, max(dataSumm$uniqSpec)))
 
-## ----speciesNames--------------------------------------------------------
+## ----speciesNames-------------------------------------------------------------
 herringCode = dplyr::filter(specCodeNames, species == "Clupea harengus")$speccode
 herringCode
 spratCode = dplyr::filter(specCodeNames, species == "Sprattus sprattus")$speccode
 spratCode
 specCode05 = c(herringCode, spratCode)      # species codes with 0.5cm length bins
 
-## ----dataBin-------------------------------------------------------------
+## ----dataBin------------------------------------------------------------------
 dataBin = dplyr::mutate(data,
                         LngtMax = LngtClass + 1)
 aa = which(dataBin$SpecCode %in% specCode05)           # row numbers for herring, sprat
@@ -121,7 +121,7 @@ range(dplyr::mutate(dataBin,
                                               # (was calculated independently)
 length(unique(dataBin$SpecCode))
 
-## ----MLEbins-------------------------------------------------------------
+## ----MLEbins------------------------------------------------------------------
 fullYears = sort(unique(dataBin$Year))
 # Do a loop for each year, saving all the results in MLEbins.nSeaFung.new
 for(iii in 1:length(fullYears))
@@ -174,7 +174,7 @@ MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
                                                abs(confMax-b))/(2*1.96) )
 MLEbins.nSeaFung.new
 
-## ----timeseries, fig.width=7.5, fig.height=6-----------------------------
+## ----timeseries, fig.width=7.5, fig.height=6----------------------------------
 # postscript("../IBTS-min-100/trends100.eps",
 #           height = 6, width = 7.5, horizontal = FALSE, paper = "special")
 res = timeSerPlot(MLEbins.nSeaFung.new,
@@ -188,12 +188,12 @@ res = timeSerPlot(MLEbins.nSeaFung.new,
                   yTicksSmallInc = 0.05)
 # dev.off()
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 trendResultsMLEbinsNew = dplyr::tbl_df(res)
 knitr::kable(dplyr::select(trendResultsMLEbinsNew, Method, Low, Trend, High, p, Rsquared),
              digits=c(NA, 4, 4, 4, 2, 2))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 MLEbins.res = MLEbins.nSeaFung.new
 MLEbins.res = dplyr::mutate(MLEbins.res,
                             C = (b != -1 ) * (b+1) / ( xmax^(b+1) - xmin^(b+1) ) +
@@ -204,7 +204,7 @@ knitr::kable(dplyr::select(MLEbins.res, Year, xmin, xmax, n, confMin, b,
                            confMax, C),
              digits=c(0, rep(2, 7)))
 
-## ----recommended---------------------------------------------------------
+## ----recommended--------------------------------------------------------------
 dataRecommend.isd = dplyr::select(dataBin,
                                   Year,
                                   wmin,
@@ -248,11 +248,11 @@ for(i in 1:length(fullYears))
 }
 
 
-## ----plotparams----------------------------------------------------------
+## ----plotparams---------------------------------------------------------------
 xlim.global = c(min(dataRecommend.isd$wmin),
                 max(dataRecommend.isd$wmax))
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  # ```
 #  # {r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
 #  ## fig.width is 0.67 * fig.height (which is 8)
@@ -276,7 +276,7 @@ xlim.global = c(min(dataRecommend.isd$wmin),
 #  # }
 #  # ```
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  for(i in 1:length(fullYears))
 #    {
 #    postscript(paste0("../IBTS-min-100/IBTS-ISD", fullYears[i], ".eps"),

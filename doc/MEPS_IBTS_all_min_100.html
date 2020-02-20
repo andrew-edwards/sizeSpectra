@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -95,7 +95,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -418,14 +418,14 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt; [1] 32609.96</span></a></code></pre></div>
 <p>The unique length classes are:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">sort</span>(<span class="kw">unique</span>(data<span class="op">$</span>LngtClass))</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">#&gt;   [1]   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25</span></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt;  [18]  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41  42</span></a>
-<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt;  [35]  43  44  45  46  47  48  49  50  51  52  53  54  55  56  57  58  59</span></a>
-<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt;  [52]  60  61  62  63  64  65  66  67  68  69  70  71  72  73  74  75  76</span></a>
-<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt;  [69]  77  78  79  80  81  82  83  84  85  86  87  88  89  90  91  92  93</span></a>
-<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt;  [86]  94  95  96  97  98  99 100 101 102 103 104 105 106 107 108 109 110</span></a>
-<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; [103] 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127</span></a>
-<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; [120] 128 129 130 131 132 133 134 135 138 139 140 142 144 145 146 149 150</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">#&gt;   [1]   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt;  [19]  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41  42  43  44</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt;  [37]  45  46  47  48  49  50  51  52  53  54  55  56  57  58  59  60  61  62</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt;  [55]  63  64  65  66  67  68  69  70  71  72  73  74  75  76  77  78  79  80</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt;  [73]  81  82  83  84  85  86  87  88  89  90  91  92  93  94  95  96  97  98</span></a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt;  [91]  99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116</span></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; [109] 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134</span></a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; [127] 135 138 139 140 142 144 145 146 149 150</span></a></code></pre></div>
 <p>Need this to stop earlier groups being kept (can mess up later code):</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">data =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">ungroup</span>(data)</a></code></pre></div>
 <p>The equivalent Table 1 (first six and last six rows of the data) is now as follows, where the last six rows of the original Table 1 are no longer in the data as they had body masses $&lt;$100 g:</p>
@@ -1171,6 +1171,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>See <a href="MEPS_IBTS_recommend.html" class="uri">MEPS_IBTS_recommend.html</a> for inserting all the figures into a LaTeX document using a loop.</p>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

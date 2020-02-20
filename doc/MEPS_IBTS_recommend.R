@@ -1,4 +1,4 @@
-## ---- include = FALSE----------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -6,18 +6,18 @@ knitr::opts_chunk$set(
   fig.height = 7
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(sizeSpectra)
 # library(tibble)  # Else prints all of a tibble
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 sculpin = 127205
 snakeblenny = 154675
 specForFig = c(snakeblenny, sculpin)
 
 dataTwoSpec = dplyr::filter(dataBin, SpecCode %in% specForFig)
 
-## ----combine-------------------------------------------------------------
+## ----combine------------------------------------------------------------------
 dataComb = dplyr::summarise(dplyr::group_by(dataTwoSpec,
                                             SpecCode,
                                             wmin),
@@ -27,7 +27,7 @@ dataComb = dplyr::mutate(dataComb, j = dplyr::min_rank(wmin))   # works since th
 dataComb[nrow(dataComb), "j"] = 25                       # manually, because there's a gap
 dataComb = dplyr::mutate(dataComb, wmid = (wmin + wmax)/2)  # midpoint for plotting
 
-## ----fig.width=6.5, fig.height=4-----------------------------------------
+## ----fig.width=6.5, fig.height=4----------------------------------------------
 target = 7                 # target bin (for species 2)
 
 target.wmin = dplyr::filter(dataComb,
@@ -147,7 +147,7 @@ lowCount = sum(dataComb$wmin.gt.tmax * dataComb$number)
 highCount = sum(dataComb$wmax.gt.tmin * dataComb$number)
 
 
-## ----recommended---------------------------------------------------------
+## ----recommended--------------------------------------------------------------
 dataRecommend.isd = dplyr::select(dataBin,
                                   Year,
                                   wmin,
@@ -200,7 +200,7 @@ xlim.global = c(min(dataRecommend.isd$wmin),
                 max(dataRecommend.isd$wmax))   # x-axis limits to be common for
                                                # all plots
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  # ```{r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
 #  # fig.width is 0.67 * fig.height (which is 8)
 #  #
@@ -222,7 +222,7 @@ xlim.global = c(min(dataRecommend.isd$wmin),
 #  #  }
 #  # ```
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  for(i in 1:length(fullYears))
 #    {
 #    postscript(paste0("../IBTS-ISD-figs/IBTS-ISD", fullYears[i], ".eps"),
@@ -245,7 +245,7 @@ xlim.global = c(min(dataRecommend.isd$wmin),
 #    dev.off()
 #  }
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  % Include this in latex preamble:
 #  \newcommand\isdfig[2]{    % filename is #1, text is #2
 #    \begin{figure}[tp]

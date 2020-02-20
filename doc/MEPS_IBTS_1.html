@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -95,7 +95,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -330,46 +330,46 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">#&gt; 5  101170 NS-IBTS  2013       1     4 Myxine glutinosa      330</span></a>
 <a class="sourceLine" id="cb2-18" data-line-number="18">dataOrig[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,<span class="dv">8</span><span class="op">:</span><span class="dv">13</span>]</a>
 <a class="sourceLine" id="cb2-19" data-line-number="19"><span class="co">#&gt; # A tibble: 5 x 6</span></a>
-<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="co">#&gt;   CPUE_number_per_h~ Taxonomic.group      a     b weight_g CPUE_bio_per_ho~</span></a>
-<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">#&gt;                &lt;dbl&gt; &lt;fct&gt;            &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="co">#&gt; 1             0.0556 Myxine glutino~ 0.0033  2.70     52.4             2.91</span></a>
-<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co">#&gt; 2             0      Myxine glutino~ 0.0033  2.70      0               0   </span></a>
-<a class="sourceLine" id="cb2-24" data-line-number="24"><span class="co">#&gt; 3             0      Myxine glutino~ 0.0033  2.70      0               0   </span></a>
-<a class="sourceLine" id="cb2-25" data-line-number="25"><span class="co">#&gt; 4             0.0244 Myxine glutino~ 0.0033  2.70     41.4             1.01</span></a>
-<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="co">#&gt; 5             0.0909 Myxine glutino~ 0.0033  2.70     41.4             3.76</span></a>
+<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="co">#&gt;   CPUE_number_per_hour Taxonomic.group       a     b weight_g CPUE_bio_per_hour</span></a>
+<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">#&gt;                  &lt;dbl&gt; &lt;fct&gt;             &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;             &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="co">#&gt; 1               0.0556 Myxine glutinosa 0.0033  2.70     52.4              2.91</span></a>
+<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co">#&gt; 2               0      Myxine glutinosa 0.0033  2.70      0                0   </span></a>
+<a class="sourceLine" id="cb2-24" data-line-number="24"><span class="co">#&gt; 3               0      Myxine glutinosa 0.0033  2.70      0                0   </span></a>
+<a class="sourceLine" id="cb2-25" data-line-number="25"><span class="co">#&gt; 4               0.0244 Myxine glutinosa 0.0033  2.70     41.4              1.01</span></a>
+<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="co">#&gt; 5               0.0909 Myxine glutinosa 0.0033  2.70     41.4              3.76</span></a>
 <a class="sourceLine" id="cb2-27" data-line-number="27"></a>
 <a class="sourceLine" id="cb2-28" data-line-number="28"><span class="kw">summary</span>(dataOrig)</a>
-<a class="sourceLine" id="cb2-29" data-line-number="29"><span class="co">#&gt;     AphiaID           Survey            Year         Quarter </span></a>
-<a class="sourceLine" id="cb2-30" data-line-number="30"><span class="co">#&gt;  Min.   :101170   NS-IBTS:178435   Min.   :1986   Min.   :1  </span></a>
-<a class="sourceLine" id="cb2-31" data-line-number="31"><span class="co">#&gt;  1st Qu.:126436                    1st Qu.:1993   1st Qu.:1  </span></a>
-<a class="sourceLine" id="cb2-32" data-line-number="32"><span class="co">#&gt;  Median :126445                    Median :2001   Median :1  </span></a>
-<a class="sourceLine" id="cb2-33" data-line-number="33"><span class="co">#&gt;  Mean   :125728                    Mean   :2001   Mean   :1  </span></a>
-<a class="sourceLine" id="cb2-34" data-line-number="34"><span class="co">#&gt;  3rd Qu.:127140                    3rd Qu.:2008   3rd Qu.:1  </span></a>
-<a class="sourceLine" id="cb2-35" data-line-number="35"><span class="co">#&gt;  Max.   :274304                    Max.   :2015   Max.   :1  </span></a>
-<a class="sourceLine" id="cb2-36" data-line-number="36"><span class="co">#&gt;                                                              </span></a>
-<a class="sourceLine" id="cb2-37" data-line-number="37"><span class="co">#&gt;       Area                           Species          LngtClas     </span></a>
-<a class="sourceLine" id="cb2-38" data-line-number="38"><span class="co">#&gt;  Min.   :1.000   Gadus morhua            : 25832   Min.   :   0.0  </span></a>
-<a class="sourceLine" id="cb2-39" data-line-number="39"><span class="co">#&gt;  1st Qu.:2.000   Amblyraja radiata       :  9316   1st Qu.: 120.0  </span></a>
-<a class="sourceLine" id="cb2-40" data-line-number="40"><span class="co">#&gt;  Median :4.000   Clupea harengus         :  8919   Median : 230.0  </span></a>
-<a class="sourceLine" id="cb2-41" data-line-number="41"><span class="co">#&gt;  Mean   :3.839   Merlangius merlangus    :  7676   Mean   : 271.3  </span></a>
-<a class="sourceLine" id="cb2-42" data-line-number="42"><span class="co">#&gt;  3rd Qu.:6.000   Melanogrammus aeglefinus:  6527   3rd Qu.: 370.0  </span></a>
-<a class="sourceLine" id="cb2-43" data-line-number="43"><span class="co">#&gt;  Max.   :7.000   Pleuronectes platessa   :  6403   Max.   :1500.0  </span></a>
-<a class="sourceLine" id="cb2-44" data-line-number="44"><span class="co">#&gt;                  (Other)                 :113762                   </span></a>
-<a class="sourceLine" id="cb2-45" data-line-number="45"><span class="co">#&gt;  CPUE_number_per_hour                 Taxonomic.group         a           </span></a>
-<a class="sourceLine" id="cb2-46" data-line-number="46"><span class="co">#&gt;  Min.   :   0.000     Gadus morhua            : 25832   Min.   :0.000100  </span></a>
-<a class="sourceLine" id="cb2-47" data-line-number="47"><span class="co">#&gt;  1st Qu.:   0.040     Amblyraja radiata       :  9316   1st Qu.:0.003500  </span></a>
-<a class="sourceLine" id="cb2-48" data-line-number="48"><span class="co">#&gt;  Median :   0.121     Conger conger           :  8919   Median :0.004200  </span></a>
-<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="co">#&gt;  Mean   :  11.972     Merlangius merlangus    :  7676   Mean   :0.006864  </span></a>
-<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="co">#&gt;  3rd Qu.:   0.717     Melanogrammus aeglefinus:  6527   3rd Qu.:0.007100  </span></a>
-<a class="sourceLine" id="cb2-51" data-line-number="51"><span class="co">#&gt;  Max.   :7207.821     Pleuronectes platessa   :  6403   Max.   :0.235000  </span></a>
-<a class="sourceLine" id="cb2-52" data-line-number="52"><span class="co">#&gt;                       (Other)                 :113762                     </span></a>
-<a class="sourceLine" id="cb2-53" data-line-number="53"><span class="co">#&gt;        b            weight_g        CPUE_bio_per_hour  </span></a>
-<a class="sourceLine" id="cb2-54" data-line-number="54"><span class="co">#&gt;  Min.   :1.797   Min.   :    0.00   Min.   :     0.00  </span></a>
-<a class="sourceLine" id="cb2-55" data-line-number="55"><span class="co">#&gt;  1st Qu.:3.079   1st Qu.:    8.02   1st Qu.:     1.97  </span></a>
-<a class="sourceLine" id="cb2-56" data-line-number="56"><span class="co">#&gt;  Median :3.156   Median :   80.87   Median :    27.94  </span></a>
-<a class="sourceLine" id="cb2-57" data-line-number="57"><span class="co">#&gt;  Mean   :3.146   Mean   :  700.64   Mean   :   469.33  </span></a>
-<a class="sourceLine" id="cb2-58" data-line-number="58"><span class="co">#&gt;  3rd Qu.:3.243   3rd Qu.:  439.08   3rd Qu.:   171.95  </span></a>
-<a class="sourceLine" id="cb2-59" data-line-number="59"><span class="co">#&gt;  Max.   :3.527   Max.   :35630.04   Max.   :310586.16  </span></a>
+<a class="sourceLine" id="cb2-29" data-line-number="29"><span class="co">#&gt;     AphiaID           Survey            Year         Quarter       Area      </span></a>
+<a class="sourceLine" id="cb2-30" data-line-number="30"><span class="co">#&gt;  Min.   :101170   NS-IBTS:178435   Min.   :1986   Min.   :1   Min.   :1.000  </span></a>
+<a class="sourceLine" id="cb2-31" data-line-number="31"><span class="co">#&gt;  1st Qu.:126436                    1st Qu.:1993   1st Qu.:1   1st Qu.:2.000  </span></a>
+<a class="sourceLine" id="cb2-32" data-line-number="32"><span class="co">#&gt;  Median :126445                    Median :2001   Median :1   Median :4.000  </span></a>
+<a class="sourceLine" id="cb2-33" data-line-number="33"><span class="co">#&gt;  Mean   :125728                    Mean   :2001   Mean   :1   Mean   :3.839  </span></a>
+<a class="sourceLine" id="cb2-34" data-line-number="34"><span class="co">#&gt;  3rd Qu.:127140                    3rd Qu.:2008   3rd Qu.:1   3rd Qu.:6.000  </span></a>
+<a class="sourceLine" id="cb2-35" data-line-number="35"><span class="co">#&gt;  Max.   :274304                    Max.   :2015   Max.   :1   Max.   :7.000  </span></a>
+<a class="sourceLine" id="cb2-36" data-line-number="36"><span class="co">#&gt;                                                                              </span></a>
+<a class="sourceLine" id="cb2-37" data-line-number="37"><span class="co">#&gt;                      Species          LngtClas      CPUE_number_per_hour</span></a>
+<a class="sourceLine" id="cb2-38" data-line-number="38"><span class="co">#&gt;  Gadus morhua            : 25832   Min.   :   0.0   Min.   :   0.000    </span></a>
+<a class="sourceLine" id="cb2-39" data-line-number="39"><span class="co">#&gt;  Amblyraja radiata       :  9316   1st Qu.: 120.0   1st Qu.:   0.040    </span></a>
+<a class="sourceLine" id="cb2-40" data-line-number="40"><span class="co">#&gt;  Clupea harengus         :  8919   Median : 230.0   Median :   0.121    </span></a>
+<a class="sourceLine" id="cb2-41" data-line-number="41"><span class="co">#&gt;  Merlangius merlangus    :  7676   Mean   : 271.3   Mean   :  11.972    </span></a>
+<a class="sourceLine" id="cb2-42" data-line-number="42"><span class="co">#&gt;  Melanogrammus aeglefinus:  6527   3rd Qu.: 370.0   3rd Qu.:   0.717    </span></a>
+<a class="sourceLine" id="cb2-43" data-line-number="43"><span class="co">#&gt;  Pleuronectes platessa   :  6403   Max.   :1500.0   Max.   :7207.821    </span></a>
+<a class="sourceLine" id="cb2-44" data-line-number="44"><span class="co">#&gt;  (Other)                 :113762                                        </span></a>
+<a class="sourceLine" id="cb2-45" data-line-number="45"><span class="co">#&gt;                  Taxonomic.group         a                  b        </span></a>
+<a class="sourceLine" id="cb2-46" data-line-number="46"><span class="co">#&gt;  Gadus morhua            : 25832   Min.   :0.000100   Min.   :1.797  </span></a>
+<a class="sourceLine" id="cb2-47" data-line-number="47"><span class="co">#&gt;  Amblyraja radiata       :  9316   1st Qu.:0.003500   1st Qu.:3.079  </span></a>
+<a class="sourceLine" id="cb2-48" data-line-number="48"><span class="co">#&gt;  Conger conger           :  8919   Median :0.004200   Median :3.156  </span></a>
+<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="co">#&gt;  Merlangius merlangus    :  7676   Mean   :0.006864   Mean   :3.146  </span></a>
+<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="co">#&gt;  Melanogrammus aeglefinus:  6527   3rd Qu.:0.007100   3rd Qu.:3.243  </span></a>
+<a class="sourceLine" id="cb2-51" data-line-number="51"><span class="co">#&gt;  Pleuronectes platessa   :  6403   Max.   :0.235000   Max.   :3.527  </span></a>
+<a class="sourceLine" id="cb2-52" data-line-number="52"><span class="co">#&gt;  (Other)                 :113762                                     </span></a>
+<a class="sourceLine" id="cb2-53" data-line-number="53"><span class="co">#&gt;     weight_g        CPUE_bio_per_hour  </span></a>
+<a class="sourceLine" id="cb2-54" data-line-number="54"><span class="co">#&gt;  Min.   :    0.00   Min.   :     0.00  </span></a>
+<a class="sourceLine" id="cb2-55" data-line-number="55"><span class="co">#&gt;  1st Qu.:    8.02   1st Qu.:     1.97  </span></a>
+<a class="sourceLine" id="cb2-56" data-line-number="56"><span class="co">#&gt;  Median :   80.87   Median :    27.94  </span></a>
+<a class="sourceLine" id="cb2-57" data-line-number="57"><span class="co">#&gt;  Mean   :  700.64   Mean   :   469.33  </span></a>
+<a class="sourceLine" id="cb2-58" data-line-number="58"><span class="co">#&gt;  3rd Qu.:  439.08   3rd Qu.:   171.95  </span></a>
+<a class="sourceLine" id="cb2-59" data-line-number="59"><span class="co">#&gt;  Max.   :35630.04   Max.   :310586.16  </span></a>
 <a class="sourceLine" id="cb2-60" data-line-number="60"><span class="co">#&gt; </span></a></code></pre></div>
 <p>Note that <code>LngtClas</code> is in mm, not cm, but that <code>a</code> and <code>b</code> are the length-weight coefficients for the length being in cm. Will use cm as units later.</p>
 <p>Some columns are duplicated and we just want to keep the useful ones. <code>AphiaID</code> is a numerical code for each species. Need to know the number of areas, but don’t need to keep <code>Area</code>.</p>
@@ -573,33 +573,31 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb13-2" data-line-number="2"><span class="co">#&gt; [1] 217645.3</span></a></code></pre></div>
 <p>The unique length classes are:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">sort</span>(<span class="kw">unique</span>(data<span class="op">$</span>LngtClass))</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co">#&gt;   [1]   4.0   5.0   6.0   7.0   8.0   9.0  10.0  10.5  11.0  11.5  12.0</span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt;  [12]  12.5  13.0  13.5  14.0  14.5  15.0  15.5  16.0  16.5  17.0  17.5</span></a>
-<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#&gt;  [23]  18.0  18.5  19.0  19.5  20.0  20.5  21.0  21.5  22.0  22.5  23.0</span></a>
-<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt;  [34]  23.5  24.0  24.5  25.0  25.5  26.0  26.5  27.0  27.5  28.0  28.5</span></a>
-<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt;  [45]  29.0  29.5  30.0  30.5  31.0  31.5  32.0  32.5  33.0  33.5  34.0</span></a>
-<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#&gt;  [56]  34.5  35.0  35.5  36.0  36.5  37.0  38.0  39.0  40.0  41.0  42.0</span></a>
-<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt;  [67]  43.0  44.0  45.0  46.0  47.0  48.0  49.0  50.0  51.0  52.0  53.0</span></a>
-<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">#&gt;  [78]  54.0  55.0  56.0  57.0  58.0  59.0  60.0  61.0  62.0  63.0  64.0</span></a>
-<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt;  [89]  65.0  66.0  67.0  68.0  69.0  70.0  71.0  72.0  73.0  74.0  75.0</span></a>
-<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt; [100]  76.0  77.0  78.0  79.0  80.0  81.0  82.0  83.0  84.0  85.0  86.0</span></a>
-<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt; [111]  87.0  88.0  89.0  90.0  91.0  92.0  93.0  94.0  95.0  96.0  97.0</span></a>
-<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="co">#&gt; [122]  98.0  99.0 100.0 101.0 102.0 103.0 104.0 105.0 106.0 107.0 108.0</span></a>
-<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt; [133] 109.0 110.0 111.0 112.0 113.0 114.0 115.0 116.0 117.0 118.0 119.0</span></a>
-<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="co">#&gt; [144] 120.0 121.0 122.0 123.0 124.0 125.0 126.0 127.0 128.0 129.0 130.0</span></a>
-<a class="sourceLine" id="cb14-16" data-line-number="16"><span class="co">#&gt; [155] 131.0 132.0 133.0 134.0 135.0 138.0 139.0 140.0 142.0 144.0 145.0</span></a>
-<a class="sourceLine" id="cb14-17" data-line-number="17"><span class="co">#&gt; [166] 146.0 149.0 150.0</span></a>
-<a class="sourceLine" id="cb14-18" data-line-number="18"><span class="kw">diff</span>(<span class="kw">sort</span>(<span class="kw">unique</span>(data<span class="op">$</span>LngtClass)))</a>
-<a class="sourceLine" id="cb14-19" data-line-number="19"><span class="co">#&gt;   [1] 1.0 1.0 1.0 1.0 1.0 1.0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</span></a>
-<a class="sourceLine" id="cb14-20" data-line-number="20"><span class="co">#&gt;  [18] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</span></a>
-<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="co">#&gt;  [35] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</span></a>
-<a class="sourceLine" id="cb14-22" data-line-number="22"><span class="co">#&gt;  [52] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
-<a class="sourceLine" id="cb14-23" data-line-number="23"><span class="co">#&gt;  [69] 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
-<a class="sourceLine" id="cb14-24" data-line-number="24"><span class="co">#&gt;  [86] 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
-<a class="sourceLine" id="cb14-25" data-line-number="25"><span class="co">#&gt; [103] 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
-<a class="sourceLine" id="cb14-26" data-line-number="26"><span class="co">#&gt; [120] 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
-<a class="sourceLine" id="cb14-27" data-line-number="27"><span class="co">#&gt; [137] 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
-<a class="sourceLine" id="cb14-28" data-line-number="28"><span class="co">#&gt; [154] 1.0 1.0 1.0 1.0 1.0 3.0 1.0 1.0 2.0 2.0 1.0 1.0 3.0 1.0</span></a></code></pre></div>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co">#&gt;   [1]   4.0   5.0   6.0   7.0   8.0   9.0  10.0  10.5  11.0  11.5  12.0  12.5</span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt;  [13]  13.0  13.5  14.0  14.5  15.0  15.5  16.0  16.5  17.0  17.5  18.0  18.5</span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#&gt;  [25]  19.0  19.5  20.0  20.5  21.0  21.5  22.0  22.5  23.0  23.5  24.0  24.5</span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt;  [37]  25.0  25.5  26.0  26.5  27.0  27.5  28.0  28.5  29.0  29.5  30.0  30.5</span></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt;  [49]  31.0  31.5  32.0  32.5  33.0  33.5  34.0  34.5  35.0  35.5  36.0  36.5</span></a>
+<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#&gt;  [61]  37.0  38.0  39.0  40.0  41.0  42.0  43.0  44.0  45.0  46.0  47.0  48.0</span></a>
+<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt;  [73]  49.0  50.0  51.0  52.0  53.0  54.0  55.0  56.0  57.0  58.0  59.0  60.0</span></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">#&gt;  [85]  61.0  62.0  63.0  64.0  65.0  66.0  67.0  68.0  69.0  70.0  71.0  72.0</span></a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt;  [97]  73.0  74.0  75.0  76.0  77.0  78.0  79.0  80.0  81.0  82.0  83.0  84.0</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt; [109]  85.0  86.0  87.0  88.0  89.0  90.0  91.0  92.0  93.0  94.0  95.0  96.0</span></a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt; [121]  97.0  98.0  99.0 100.0 101.0 102.0 103.0 104.0 105.0 106.0 107.0 108.0</span></a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="co">#&gt; [133] 109.0 110.0 111.0 112.0 113.0 114.0 115.0 116.0 117.0 118.0 119.0 120.0</span></a>
+<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt; [145] 121.0 122.0 123.0 124.0 125.0 126.0 127.0 128.0 129.0 130.0 131.0 132.0</span></a>
+<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="co">#&gt; [157] 133.0 134.0 135.0 138.0 139.0 140.0 142.0 144.0 145.0 146.0 149.0 150.0</span></a>
+<a class="sourceLine" id="cb14-16" data-line-number="16"><span class="kw">diff</span>(<span class="kw">sort</span>(<span class="kw">unique</span>(data<span class="op">$</span>LngtClass)))</a>
+<a class="sourceLine" id="cb14-17" data-line-number="17"><span class="co">#&gt;   [1] 1.0 1.0 1.0 1.0 1.0 1.0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</span></a>
+<a class="sourceLine" id="cb14-18" data-line-number="18"><span class="co">#&gt;  [19] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</span></a>
+<a class="sourceLine" id="cb14-19" data-line-number="19"><span class="co">#&gt;  [37] 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</span></a>
+<a class="sourceLine" id="cb14-20" data-line-number="20"><span class="co">#&gt;  [55] 0.5 0.5 0.5 0.5 0.5 0.5 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
+<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="co">#&gt;  [73] 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
+<a class="sourceLine" id="cb14-22" data-line-number="22"><span class="co">#&gt;  [91] 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
+<a class="sourceLine" id="cb14-23" data-line-number="23"><span class="co">#&gt; [109] 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
+<a class="sourceLine" id="cb14-24" data-line-number="24"><span class="co">#&gt; [127] 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0</span></a>
+<a class="sourceLine" id="cb14-25" data-line-number="25"><span class="co">#&gt; [145] 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 3.0 1.0 1.0 2.0</span></a>
+<a class="sourceLine" id="cb14-26" data-line-number="26"><span class="co">#&gt; [163] 2.0 1.0 1.0 3.0 1.0</span></a></code></pre></div>
 <p>The 0.5-cm length classes are only for two species, Atlantic Herring (code 126417) and European Sprat (code 126425), as confirmed here (no differences of 0.5cm):</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">temp =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(data, <span class="op">!</span>(SpecCode <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">126417</span>, <span class="dv">126425</span>)))</a>
 <a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw">unique</span>(<span class="kw">diff</span>(<span class="kw">sort</span>(<span class="kw">unique</span>(temp<span class="op">$</span>LngtClass))))</a>
@@ -774,6 +772,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </table>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -95,7 +95,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -310,7 +310,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <h2>Overview of vignettes for sizeSpectra package</h2>
 <p>This R package contains functions for fitting size spectra to ecological data. In particular, it contains functionalised code to reproduce all the results in [1] and [2], and for users to apply the methods to their own data.</p>
 <p>[1] <strong>Testing and recommending methods for fitting size spectra to data</strong> by Andrew M. Edwards, James P. W. Robinson, Michael J. Plank, Julia K. Baum and Julia L. Blanchard. <strong><em>Methods in Ecology and Evolution</em></strong> (2017, 8:57-67). Freely available at <a href="http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12641/full" class="uri">http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12641/full</a>.</p>
-<p>[2] <strong>Accounting for the bin structure of data removes bias when fitting size spectra</strong> by Andrew M. Edwards, James P. W. Robinson, Julia L. Blanchard, Julia K. Baum and Michael J. Plank. <strong><em>Marine Ecology Progress Series</em></strong> (in press). Will be at <a href="http://www.int-res.com/prepress/m13230.html" class="uri">http://www.int-res.com/prepress/m13230.html</a>.</p>
+<p>[2] <strong>Accounting for the bin structure of data removes bias when fitting size spectra</strong> by Andrew M. Edwards, James P. W. Robinson, Julia L. Blanchard, Julia K. Baum and Michael J. Plank. <strong><em>Marine Ecology Progress Series</em></strong> (2020, 636:19-33). Freely available at <a href="https://www.int-res.com/abstracts/meps/v636/p19-33/" class="uri">https://www.int-res.com/abstracts/meps/v636/p19-33/</a>.</p>
 <p>The vignettes explain how to use the functions in the package to reproduce the results in both papers. Users should look over the vignettes to determine which functions and code are best suited for analysing their own data. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating explanatory text from the papers in the vignettes). In the vignettes, [1] is referred to as the ‘MEE paper’ and [2] as the ‘MEPS paper’.</p>
 <p>The vignettes are:</p>
 <ul>
@@ -327,6 +327,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>The source code written in <code>Rmarkdown</code>, the R code that gets extracted from the <code>Rmarkdown</code> code, and the resulting .html files are all found within your library folder (where all your R libraries get saved), in <code>library\sizeSpectra\doc\</code>.</p>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

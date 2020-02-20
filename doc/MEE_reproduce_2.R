@@ -1,4 +1,4 @@
-## ---- include = FALSE----------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -6,13 +6,13 @@ knitr::opts_chunk$set(
   fig.height = 6
 )
 
-## ----setup---------------------------------------------------------------
+## ----setup--------------------------------------------------------------------
 library(sizeSpectra)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(sizeSpectra)
 
-## ---- fig.height=7-------------------------------------------------------
+## ---- fig.height=7------------------------------------------------------------
 list2env(eight.results.default, envir=.GlobalEnv)    # Extract previously saved results
 
 
@@ -114,7 +114,7 @@ legend("topleft", "(h) MLE", bty="n", inset=inset)
 mtext(expression(paste("Estimate of ", italic(b))), side=1, outer=TRUE, line=-1)
 # mtext("hello", side=1, outer=TRUE, line=-1)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 
 par(omi = c(0.12, 0.05, 0.12, 0.0))      # outer margins in inches
 par(mfrow=c(2,1))
@@ -142,7 +142,7 @@ legend("topleft", "(b) MLEfix", bty="n", inset=0.5*inset)
 
 mtext(expression(paste("Estimate of ", italic(b))), side=1, outer=TRUE, line=-1)
 
-## ---- fig.height=7-------------------------------------------------------
+## ---- fig.height=7------------------------------------------------------------
 par(omi = c(0.14, 0, 0.1, 0.15))      # outer margins in inches
 par(mfrow=c(4,2)) #7,1))
 
@@ -187,7 +187,7 @@ MLE.rep.conf.sort = confPlot(MLE.rep.df[ ,-1], legName="(h) MLE",
 mtext(expression(paste("Estimate of ", italic(b)), sep=""),
       side=1, outer=TRUE, line=-0.2, cex=0.8)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # Confidence intervals for MLE and MLEfix methods.
 #postscript("fitting3confMLEfix.eps", height = 0.8*figheight,
 #           width = 0.8*figwidth,

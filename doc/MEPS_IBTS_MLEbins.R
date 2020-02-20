@@ -1,4 +1,4 @@
-## ---- include = FALSE----------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -6,20 +6,20 @@ knitr::opts_chunk$set(
   fig.height = 7
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(sizeSpectra)
 library(tibble)  # Else prints all of a tibble
 data = IBTS_data
 data
 
-## ----speciesNames--------------------------------------------------------
+## ----speciesNames-------------------------------------------------------------
 herringCode = dplyr::filter(specCodeNames, species == "Clupea harengus")$speccode
 herringCode
 spratCode = dplyr::filter(specCodeNames, species == "Sprattus sprattus")$speccode
 spratCode
 specCode05 = c(herringCode, spratCode)      # species codes with 0.5cm length bins
 
-## ----dataBin-------------------------------------------------------------
+## ----dataBin------------------------------------------------------------------
 dataBin = dplyr::mutate(data,
                         LngtMax = LngtClass + 1)
 aa = which(dataBin$SpecCode %in% specCode05)           # row numbers for herring, sprat
@@ -43,13 +43,13 @@ range(dplyr::mutate(dataBin,
                                               # (was calculated independently)
 length(unique(dataBin$SpecCode))
 
-## ----dataBinsave, eval=FALSE---------------------------------------------
+## ----dataBinsave, eval=FALSE--------------------------------------------------
 #  usethis::use_data(dataBin, overwrite = TRUE)
 
-## ----fig.width=7.5, fig.height=6-----------------------------------------
+## ----fig.width=7.5, fig.height=6----------------------------------------------
 res <- species_bins_plots()
 
-## ----highlight-----------------------------------------------------------
+## ----highlight----------------------------------------------------------------
 dataHighlight = dplyr::filter(data,
                               SpecCode %in% c(127205, 154675))
 dataHighlightSumm = dplyr::summarise(dplyr::group_by(dataHighlight,
@@ -60,7 +60,7 @@ dataHighlightSumm = dplyr::summarise(dplyr::group_by(dataHighlight,
                                      LWb = unique(LWb))
 dataHighlightSumm
 
-## ----echo=FALSE, eval=FALSE----------------------------------------------
+## ----echo=FALSE, eval=FALSE---------------------------------------------------
 #  # Plot of wmax for each species. I think it's a metric used somewhere.
 #  plot(1:(dim(dataBinSpecWmax)[1]),
 #       dataBinSpecWmax$maxWmax,
@@ -84,7 +84,7 @@ dataHighlightSumm
 #  axis(2, at = yTicksSmall, labels = rep("", length(yTicksSmall)), tck=-smallTck)
 #  # points(2011, dplyr::filter(maxWmaxByYear, Year == 2011)$maxWmax, col="red", pch=19)
 
-## ----MLEbins-------------------------------------------------------------
+## ----MLEbins------------------------------------------------------------------
 fullYears = sort(unique(dataBin$Year))
 # Do a loop for each year, saving all the results in MLEbins.nSeaFung.new
 for(iii in 1:length(fullYears))
@@ -137,7 +137,7 @@ MLEbins.nSeaFung.new = dplyr::mutate(MLEbins.nSeaFung.new,
                                                abs(confMax-b))/(2*1.96) )
 MLEbins.nSeaFung.new
 
-## ----timeseries, fig.width=7.5, fig.height=6-----------------------------
+## ----timeseries, fig.width=7.5, fig.height=6----------------------------------
 res = timeSerPlot(MLEbins.nSeaFung.new,
                   legName = "(a) MLEbins",
                   yLim = c(-2.2, -0.9),
@@ -148,12 +148,12 @@ res = timeSerPlot(MLEbins.nSeaFung.new,
                   xTicksSmallInc = 1,
                   yTicksSmallInc = 0.05)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 trendResultsMLEbinsNew = dplyr::tbl_df(res)
 knitr::kable(dplyr::select(trendResultsMLEbinsNew, Method, Low, Trend, High, p, Rsquared),
              digits=c(NA, 4, 4, 4, 2, 2))
 
-## ----fig.width=7.5, fig.height=6.3---------------------------------------
+## ----fig.width=7.5, fig.height=6.3--------------------------------------------
 fullResults.MLEbins = MLEbins.nSeaFung.new  # Should really have just used
                                         # MLEbins..; happened to include nSeaFung early on
 trend.MLEbins.new = dplyr::filter(trendResultsMLEbinsNew,
@@ -201,7 +201,7 @@ res.MLEbins.new = timeSerPlot(fullResults.MLEbins,
                               xJitter = 0.03)
 # dev.off()
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 MLEbins.res = MLEbins.nSeaFung.new
 MLEbins.res = dplyr::mutate(MLEbins.res,
                             C = (b != -1 ) * (b+1) / ( xmax^(b+1) - xmin^(b+1) ) +
@@ -212,6 +212,6 @@ knitr::kable(dplyr::select(MLEbins.res, Year, xmin, xmax, n, confMin, b,
                            confMax, C),
              digits=c(0, rep(2, 7)))
 
-## ----save, eval=FALSE----------------------------------------------------
+## ----save, eval=FALSE---------------------------------------------------------
 #  usethis::use_data(MLEbins.res, overwrite = TRUE)
 

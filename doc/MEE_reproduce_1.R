@@ -1,4 +1,4 @@
-## ---- include = FALSE----------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -6,10 +6,10 @@ knitr::opts_chunk$set(
   fig.height = 6
 )
 
-## ----setup---------------------------------------------------------------
+## ----setup--------------------------------------------------------------------
 library(sizeSpectra)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 n = 1000                  # sample size
 b.known = -2              # known fixed value of b
 xmin.known = 1            # known fixed value of xmin
@@ -23,7 +23,7 @@ x = rPLB(n,
 
 head(x)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 num.bins = 8    # Suggested number of bins for standard histogram and Llin
                 #  method; Daan et al. used 8 bins.
 
@@ -41,19 +41,19 @@ gap.barplot.cust(hLlin$counts,
                  yaxs = "i"
                  )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 eight.results = eightMethodsMEE(x, num.bins = num.bins)
 
-## ---- fig.height = 8-----------------------------------------------------
+## ---- fig.height = 8----------------------------------------------------------
 eight.methods.plot(eight.results)
 
-## ---- fig.height=9.4-----------------------------------------------------
+## ---- fig.height=9.4----------------------------------------------------------
 MLE.plots.recommend(x = x,
                     b.MLE = eight.results$hMLE.list$b,
                     confVals.MLE = eight.results$hMLE.list$confVals,
                     hLBNbiom.list = eight.results$hLBNbiom.list)
 
-## ---- fig.height = 5.4---------------------------------------------------
+## ---- fig.height = 5.4--------------------------------------------------------
 par(mai=c(0.8, 0.8, 0.2, 0.3))
 MLE.plot(x,
          b = eight.results$hMLE.list$b,

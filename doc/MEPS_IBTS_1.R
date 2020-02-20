@@ -1,4 +1,4 @@
-## ---- include = FALSE----------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -6,10 +6,10 @@ knitr::opts_chunk$set(
   fig.height = 6
 )
 
-## ----setup---------------------------------------------------------------
+## ----setup--------------------------------------------------------------------
 library(sizeSpectra)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 dim(dataOrig)
 names(dataOrig)
 dataOrig[1:5,1:7]
@@ -17,7 +17,7 @@ dataOrig[1:5,8:13]
 
 summary(dataOrig)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 numAreas = length(unique(dataOrig$Area))
 numAreas
 colsKeep = c("Year",
@@ -31,17 +31,17 @@ colsKeep = c("Year",
 colsDiscard = setdiff(names(dataOrig), colsKeep)
 colsDiscard
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data = sizeSpectra::s_select(dataOrig, colsKeep)   # uses Sebastian Kranz's s_dplyr_funcs.r
 data
 # str(data)
 summary(data)
 min(data$CPUE_number_per_hour)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 sum(data$CPUE_number_per_hour == 0)
 
-## ----rename--------------------------------------------------------------
+## ----rename-------------------------------------------------------------------
 if(sum( colsKeep != c("Year", "AphiaID", "LngtClas", "CPUE_number_per_hour",
     "a", "b", "weight_g", "CPUE_bio_per_hour")) > 0)
        { stop("Need to adjust renaming") }
@@ -49,18 +49,18 @@ names(data) = c("Year", "SpecCode", "LngtClass", "Number", "LWa", "LWb",
          "bodyMass", "CPUE_bio_per_hour")
 # CPUE_bio_per_hour is Number * bodyMass
 
-## ----cm------------------------------------------------------------------
+## ----cm-----------------------------------------------------------------------
 data$LngtClass = data$LngtClass/10
 
-## ----arrange-------------------------------------------------------------
+## ----arrange------------------------------------------------------------------
 data = dplyr::arrange(data, Year, SpecCode, LngtClass)
 data
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 exampleSp = dplyr::filter(data, Year == 1986, SpecCode == 105814, LngtClass == 60)
 exampleSp
 
-## ---- aggregating--------------------------------------------------------
+## ---- aggregating-------------------------------------------------------------
 data = dplyr::summarise(dplyr::group_by(data,
                                         Year,
                                         SpecCode,
@@ -74,13 +74,13 @@ summary(data)
 
 dplyr::filter(data, SpecCode == 105814, Year == 1986, LngtClass == 60)
 
-## ----bodyMass------------------------------------------------------------
+## ----bodyMass-----------------------------------------------------------------
 data = dplyr::mutate(data,
                      bodyMass2 = LWa * LngtClass^LWb)
 if(max(abs(data$bodyMass2 - data$bodyMass)) > 0.0001) stop("Check conversions")
 data = dplyr::select(data, -bodyMass2)              # don't keep the confirming column
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 range(data$LngtClass)
 range(data$bodyMass)
 sum(data$bodyMass == 0)   # 2549
@@ -90,29 +90,29 @@ range(data$bodyMass)
 data
 summary(data)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 sum(data$Number)
 
-## ----lengths-------------------------------------------------------------
+## ----lengths------------------------------------------------------------------
 sort(unique(data$LngtClass))
 diff(sort(unique(data$LngtClass)))
 
-## ----halfcm--------------------------------------------------------------
+## ----halfcm-------------------------------------------------------------------
 temp = dplyr::filter(data, !(SpecCode %in% c(126417, 126425)))
 unique(diff(sort(unique(temp$LngtClass))))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 specCodeNames
 length(unique(specCodeNames$speccode))   # checking speccode are unique
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data = dplyr::ungroup(data)
 
-## ----eval=FALSE----------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  IBTS_data = data
 #  usethis::use_data(IBTS_data, overwrite = TRUE)
 
-## ----results='asis'------------------------------------------------------
+## ----results='asis'-----------------------------------------------------------
 data_biomass <- dplyr::mutate(data,
                               Biomass = Number * bodyMass)
 knitr::kable(rbind(data_biomass[1:6,],
