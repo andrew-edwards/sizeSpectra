@@ -5,8 +5,13 @@
 \title{Construct bins either double in size or are of equal width, and encompass
 the data}
 \usage{
-binData(x = NULL, counts = NULL, binWidth = NULL, binBreaks = NULL,
-  startInteger = TRUE)
+binData(
+  x = NULL,
+  counts = NULL,
+  binWidth = NULL,
+  binBreaks = NULL,
+  startInteger = TRUE
+)
 }
 \arguments{
 \item{x}{vector of individual values (e.g. body masses). Only \code{x} or
@@ -30,10 +35,10 @@ the first bin should be.
 data, that:
 \itemize{
 \item with \code{startInteger=TRUE} start from \code{z = floor(min(x))} and are then
-\code{z, z+a, z+2a, z+3a, ....}   (if \code{z = 0} then power-law cannot be fit
+\verb{z, z+a, z+2a, z+3a, ....}   (if \code{z = 0} then power-law cannot be fit
 so then need to use \code{startInteger=FALSE})
 \item with \code{startInteger=FALSE} start from \code{z = min(x)} and are then
-\code{z, z+a, z+2a, z+3a, ....}
+\verb{z, z+a, z+2a, z+3a, ....}
 }
 \item only \code{binWidth} or \code{binBreaks} can be specified.
 }}
@@ -53,7 +58,7 @@ list containing:
 \item \code{x}: original \code{x} values
 \item \code{binMid}, \code{binMin}, \code{binMax}, \code{binWidth}: midpoint, minimum,
 maximum, and width, respectively, of the bin within
-which the \code{x} value falls.  If indiv has \code{>=10^6} rows then it isn't saved.
+which the \code{x} value falls.  If indiv has \verb{>=10^6} rows then it isn't saved.
 If \code{counts} was specified then an equivalent \code{x}
 vector is created and is column \code{x} (i.e. \code{x} values are repeated). May
 not be the most efficient way, but it easiest to program.

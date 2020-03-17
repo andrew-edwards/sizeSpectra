@@ -10,7 +10,7 @@ the 8 methods) and corresponding columns for each year-method combination:
 \item Year: Year of data
 \item Method: Method used
 \item b: Estimated size-spectrum exponent $b$
-\item confMin, confMax: Minimum and maximum of 95\% confidence interval of
+\item confMin, confMax: Minimum and maximum of 95\\% confidence interval of
 $b$
 \item stdErr: Standard error of estimate of $b$
 }}

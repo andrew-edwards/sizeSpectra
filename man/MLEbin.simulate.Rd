@@ -5,9 +5,18 @@
 \title{Simulate, bin and fit data using four different binning methods and two
 likelihood approaches}
 \usage{
-MLEbin.simulate(n = 1000, b.known = -2, xmin.known = 1,
-  xmax.known = 1000, num.reps = 10000, seed = 42, binType = list(1,
-  5, 10, "2k"), vecDiffVal = 0.5, cut.off = NA, full.mult = 1.5)
+MLEbin.simulate(
+  n = 1000,
+  b.known = -2,
+  xmin.known = 1,
+  xmax.known = 1000,
+  num.reps = 10000,
+  seed = 42,
+  binType = list(1, 5, 10, "2k"),
+  vecDiffVal = 0.5,
+  cut.off = NA,
+  full.mult = 1.5
+)
 }
 \arguments{
 \item{n}{sample size of each simulated data set (numeric)}
@@ -41,7 +50,7 @@ size \code{n}.}
 \value{
 list containing:
 \itemize{
-\item MLE.array: three-dimensional array with element \code{[i, j, k]} representing
+\item MLE.array: three-dimensional array with element \verb{[i, j, k]} representing
 the estimate of \emph{b} obtained from random sample \code{i}, bin type \code{j}, and MLE
 method \code{k}. Size is \code{num.reps} \eqn{\times} \code{length(binType)} \eqn{\times} 2.
 \item MLEconf.array: four-dimensional array with vector

@@ -4,8 +4,18 @@
 \alias{MLE.plot}
 \title{Recommended single plot of ISD and MLE results}
 \usage{
-MLE.plot(x, b, confVals = NULL, panel = FALSE, log.xy = "xy",
-  mgpVals = c(1.6, 0.5, 0), inset = c(0, -0.04))
+MLE.plot(
+  x,
+  b,
+  confVals = NULL,
+  panel = FALSE,
+  log.xy = "xy",
+  mgpVals = c(1.6, 0.5, 0),
+  inset = c(0, -0.04),
+  xlim_global = NA,
+  ylim_global = NA,
+  ...
+)
 }
 \arguments{
 \item{x}{Vector of data values}
@@ -25,6 +35,12 @@ log-log axes, "x" for only x-axis logged.}
 \item{mgpVals}{mgp values to use, as in \code{plot(..., mgp = mgpVals)}.}
 
 \item{inset}{Inset distance for legend}
+
+\item{xlim_global}{Define global x-axis limits}
+
+\item{ylim_global}{Define global y-axis limits}
+
+\item{...}{Further arguments for \code{plot()}}
 }
 \value{
 Single figure of ISD on log-log plot (or log-linear depending on the

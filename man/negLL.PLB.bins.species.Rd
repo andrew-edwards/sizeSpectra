@@ -15,18 +15,18 @@ of a species, and columns (and corresponding mathematical notation in MEPS
 Supplementary Material) are:
 \itemize{
 \item \code{SpecCode}: code for each species, \code{s}
-\item \code{wmin}: lower bound of the bin, \code{w_\{sj\}} where \code{j} is the bin number
-\item \code{wmax}: upper bound of the bin, \code{w_\{s, j+1\}}
-\item \code{Number}: count in that bin for that species, \code{d_\{sj\}}
+\item \code{wmin}: lower bound of the bin, \verb{w_\\\{sj\\\}} where \code{j} is the bin number
+\item \code{wmax}: upper bound of the bin, \verb{w_\\\{s, j+1\\\}}
+\item \code{Number}: count in that bin for that species, \verb{d_\\\{sj\\\}}
 For each species the first and last bins must be non-empty, i.e.
-\code{w_\{s1\}, w_\{s,J_s +1\} > 0}.
+\verb{w_\\\{s1\\\}, w_\\\{s,J_s +1\\\} > 0}.
 }}
 
-\item{n}{total number of counts \code{n = \sum_\{sj\} d_\{sj\}} over all \code{s} and \code{j}}
+\item{n}{total number of counts \verb{n = \\sum_\\\{sj\\\} d_\\\{sj\\\}} over all \code{s} and \code{j}}
 
-\item{xmin}{maximum likelihood estimate for \code{xmin}, \code{xmin = min_\{sj\} w_\{s, 1\}}}
+\item{xmin}{maximum likelihood estimate for \code{xmin}, \verb{xmin = min_\\\{sj\\\} w_\\\{s, 1\\\}}}
 
-\item{xmax}{maximum likelihood estimate for \code{xmax}, \code{xmax = max_\{sj\} w_\{s, J_s+1\}}}
+\item{xmax}{maximum likelihood estimate for \code{xmax}, \verb{xmax = max_\\\{sj\\\} w_\\\{s, J_s+1\\\}}}
 }
 \value{
 negative log-likelihood of the parameters given the data

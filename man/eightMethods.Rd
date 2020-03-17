@@ -5,8 +5,11 @@
 \title{Compute size-spectra exponents for a dataset using all eight methods -
 deprecated, see eightMethods.count()}
 \usage{
-eightMethods(oneYear = 1980, dataForYear = dplyr::filter(data, Year ==
-  oneYear), figName = "eightMethods")
+eightMethods(
+  oneYear = 1980,
+  dataForYear = dplyr::filter(data, Year == oneYear),
+  figName = "eightMethods"
+)
 }
 \arguments{
 \item{oneYear}{the year of data to use, from that in the multiple years contained
@@ -31,8 +34,8 @@ data frame with one row for each method, with columns:
 \item \code{Year}
 \item \code{Method}
 \item \code{b}: estimate of b from that method
-\item \code{confMin}: lower end of 95\% confidence interval of \code{b} for that method
-\item \code{confMax}: upper end of 95\% confidence interval of \code{b} for that method.
+\item \code{confMin}: lower end of 95\\% confidence interval of \code{b} for that method
+\item \code{confMax}: upper end of 95\\% confidence interval of \code{b} for that method.
 }
 
 Also saves a \code{.png} figure called \code{paste(figName, "-", oneYear, ".png")}, of the

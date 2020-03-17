@@ -4,14 +4,30 @@
 \alias{MLEmid.MLEbin.hist}
 \title{One figure with eight histograms for each of  MLEmid and MLEbin methods and four binning types}
 \usage{
-MLEmid.MLEbin.hist(results.list, vertCol = "red", vertThick = 1,
-  xrange = c(-2.4, -1.1), xbigticks.by = 0.4, xsmallticks.by = 0.1,
-  ylimA = c(0, 7000), yBigTickLab.by = 3000, yBigTickNoLab.by = 1000,
-  ySmallTick.by = 500, binwidth = NA, omi = c(0.12, 0.05, 0.2, 0),
-  mfrow = c(4, 2), mai = c(0.5, 0.5, 0, 0.3), xaxs = "i",
-  yaxs = "i", mgp = c(2, 0.5, 0), cex = 0.8, cexAxis = 0.9,
-  inset = c(0, -0.04), legLabMid = c("(a)", "(c)", "(e)", "(g)"),
-  legLabBin = c("(b)", "(d)", "(f)", "(h)"))
+MLEmid.MLEbin.hist(
+  results.list,
+  vertCol = "red",
+  vertThick = 1,
+  xrange = c(-2.4, -1.1),
+  xbigticks.by = 0.4,
+  xsmallticks.by = 0.1,
+  ylimA = c(0, 7000),
+  yBigTickLab.by = 3000,
+  yBigTickNoLab.by = 1000,
+  ySmallTick.by = 500,
+  binwidth = NA,
+  omi = c(0.12, 0.05, 0.2, 0),
+  mfrow = c(4, 2),
+  mai = c(0.5, 0.5, 0, 0.3),
+  xaxs = "i",
+  yaxs = "i",
+  mgp = c(2, 0.5, 0),
+  cex = 0.8,
+  cexAxis = 0.9,
+  inset = c(0, -0.04),
+  legLabMid = c("(a)", "(c)", "(e)", "(g)"),
+  legLabBin = c("(b)", "(d)", "(f)", "(h)")
+)
 }
 \arguments{
 \item{results.list}{output list from \code{MLEbin.simulate()}; see

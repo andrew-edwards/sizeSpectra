@@ -5,15 +5,14 @@
 \title{Calculate negative log-likelihood for the bounded power-law
 distribution given binned data}
 \usage{
-negLL.PLB.binned(b, w, d, J = length(d), xmin = min(w),
-  xmax = max(w))
+negLL.PLB.binned(b, w, d, J = length(d), xmin = min(w), xmax = max(w))
 }
 \arguments{
 \item{b}{value of b for which to calculate the negative log-likelihood}
 
-\item{w}{vector of length \code{J+1} giving the bin breaks \code{w_1, w_2, ..., w_{J+1}}}
+\item{w}{vector of length \code{J+1} giving the bin breaks \verb{w_1, w_2, ..., w_\{J+1\}}}
 
-\item{d}{vector of length \code{J} giving the count in each bin; must have \code{d_1, d_J > 0}}
+\item{d}{vector of length \code{J} giving the count in each bin; must have \verb{d_1, d_J > 0}}
 
 \item{J}{number of bins (length of \code{d})}
 

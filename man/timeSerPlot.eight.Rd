@@ -17,9 +17,9 @@ Dataframe with one row for each of the main eight methods, where
 each row is an output from \code{timeSerPlot()} and so has columns:
 \itemize{
 \item Method: method used
-\item Low: lower bound of 95\% confidence interval
+\item Low: lower bound of 95\\% confidence interval
 \item Trend: gradient of regression fit
-\item High: upper bound of 95\% confidence interval
+\item High: upper bound of 95\\% confidence interval
 \item p: p-value of regression fit
 \item Rsquared: r-squared of regression fit
 \item adjRsquared: adjusted r-squared of regression fit
@@ -27,7 +27,7 @@ each row is an output from \code{timeSerPlot()} and so has columns:
 }
 \description{
 For each of the eight methods in turn, call \code{timeSerPlot()} to add a panel
-with the estimated $b$ and 95\% confidence interval for the method for each
+with the estimated $b$ and 95\\% confidence interval for the method for each
 year of IBTS data, and then fit a regression through the estimates. Called
 in vignette \code{MEPS_IBTS_2.Rmd}.
 }

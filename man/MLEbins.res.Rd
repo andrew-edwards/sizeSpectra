@@ -12,7 +12,7 @@ corresponding columns for each year:
 \item xmax: Estimated $x_{max}$
 \item n: Total number of individuals per hour
 \item b: Estimated size-spectrum exponent $b$
-\item confMin,confMax: Minimum and maximum of 95\% confidence interval of
+\item confMin,confMax: Minimum and maximum of 95\\% confidence interval of
 $b$
 \item C: Calculated normalisation constant
 }}

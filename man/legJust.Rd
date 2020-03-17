@@ -4,8 +4,13 @@
 \alias{legJust}
 \title{Add legend with right-justification}
 \usage{
-legJust(textVec, pos = "topright", textWidth = "slope=-*.**",
-  inset = 0, logxy = FALSE)
+legJust(
+  textVec,
+  pos = "topright",
+  textWidth = "slope=-*.**",
+  inset = 0,
+  logxy = FALSE
+)
 }
 \arguments{
 \item{textVec}{text for the legend, one element for each row}

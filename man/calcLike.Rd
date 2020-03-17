@@ -2,11 +2,17 @@
 % Please edit documentation in R/likelihood.R
 \name{calcLike}
 \alias{calcLike}
-\title{Calculate maximum likelihood estimate and 95\% confidence
+\title{Calculate maximum likelihood estimate and 95\\% confidence
 interval}
 \usage{
-calcLike(negLL.fn, p, vecDiff = 0.5, vecInc = 0.001,
-  suppress.warnings = FALSE, ...)
+calcLike(
+  negLL.fn,
+  p,
+  vecDiff = 0.5,
+  vecInc = 0.001,
+  suppress.warnings = FALSE,
+  ...
+)
 }
 \arguments{
 \item{negLL.fn}{negative log-likelihood function that take arguments
@@ -24,14 +30,14 @@ symmetric, so symmetric seems a good start.}
 \item{vecInc}{increments to try, the accuracy of the resulting bounds
 will depend on this. Note that a resulting interval of, say,
 (-2.123, -1.987) means that that interval is contained within the
-true 95\% interval, which is itself contained within (-2.124, -1.986).
+true 95\\% interval, which is itself contained within (-2.124, -1.986).
 The true bounds lie between the stated lower bounds and between
 the stated upper bounds. So reduce \code{vecInc} if further accuracy is needed.}
 
 \item{suppress.warnings}{If TRUE then suppress warnings from the \code{nlm()}
 calculations; for the \code{MEPS_IBTS_MLEbins} vignette these occur a lot, and
 are always:
-\code{Warning in nlm(f = negLL.fn, p = p, ...) : NA/Inf replaced by maximum positive value}. The same warning often happens in other
+\verb{Warning in nlm(f = negLL.fn, p = p, ...) : NA/Inf replaced by maximum positive value}. The same warning often happens in other
 situations also.}
 
 \item{...}{further arguments (including parameters and data) to \code{negLL.fn()}}
@@ -41,11 +47,11 @@ situations also.}
 }
 \itemize{
 \item MLE: the maximum likelihood estimate
-\item conf: the 95\% confidence interval of the MLE
+\item conf: the 95\\% confidence interval of the MLE
 }
 }
 \description{
-Calculate maximum likelihood estimate of a parameter and its 95\% confidence
+Calculate maximum likelihood estimate of a parameter and its 95\\% confidence
 interval using the profile log-likelihood method, for a given
 negative log-likelihood function and its arguments (other parameters and data).
 }

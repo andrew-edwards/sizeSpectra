@@ -4,17 +4,36 @@
 \alias{confPlot}
 \title{Plot confidence intervals of repeated estimates for one method}
 \usage{
-confPlot(repConf, legName, b.true = b.known, inCol = "darkgrey",
-  outCol = "blue", vertCol = "red", pchVal = 20, cexVal = 0,
-  xLim = NULL, colourCode = TRUE, vertThick = 1, horizThick = 0.3,
-  thin = 33, horizLines = FALSE, horizLinesOut = TRUE,
-  horizLinesIn = TRUE, yLab = "Sample number", yTicks = seq(0, 300,
-  50), yLabels = TRUE, vertFirst = FALSE, insetVal = c(-0.08, -0.06),
-  insetVal2 = c(-0.08, 0.07), xsmallticks = NULL, legLoc = "topleft")
+confPlot(
+  repConf,
+  legName,
+  b.true = b.known,
+  inCol = "darkgrey",
+  outCol = "blue",
+  vertCol = "red",
+  pchVal = 20,
+  cexVal = 0,
+  xLim = NULL,
+  colourCode = TRUE,
+  vertThick = 1,
+  horizThick = 0.3,
+  thin = 33,
+  horizLines = FALSE,
+  horizLinesOut = TRUE,
+  horizLinesIn = TRUE,
+  yLab = "Sample number",
+  yTicks = seq(0, 300, 50),
+  yLabels = TRUE,
+  vertFirst = FALSE,
+  insetVal = c(-0.08, -0.06),
+  insetVal2 = c(-0.08, 0.07),
+  xsmallticks = NULL,
+  legLoc = "topleft"
+)
 }
 \arguments{
 \item{repConf}{data frame with columns \code{confMin} and \code{confMax}, the
-minimum and maximum of the 95\% confidence interval for b, and rows
+minimum and maximum of the 95\\% confidence interval for b, and rows
 corresponding to each simulated data set. When \code{confPlot} is called, for
 some methods \code{b = slope - 1} or \code{b = slope - 2}, which gets done in the
 call.}

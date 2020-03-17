@@ -2,7 +2,7 @@
 % Please edit documentation in R/likelihood.R
 \name{profLike}
 \alias{profLike}
-\title{Profile log-likelihood method to calculate 95\% confidence interval}
+\title{Profile log-likelihood method to calculate 95\\% confidence interval}
 \usage{
 profLike(negLL.fn, MLE, minNegLL, vecDiff = 0.5, vecInc = 0.001, ...)
 }
@@ -24,17 +24,17 @@ symmetric, so symmetric seems a good start.}
 \item{vecInc}{increments to try, the accuracy of the resulting bounds
 will depend on this. Note that a resulting interval of, say,
 (-2.123, -1.987) means that that interval is contained within the
-true 95\% interval, which is itself contained within (-2.124, -1.986).
+true 95\\% interval, which is itself contained within (-2.124, -1.986).
 The true bounds lie between the stated lower bounds and between
 the stated upper bounds. So reduce vecInc if further accuracy is needed.}
 
 \item{...}{further arguments to \code{negLL.fn()}}
 }
 \value{
-two-component vector of the 95\% confidence interval
+two-component vector of the 95\\% confidence interval
 }
 \description{
-Profile log-likelihood method to calculate 95\% confidence interval
+Profile log-likelihood method to calculate 95\\% confidence interval
 for a given negative log-likelihood function, maximum likelihood estimate
 (MLE) and minimum of of the negative log-likelihood function. Based on
 Hilborn and Mangel (1997), The Ecological Detective, p162.

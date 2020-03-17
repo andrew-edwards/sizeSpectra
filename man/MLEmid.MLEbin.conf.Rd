@@ -4,13 +4,25 @@
 \alias{MLEmid.MLEbin.conf}
 \title{One figure with eight confidence interval plots for each of  MLEmid and MLEbin methods and four binning types}
 \usage{
-MLEmid.MLEbin.conf(results.list, vertCol = "red", vertThick = 1,
-  xrange = c(-2.4, -1.1), xbigticks.by = 0.4, xsmallticks.by = 0.1,
-  omi = c(0.2, 0.05, 0.22, 0.1), mfrow = c(4, 2), mai = c(0.3, 0.5,
-  0.08, 0), xaxs = "i", yaxs = "i", mgp = c(2, 0.5, 0), cex = 0.8,
-  inset = c(0, -0.04), insetMat = matrix(rep(c(-0.01, -0.04), 4), ncol
-  = 2, byrow = TRUE), legLabMid = c("(a)", "(c)", "(e)", "(g)"),
-  legLabBin = c("(b)", "(d)", "(f)", "(h)"))
+MLEmid.MLEbin.conf(
+  results.list,
+  vertCol = "red",
+  vertThick = 1,
+  xrange = c(-2.4, -1.1),
+  xbigticks.by = 0.4,
+  xsmallticks.by = 0.1,
+  omi = c(0.2, 0.05, 0.22, 0.1),
+  mfrow = c(4, 2),
+  mai = c(0.3, 0.5, 0.08, 0),
+  xaxs = "i",
+  yaxs = "i",
+  mgp = c(2, 0.5, 0),
+  cex = 0.8,
+  inset = c(0, -0.04),
+  insetMat = matrix(rep(c(-0.01, -0.04), 4), ncol = 2, byrow = TRUE),
+  legLabMid = c("(a)", "(c)", "(e)", "(g)"),
+  legLabBin = c("(b)", "(d)", "(f)", "(h)")
+)
 }
 \arguments{
 \item{results.list}{output list from \code{MLEbin.simulate()}; see

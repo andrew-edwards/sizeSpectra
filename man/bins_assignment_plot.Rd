@@ -5,10 +5,19 @@
 \title{Demonstration of how binned body-mass values get assigned to logarithmic
 size-class bins (Figure 3 of MEPS)}
 \usage{
-bins_assignment_plot(num2 = 11, lenBins = seq(10, 40, by = 5),
-  LWa = c(0.001, 0.0255), LWb = c(3.4362, 2.7643), col1 = c("red",
-  "pink"), col2 = c("blue", "lightblue"), thick = 7, xaxs = "i",
-  yaxs = "i", mgp = c(2, 0.5, 0), lend = "butt")
+bins_assignment_plot(
+  num2 = 11,
+  lenBins = seq(10, 40, by = 5),
+  LWa = c(0.001, 0.0255),
+  LWb = c(3.4362, 2.7643),
+  col1 = c("red", "pink"),
+  col2 = c("blue", "lightblue"),
+  thick = 7,
+  xaxs = "i",
+  yaxs = "i",
+  mgp = c(2, 0.5, 0),
+  lend = "butt"
+)
 }
 \arguments{
 \item{num2}{Number of log2 bin breaks}

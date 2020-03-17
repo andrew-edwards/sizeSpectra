@@ -4,19 +4,40 @@
 \alias{timeSerPlot}
 \title{Plot time series of estimated \emph{b} with confidence intervals}
 \usage{
-timeSerPlot(bForYears, legName, method, weightReg = FALSE,
-  bCol = "black", pchVal = 20, cexVal = 1, confCol = "black",
-  confThick = 1, xLim = NULL, yLim = NULL, xLab = "",
+timeSerPlot(
+  bForYears,
+  legName,
+  method,
+  weightReg = FALSE,
+  bCol = "black",
+  pchVal = 20,
+  cexVal = 1,
+  confCol = "black",
+  confThick = 1,
+  xLim = NULL,
+  yLim = NULL,
+  xLab = "",
   yLab = expression(paste("Estimate of ", italic(b)), sep = ""),
-  xTicksSmallInc = NULL, xTicksSmallTck = 0.01, yLabels = TRUE,
-  yTicksSmallInc = NULL, yTicksSmallTck = 0.01, legPos = "topleft",
-  newPlot = TRUE, regPlot = TRUE, regColNotSig = "darkgrey",
-  regColSig = "red", legExtra = NULL, legExtraPos = "topleft",
-  legExtraCol = "", insetVal = c(-0.08, -0.06), xJitter = 0)
+  xTicksSmallInc = NULL,
+  xTicksSmallTck = 0.01,
+  yLabels = TRUE,
+  yTicksSmallInc = NULL,
+  yTicksSmallTck = 0.01,
+  legPos = "topleft",
+  newPlot = TRUE,
+  regPlot = TRUE,
+  regColNotSig = "darkgrey",
+  regColSig = "red",
+  legExtra = NULL,
+  legExtraPos = "topleft",
+  legExtraCol = "",
+  insetVal = c(-0.08, -0.06),
+  xJitter = 0
+)
 }
 \arguments{
 \item{bForYears}{dataframe with columns \code{Year}, \code{Method} (optional), \code{b}
-(the estimate of \emph{b}), \code{confMin} and \code{confMax} (the 95\% lower and upper
+(the estimate of \emph{b}), \code{confMin} and \code{confMax} (the 95\\% lower and upper
 confidence limits) and \code{stdError} (the standard error of the estimate of
 \emph{b}).}
 
@@ -85,9 +106,9 @@ confidence intervals overlap)}
 dataframe of just one row with columns:
 \itemize{
 \item Method: method used
-\item Low: lower bound of 95\% confidence interval
+\item Low: lower bound of 95\\% confidence interval
 \item Trend: gradient of regression fit
-\item High: upper bound of 95\% confidence interval
+\item High: upper bound of 95\\% confidence interval
 \item p: p-value of regression fit
 \item Rsquared: r-squared of regression fit
 \item adjRsquared: adjusted r-squared of regression fit

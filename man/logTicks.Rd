@@ -4,8 +4,15 @@
 \alias{logTicks}
 \title{Add axes and tick marks to a log-log plot to represent unlogged values}
 \usage{
-logTicks(xLim, yLim = NULL, tclSmall = -0.2, xLabelSmall = NULL,
-  yLabelSmall = NULL, xLabelBig = NULL, mgpVal = c(1.6, 0.5, 0))
+logTicks(
+  xLim,
+  yLim = NULL,
+  tclSmall = -0.2,
+  xLabelSmall = NULL,
+  yLabelSmall = NULL,
+  xLabelBig = NULL,
+  mgpVal = c(1.6, 0.5, 0)
+)
 }
 \arguments{
 \item{xLim}{the x limits for the plot (unlogged scale); if NULL then do not

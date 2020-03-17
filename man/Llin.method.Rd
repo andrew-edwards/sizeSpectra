@@ -24,7 +24,7 @@ list containing:
 \item lm: results of the linear regression of \code{log.counts ~ mids}
 \item slope: slope of the linear regression fit
 \item breaks: bin breaks
-\item confVals: 95\% confidence interval of the fitted slope
+\item confVals: 95\\% confidence interval of the fitted slope
 }
 }
 \description{

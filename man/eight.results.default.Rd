@@ -7,7 +7,7 @@
 \format{A list with elements:
 \itemize{
 \item Llin.rep.df: Dataframe with columns \code{slope}, \code{confMin} and \code{confMax},
-giving the estimated slope, min and max of 95% confidence intervals from
+giving the estimated slope, min and max of 95\% confidence intervals from
 the Llin method, with each row representing the values for one of the 10,000 simulated data sets
 \item LT.rep.df, LTplus1.rep.df, LBmiz.rep.df, LBbiom.rep.df, LBNbiom.rep.df, LCD.rep.df:
 Corresponding respective data frames for the next six methods

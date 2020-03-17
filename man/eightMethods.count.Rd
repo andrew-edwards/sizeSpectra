@@ -5,8 +5,7 @@
 \title{Compute exponents for the IBTS dataset using all eight methods, explicitly
 using the counts which can be non-integer.}
 \usage{
-eightMethods.count(data = data, oneYear = 1980,
-  figName = "eightMCnt")
+eightMethods.count(data = data, oneYear = 1980, figName = "eightMCnt")
 }
 \arguments{
 \item{data}{local data frame that has a unique row for every combination of
@@ -27,8 +26,8 @@ data frame with one row for each method, with columns:
 \item \code{Year}
 \item \code{Method}
 \item \code{b} (estimate of \emph{b} from that method)
-\item \code{confMin} (lower end of 95\% confidence interval of \emph{b} for that method)
-\item \code{confMax} (upper end of 95\% confidence interval of \emph{b} for that method).
+\item \code{confMin} (lower end of 95\\% confidence interval of \emph{b} for that method)
+\item \code{confMax} (upper end of 95\\% confidence interval of \emph{b} for that method).
 a .png figure \code{paste(figName, "-", oneYear, ".png")} of the fits for each of the eight methods
 }
 }

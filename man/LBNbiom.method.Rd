@@ -4,8 +4,12 @@
 \alias{LBNbiom.method}
 \title{Fit biomass size spectrum with the LBNbiom and LBbiom methods}
 \usage{
-LBNbiom.method(bodyMass = NULL, counts = NULL, binBreaks = NULL,
-  lowerCutOff = 0)
+LBNbiom.method(
+  bodyMass = NULL,
+  counts = NULL,
+  binBreaks = NULL,
+  lowerCutOff = 0
+)
 }
 \arguments{
 \item{bodyMass}{vector of individual body masses}

@@ -4,9 +4,18 @@
 \alias{MLE.plots.recommend}
 \title{Recommended LBN-type plot with ISD for fitted MLE (MEE Figure 6)}
 \usage{
-MLE.plots.recommend(x, b.MLE, confVals.MLE, hLBNbiom.list = NULL,
-  inset = c(0, -0.04), mgpVals = c(1.6, 0.5, 0), xLim = c(0, 2.7),
-  yLim = c(0, 3), yBigTicks = 0:3, ySmallTicks = c(0.5, 1.5, 2.5))
+MLE.plots.recommend(
+  x,
+  b.MLE,
+  confVals.MLE,
+  hLBNbiom.list = NULL,
+  inset = c(0, -0.04),
+  mgpVals = c(1.6, 0.5, 0),
+  xLim = c(0, 2.7),
+  yLim = c(0, 3),
+  yBigTicks = 0:3,
+  ySmallTicks = c(0.5, 1.5, 2.5)
+)
 }
 \arguments{
 \item{x}{Raw data, must be body-mass values (else LBN plot is meaningless).}

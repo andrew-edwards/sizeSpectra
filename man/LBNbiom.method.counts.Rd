@@ -43,15 +43,15 @@ biomass in each bin
 biomass in each bin
 \item \code{unNorm.lm}: \code{lm()} result of the linear regression fit when not
 normalising the biomass in each bin
-\item \code{unNorm.slope:} slope of the linear regression fit when not
+\item \verb{unNorm.slope:} slope of the linear regression fit when not
 normalising the biomass in each bin
 }
 }
 \description{
 Use the log-binning with normalisation technique to calculate the slope of
 the biomass size spectra, for count data. Slope is from fitting
-a linear regression of \code{log10(normalised biomass in bin)}
-against \code{log10(midpoint of bin)}. Bins can be defined by user,
+a linear regression of \verb{log10(normalised biomass in bin)}
+against \verb{log10(midpoint of bin)}. Bins can be defined by user,
 else are created to double in size. Also calculates slope
 for biomasses not being normalised (LB method).
 }

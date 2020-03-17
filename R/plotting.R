@@ -610,7 +610,6 @@ legJust = function(textVec,
            leg$text$y,
            textVec,
            pos = 2) }
-
 }
 
 ##' Recommended single plot of ISD and MLE results
@@ -628,6 +627,9 @@ legJust = function(textVec,
 ##'   log-log axes, "x" for only x-axis logged.
 ##' @param mgpVals mgp values to use, as in `plot(..., mgp = mgpVals)`.
 ##' @param inset Inset distance for legend
+##' @param xlim_global Define global x-axis limits
+##' @param ylim_global Define global y-axis limits
+##' @param ... Further arguments for `plot()`
 ##' @return Single figure of ISD on log-log plot (or log-linear depending on the
 ##'   options given).
 ##'
@@ -639,10 +641,21 @@ MLE.plot <- function(x,
                      panel = FALSE,
                      log.xy = "xy",
                      mgpVals = c(1.6, 0.5, 0),
-                     inset = c(0, -0.04)
+                     inset = c(0, -0.04),
+                     xlim_global = NA,
+                     ylim_global = NA,
+                     ...
                      )
 {
   # MLE (maximum likelihood method) plot.
+
+  if(is.na(xlim_global[1])){
+    xlim_global = c(min(x),
+                    max(x))
+  }
+  if(is.na(ylim_global[1])){
+    ylim_global = c(1, length(x))
+    }
 
   # To plot rank/frequency style plot:
   plot(sort(x, decreasing=TRUE),
@@ -651,10 +664,10 @@ MLE.plot <- function(x,
        xlab = expression(paste("Values, ", italic(x))),
        ylab = expression( paste("Number of ", values >= x), sep=""),
        mgp = mgpVals,
-       xlim = c(min(x),
-                max(x)),
-       ylim = c(1, length(x)),
-       axes = FALSE)
+       xlim = xlim_global,
+       ylim = ylim_global,
+       axes = FALSE,
+       ...)
   xLim = 10^par("usr")[1:2]
   yLim = 10^par("usr")[3:4]
 

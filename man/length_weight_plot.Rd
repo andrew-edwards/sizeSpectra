@@ -5,13 +5,27 @@
 \title{Example length-weight relationships for two species, demonstrating
 consequences of length bins}
 \usage{
-length_weight_plot(sp1 = "Common Ling", sp2 = "Lemon Sole",
-  LWa = c(0.001, 0.0255), LWb = c(3.4362, 2.7643), col1 = c("red",
-  "pink"), col2 = c("blue", "lightblue"), thick = 7, curve_thick = 3,
-  length = 10:50, lenBins = seq(10, 40, by = 5), xlim = c(-6, 50),
-  ylim = c(-60, 800), inset = c(0.1, -0.02), xlab = "Length, cm",
-  ylab = "Body mass, g", xaxs = "i", yaxs = "i", mgp = c(2, 0.5,
-  0), lend = "butt")
+length_weight_plot(
+  sp1 = "Common Ling",
+  sp2 = "Lemon Sole",
+  LWa = c(0.001, 0.0255),
+  LWb = c(3.4362, 2.7643),
+  col1 = c("red", "pink"),
+  col2 = c("blue", "lightblue"),
+  thick = 7,
+  curve_thick = 3,
+  length = 10:50,
+  lenBins = seq(10, 40, by = 5),
+  xlim = c(-6, 50),
+  ylim = c(-60, 800),
+  inset = c(0.1, -0.02),
+  xlab = "Length, cm",
+  ylab = "Body mass, g",
+  xaxs = "i",
+  yaxs = "i",
+  mgp = c(2, 0.5, 0),
+  lend = "butt"
+)
 }
 \arguments{
 \item{sp1}{Species 1 name (for legend)}

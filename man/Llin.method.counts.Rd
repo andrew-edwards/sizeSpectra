@@ -31,7 +31,7 @@ list containing:
 \item \code{lm}: results of the linear regression of \code{log.counts ~ mids}
 \item \code{slope}: slope of the linear regression fit
 \item \code{breaks}: bin breaks
-\item \code{confVals}: 95\% confidence interval of the fitted slope
+\item \code{confVals}: 95\\% confidence interval of the fitted slope
 \item \code{stdError}: standard error of the fitted slope
 }
 }

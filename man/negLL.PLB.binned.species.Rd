@@ -3,7 +3,7 @@
 \name{negLL.PLB.binned.species}
 \alias{negLL.PLB.binned.species}
 \title{Calculate the negative log-likelihood of \code{b} for the PLB model, given
-species-specific binned data (MLEbins method). DEPRECATED -- \code{use negLL.PLB.bins.species()}}
+species-specific binned data (MLEbins method). DEPRECATED -- \verb{use negLL.PLB.bins.species()}}
 \usage{
 negLL.PLB.binned.species(b, dataBinForLike, dataBinForLikeSummary)
 }
@@ -14,22 +14,22 @@ negLL.PLB.binned.species(b, dataBinForLike, dataBinForLikeSummary)
 of a species, and columns (and corresponding mathematical notation in MEPS Appendix) are:
 \itemize{
 \item \code{SpecCode}: code for each species, \code{s}
-\item \code{wmin}: lower bound of the bin, \code{w_\{sj\}} where \code{j} is the bin number
-\item \code{wmax}: upper bound of the bin, \code{w_\{s,j+1\}}
-\item \code{Number}: count in that bin for that species, \code{d_\{sj\}}
+\item \code{wmin}: lower bound of the bin, \verb{w_\\\{sj\\\}} where \code{j} is the bin number
+\item \code{wmax}: upper bound of the bin, \verb{w_\\\{s,j+1\\\}}
+\item \code{Number}: count in that bin for that species, \verb{d_\\\{sj\\\}}
 For each species the first and last bins must be non-empty, i.e.
-\code{w_\{s1\}, w_\{s,J_s +1\} > 0}. Should ideally write code to check that before
+\verb{w_\\\{s1\\\}, w_\\\{s,J_s +1\\\} > 0}. Should ideally write code to check that before
 calling this function (since this gets repeatedly called).
 }}
 
 \item{dataBinForLikeSummary}{tbl_df with one row for each species, giving
-the minimum lower bound \code{w_\{s1\}} and maximum upper bound \code{w_\{s,J_s +1\}}
+the minimum lower bound \verb{w_\\\{s1\\\}} and maximum upper bound \verb{w_\\\{s,J_s +1\\\}}
 and the number of counts for that species, where \code{J_s} is the number of
 bins for species \code{s} (won't need to explicilty specify). Columns are:
 \itemize{
 \item \code{SpecCode}: code for each species \code{s}
-\item \code{wminSpecies}: minimum lower bound \code{w_\{s1\}}
-\item \code{wmaxSpecies: maximum upper bound }w_{s,J_s +1}`
+\item \code{wminSpecies}: minimum lower bound \verb{w_\\\{s1\\\}}
+\item \verb{wmaxSpecies: maximum upper bound }w_\{s,J_s +1\}`
 \item \code{n_s}: total number of counts for species \code{s} \code{n_s}
 }}
 }

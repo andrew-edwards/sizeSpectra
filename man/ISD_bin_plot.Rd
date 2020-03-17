@@ -4,16 +4,35 @@
 \alias{ISD_bin_plot}
 \title{Recommended plots of individual size distribution and fit for binned data}
 \usage{
-ISD_bin_plot(data.year, b.MLE, b.confMin, b.confMax, year = NA,
-  xlim = NA, xmin = NA, xmax = NA, yScaling = 0.75,
-  MLE.round = 2, xLabel.small = c(5, 50, 500, 5000), yBig.inc = 1000,
-  ySmall.inc = 250, ySmall.tcl = -0.2,
+ISD_bin_plot(
+  data.year,
+  b.MLE,
+  b.confMin,
+  b.confMax,
+  year = NA,
+  xlim = NA,
+  xmin = NA,
+  xmax = NA,
+  yScaling = 0.75,
+  MLE.round = 2,
+  xLabel.small = c(5, 50, 500, 5000),
+  yBig.inc = 1000,
+  ySmall.inc = 250,
+  ySmall.tcl = -0.2,
   xLab = expression(paste("Body mass (", italic(x), "), g")),
   yLab = expression(paste("Number of ", values >= italic(x))),
-  inset.a = c(0, 0), inset.year = c(0, 0.04), seg.col = "green",
-  rect.col = "grey", fit.col = "red", fit.lwd = 2, conf.lty = 2,
-  par.mfrow = c(2, 1), par.mai = c(0.4, 0.5, 0.05, 0.3),
-  par.cex = 0.7, mgp.vals = c(1.6, 0.5, 0))
+  inset.a = c(0, 0),
+  inset.year = c(0, 0.04),
+  seg.col = "green",
+  rect.col = "grey",
+  fit.col = "red",
+  fit.lwd = 2,
+  conf.lty = 2,
+  par.mfrow = c(2, 1),
+  par.mai = c(0.4, 0.5, 0.05, 0.3),
+  par.cex = 0.7,
+  mgp.vals = c(1.6, 0.5, 0)
+)
 }
 \arguments{
 \item{data.year}{tibble containing columns Year, wmin, wmax, Number,
@@ -21,9 +40,9 @@ countGTEwmin, lowCount, highCount}
 
 \item{b.MLE}{maximum likelihood estimate of \emph{b} (ideally from the MLEbins method)}
 
-\item{b.confMin}{lower 95\% confidence limits of \emph{b}}
+\item{b.confMin}{lower 95\\% confidence limits of \emph{b}}
 
-\item{b.confMax}{upper 95\% confidence limits of \emph{b}}
+\item{b.confMax}{upper 95\\% confidence limits of \emph{b}}
 
 \item{year}{year of data to go into legend (use NA if not applicable)}
 

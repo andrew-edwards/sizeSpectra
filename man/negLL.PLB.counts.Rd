@@ -5,8 +5,15 @@
 \title{Calculate negative log-likelihood for the bounded power-law
 distribution given count data}
 \usage{
-negLL.PLB.counts(b, x, c, K = length(c), xmin = min(x),
-  xmax = max(x), sumclogx = sum(c * log(x)))
+negLL.PLB.counts(
+  b,
+  x,
+  c,
+  K = length(c),
+  xmin = min(x),
+  xmax = max(x),
+  sumclogx = sum(c * log(x))
+)
 }
 \arguments{
 \item{b}{value of \code{b} for which to calculate the negative log-likelihood.}
@@ -14,7 +21,7 @@ negLL.PLB.counts(b, x, c, K = length(c), xmin = min(x),
 \item{x}{vector of length K corresponding to data values \code{x_k}, with a
 corresponding count \code{c} being the number of times that \code{x_k} is repeated}
 
-\item{c}{vector of length \code{K} giving the counts \code{c_k} for each \code{k=1, 2, 3, ..., K}.
+\item{c}{vector of length \code{K} giving the counts \code{c_k} for each \verb{k=1, 2, 3, ..., K}.
 Must have \code{c[1]>0} and \code{c[K]>0}, i.e. non-zero counts for first and last
 \code{x_k}. Note that the \code{c_k} do not have to be integer-valued.}
 

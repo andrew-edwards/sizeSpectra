@@ -12,7 +12,7 @@ MLEmid.MLEbin.table(results.list)
 }
 \value{
 dataframe of table with columns \code{Binning.type}, \code{Method},
-\code{Quantile.5}, \code{Median, }Mean\code{, }Quantile.95\code{, }Percent.below.true`, one
+\code{Quantile.5}, \verb{Median, }Mean\verb{, }Quantile.95\verb{, }Percent.below.true`, one
 row for each combination of binning type and fitting method.
 }
 \description{

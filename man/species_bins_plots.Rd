@@ -4,8 +4,11 @@
 \alias{species_bins_plots}
 \title{Plot the species-specific bins for all species, as in Figures 6, S.1, S.2 and S.3}
 \usage{
-species_bins_plots(dataBin_vals = dataBin, postscript = FALSE,
-  specCodeHighlight = c(127205, 154675))
+species_bins_plots(
+  dataBin_vals = dataBin,
+  postscript = FALSE,
+  specCodeHighlight = c(127205, 154675)
+)
 }
 \arguments{
 \item{dataBin_vals}{dataframe in the same format as the saved dataset \code{dataBin}
