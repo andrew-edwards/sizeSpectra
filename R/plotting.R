@@ -1876,6 +1876,8 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' @param par.mai margin size in inches
 ##' @param par.cex magnification of plotting text and symbols relative to default
 ##' @param mgp.vals margin line for axis title, axis labels and axis line
+##' @param overlapping.bins whether or not the bins can overlap (as in Fig 7
+##'   because they are species-specific)
 ##' @return two-panel figure of the recommended plot of binned data and the
 ##'   fitted individual size distribution, like Figures 7 and S.5-S.34 of the
 ##'   MEPS paper. See the vignette `MEPS_IBTS_recommend` for explicit example.
@@ -1907,7 +1909,8 @@ ISD_bin_plot <- function(data.year,
                          par.mfrow = c(2, 1),
                          par.mai = c(0.4, 0.5, 0.05, 0.3),
                          par.cex = 0.7,
-                         mgp.vals = c(1.6,0.5,0)
+                         mgp.vals = c(1.6,0.5,0),
+                         overlapping.bins = TRUE
                          )
   {
   sumNumber = sum(data.year$Number)
@@ -1948,10 +1951,10 @@ ISD_bin_plot <- function(data.year,
   #  log axis. Which also means that the rectangle that goes to 0 has to be
   #  added manually (below). Picking the y-axis to go down to 0.75 of the
   #  minimum value of CountGTEwmin.
-  yRange = c(yScaling * min(data.year$countGTEwmin), max(data.year$highCount))
+C  yRange = c(yScaling * min(data.year$countGTEwmin), max(data.year$highCount))
 
   # y-axis not logged
-  plot(data.year$wmin,
+C  plot(data.year$wmin,
        data.year$countGTEwmin,
        log="x",
        xlab=xLab,
@@ -1983,12 +1986,12 @@ ISD_bin_plot <- function(data.year,
        tcl = ySmall.tcl,
        mgp = mgp.vals)
 
-  rect(xleft = data.year$wmin,
+C  rect(xleft = data.year$wmin,
        ybottom = data.year$lowCount,
        xright = data.year$wmax,
        ytop = data.year$highCount,
        col = rect.col)
-  segments(x0 = data.year$wmin,
+C  segments(x0 = data.year$wmin,
            y0 = data.year$countGTEwmin,
            x1 = data.year$wmax,
            y1 = data.year$countGTEwmin,
@@ -2000,7 +2003,7 @@ ISD_bin_plot <- function(data.year,
   legend("topright", "(a)",
          bty = "n",
          inset = inset.a)
-  if(!is.na(year)){
+C if(!is.na(year)){
     legend("topright",
            legend = year,
            bty = "n",
@@ -2020,7 +2023,7 @@ ISD_bin_plot <- function(data.year,
   # y-axis logged
   # empty plot:
   plot(data.year$wmin,
-       data.year$countGTEwmin,
+C      data.year$countGTEwmin,
        log = "xy",
        xlab = xLab,
        ylab = yLab,
@@ -2037,7 +2040,7 @@ ISD_bin_plot <- function(data.year,
            yLim,
            xLabelSmall = xLabel.small)
 
-  rect(xleft = data.year$wmin,
+C  rect(xleft = data.year$wmin,
        ybottom = data.year$lowCount,
        xright = data.year$wmax,
        ytop = data.year$highCount,
@@ -2045,10 +2048,10 @@ ISD_bin_plot <- function(data.year,
 
   # Need to manually draw the rectangle with lowCount = 0 since it doesn't
   #  get plotted on log-log plot
-  extra.rect = dplyr::filter(data.year,
+C  extra.rect = dplyr::filter(data.year,
                              lowCount == 0)
   # if(nrow(extra.rect) > 1) stop("Check rows of extra rect.")
-  rect(xleft = extra.rect$wmin,
+C  rect(xleft = extra.rect$wmin,
        ybottom = rep(0.01 * yRange[1], nrow(extra.rect)),
        xright = extra.rect$wmax,
        ytop = extra.rect$highCount,
@@ -2076,4 +2079,82 @@ ISD_bin_plot <- function(data.year,
          "(b)",
          bty="n",
          inset = inset.a)
+}
+
+##' Recommended plots of individual size distribution and fit for binned data with non-overlapping bins
+##'
+##' For data in binned form (i.e. bin breaks and counts), plots the individual
+##' size distribution and the fit from the MLEbin method (alreadly calculated)
+##' with linear and then logarithmic y-axes. This is a simpler version of
+##' the recommended plots in Figures 7 and S.5-S.34 of the MEPS paper; simpler
+##' because if the bins are not overlapping (i.e. just one set of bin breaks,
+##' not differing by species like in Fig. 7) then we do not have the grey boxes,
+##' just the horizontal green lines. See vignette `MLEbin_recommend.Rmd`.
+##'
+##' Bin breaks and counts are input as either a single tibble `binValsTibble`
+##'  with each row representing a bin, OR as vectors `binBreaks` and
+##'  `binCounts`.
+##'
+##' This function calls `ISD_bin_plot()` which is the original one for Fig 7 of
+##'   MEPS paper, slightly updated to skip some features that are not needed here.
+##' @param binValsTibble tibble of binned data with each row representing a bin
+##'   and with columns `binMin` and `binMmax` (min and max break of each bin)
+##'   and `binCount` (count in that bin), as in the `binVals` component of the
+##'   output of `binData`. `wmin` and `wmax` can also be used instead of
+##'   `binMin` and `binMax`. Extra columns are ignored.
+##' @param binBreaks vector of bin breaks
+##' @param binCounts vector of bin counts
+##'
+##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbin method)
+##' @param b.confMin lower 95\% confidence limits of *b*
+##' @param b.confMax upper 95\% confidence limits of *b*
+##' @param ... further arguments to be passed to `ISD_bin_plot()`
+##' @return
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @
+##' @}
+ISD_bin_plot_nonoverlapping <- function(binValsTibble = NULL,
+                                        binBreaks = NULL,
+                                        binCounts = NULL,
+                                        b.MLE,
+                                        b.confMin,
+                                        b.confMax,
+                                        ...){
+
+  stopifnot(
+    "Need binValsTibble OR both binBreaks and binCounts to be NULL" =
+    (!is.null(binValsTibble) & is.null(binBreaks) & is.null(binCounts)) |
+    (is.null(binValsTibble) & !is.null(binBreaks) & !is.null(binCounts))
+  )
+
+  # Create a tibble with the desired columns, to go into ISD_bin_plot:
+  ifelse(!is.null(binValsTibble),
+    # Adapt the existing tibble into the required form:
+    ifelse(binMin %in% names(binValsTibble),
+      binTibble <- dplyr::select(binValsTibble,
+                                 wmin = binMin,
+                                 wmax = binMax,
+                                 Number = binCount),
+      binTibble <- dplyr::select(binValsTibble,
+                                 wmin,
+                                 wmax,
+                                 Number = binCount)),
+    # Create a tibble from the vectors binBreaks and binCounts:
+    binTibble <- dplyr::tibble(wmin = binBreaks[-length(binBreaks)],
+                               wmax = binBreaks[-1],
+                               Number = binCounts))
+#  So have made (without all the columns):
+  ##' @param data.year tibble containing columns Year, wmin, wmax, Number,
+##'   countGTEwmin, lowCount, highCount, for a single year (or instance) to show
+
+  ISD_bin_plot(data.year = binTibble,
+               b.MLE = b.MLE,
+               b.confMin = b.confMin,
+               b.confMax = b.confMax,
+               seg.col = "darkgreen",
+               overlapping.bins = FALSE
+               ...)
 }
