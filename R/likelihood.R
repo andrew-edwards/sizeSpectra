@@ -6,6 +6,8 @@
 ##' Calculate maximum likelihood estimate of a parameter and its 95\% confidence
 ##'  interval using the profile log-likelihood method, for a given
 ##'  negative log-likelihood function and its arguments (other parameters and data).
+##' Will likely give warnings that can safely be ignored (see
+##'  `suppress.warnings` description below).
 ##'
 ##' @param negLL.fn negative log-likelihood function that take arguments
 ##'  (parameters and data) in ... and returns a negative
@@ -27,7 +29,8 @@
 ##'   are always:
 ##'   `Warning in nlm(f = negLL.fn, p = p, ...) :
 ##'    NA/Inf replaced by maximum positive value`. The same warning often happens in other
-##'   situations also.
+##'   situations also. It is due to the likelihood function blowing up,
+##'   presumably when searching some very very very unlikely region of paramater space.
 ##'
 ##' @param ... further arguments (including parameters and data) to `negLL.fn()`
 ##' @return       list containing:

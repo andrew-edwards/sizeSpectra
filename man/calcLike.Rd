@@ -38,7 +38,8 @@ the stated upper bounds. So reduce \code{vecInc} if further accuracy is needed.}
 calculations; for the \code{MEPS_IBTS_MLEbins} vignette these occur a lot, and
 are always:
 \verb{Warning in nlm(f = negLL.fn, p = p, ...) : NA/Inf replaced by maximum positive value}. The same warning often happens in other
-situations also.}
+situations also. It is due to the likelihood function blowing up,
+presumably when searching some very very very unlikely region of paramater space.}
 
 \item{...}{further arguments (including parameters and data) to \code{negLL.fn()}}
 }
@@ -54,6 +55,8 @@ situations also.}
 Calculate maximum likelihood estimate of a parameter and its 95\\% confidence
 interval using the profile log-likelihood method, for a given
 negative log-likelihood function and its arguments (other parameters and data).
+Will likely give warnings that can safely be ignored (see
+\code{suppress.warnings} description below).
 }
 \author{
 Andrew Edwards

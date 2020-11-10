@@ -4,7 +4,8 @@
 \name{fullResults}
 \alias{fullResults}
 \title{Full results from using each fitting method on each year of IBTS data set.}
-\format{Data frame with 240 rows (one row for each of 30 years for each of
+\format{
+Data frame with 240 rows (one row for each of 30 years for each of
 the 8 methods) and corresponding columns for each year-method combination:
 \itemize{
 \item Year: Year of data
@@ -13,7 +14,8 @@ the 8 methods) and corresponding columns for each year-method combination:
 \item confMin, confMax: Minimum and maximum of 95\\% confidence interval of
 $b$
 \item stdErr: Standard error of estimate of $b$
-}}
+}
+}
 \source{
 Vignette \code{MEPS_IBTS_2}.
 }

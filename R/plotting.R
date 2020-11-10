@@ -1843,20 +1843,20 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' the MEPS paper.
 ##'
 ##' @param data.year tibble containing columns Year, wmin, wmax, Number,
-##'   countGTEwmin, lowCount, highCount
+##'   countGTEwmin, lowCount, highCount, for a single year (or instance) to show
 ##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbins method)
 ##' @param b.confMin lower 95\% confidence limits of *b*
 ##' @param b.confMax upper 95\% confidence limits of *b*
 ##' @param year year of data to go into legend (use NA if not applicable)
 ##' @param xlim (soft) limits of x-axis. If NA then automatically uses the minimum
-##'   `wmin` and maximum `wmax` for that data set (so good to set globally when
+##'   `wmin` and maximum `wmax` for that data set (so it's good to set it globally when
 ##'   doing multiple years).
 ##' @param xmin,xmax: values of `xmin` and `xmax` to plot the PLB curve
 ##' @param yScaling Scaling of y-minimum of y-axis. Axis can't go to zero on
 ##'   log-log plot, but goes to the proportion `yScaling` (which is less than 1)
 ##'   of the minimum value of counts greater than the highest `wmin` value. Do
 ##'   such that can see the right-most bin in all plots.
-##' @param MLE.round number of decimal places to show MLE of b on the top plot
+##' @param MLE.round number of decimal places to show MLE of *b* on the top plot
 ##' @param xLabel.small which small tickmarks to label on the x-axis
 ##' @param yBig.inc increment for labelled big tickmarks on the unlogged y-axis
 ##' @param ySmall.inc increment for small unlabelled tickmarks on the y-axis

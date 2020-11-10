@@ -4,7 +4,8 @@
 \name{eight.results.default}
 \alias{eight.results.default}
 \title{Results of fitting 10,000 data sets using eight methods (MEE paper)}
-\format{A list with elements:
+\format{
+A list with elements:
 \itemize{
 \item Llin.rep.df: Dataframe with columns \code{slope}, \code{confMin} and \code{confMax},
 giving the estimated slope, min and max of 95\% confidence intervals from
@@ -21,7 +22,8 @@ method (namely \code{max(x)}) for each simulated data set.
 \item b: Default value of \code{b} (namely -2) for simulations.
 \item xmin: Default value of \code{xmin} (namely 1) for simulations.
 \item xmax: Default value of \code{xmax} (namely 1000) for simulations.
-}}
+}
+}
 \source{
 Generated from running \code{data-raw/simulate-data.R}.
 }

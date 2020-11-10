@@ -36,7 +36,7 @@ ISD_bin_plot(
 }
 \arguments{
 \item{data.year}{tibble containing columns Year, wmin, wmax, Number,
-countGTEwmin, lowCount, highCount}
+countGTEwmin, lowCount, highCount, for a single year (or instance) to show}
 
 \item{b.MLE}{maximum likelihood estimate of \emph{b} (ideally from the MLEbins method)}
 
@@ -47,7 +47,7 @@ countGTEwmin, lowCount, highCount}
 \item{year}{year of data to go into legend (use NA if not applicable)}
 
 \item{xlim}{(soft) limits of x-axis. If NA then automatically uses the minimum
-\code{wmin} and maximum \code{wmax} for that data set (so good to set globally when
+\code{wmin} and maximum \code{wmax} for that data set (so it's good to set it globally when
 doing multiple years).}
 
 \item{xmin, xmax:}{values of \code{xmin} and \code{xmax} to plot the PLB curve}
@@ -57,7 +57,7 @@ log-log plot, but goes to the proportion \code{yScaling} (which is less than 1)
 of the minimum value of counts greater than the highest \code{wmin} value. Do
 such that can see the right-most bin in all plots.}
 
-\item{MLE.round}{number of decimal places to show MLE of b on the top plot}
+\item{MLE.round}{number of decimal places to show MLE of \emph{b} on the top plot}
 
 \item{xLabel.small}{which small tickmarks to label on the x-axis}
 
