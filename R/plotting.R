@@ -1835,7 +1835,7 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 }
 
 
-##' Recommended plots of individual size distribution and fit for binned data
+##' Recommended plots of individual size distribution and fit for binned data with overlapping bins
 ##'
 ##' Plots the individual size distribution and the fit from the MLEbins method,
 ##' with linear and then logarithmic y-axes, in the recommended way that takes

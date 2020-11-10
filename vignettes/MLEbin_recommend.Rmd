@@ -1,0 +1,224 @@
+---
+title: "MLEbin_recommend"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MLEbin_recommend}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 5.7,
+  fig.height = 7
+)
+```
+
+## Recommended fitting and plotting approach for data that are binned
+
+In the MEPS paper, we recommended using the MLEbin method for fitting data that
+are only available in a binned form where the bins do not overlap each
+other. This is the usual situation -- the more complex MLEbins method is for
+when the bins overlap.
+
+This vignette shows extracts the necessary code to fit and plot the results for
+a general data set. This creates a simpler version of Fig. 7 (simpler because
+the grey boxes are not needed because the bins do not overlap).
+
+TODO: maybe add some noise to data to add realism;
+
+mention allows fitting of old data, digitised from plots
+
+people have to get data in same form but I should keep it simple here
+(binBreaks)
+
+do wrapper for current ISD plot, just removing boxes to keep it simpler (could
+take the middle bit out as a new function, or just adapt the existing one).
+
+could try goodness-of-fit more naturally, from Ecology paper
+
+```{r setup}
+library(sizeSpectra)
+# library(tibble)  # Else prints all of a tibble
+```
+
+Generate simulated data for this example; real data should be in the same
+resulting format:
+```{r generate}
+# test <- MLEbin.simulate(num.reps = 1)  # that does way too much, copying the
+# function here then simplifying down
+n <- 1000      # sample size, but maybe calc later
+b.known <- -2
+xmin.known <- 1
+xmax.known <- 1000
+
+x <- rPLB(n,
+          b = b.known,
+          xmin = xmin.known,
+          xmax = xmax.known)
+
+binType = "2k"    # one of (1, 5, 10, "2k")  # can maybe be any number
+#                           vecDiffVal = 0.5,
+#                           cut.off = NA,
+#                           full.mult = 1.5
+#                          )
+x.binned <- binData(x,
+                    binWidth = binType)  # 1, 2, 5 or "2k"
+head(x.binned$indiv)     # Individual x values and which bin they are assigned to
+x.binned$binVals         # Bins and the counts in each bin
+
+num.bins <- nrow(x.binned$binVals)
+
+# bin breaks are the minima plus the max of the final bin:
+binBreaks <- c(dplyr::pull(x.binned$binVals, binMin),
+               dplyr::pull(x.binned$binVals, binMax)[num.bins])
+
+# binBreaks <- c(binBreaks, maxOfMaxBin)             # Append endpoint of final
+    # bin, maybe don't need
+binCounts <- dplyr::pull(x.binned$binVals, binCount)
+
+MLEbin.res <-  calcLike(negLL.PLB.binned,
+                        p = -1.5,
+                        w = binBreaks,
+                        d = binCounts,
+                        J = length(binCounts),   # = num.bins
+                        vecDiff = 1)             # increase this if hit a bound
+
+```
+
+
+
+
+## Results plotted for each year
+
+These calculations are to get the required input for the recommended plot (see
+`?sizeSpectra::ISD_bin_plot` for the structure). This could maybe be
+functionalised like the plotting function `ISD_bin_plot()`.
+```{r recommended}
+dataRecommend.isd = dplyr::select(dataBin,
+                                  Year,
+                                  wmin,
+                                  wmax,
+                                  Number)
+
+
+data.year.list = list()                # to save results for each year
+
+fullYears = sort(unique(dataBin$Year))
+for(i in 1:length(fullYears))
+  {
+    data.year = dplyr::filter(dataRecommend.isd,
+                              Year == fullYears[i])
+
+    data.year = dplyr::arrange(data.year,
+                               desc(wmin))
+    sumNumber = sum(data.year$Number)
+
+    # data.year = dplyr::mutate(data.year,
+    #                          cumSum = cumsum(Number))
+    # This is wrong when we have two species with the same
+    #  length-weight coefficients in the same year, so need countGTEwmin below
+    # Have to do not with dplyr:
+    wmin.vec = data.year$wmin
+    wmax.vec = data.year$wmax
+    num.vec  = data.year$Number
+
+    countGTEwmin = rep(NA, length(num.vec)) # to do a manual count
+    lowCount = countGTEwmin
+    highCount = countGTEwmin
+
+    for(iii in 1:length(countGTEwmin))
+    {
+      countGTEwmin[iii]    = sum( (wmin.vec >= wmin.vec[iii]) * num.vec)
+      lowCount[iii]  = sum( (wmin.vec >= wmax.vec[iii]) * num.vec)
+      highCount[iii] = sum( (wmax.vec >  wmin.vec[iii]) * num.vec)
+    }
+    data.year = cbind(data.year,
+                      "countGTEwmin" = countGTEwmin,
+                      "lowCount" = lowCount,
+                      "highCount" = highCount)
+    data.year = dplyr::tbl_df(data.year) # This is one of the desired input for
+                                         #  the plotting function below
+
+    data.year.list[[i]] = data.year
+}
+
+xlim.global = c(min(dataRecommend.isd$wmin),
+                max(dataRecommend.isd$wmax))   # x-axis limits to be common for
+                                               # all plots
+```
+
+Here is the code to give an animation for Figures 7 and S.5-S.34 for the IBTS data. For each year
+(given in top-right corner) the plot shows the individual size distribution and
+MLEbins fit (red solid curve) with 95\% confidence intervals (red dashed curves, may be hard to see).
+For each bin, the horizontal green line shows the range of body sizes, with value on the y-axis
+corresponding to the total number of individuals in bins whose minima are $\geq$
+the bin's minimum.  For each bin, the vertical span of the grey rectangle shows
+the possible range of the number of individuals with body mass $\geq$ the body
+mass of individuals in that bin (horizontal span is the same as for the green
+lines). The text in (a) gives the year, the MLE for the size-spectrum exponent
+$b$, and the sample size $n$.
+
+Here is the code to build the movie, but it is commented out since it causes Travis
+to fail -- Travis is the continuous integration service that automatically
+checks the packages builds every time a change is committed to GitHub, giving the
+little green symbol `passing` icon on the main page. The trick to showing the
+movie is to run the code uncommented (you need to install the `gifski` package), right-click on the animation in the
+html viewer and save it. I've done that and so am leaving this code commented,
+and will just refer to the saved animation file.
+```{r, eval=FALSE}
+# ```{r, animation.hook = 'gifski', interval = 1.5, fig.width = 5.36, fig.height = 8}
+# fig.width is 0.67 * fig.height (which is 8)
+#
+# for(i in 1:length(fullYears))  # Not tested new options here (from _all vignette)
+#    {
+#    ISD_bin_plot(data.year = data.year.list[[i]],
+#                 b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+#                 b.confMin = dplyr::filter(MLEbins.res, Year ==
+#                                                      fullYears[i])$confMin,
+#                 b.confMax = dplyr::filter(MLEbins.res, Year ==
+#                                                      fullYears[i])$confMax,
+#                 year = fullYears[i],
+#                 xlim = xlim.global,
+#                 xmin = dplyr::filter(MLEbins.res, Year ==
+#                                                      fullYears[i])$xmin,
+#                 xmax = dplyr::filter(MLEbins.res, Year ==
+#                                                   fullYears[i])$xmax
+#                 )
+#  }
+# ```
+```
+
+The resulting animation is
+
+![IBTS_movie.gif](IBTS_movie.gif).
+
+
+To save each year as it's own figure do this (not it running here; you have to
+make the `IBTS-ISD-figs` directory first):
+```{r, eval=FALSE}
+for(i in 1:length(fullYears))
+  {
+  postscript(paste0("../IBTS-ISD-figs/IBTS-ISD", fullYears[i], ".eps"),
+           height = 8, width = 5.36,
+           horizontal=FALSE, paper="special")
+
+  ISD_bin_plot(data.year = data.year.list[[i]],
+               b.MLE = dplyr::filter(MLEbins.res, Year == fullYears[i])$b,
+               b.confMin = dplyr::filter(MLEbins.res, Year ==
+                                                     fullYears[i])$confMin,
+               b.confMax = dplyr::filter(MLEbins.res, Year ==
+                                                     fullYears[i])$confMax,
+               year = fullYears[i],
+               xlim = xlim.global,
+               xmin = dplyr::filter(MLEbins.res, Year ==
+                                                    fullYears[i])$xmin,
+               xmax = dplyr::filter(MLEbins.res, Year ==
+                                                 fullYears[i])$xmax
+               )
+  dev.off()
+}
+```
