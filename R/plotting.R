@@ -1862,7 +1862,9 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' @param MLE.round number of decimal places to show MLE of *b* on the top plot
 ##' @param xLabel.small which small tickmarks to label on the x-axis
 ##' @param yBig.inc increment for labelled big tickmarks on the unlogged y-axis
-##' @param ySmall.inc increment for small unlabelled tickmarks on the y-axis
+##' @param yBig.max maximum number of desired labelled big tickmarks on the unlogged y-axis
+##' @param ySmall.inc increment for small unlabelled tickmarks on the y-axis (if
+##'   NA then is set to yBig.inc/4)
 ##' @param ySmall.tcl length of small y-axis tick marks - only for (a) maybe
 ##' @param xLab label for x-axis
 ##' @param yLab label for y-axis
@@ -1898,7 +1900,8 @@ ISD_bin_plot <- function(data.year,
                          MLE.round = 2,
                          xLabel.small = c(5, 50, 500, 5000),
                          yBig.inc = 1000,
-                         ySmall.inc = 250,
+                         yBig.max = 10,
+                         ySmall.inc = NA,
                          ySmall.tcl = -0.2,
                          xLab = expression(paste("Body mass (", italic(x), "), g")),
                          yLab = expression(paste("Number of ", values >= italic(x))),
@@ -1917,9 +1920,13 @@ ISD_bin_plot <- function(data.year,
                          )
   {
   sumNumber = sum(data.year$Number)
-
+browser()
   par(mfrow = par.mfrow)
   par(mai = par.mai, cex = par.cex)  # Affects all figures
+
+  if(is.na(ySmall.inc)){
+    ySmall.inc = yBig.inc/4
+  }
 
   if(is.na(xlim[1])){
     xlim = c(min(data.year$wmin),
@@ -1937,8 +1944,15 @@ ISD_bin_plot <- function(data.year,
   x.PLB = seq(xmin,
               xmax,
               length=10000)
-          # x values to plot PLB, need high resolution for both plots, but
-          #  insert value close to xmax to make log-log curve go down further
+  # testing:
+  x.PLB.2 <- exp(seq(log(xmin), log(xmax), length = 10000))
+
+  x.PLB = x.PLB.2
+
+  # x values to plot PLB, need high resolution for both plots, but
+  #  insert value close to xmax to make log-log curve go down further:
+  # BUT also, if low bins are really small (e.g. zooplankton data) then need
+  # high resolution there also else can have no values in those bins
   x.PLB.length = length(x.PLB)
   x.PLB = c(x.PLB[-x.PLB.length],
             0.99999 * x.PLB[x.PLB.length],
@@ -1983,6 +1997,15 @@ ISD_bin_plot <- function(data.year,
            yLim=NULL,
            xLabelSmall = xLabel.small)
   yBig = seq(0, yRange[2], yBig.inc)  # May have to tweak for some years
+
+  if(length(yBig) > yBig.max){
+    stop(paste0("The value of yBig.inc will yield ", length(yBig),
+    " big tickmarks on the unlogged y-axis, which seems a little excessive.
+    Increase the value of yBig.inc in ISD_bin_plot() or ISD_bin_plot_nonoverlapping()
+    by X-fold to decrease the number of tickmarks X-fold to a reasonable amount
+    (default of yBig.inc is 1000). If you do want more than 10 big tickmarks,
+    then set yBig.max to the desired number."))
+  }
   # Big labelled:
   axis(2, at = yBig, labels = yBig, mgp=mgp.vals)
   # Small unlabelled:
@@ -2180,7 +2203,8 @@ ISD_bin_plot_nonoverlapping <- function(binValsTibble = NULL,
       highCount[iii] <-    sum( (wmax.vec >  wmin.vec[iii]) * num.vec)
     }
 
-# When having working, check if can just to mutate here; think can:
+# When having working, check if can just to mutate here; think can: - can't,
+#  but there is another command
     binTibble <- cbind(binTibble,
                       "countGTEwmin" = countGTEwmin,
                       "lowCount" = lowCount,
@@ -2191,5 +2215,5 @@ ISD_bin_plot_nonoverlapping <- function(binValsTibble = NULL,
                b.MLE = b.MLE,
                b.confMin = b.confMin,
                b.confMax = b.confMax,
-               overlapping.bins = FALSE)
+               ...)
 }
