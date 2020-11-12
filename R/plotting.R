@@ -1843,7 +1843,10 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' the MEPS paper.
 ##'
 ##' @param data.year tibble containing columns Year, wmin, wmax, Number,
-##'   countGTEwmin, lowCount, highCount, for a single year (or instance) to show
+##'   countGTEwmin, lowCount, highCount, for a single year (or instance) to
+##'   show; Year not used, but no need to remove (it is in the results for the
+##'   IBTS data). , countGTEwmin is, for a given bin, the total counts greater
+##'   than that bin's wmin.
 ##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbins method)
 ##' @param b.confMin lower 95\% confidence limits of *b*
 ##' @param b.confMax upper 95\% confidence limits of *b*
@@ -1921,7 +1924,15 @@ ISD_bin_plot <- function(data.year,
   if(is.na(xlim[1])){
     xlim = c(min(data.year$wmin),
              max(data.year$wmax))  # Range of axis
-    }
+  }
+
+  if(is.na(xmin)){
+    xmin = min(data.year$wmin)
+  }
+
+  if(is.na(xmax)){
+    xmax = max(data.year$wmax)
+  }
 
   x.PLB = seq(xmin,
               xmax,
@@ -1951,10 +1962,10 @@ ISD_bin_plot <- function(data.year,
   #  log axis. Which also means that the rectangle that goes to 0 has to be
   #  added manually (below). Picking the y-axis to go down to 0.75 of the
   #  minimum value of CountGTEwmin.
-C  yRange = c(yScaling * min(data.year$countGTEwmin), max(data.year$highCount))
+  yRange = c(yScaling * min(data.year$countGTEwmin), max(data.year$highCount))
 
   # y-axis not logged
-C  plot(data.year$wmin,
+  plot(data.year$wmin,
        data.year$countGTEwmin,
        log="x",
        xlab=xLab,
@@ -1986,12 +1997,12 @@ C  plot(data.year$wmin,
        tcl = ySmall.tcl,
        mgp = mgp.vals)
 
-C  rect(xleft = data.year$wmin,
+  rect(xleft = data.year$wmin,
        ybottom = data.year$lowCount,
        xright = data.year$wmax,
        ytop = data.year$highCount,
        col = rect.col)
-C  segments(x0 = data.year$wmin,
+  segments(x0 = data.year$wmin,
            y0 = data.year$countGTEwmin,
            x1 = data.year$wmax,
            y1 = data.year$countGTEwmin,
@@ -2003,7 +2014,7 @@ C  segments(x0 = data.year$wmin,
   legend("topright", "(a)",
          bty = "n",
          inset = inset.a)
-C if(!is.na(year)){
+  if(!is.na(year)){
     legend("topright",
            legend = year,
            bty = "n",
@@ -2023,7 +2034,7 @@ C if(!is.na(year)){
   # y-axis logged
   # empty plot:
   plot(data.year$wmin,
-C      data.year$countGTEwmin,
+       data.year$countGTEwmin,
        log = "xy",
        xlab = xLab,
        ylab = yLab,
@@ -2040,7 +2051,7 @@ C      data.year$countGTEwmin,
            yLim,
            xLabelSmall = xLabel.small)
 
-C  rect(xleft = data.year$wmin,
+  rect(xleft = data.year$wmin,
        ybottom = data.year$lowCount,
        xright = data.year$wmax,
        ytop = data.year$highCount,
@@ -2048,10 +2059,10 @@ C  rect(xleft = data.year$wmin,
 
   # Need to manually draw the rectangle with lowCount = 0 since it doesn't
   #  get plotted on log-log plot
-C  extra.rect = dplyr::filter(data.year,
+  extra.rect = dplyr::filter(data.year,
                              lowCount == 0)
   # if(nrow(extra.rect) > 1) stop("Check rows of extra rect.")
-C  rect(xleft = extra.rect$wmin,
+  rect(xleft = extra.rect$wmin,
        ybottom = rep(0.01 * yRange[1], nrow(extra.rect)),
        xright = extra.rect$wmax,
        ytop = extra.rect$highCount,
@@ -2091,12 +2102,12 @@ C  rect(xleft = extra.rect$wmin,
 ##' not differing by species like in Fig. 7) then we do not have the grey boxes,
 ##' just the horizontal green lines. See vignette `MLEbin_recommend.Rmd`.
 ##'
-##' Bin breaks and counts are input as either a single tibble `binValsTibble`
+##' Bin breaks and counts are input as EITHER a single tibble `binValsTibble`
 ##'  with each row representing a bin, OR as vectors `binBreaks` and
 ##'  `binCounts`.
 ##'
 ##' This function calls `ISD_bin_plot()` which is the original one for Fig 7 of
-##'   MEPS paper, slightly updated to skip some features that are not needed here.
+##'   MEPS paper.
 ##' @param binValsTibble tibble of binned data with each row representing a bin
 ##'   and with columns `binMin` and `binMmax` (min and max break of each bin)
 ##'   and `binCount` (count in that bin), as in the `binVals` component of the
@@ -2123,7 +2134,6 @@ ISD_bin_plot_nonoverlapping <- function(binValsTibble = NULL,
                                         b.confMin,
                                         b.confMax,
                                         ...){
-
   stopifnot(
     "Need binValsTibble OR both binBreaks and binCounts to be NULL" =
     (!is.null(binValsTibble) & is.null(binBreaks) & is.null(binCounts)) |
@@ -2150,11 +2160,36 @@ ISD_bin_plot_nonoverlapping <- function(binValsTibble = NULL,
   ##' @param data.year tibble containing columns Year, wmin, wmax, Number,
 ##'   countGTEwmin, lowCount, highCount, for a single year (or instance) to show
 
+    # See ISD_bin_plot() for why can't just use cumsum there.
+
+    # Have to do not with dplyr:
+    wmin.vec <- binTibble$wmin
+    wmax.vec <- binTibble$wmax
+    num.vec <- binTibble$Number
+
+    # Here, highCount and countGWEwmin will be the same since only one set of
+    # bin breaks; but do them both to save adapting ISD_bin_plot()
+    countGTEwmin <- rep(NA, length(num.vec)) # to do a manual count
+    lowCount <- countGTEwmin
+    highCount <- countGTEwmin
+
+    for(iii in 1:length(countGTEwmin))
+    {
+      countGTEwmin[iii] <- sum( (wmin.vec >= wmin.vec[iii]) * num.vec)
+      lowCount[iii] <-     sum( (wmin.vec >= wmax.vec[iii]) * num.vec)
+      highCount[iii] <-    sum( (wmax.vec >  wmin.vec[iii]) * num.vec)
+    }
+
+# When having working, check if can just to mutate here; think can:
+    binTibble <- cbind(binTibble,
+                      "countGTEwmin" = countGTEwmin,
+                      "lowCount" = lowCount,
+                      "highCount" = highCount)
+    binTibble <- tibble::as_tibble(binTibble) # This is one of the desired input for
+                                         #  the plotting function below
   ISD_bin_plot(data.year = binTibble,
                b.MLE = b.MLE,
                b.confMin = b.confMin,
                b.confMax = b.confMax,
-               seg.col = "darkgreen",
-               overlapping.bins = FALSE
-               ...)
+               overlapping.bins = FALSE)
 }
