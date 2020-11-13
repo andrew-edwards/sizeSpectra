@@ -1884,6 +1884,8 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' @param IBTS_MEPS_figs logical, TRUE for exactly reproducing the original
 ##'   MEPS Figures 7 and S.5-S.34 (which were done before some improvements to
 ##'   this function)
+##' @param x.PLB vector of values to use to plot the fitted PLB curve; if NA then
+##'   automatically calculated
 ##' @return two-panel figure of the recommended plot of binned data and the
 ##'   fitted individual size distribution, like Figures 7 and S.5-S.34 of the
 ##'   MEPS paper. See the vignette `MEPS_IBTS_recommend` for explicit example.
@@ -1917,7 +1919,8 @@ ISD_bin_plot <- function(data.year,
                          par.mai = c(0.4, 0.5, 0.05, 0.3),
                          par.cex = 0.7,
                          mgp.vals = c(1.6,0.5,0),
-                         IBTS_MEPS_figs = FALSE
+                         IBTS_MEPS_figs = FALSE,
+                         x.PLB = NA
                          )
   {
   sumNumber = sum(data.year$Number)
@@ -1942,26 +1945,29 @@ ISD_bin_plot <- function(data.year,
     xmax = max(data.year$wmax)
   }
 
+  # x values to plot PLB if not provided; need high resolution for both plots.
+  if(is.na(x.PLB)){
+    #  First option is just to keep the exact original code used in MEPS
+    #  figures,
+    #  second option is probably more generally useful (for example, when using
+    #  very small size classes like for zooplankton data)
+    ifelse((IBTS_MEPS_figs),
+           x.PLB <- seq(xmin,
+                        xmax,
+                        length=10000),
+           x.PLB <- exp(seq(log(xmin),
+                            log(xmax),
+                            length = 10000))
+           )
 
-  # x values to plot PLB, need high resolution for both plots.
-  #  First option is just to keep the exact original code used in MEPS figures,
-  #  second option is probably more generally useful (for example, when using
-  #  very small size classes like for zooplankton data)
-  ifelse((IBTS_MEPS_figs),
-         x.PLB <- seq(xmin,
-                      xmax,
-                      length=10000),
-         x.PLB <- exp(seq(log(xmin),
-                          log(xmax),
-                          length = 10000))
-         )
+    #  Need to insert value close to xmax to make log-log curve go down further;
+    #   since log(1 - pPLB(xmax, ...)) = log(0) = -Inf   we need to force the asymptopte
+    x.PLB.length = length(x.PLB)
+    x.PLB = c(x.PLB[-x.PLB.length],
+              0.9999999999 * x.PLB[x.PLB.length],
+              x.PLB[x.PLB.length])
+  }
 
-
-  #  Need to insert value close to xmax to make log-log curve go down further:
-  x.PLB.length = length(x.PLB)
-  x.PLB = c(x.PLB[-x.PLB.length],
-            0.99999 * x.PLB[x.PLB.length],
-            x.PLB[x.PLB.length])
   y.PLB = (1 - pPLB(x = x.PLB,
                     b = b.MLE,
                     xmin = min(x.PLB),
