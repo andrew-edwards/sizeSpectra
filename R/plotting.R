@@ -1881,8 +1881,9 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' @param par.mai margin size in inches
 ##' @param par.cex magnification of plotting text and symbols relative to default
 ##' @param mgp.vals margin line for axis title, axis labels and axis line
-##' @param overlapping.bins whether or not the bins can overlap (as in Fig 7
-##'   because they are species-specific)
+##' @param IBTS_MEPS_figs logical, TRUE for exactly reproducing the original
+##'   MEPS Figures 7 and S.5-S.34 (which were done before some improvements to
+##'   this function)
 ##' @return two-panel figure of the recommended plot of binned data and the
 ##'   fitted individual size distribution, like Figures 7 and S.5-S.34 of the
 ##'   MEPS paper. See the vignette `MEPS_IBTS_recommend` for explicit example.
@@ -1916,11 +1917,11 @@ ISD_bin_plot <- function(data.year,
                          par.mai = c(0.4, 0.5, 0.05, 0.3),
                          par.cex = 0.7,
                          mgp.vals = c(1.6,0.5,0),
-                         overlapping.bins = TRUE
+                         IBTS_MEPS_figs = FALSE
                          )
   {
   sumNumber = sum(data.year$Number)
-browser()
+
   par(mfrow = par.mfrow)
   par(mai = par.mai, cex = par.cex)  # Affects all figures
 
@@ -1941,18 +1942,22 @@ browser()
     xmax = max(data.year$wmax)
   }
 
-  x.PLB = seq(xmin,
-              xmax,
-              length=10000)
-  # testing:
-  x.PLB.2 <- exp(seq(log(xmin), log(xmax), length = 10000))
 
-  x.PLB = x.PLB.2
+  # x values to plot PLB, need high resolution for both plots.
+  #  First option is just to keep the exact original code used in MEPS figures,
+  #  second option is probably more generally useful (for example, when using
+  #  very small size classes like for zooplankton data)
+  ifelse((IBTS_MEPS_figs),
+         x.PLB <- seq(xmin,
+                      xmax,
+                      length=10000),
+         x.PLB <- exp(seq(log(xmin),
+                          log(xmax),
+                          length = 10000))
+         )
 
-  # x values to plot PLB, need high resolution for both plots, but
-  #  insert value close to xmax to make log-log curve go down further:
-  # BUT also, if low bins are really small (e.g. zooplankton data) then need
-  # high resolution there also else can have no values in those bins
+
+  #  Need to insert value close to xmax to make log-log curve go down further:
   x.PLB.length = length(x.PLB)
   x.PLB = c(x.PLB[-x.PLB.length],
             0.99999 * x.PLB[x.PLB.length],
@@ -2053,6 +2058,7 @@ browser()
          legend = paste0("n=", round(yRange[2], 2)),
          bty = "n",
          inset = 3 * inset.year)
+  box()     # to redraw axes over any boxes
 
   # y-axis logged
   # empty plot:
@@ -2113,6 +2119,7 @@ browser()
          "(b)",
          bty="n",
          inset = inset.a)
+  box()       # to redraw axes over any boxes
 }
 
 ##' Recommended plots of individual size distribution and fit for binned data with non-overlapping bins
