@@ -89,15 +89,25 @@ ISD_bin_plot_nonoverlapping(binBreaks = binBreaks,
 ```
 
 The y-axis is (a) linear and (b) logarithmic. For each bin, the horizontal green
-line shows the range of body sizes, with its value
+line shows the range of body masses of that bin, with its value
 on the y-axis corresponding to the total number of individuals in bins whose
 minima are $\geq$ the bin's minimum. By definition, this includes all individual
-in that bin; for example, all $n = 1000$ values are $\geq$ the minimum of
+in that bin; for example, all $n = 1000$ individuals are $\geq$ the minimum of
 the first (left-most) bin, so that bin is at $1000$ on the y-axis. The vertical
-span of each grey rectangle shows the possible range of the number of
+span of each grey rectangle shows the possible numbers of
 individuals with body mass $\geq$ the
 body mass of individuals in that bin (horizontal
-span is the same as for the green lines). The text
+span is the same as for the green lines). The maximum number of such individuals
+is the same as the green line, and the minimum number (bottom of grey rectangle)
+is the total number of individuals $\geq$ the bin's maximum. By definition, this is then the
+green line for the next bin. This plotting method allows us to properly represent the
+discrete binned data on a continuous scale. For example, for a body mass of 1.5
+g we can see that the number (on the y-axis) of possible individual individuals with
+body mass $\geq$ 1.5 g is between `r sum(binCounts) - binCounts[1]` and `r
+sum(binCounts)`. This is true for all body masses in the first bin... HERE
+
+
+The text
 in (a) gives the MLE for the size-spectrum exponent
 $b$, and the sample size $n$.
 
