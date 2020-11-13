@@ -26,33 +26,37 @@ library(sizeSpectra)
 
 This vignette is for data that are only available in standard binned form, with one
 set of bin breaks (unlike the overlapping species-specific bins shown in MEPS
-Fig. 7). For example, zooplankton data available in non-overlapping logarithmic
-scaled bins. Or, data that are only available in digitised form from earlier studies.
+Fig. 7). For example, zooplankton data available in bins that progressively
+double in bin width. Or, data that are only available in digitised form from earlier papers.
 
 This vignette shows how to fit the PLB disribution (using the
 MLEbin method) and plot it in a similar way to the MEPS Fig. 7. The plotting is
 done using the new function `ISD_bin_plot_nonoverlapping()`, which is a wrapper
-for the more complex (and now updated) `ISD_bin_plot()`.
+for the more complex (and slightly updated) `ISD_bin_plot()`.
 
-There are two options depending how your data are stored. GOT TO HERE - divide
-the next parts into two.
+### Simulate and fit data
 
-### Option 1 -- a vector of bin breaks and a vector of bin counts
-
-Generate simulated data and bin it:
+First, generate some data from a true PLB distribution and bin it (using bin widths
+that double in size):
 ```{r generate}
+set.seed(42)
 x <- rPLB(1000,
           b = -2,
           xmin = 1,
           xmax = 1000)
 
-binType = "2k"    # one of (1, 5, 10, "2k")
-
 x.binned <- binData(x,
-                    binWidth = binType)  # 1, 2, 5 or "2k"
-head(x.binned$indiv)     # Individual x values and which bin they are assigned to
-x.binned$binVals         # Bins and the counts in each bin
+                    binWidth = "2k")  # 1, 2, 5 or "2k"
 
+head(x.binned$indiv)     # Individual x values and which bin they are assigned to
+x.binned$binVals         # Bins and the counts in each bin (with extra columns
+                         #  that we won't need here).
+```
+
+Now fit the PLB distribution using the MLEbin method.
+The fitting function takes the binned data as two vectors (the bin breaks
+and the counts in each bin):
+```{r likelihood}
 num.bins <- nrow(x.binned$binVals)
 
 # bin breaks are the minima plus the max of the final bin:
@@ -68,17 +72,59 @@ MLEbin.res <-  calcLike(negLL.PLB.binned,
                         J = length(binCounts),   # = num.bins
                         vecDiff = 1)             # increase this if hit a bound
 ```
-Real data should be in the same form as above - basically a vector `binBreaks`
-of breakpoints, and a vector `binCounts` of counts in each bin. There should be
-one less component in `binCounts`, because `binBreaks` includes the endpoints of
-all the bins.
+The `NA/Inf replaced by maximum positive value` warnings are fine - the
+likelihood function is blowing up in a very unlikely region of parameter
+space.
 
-If the real data are already in a tibble format, then
+### Plot the data and the fit like in MEPS Fig. 7
 
-```{r, fig.width = 5.36, fig.height = 8}
+Now plot the data and results using:
+```{r, plotvec, fig.width = 5.36, fig.height = 8}
 # fig.width is 0.67 * fig.height (which is 8)
 ISD_bin_plot_nonoverlapping(binBreaks = binBreaks,
                             binCounts = binCounts,
+                            b.MLE = MLEbin.res$MLE,
+                            b.confMin = MLEbin.res$conf[1],
+                            b.confMax = MLEbin.res$conf[2])
+```
+
+The y-axis is (a) linear and (b) logarithmic. For each bin, the horizontal green
+line shows the range of body sizes, with its value
+on the y-axis corresponding to the total number of individuals in bins whose
+minima are $\geq$ the bin's minimum. By definition, this includes all individual
+in that bin; for example, all $n = 1000$ values are $\geq$ the minimum of
+the first (left-most) bin, so that bin is at $1000$ on the y-axis. The vertical
+span of each grey rectangle shows the possible range of the number of
+individuals with body mass $\geq$ the
+body mass of individuals in that bin (horizontal
+span is the same as for the green lines). The text
+in (a) gives the MLE for the size-spectrum exponent
+$b$, and the sample size $n$.
+
+Both figures show that the PLB distribution is an excellent fit for these data
+the red curves go through the top-left and bottom-right corners of the grey
+boxes. Of course, the data are simulated from a PLB distribution and so should
+be a good fit, but these figures show the benefit of the plotting approach
+(which may not have been so obvious in MEPS Fig. 7 for data with a complex bin
+structure).
+
+
+
+
+
+
+
+
+### Plotting the data if stored as a tibble
+
+Real data can either input to the plotting function in the above form - a vector `binBreaks`
+of breakpoints and a vector `binCounts` of counts in each bin, or as a tibble.
+
+If you prefer keeping your binned data as a tibble, then you can use the tible
+in the call to the plotting function (though you do still need to input the data
+as two vectors in the `calcLike` call above). This gives the same figures:
+```{r, plottib, fig.width = 5.36, fig.height = 8}
+ISD_bin_plot_nonoverlapping(binValsTibble = x.binned$binVals,
                             b.MLE = MLEbin.res$MLE,
                             b.confMin = MLEbin.res$conf[1],
                             b.confMax = MLEbin.res$conf[2])

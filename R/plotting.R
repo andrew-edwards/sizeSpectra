@@ -2179,7 +2179,7 @@ ISD_bin_plot_nonoverlapping <- function(binValsTibble = NULL,
   # Create a tibble with the desired columns, to go into ISD_bin_plot:
   ifelse(!is.null(binValsTibble),
     # Adapt the existing tibble into the required form:
-    ifelse(binMin %in% names(binValsTibble),
+    ifelse("binMin" %in% names(binValsTibble),
       binTibble <- dplyr::select(binValsTibble,
                                  wmin = binMin,
                                  wmax = binMax,
@@ -2188,15 +2188,10 @@ ISD_bin_plot_nonoverlapping <- function(binValsTibble = NULL,
                                  wmin,
                                  wmax,
                                  Number = binCount)),
-    # Create a tibble from the vectors binBreaks and binCounts:
+    # Else no tibble, so create one from the vectors binBreaks and binCounts:
     binTibble <- dplyr::tibble(wmin = binBreaks[-length(binBreaks)],
                                wmax = binBreaks[-1],
                                Number = binCounts))
-#  So have made (without all the columns):
-  ##' @param data.year tibble containing columns Year, wmin, wmax, Number,
-##'   countGTEwmin, lowCount, highCount, for a single year (or instance) to show
-
-    # See ISD_bin_plot() for why can't just use cumsum there.
 
     # Have to do not with dplyr:
     wmin.vec <- binTibble$wmin
