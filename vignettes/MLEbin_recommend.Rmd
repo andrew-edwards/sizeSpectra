@@ -17,53 +17,37 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Recommended fitting and plotting approach for data that are binned
-
-In the MEPS paper, we recommended using the MLEbin method for fitting data that
-are only available in a binned form where the bins do not overlap each
-other. This is the usual situation -- the more complex MLEbins method is for
-when the bins overlap.
-
-This vignette shows extracts the necessary code to fit and plot the results for
-a general data set. This creates a simpler version of Fig. 7  -- simpler because
-the green lines have to be at the top of the grey boxes because the bins do not
-overlap CHECK???
-
-TODO: maybe add some noise to data to add realism;
-
-mention allows fitting of old data, digitised from plots
-
-people have to get data in same form but I should keep it simple here
-(binBreaks)
-
-
-could try goodness-of-fit more naturally, from Ecology paper
+## Recommended fitting and plotting approach for data that are binned (with just one set of bin breaks)
 
 ```{r setup}
 library(sizeSpectra)
 # library(tibble)  # Else prints all of a tibble
 ```
 
-Generate simulated data for this example; real data should be in the same
-resulting format:
+This vignette is for data that are only available in standard binned form, with one
+set of bin breaks (unlike the overlapping species-specific bins shown in MEPS
+Fig. 7). For example, zooplankton data available in non-overlapping logarithmic
+scaled bins. Or, data that are only available in digitised form from earlier studies.
+
+This vignette shows how to fit the PLB disribution (using the
+MLEbin method) and plot it in a similar way to the MEPS Fig. 7. The plotting is
+done using the new function `ISD_bin_plot_nonoverlapping()`, which is a wrapper
+for the more complex (and now updated) `ISD_bin_plot()`.
+
+There are two options depending how your data are stored. GOT TO HERE - divide
+the next parts into two.
+
+### Option 1 -- a vector of bin breaks and a vector of bin counts
+
+Generate simulated data and bin it:
 ```{r generate}
-# test <- MLEbin.simulate(num.reps = 1)  # that does way too much, copying the
-# function here then simplifying down
-n <- 1000      # sample size, but maybe calc later
-b.known <- -2
-xmin.known <- 1
-xmax.known <- 1000
+x <- rPLB(1000,
+          b = -2,
+          xmin = 1,
+          xmax = 1000)
 
-x <- rPLB(n,
-          b = b.known,
-          xmin = xmin.known,
-          xmax = xmax.known)
+binType = "2k"    # one of (1, 5, 10, "2k")
 
-binType = "2k"    # one of (1, 5, 10, "2k")  # can maybe be any number
-#                           vecDiffVal = 0.5,
-#                           cut.off = NA,
-#                           full.mult = 1.5
-#                          )
 x.binned <- binData(x,
                     binWidth = binType)  # 1, 2, 5 or "2k"
 head(x.binned$indiv)     # Individual x values and which bin they are assigned to
@@ -75,8 +59,6 @@ num.bins <- nrow(x.binned$binVals)
 binBreaks <- c(dplyr::pull(x.binned$binVals, binMin),
                dplyr::pull(x.binned$binVals, binMax)[num.bins])
 
-# binBreaks <- c(binBreaks, maxOfMaxBin)             # Append endpoint of final
-    # bin, maybe don't need
 binCounts <- dplyr::pull(x.binned$binVals, binCount)
 
 MLEbin.res <-  calcLike(negLL.PLB.binned,
@@ -85,34 +67,19 @@ MLEbin.res <-  calcLike(negLL.PLB.binned,
                         d = binCounts,
                         J = length(binCounts),   # = num.bins
                         vecDiff = 1)             # increase this if hit a bound
-
 ```
+Real data should be in the same form as above - basically a vector `binBreaks`
+of breakpoints, and a vector `binCounts` of counts in each bin. There should be
+one less component in `binCounts`, because `binBreaks` includes the endpoints of
+all the bins.
 
-CHECK: Here is the code to give an animation for Figures 7 and S.5-S.34 for the IBTS data. For each year
-(given in top-right corner) the plot shows the individual size distribution and
-MLEbins fit (red solid curve) with 95\% confidence intervals (red dashed curves, may be hard to see).
-For each bin, the horizontal green line shows the range of body sizes, with value on the y-axis
-corresponding to the total number of individuals in bins whose minima are $\geq$
-the bin's minimum.  For each bin, the vertical span of the grey rectangle shows
-the possible range of the number of individuals with body mass $\geq$ the body
-mass of individuals in that bin (horizontal span is the same as for the green
-lines). The text in (a) gives the year, the MLE for the size-spectrum exponent
-$b$, and the sample size $n$.
+If the real data are already in a tibble format, then
 
-CHECK: Here is the code to build the movie, but it is commented out since it causes Travis
-to fail -- Travis is the continuous integration service that automatically
-checks the packages builds every time a change is committed to GitHub, giving the
-little green symbol `passing` icon on the main page. The trick to showing the
-movie is to run the code uncommented (you need to install the `gifski` package), right-click on the animation in the
-html viewer and save it. I've done that and so am leaving this code commented,
-and will just refer to the saved animation file.
 ```{r, fig.width = 5.36, fig.height = 8}
 # fig.width is 0.67 * fig.height (which is 8)
-#
 ISD_bin_plot_nonoverlapping(binBreaks = binBreaks,
                             binCounts = binCounts,
                             b.MLE = MLEbin.res$MLE,
                             b.confMin = MLEbin.res$conf[1],
                             b.confMax = MLEbin.res$conf[2])
-
 ```
