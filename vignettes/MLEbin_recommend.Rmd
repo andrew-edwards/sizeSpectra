@@ -118,13 +118,6 @@ be a good fit, but these figures show the benefit of the plotting approach
 (which may not have been so obvious in MEPS Fig. 7 for data with a complex bin
 structure).
 
-
-
-
-
-
-
-
 ### Plotting the data if stored as a tibble
 
 Real data can either input to the plotting function in the above form - a vector `binBreaks`
@@ -139,3 +132,35 @@ ISD_bin_plot_nonoverlapping(binValsTibble = x.binned$binVals,
                             b.confMin = MLEbin.res$conf[1],
                             b.confMax = MLEbin.res$conf[2])
 ```
+
+## LBN plot if data are body-masses
+
+In MEE Fig. 6 we recommended, for body-mass data, showing the biomass size
+spectrum, as people are used to seeing this type of plot. If the data are only
+available in binned form (as here), then this would be particularly
+appropriate. The fit is calculated using likelihood, but then shown on the
+biomass size spectrum.
+
+Here, we introduce a modified version of MEE Fig 6(a). In
+that figure the normalised biomass in each bin (the total biomass in a bin divided
+by its bin width) was shown as a single point, as has been traditional in such
+figures. However, this does not explicitly show the true width of the bin, and
+ignores the uncertainty in the total biomass (that arises due to the binning).
+
+Following the notation in MEE Section A.1.7, bin $j$ covers values of $x$ (body
+masses) in the interval $[w_j, w_{j+1})$, and contains $d_j$ individuals. So the
+total biomass in bin $j$ is in the range $[d_j w_j, d_j w_{j+1})$. The
+normalised biomass in the bin (of width $w_{j+1} - w_j$), is therefore
+in the range $d_j w_j /(w_{j+1} - w_j)$ to $d_j w_{j+1} / (w_{j+1} - w_j)$. We
+express as the vertical extent of the grey box in the figure below for each bin.
+
+The horizontal range of each bin is simply shown as the horizontal extent of the
+grey box for that bin; for bin $j$ this is just $w_j$ to $w_{j+1}$.
+
+
+
+
+
+
+We
+represent this uncertainty
