@@ -136,7 +136,7 @@ ISD_bin_plot_nonoverlapping(binValsTibble = x.binned$binVals,
 ## LBN plot if data are body-masses
 
 In MEE Fig. 6 we recommended, for body-mass data, showing the biomass size
-spectrum, as people are used to seeing this type of plot. If the data are only
+spectrum, as people are used to seeing this type of plot. If body-mass data are only
 available in binned form (as here), then this would be particularly
 appropriate. The fit is calculated using likelihood, but then shown on the
 biomass size spectrum.
@@ -147,20 +147,26 @@ by its bin width) was shown as a single point, as has been traditional in such
 figures. However, this does not explicitly show the true width of the bin, and
 ignores the uncertainty in the total biomass (that arises due to the binning).
 
-Following the notation in MEE Section A.1.7, bin $j$ covers values of $x$ (body
+Consider an example bin range from 15 to 20 g, with a count of 30
+individuals. The possible range of the *total* biomass of those 30 individuals is
+therefore 450 to 600 g, and the normalised biomass (dividing the total biomass
+by the bin width) is 90 to 120.
+
+More generally,
+following the notation in MEE Section A.1.7, bin $j$ covers values of $x$ (body
 masses) in the interval $[w_j, w_{j+1})$, and contains $d_j$ individuals. So the
 total biomass in bin $j$ is in the range $[d_j w_j, d_j w_{j+1})$. The
 normalised biomass in the bin (of width $w_{j+1} - w_j$), is therefore
 in the range $d_j w_j /(w_{j+1} - w_j)$ to $d_j w_{j+1} / (w_{j+1} - w_j)$. We
-express as the vertical extent of the grey box in the figure below for each bin.
+express this as the vertical extent of the grey box in the figure below for each bin.
 
 The horizontal range of each bin is simply shown as the horizontal extent of the
-grey box for that bin; for bin $j$ this is just $w_j$ to $w_{j+1}$.
+grey box for that bin; for bin $j$ this is simply $w_j$ to $w_{j+1}$, as in the
+above figures.
 
-
-
-
-
-
-We
-represent this uncertainty
+```{r, plotLBN, fig.width = 5.36, fig.height = 8}
+LBN_bin_plot(binValsTibble = x.binned$binVals,
+             b.MLE = MLEbin.res$MLE,
+             b.confMin = MLEbin.res$conf[1],
+             b.confMax = MLEbin.res$conf[2])
+```
