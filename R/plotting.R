@@ -2290,6 +2290,7 @@ LBN_bin_plot <- function(binValsTibble = NULL,
                          b.confMax,
                          xLim = NA,
                          yLim = NA,
+#                         yBigTicks = NA,
                          rect.col = "grey",
                          ...){
 
@@ -2307,7 +2308,7 @@ LBN_bin_plot <- function(binValsTibble = NULL,
     (!is.null(binValsTibble) & is.null(binBreaks) & is.null(binCounts)) |
     (is.null(binValsTibble) & !is.null(binBreaks) & !is.null(binCounts))
   )
-browser()
+
 # SIMPLIFY THIS- binValsTibble may already have desired ones
 
   # Create a tibble with the desired columns:
@@ -2326,7 +2327,6 @@ browser()
     binTibble <- dplyr::tibble(wmin = binBreaks[-length(binBreaks)],
                                wmax = binBreaks[-1],
                                Number = binCounts))
-
   binTibble <- dplyr::mutate(binTibble,
                              lowBiomass = wmin * Number,
                              highBiomass = wmax * Number,
@@ -2355,7 +2355,7 @@ browser()
 #       mgp = mgpVals,
        xlim = xLim,
        ylim = yLim,
-       yaxt="n",
+#       yaxt="n",
        type = "n")
 
 #  axis(2, at = yBigTicks,
@@ -2378,7 +2378,7 @@ browser()
   B.PLB <- dPLB(x.PLB,
                 b = b.MLE,
                 xmin=min(x.PLB),
-                xmax=max(x.PLB)) * length(x) * x.PLB
+                xmax=max(x.PLB)) * sum(binTibble$Number) * x.PLB
          # The biomass density, from MEE equation (4), using the MLE for b.
 
   # ALSO want to plot binned version of that also
@@ -2392,7 +2392,7 @@ browser()
         log10(dPLB(x.PLB,
                    b = b.confMin,
                    xmin = min(x.PLB),
-                   xmax = max(x.PLB)) * length(x) * x.PLB),
+                   xmax = max(x.PLB)) * sum(binTibble$Number) * x.PLB),
         col="red",
         lty=2)
 
@@ -2400,8 +2400,12 @@ browser()
         log10(dPLB(x.PLB,
                    b = b.confMax,
                    xmin = min(x.PLB),
-                   xmax = max(x.PLB)) * length(x) * x.PLB),
+                   xmax = max(x.PLB)) * sum(binTibble$Number) * x.PLB),
         col="red",
         lty=2)
-#  legend("topright", "(a)", bty="n", inset = inset)
+  #  legend("topright", "(a)", bty="n", inset = inset)
+
+  # Go through this and tidy up. Could also do nonlogged version.
+  #   And add red and (uncertainty) pink rectangles for ranges expected by the
+  #   fitted distributions
 }

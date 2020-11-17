@@ -40,7 +40,7 @@ First, generate some data from a true PLB distribution and bin it (using bin wid
 that double in size):
 ```{r generate}
 set.seed(42)
-x <- rPLB(1000,
+x <- rPLB(n = 1000,
           b = -2,
           xmin = 1,
           xmax = 1000)
@@ -164,9 +164,54 @@ The horizontal range of each bin is simply shown as the horizontal extent of the
 grey box for that bin; for bin $j$ this is simply $w_j$ to $w_{j+1}$, as in the
 above figures.
 
-```{r, plotLBN, fig.width = 5.36, fig.height = 8}
+```{r, plotLBN, fig.height = 5.7}
 LBN_bin_plot(binValsTibble = x.binned$binVals,
              b.MLE = MLEbin.res$MLE,
              b.confMin = MLEbin.res$conf[1],
              b.confMax = MLEbin.res$conf[2])
 ```
+
+Just curious to see what the figure looks like with a confidence interval for
+$b$ that's set to twice as wide as the actual one (fixing the interval here by
+adding half the width to each side):
+```{r, plotLBN2, fig.height = 5.7}
+confWidth <- diff(MLEbin.res$conf)
+confWidth
+LBN_bin_plot(binValsTibble = x.binned$binVals,
+             b.MLE = MLEbin.res$MLE,
+             b.confMin = MLEbin.res$conf[1] - confWidth/2,
+             b.confMax = MLEbin.res$conf[2]) + confWidth/2
+```
+
+Some rough calculations:
+```{r biomass}
+bio <- pBiomass(b = MLEbin.res$MLE,
+         xmin = min(x.binned$binVals$binMin),
+         xmax = max(x.binned$binVals$binMax),
+         n = 1000,
+         x1 = 256,   # just testing hardwired values
+         x2 = 512)
+
+log10(bio/256)
+
+bioConfMin <- pBiomass(b = MLEbin.res$conf[1],
+         xmin = min(x.binned$binVals$binMin),
+         xmax = max(x.binned$binVals$binMax),
+         n = 1000,
+         x1 = 256,   # just testing hardwired values
+         x2 = 512)
+
+log10(bioConfMin/256)
+
+bioConfMax <- pBiomass(b = MLEbin.res$conf[2],
+         xmin = min(x.binned$binVals$binMin),
+         xmax = max(x.binned$binVals$binMax),
+         n = 1000,
+         x1 = 256,   # just testing hardwired values
+         x2 = 512)
+
+log10(bioConfMax/256)
+
+```
+
+Then put these calcs into the plotting function as an option - blue box maybe.

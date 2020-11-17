@@ -1,4 +1,6 @@
-# distributions.R - functions related to random number generation.
+# distributions.R - functions related to random number generation for bounded
+# and unbounded power-law distributions. Also the biomass distribution function
+# (MEE equations A.4 and A.8).
 
 ##' Bounded and unbounded power-law distributions
 ##'
@@ -104,3 +106,42 @@ rPLB <- function(n = 1, b = -2, xmin = 1, xmax = 100)
         }
     return(y)
   }
+
+##' Biomass distribution function from MEE equations A.4 and A.8
+##'
+##' Total biomass between two body masses WILL MAKE MORE GENERAL `x1` and `x2`, assuming a bounded power-law
+##' distribution of body masses between `xmin` and `xmax` and a given value of
+##' exponent `b`, with a total of `n` individuals.
+##' Given by MEE equations A.4 and A.8 (with the integration calculated between
+##' general `x1` and `x2` rather than `xmin` and `x`).
+##' @return
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @
+##' @}
+pBiomass <- function(b = -2,
+                     xmin = 1,
+                     xmax = 100,
+                     n = 1000,
+                     x1 = 1,
+                     x2 = 100){
+  if(xmin <= 0 | xmin >= xmax | x1 < xmin | x2 > xmax | x1 >= xmax | n <= 0){
+    stop("Parameters out of bounds in pBiomass")
+  }
+
+  if(b != -1){
+    C <- (b+1) / ( xmax^(b+1) - xmin^(b+1) )
+  } else {
+    C <- 1/ ( log(xmax) - log(xmin) )
+  }
+
+  if(b != -2){
+    biomass <- n * C * (x2^(b+2) - x1^(b+2)) / (b + 2)
+  } else {
+    biomass <- n * C * (log(x2) - log(x1))
+  }
+
+  return(biomass)
+}
