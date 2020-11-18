@@ -130,7 +130,8 @@ as two vectors in the `calcLike` call above). This gives the same figures:
 ISD_bin_plot_nonoverlapping(binValsTibble = x.binned$binVals,
                             b.MLE = MLEbin.res$MLE,
                             b.confMin = MLEbin.res$conf[1],
-                            b.confMax = MLEbin.res$conf[2])
+                            b.confMax = MLEbin.res$conf[2],
+                            yBig.inc = 500)
 ```
 
 ## LBN plot if data are body-masses
@@ -180,8 +181,14 @@ confWidth
 LBN_bin_plot(binValsTibble = x.binned$binVals,
              b.MLE = MLEbin.res$MLE,
              b.confMin = MLEbin.res$conf[1] - confWidth/2,
-             b.confMax = MLEbin.res$conf[2]) + confWidth/2
+             b.confMax = MLEbin.res$conf[2] + confWidth/2)
 ```
+
+But, now there's no real reason to label the axes with logged values, rather
+than use the more intuitive actual values (still on a log scale).
+
+
+## Extra
 
 Some rough calculations:
 ```{r biomass}
