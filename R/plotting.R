@@ -2416,7 +2416,7 @@ LBN_bin_plot <- function(binValsTibble = NULL,
 ##' @param b.confMin lower 95\% confidence limits of *b*
 ##' @param b.confMax upper 95\% confidence limits of *b*
 ##' @param log.xy Which axes to log, for `plot(..., log = log.xy)`. So "xy" for
-##'   log-log axes, "x" for only x-axis logged.
+##'   log-log axes, "x" for only x-axis logged, "" for both axes unlogged.
 ##' @param xLim
 ##' @param yLim
 ##' @param rect.col
@@ -2443,8 +2443,10 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
                          yLim = NA,
 #                         yBigTicks = NA,
                          rect.col = "grey",
-                         yLog = TRUE,   # yaxis logged
+                         yLog = TRUE,   # yaxis logged  - remove, since now have log.xy
                          logLabels = FALSE,   # log marks labelling or unlogged                         # tick marks
+                         xLabel.small = c(2, 5, 20, 50, 200, 500),
+                         yLabel.small = c(5, 50, 500),
                          xLab = NULL,
                          yLab = NULL,
                          x.PLB = NA,
@@ -2464,6 +2466,13 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
     (!is.null(binValsTibble) & is.null(binBreaks) & is.null(binCounts)) |
     (is.null(binValsTibble) & !is.null(binBreaks) & !is.null(binCounts))
   )
+
+  stopifnot(
+    "log.xy must be xy, x or empty (all in double quotes) -- see ?sizeSpectra::LBN_bin_plot()" =
+      log.xy %in% c("xy", "x", "")
+  )
+
+
 
 # SIMPLIFY THIS- binValsTibble may already have desired ones
 
@@ -2495,12 +2504,12 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
 #                             log10highBiomassNorm = log10(highBiomassNorm))
 
   if(is.na(xLim)){
-    xLim <- c(min(c(0, min(binTibble$wmin))),
+    xLim <- c(min(binTibble$wmin),
               max(binTibble$wmax))          # may need pull
   }
 
   if(is.na(yLim)){
-    yLim <- c(min(c(0, min(binTibble$lowBiomassNorm))),
+    yLim <- c(min(binTibble$lowBiomassNorm),
               max(binTibble$highBiomassNorm))          # may need pull
   }
 
@@ -2525,10 +2534,26 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
        xlab = xLab,
        ylab = yLab,
 #       mgp = mgpVals,
-#       xlim = xLim,
-#       ylim = yLim,
-#       yaxt="n",
+       xlim = xLim,
+       ylim = yLim,
+       xaxt = ifelse(log.xy %in% c("x", "xy") , "n", "s"),
+       yaxt = ifelse(log.xy == "xy", "n", "s"),
        type = "n")   # empty plot
+
+  if(log.xy == "x"){
+    logTicks(xLim,
+             yLim = NULL,
+             xLabelSmall = xLabel.small)
+  }
+
+  if(log.xy == "xy"){
+    logTicks(xLim,
+             yLim,
+             xLabelSmall = xLabel.small,
+             yLabelSmall = yLabel.small)
+  }
+
+  box()
 
 #  axis(2, at = yBigTicks,
 #       mgp = mgpVals)
@@ -2542,7 +2567,7 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
        xright = binTibble$wmax,
        ytop = binTibble$highBiomassNorm,
        col = rect.col)
-browser()
+
   if(is.na(x.PLB)){
     x.PLB <- exp(seq(log(min(binTibble$wmin)),
                      log(max(binTibble$wmax)),
