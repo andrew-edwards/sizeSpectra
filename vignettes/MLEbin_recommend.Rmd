@@ -159,23 +159,68 @@ masses) in the interval $[w_j, w_{j+1})$, and contains $d_j$ individuals. So the
 total biomass in bin $j$ is in the range $[d_j w_j, d_j w_{j+1})$. The
 normalised biomass in the bin (of width $w_{j+1} - w_j$), is therefore
 in the range $d_j w_j /(w_{j+1} - w_j)$ to $d_j w_{j+1} / (w_{j+1} - w_j)$. We
-express this as the vertical extent of the grey box in the figure below for each bin.
+express this as the vertical extent of the grey box for each bin in the figures below.
 
 The horizontal range of each bin is simply shown as the horizontal extent of the
 grey box for that bin; for bin $j$ this is simply $w_j$ to $w_{j+1}$, as in the
 above figures.
 
+We present three options, depending on whether axes are logged or not.
+
+Neither axis logged:
 ```{r, plotLBN, fig.height = 5.7}
 LBN_bin_plot(binValsTibble = x.binned$binVals,
              b.MLE = MLEbin.res$MLE,
              b.confMin = MLEbin.res$conf[1],
-             b.confMax = MLEbin.res$conf[2])
+             b.confMax = MLEbin.res$conf[2],
+             log.xy = "")
 ```
+
+This is clearly hard to see, hence motivates logging the x-axis:
+```{r, plotLBN2, fig.height = 5.7}
+LBN_bin_plot(binValsTibble = x.binned$binVals,
+             b.MLE = MLEbin.res$MLE,
+             b.confMin = MLEbin.res$conf[1],
+             b.confMax = MLEbin.res$conf[2],
+             leg.text = "(b)",
+             log.xy = "x")
+```
+
+This is easier to see and shows the good fit to the data, though it is harder to
+see the high body-mass bins that have low normalised biomass in them. The grey
+boxes show (horizontally) the range of each bin, and (vertically) the possible
+range in normalised biomass for that bin, given the data. The red solid curve
+fits through the boxes; dashed lines are the PLB distribution with $b$ set to
+the limits of the 95% confidence interval (calculated using likelihood).
+
+So log both axes (which is analogous to the traditional LBN plot, like in MEE
+Fig. 6):
+```{r, plotLBN3, fig.height = 5.7}
+LBN_bin_plot(binValsTibble = x.binned$binVals,
+             b.MLE = MLEbin.res$MLE,
+             b.confMin = MLEbin.res$conf[1],
+             b.confMax = MLEbin.res$conf[2],
+             leg.text = "(c)",
+             log.xy = "xy")
+```
+
+The fit is really good for the numerous small individuals, less so for the
+larger rare individuals. The log-log axes do emphasise the relatively poorer fit of the
+larger body sizes, but there are few individuals here. The red lines are all
+straight because of the log-log axes, but are calculated using likelihood, not
+regression (which would be the LBNbiom method). The LBNbiom method would weight
+all bins equally, so the few individuals with large body size are given equal
+weight to the numerous small individuals.
+
+A useful thing will be to create movie where the fit is for incrementally higher
+values of $x_{min}$
+
+
 
 Just curious to see what the figure looks like with a confidence interval for
 $b$ that's set to twice as wide as the actual one (fixing the interval here by
 adding half the width to each side):
-```{r, plotLBN2, fig.height = 5.7}
+```{r, plotLBN22, fig.height = 5.7}
 confWidth <- diff(MLEbin.res$conf)
 confWidth
 LBN_bin_plot(binValsTibble = x.binned$binVals,

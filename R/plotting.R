@@ -2259,7 +2259,7 @@ ISD_bin_plot_nonoverlapping <- function(binValsTibble = NULL,
 ##' @donttest{
 ##' @
 ##' @}
-LBN_bin_plot <- function(binValsTibble = NULL,
+LBN_bin_plot_can_delete <- function(binValsTibble = NULL,
                          binBreaks = NULL,
                          binCounts = NULL,
                          b.MLE,
@@ -2389,10 +2389,7 @@ LBN_bin_plot <- function(binValsTibble = NULL,
 
 
 
-##' Biomass size spectrum plot for binned data, showing uncertainties -
-##' ADAPTING FROM (and then REPLACE) version 1 above - don't need to calculate
-##' log10 values I think, just plot unlogged values on log axes (like ISD plot,
-##' not sure why I changed it)
+##' Biomass size spectrum plot for binned data demonstrating uncertainties
 ##'
 ##' Biomass size spectrum plot for binned data, showing the bin widths
 ##' explicitly and the normalised biomass in
@@ -2420,9 +2417,19 @@ LBN_bin_plot <- function(binValsTibble = NULL,
 ##' @param xLim
 ##' @param yLim
 ##' @param rect.col
-##' @param yLog
+##' @param logLabels
+##' @param xLab
+##' @param ""))
+##' @param yLab
 ##' @param x.PLB vector of values to use to plot the fitted PLB curve; if NA then
 ##'   automatically calculated
+##'
+##' @param legend if TRUE then add legend
+##' @param leg.pos position of legend, from "bottomright"', '"bottom"',
+##'   '"bottomleft"', '"left"', '"topleft"', '"top"', '"topright"', '"right"'
+##'   and '"center"'.
+##' @param inset inset distance vector for legend
+##' @param leg.text text for legend
 ##'
 ##' @param ... further arguments to be passed to `plot()` PROBABLY
 ##' @return
@@ -2432,7 +2439,7 @@ LBN_bin_plot <- function(binValsTibble = NULL,
 ##' @donttest{
 ##' @
 ##' @}
-LBN_bin_plot_2 <- function(binValsTibble = NULL,
+LBN_bin_plot <- function(binValsTibble = NULL,
                          binBreaks = NULL,
                          binCounts = NULL,
                          b.MLE,
@@ -2441,15 +2448,17 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
                          log.xy = "xy",
                          xLim = NA,
                          yLim = NA,
-#                         yBigTicks = NA,
                          rect.col = "grey",
-                         yLog = TRUE,   # yaxis logged  - remove, since now have log.xy
                          logLabels = FALSE,   # log marks labelling or unlogged                         # tick marks
                          xLabel.small = c(2, 5, 20, 50, 200, 500),
                          yLabel.small = c(5, 50, 500),
-                         xLab = NULL,
-                         yLab = NULL,
+                         xLab = expression(paste("Body mass ", italic(x), "(g)")),
+                         yLab = "Normalised biomass",
                          x.PLB = NA,
+                         legend = TRUE,
+                         leg.pos = "topright",
+                         inset = c(0,0),
+                         leg.text = "(a)",
                          ...){
 
 #Maybe extra options to add, as for MLE.plots.recommend:
@@ -2471,10 +2480,6 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
     "log.xy must be xy, x or empty (all in double quotes) -- see ?sizeSpectra::LBN_bin_plot()" =
       log.xy %in% c("xy", "x", "")
   )
-
-
-
-# SIMPLIFY THIS- binValsTibble may already have desired ones
 
   # Create a tibble with the desired columns:
   ifelse(!is.null(binValsTibble),
@@ -2498,14 +2503,10 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
                              binWidth = wmax - wmin,
                              lowBiomassNorm       = lowBiomass / binWidth,
                              highBiomassNorm      = highBiomass / binWidth)
-#                             log10wmin            = log10(wmin),
-#                             log10wmax            = log10(wmax),
-#                             log10lowBiomassNorm  = log10(lowBiomassNorm),
-#                             log10highBiomassNorm = log10(highBiomassNorm))
 
   if(is.na(xLim)){
     xLim <- c(min(binTibble$wmin),
-              max(binTibble$wmax))          # may need pull
+              max(binTibble$wmax))
   }
 
   if(is.na(yLim)){
@@ -2513,22 +2514,24 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
               max(binTibble$highBiomassNorm))          # may need pull
   }
 
-  if(is.null(xLab)){
-    ifelse(logLabels,
-           xLab <- expression(paste("Log10 (body mass ", italic(x), ")")),
-           xLab <- expression(paste("Body mass ", italic(x), "(g)"))
-           )
-  }
+  # Was going to include option to have logs on tickmarks, but stick with just
+  # unlogged values
+  #  if(is.null(xLab)){
+  #    ifelse(logLabels,
+  #           xLab <- expression(paste("Log10 (body mass ", italic(x), ")")),
+  #           xLab <- expression(paste("Body mass ", italic(x), "(g)"))
+  #           )
+  #  }
+  #
+  #  if(is.null(yLab)){
+  #    ifelse(logLabels,
+  #           yLab <- "Log10 (normalised biomass)",
+  #           yLab <- "Normalised biomass"
+  #           )
+  #  }
 
-  if(is.null(yLab)){
-    ifelse(logLabels,
-           yLab <- "Log10 (normalised biomass)",
-           yLab <- "Normalised biomass"
-           )
-  }
 
-
-  plot(binTibble$wmin,
+  plot(binTibble$wmin,         # not plotted, just need something
        binTibble$highBiomassNorm,
        log = log.xy,
        xlab = xLab,
@@ -2538,7 +2541,8 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
        ylim = yLim,
        xaxt = ifelse(log.xy %in% c("x", "xy") , "n", "s"),
        yaxt = ifelse(log.xy == "xy", "n", "s"),
-       type = "n")   # empty plot
+       type = "n",            # empty plot
+       ...)
 
   if(log.xy == "x"){
     logTicks(xLim,
@@ -2554,6 +2558,11 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
   }
 
   box()
+
+  legend(leg.pos,
+         leg.text,
+         bty="n",
+         inset = inset)
 
 #  axis(2, at = yBigTicks,
 #       mgp = mgpVals)
@@ -2581,8 +2590,6 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
                 xmax=max(x.PLB)) * sum(binTibble$Number) * x.PLB
          # The biomass density, from MEE equation (4), using the MLE for b.
 
-  # ALSO want to plot binned version of that also
-
   lines(x.PLB,
         B.PLB,
         col="red")
@@ -2603,6 +2610,11 @@ LBN_bin_plot_2 <- function(binValsTibble = NULL,
              xmax = max(x.PLB)) * sum(binTibble$Number) * x.PLB,
         col="red",
         lty=2)
+
+  # Option to plot binned version of fitted curve
+
+
+
 
   # Go through this and tidy up. Could also do nonlogged version.
   #   And add red and (uncertainty) pink rectangles for ranges expected by the
