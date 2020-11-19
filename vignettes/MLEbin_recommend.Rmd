@@ -216,6 +216,7 @@ A useful thing will be to create movie where the fit is for incrementally higher
 values of $x_{min}$
 
 
+### Larger confidence interval curiosity
 
 Just curious to see what the figure looks like with a confidence interval for
 $b$ that's set to twice as wide as the actual one (fixing the interval here by

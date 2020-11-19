@@ -109,25 +109,34 @@ rPLB <- function(n = 1, b = -2, xmin = 1, xmax = 100)
 
 ##' Biomass distribution function from MEE equations A.4 and A.8
 ##'
-##' Total biomass between two body masses WILL MAKE MORE GENERAL `x1` and `x2`, assuming a bounded power-law
+##' Total biomass between `xmin` and `x`, assuming a bounded power-law
 ##' distribution of body masses between `xmin` and `xmax` and a given value of
-##' exponent `b`, with a total of `n` individuals.
-##' Given by MEE equations A.4 and A.8 (with the integration calculated between
-##' general `x1` and `x2` rather than `xmin` and `x`).
-##' @return
+##' exponent `b`, and a total of `n` individuals.
+##' Given by MEE equations A.4 and A.8. Can then be called by `pBiomassBins` to
+##' give total biomass (and normalised biomass) in each bin.
+##'
+##' @param x vector of (increasing) values for which to calculate the total biomass between
+##' `xmin` and the value
+##' @param b exponent of the PLB distribution
+##' @param xmin minimum bound of the distribution, `xmin > 0`
+##' @param xmax maximum bound for bounded distribution, `xmax > xmin`
+##' @param n
+##' @return returns of vector total biomass between `xmin` and each value of `x`
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
 ##' @donttest{
-##' @
-##' @}
-pBiomass <- function(b = -2,
+##' pBiomass(x = c(1, 5, 10, 20, 50, 100),
+##'          n = 1000)
+##' }
+pBiomass <- function(x = c(1, 10, 20, 50, 100),
+                     b = -2,
                      xmin = 1,
                      xmax = 100,
-                     n = 1000,
-                     x1 = 1,
-                     x2 = 100){
-  if(xmin <= 0 | xmin >= xmax | x1 < xmin | x2 > xmax | x1 >= xmax | n <= 0){
+                     n = 1000){
+
+  if(xmin <= 0 | xmin >= xmax | min(x) < xmin | max(x) > xmax | min(diff(x)) <=
+    0 | n <= 0){
     stop("Parameters out of bounds in pBiomass")
   }
 
@@ -138,9 +147,9 @@ pBiomass <- function(b = -2,
   }
 
   if(b != -2){
-    biomass <- n * C * (x2^(b+2) - x1^(b+2)) / (b + 2)
+    biomass <- n * C * (x^(b+2) - xmin^(b+2)) / (b + 2)
   } else {
-    biomass <- n * C * (log(x2) - log(x1))
+    biomass <- n * C * (log(x) - log(xmin))
   }
 
   return(biomass)
