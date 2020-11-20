@@ -2494,6 +2494,7 @@ LBN_bin_plot <- function(binValsTibble = NULL,
     binTibble <- dplyr::tibble(wmin = binBreaks[-length(binBreaks)],
                                wmax = binBreaks[-1],
                                Number = binCounts))
+
   binTibble <- dplyr::mutate(binTibble,
                              lowBiomass = wmin * Number,
                              highBiomass = wmax * Number,
@@ -2527,6 +2528,8 @@ LBN_bin_plot <- function(binValsTibble = NULL,
   #           )
   #  }
 
+
+  # REPLACE with wrapper to call three times, one for each value of b
   # Calculated the fitted estimates of biomass in each bin
   binTibble <- pBiomassBins(binValsTibble = binTibble,
                             xmin = min(binTibble$wmin),
@@ -2534,7 +2537,6 @@ LBN_bin_plot <- function(binValsTibble = NULL,
                             b = b.MLE,
                             n = sum(binTibble$Number))
 
-browser()
   plot(binTibble$wmin,         # not plotted, just need something
        binTibble$highBiomassNorm,
        log = log.xy,

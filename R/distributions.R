@@ -156,7 +156,8 @@ pBiomass <- function(x = c(1, 10, 20, 50, 100),
 }
 
 
-##' Total and normalised biomass in each bin
+##' Total and normalised biomass in each bin for a fitted distribution and given
+##' bin breaks
 ##'
 ##' Bin breaks are input as EITHER a single tibble `binValsTibble`
 ##'  with each row representing a bin, OR as a vector `binBreaks` of breaks.
@@ -218,4 +219,28 @@ pBiomassBins <- function(...,
                                estBiomassNorm = estBiomass / binWidth)
   }
   return(binTibble)
+}
+
+##' Wrapper to call `pBiomassBins()` for three values of b (MLE and conf limits)
+##'
+##' ##'  <desc>
+##'
+##' @param ... Arguments to `pBiomassBins` and `pBiomass`
+##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbin method)
+##' @param b.confMin lower 95\% confidence limits of *b*
+##' @param b.confMax upper 95\% confidence limits of *b*
+##' @return
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @
+##' @}
+pBiomassBinsConfs <- function(...,
+                              b.MLE = NULL,
+                              b.confMin = NULL,
+                              b.confMax = NULL){
+
+# GOT TO HERE. Call three times and return tibble with properly named columns
+# (have to tweak the defaults for each call). Then plot rectangles on the figure.
 }
