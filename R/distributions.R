@@ -154,3 +154,65 @@ pBiomass <- function(x = c(1, 10, 20, 50, 100),
 
   return(biomass)
 }
+
+
+##' Total and normalised biomass in each bin
+##'
+##' Bin breaks are input as EITHER a single tibble `binValsTibble`
+##'  with each row representing a bin, OR as a vector `binBreaks` of breaks.
+##'
+##' @param ... extra arguments passed to `bBiomass`; needs to go first to avoid
+##'   partial matching of `b` (to be part of `...`) with whichever of
+##'   `binValsTibble` or `binBreaks` is not supplied in the call to `pBiomassBins()`.
+##' @param binValsTibble tibble of binned data with each row representing a bin
+##'   and with columns `wmin` and `wmax` (min and max break of each bin), or
+##'   columns named `binMin` and `binMax`.
+##'   Extra columns are ignored. Similar to `LBN_bin_plot()`.
+##' @param binBreaks vector of bin breaks
+##' @return tibble with each row corresponding to a bin, and columns `wmin`,
+##'   `wmax`,  `binWidth`, `biomass`, and `biomassNorm`. If the input is a tibble with
+##'   columns `wmin` and `wmax` (or `binMin` and `binMax`), then
+##'   columns `totalBiom` and `totalBiomNorm` are appended to the input tibble.
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' binBreaks = c(1, 10, 20, 50, 100)
+##' pBiomassBins(binBreaks = binBreaks) # uses default pBiomass() values
+##'
+##' # Same data as a tibble:
+##' testTibble <- dplyr::tibble(binMin = binBreaks[-length(binBreaks)],
+##'                             binMax = binBreaks[-1])
+##' pBiomassBins(binValsTibble = testTibble)
+##' @}
+pBiomassBins <- function(...,
+                         binValsTibble = NULL,
+                         binBreaks = NULL){
+
+  stopifnot(
+    "Need binValsTibble OR binBreaksto be NULL" =
+    (!is.null(binValsTibble) & is.null(binBreaks) ) |
+    (is.null(binValsTibble) & !is.null(binBreaks) ) )
+
+  ifelse(!is.null(binValsTibble),
+         binTibble <- binValsTibble,
+         # Create tibble from the vector binBreaks:
+         binTibble <- dplyr::tibble(wmin = binBreaks[-length(binBreaks)],
+                                    wmax = binBreaks[-1])
+         )
+
+  if("wmin" %in% names(binTibble)){
+    binTibble <- dplyr::mutate(binTibble,
+                               binWidth = wmax - wmin,
+                               biomass = pBiomass(x = wmax, ...) -
+                                 pBiomass(x = wmin, ...),
+                               biomassNorm = biomass / binWidth)
+  } else {
+    binTibble <- dplyr::mutate(binTibble,
+                               binWidth = binMax - binMin,
+                               biomass = pBiomass(x = binMax, ...) -
+                                 pBiomass(x = binMin, ...),
+                               biomassNorm = biomass / binWidth)
+  }
+  return(binTibble)
+}
