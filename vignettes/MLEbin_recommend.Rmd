@@ -208,11 +208,14 @@ The fit is really good for the numerous small individuals, less so for the
 larger rare individuals. The log-log axes do emphasise the relatively poorer fit of the
 larger body sizes, but there are few individuals here. The red lines are all
 straight because of the log-log axes, but are calculated using likelihood, not
-regression (which would be the LBNbiom method). The LBNbiom method would weight
+regression (which would be the LBNbiom method). The LBNbiom method for fitting
+the red lines would weight
 all bins equally, so the few individuals with large body size are given equal
 weight to the numerous small individuals.
 
-A useful thing will be to create movie where the fit is for incrementally higher
+
+
+XXX - A useful thing will be to create movie where the fit is for incrementally higher
 values of $x_{min}$
 
 
@@ -234,10 +237,12 @@ But, now there's no real reason to label the axes with logged values, rather
 than use the more intuitive actual values (still on a log scale).
 
 
-## Extra
+## Extra - note I already have a total biomass function - should check it agrees
+## with pBiomassbins
+
 
 Some rough calculations:
-```{r biomass}
+```{r biomass, eval = FALSE}
 bio <- pBiomass(b = MLEbin.res$MLE,
          xmin = min(x.binned$binVals$binMin),
          xmax = max(x.binned$binVals$binMax),
