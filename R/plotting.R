@@ -2528,14 +2528,15 @@ LBN_bin_plot <- function(binValsTibble = NULL,
   #           )
   #  }
 
+  # Calculate the fitted estimates of biomass in each bin, for b, b.confMin and b.confMax
+  binTibble <- pBiomassBinsConfs(binValsTibble = binTibble,
+                                 xmin = min(binTibble$wmin),
+                                 xmax = max(binTibble$wmax),
+                                 n = sum(binTibble$Number),
+                                 b.MLE = b.MLE,
+                                 b.confMin = b.confMin,
+                                 b.confMax = b.confMax)
 
-  # REPLACE with wrapper to call three times, one for each value of b
-  # Calculated the fitted estimates of biomass in each bin
-  binTibble <- pBiomassBins(binValsTibble = binTibble,
-                            xmin = min(binTibble$wmin),
-                            xmax = max(binTibble$wmax),
-                            b = b.MLE,
-                            n = sum(binTibble$Number))
 
   plot(binTibble$wmin,         # not plotted, just need something
        binTibble$highBiomassNorm,
@@ -2626,5 +2627,5 @@ LBN_bin_plot <- function(binValsTibble = NULL,
   # Go through this and tidy up. Could also do nonlogged version.
   #   And add red and (uncertainty) pink rectangles for ranges expected by the
   #   fitted distributions
-  return(binTibble)
+  invisible(binTibble)
 }

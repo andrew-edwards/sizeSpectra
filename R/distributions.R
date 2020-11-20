@@ -115,7 +115,7 @@ rPLB <- function(n = 1, b = -2, xmin = 1, xmax = 100)
 ##' Given by MEE equations A.4 and A.8. Can then be called by `pBiomassBins` to
 ##' give total biomass (and normalised biomass) in each bin.
 ##'
-##' @param x vector of (increasing) values for which to calculate the total biomass between
+##' @param x vector of values for which to calculate the total biomass between
 ##' `xmin` and the value
 ##' @param b exponent of the PLB distribution
 ##' @param xmin minimum bound of the distribution, `xmin > 0`
@@ -135,8 +135,7 @@ pBiomass <- function(x = c(1, 10, 20, 50, 100),
                      xmax = 100,
                      n = 1000){
 
-  if(xmin <= 0 | xmin >= xmax | min(x) < xmin | max(x) > xmax | min(diff(x)) <=
-    0 | n <= 0){
+  if(xmin <= 0 | xmin >= xmax | min(x) < xmin | max(x) > xmax | n <= 0){
     stop("Parameters out of bounds in pBiomass")
   }
 
@@ -204,18 +203,23 @@ pBiomassBins <- function(...,
          binTibble <- dplyr::tibble(wmin = binBreaks[-length(binBreaks)],
                                     wmax = binBreaks[-1])
          )
+browser()
 
   if("wmin" %in% names(binTibble)){
     binTibble <- dplyr::mutate(binTibble,
-                               binWidth = wmax - wmin,
-                               estBiomass = pBiomass(x = wmax, ...) -
-                                 pBiomass(x = wmin, ...),
+                               binWidth = wmax - wmin) #,
+                               estBiomass = pBiomass(x = binTibble$wmax,
+                                                     ...) -
+                                 pBiomass(x = binTibble$wmin,
+                                          ...),
                                estBiomassNorm = estBiomass / binWidth)
   } else {
     binTibble <- dplyr::mutate(binTibble,
                                binWidth = binMax - binMin,
-                               estBiomass = pBiomass(x = binMax, ...) -
-                                 pBiomass(x = binMin, ...),
+                               estBiomass = pBiomass(x = binTibble$binMax,
+                                                     ...) -
+                                 pBiomass(x = binTibble$binMin,
+                                          ...),
                                estBiomassNorm = estBiomass / binWidth)
   }
   return(binTibble)
@@ -223,24 +227,60 @@ pBiomassBins <- function(...,
 
 ##' Wrapper to call `pBiomassBins()` for three values of b (MLE and conf limits)
 ##'
-##' ##'  <desc>
+##' Only takes a tibble as the input data (unlike `pBiomassBins()` and
+##' `pBiomass()`. Currently needs `wmin`, `wmax` and `Number` as columns.
 ##'
-##' @param ... Arguments to `pBiomassBins` and `pBiomass`
+##' @param ... extra arguments passed to `bBiomassBins()`: `b`, `xmin`, `xmax, `n`.
+##' @param binValsTibble tibble of binned data in the form required for `pBiomassBins()`
 ##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbin method)
 ##' @param b.confMin lower 95\% confidence limits of *b*
 ##' @param b.confMax upper 95\% confidence limits of *b*
-##' @return
+##' @return `binValsTibble` with extra columns `estBiomassMLE` and
+##'   `estBiomassNormMLE` for the estimated biomass and normalised biomass for
+##'   `b.MLE`, extra columns `estBiomassConfMin` and `estBiomassNormConfMin` for
+##'   the same but using `b.confMin`, `estBiomassConfMax` and
+##'   `estBiomassNormConfMax` for `b.confMax`.
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
 ##' @donttest{
-##' @
+##' # see `MLEbin_recommend` vignette
 ##' @}
 pBiomassBinsConfs <- function(...,
-                              b.MLE = NULL,
-                              b.confMin = NULL,
-                              b.confMax = NULL){
+                              binValsTibble,
+                              b.MLE,
+                              b.confMin,
+                              b.confMax){
 
-# GOT TO HERE. Call three times and return tibble with properly named columns
-# (have to tweak the defaults for each call). Then plot rectangles on the figure.
+  # MLE value
+  binTibbleConfs <- pBiomassBins(binValsTibble = binValsTibble,
+                                 xmin = min(binValsTibble$wmin),
+                                 xmax = max(binValsTibble$wmax),
+                                 b = b.MLE,
+                                 n = sum(binValsTibble$Number),
+                                 ...) %>%
+    dplyr::rename(estBiomassMLE = estBiomass,
+                  estBiomassNormMLE = estBiomassNorm)
+
+  # Minimum of confidence interval for b
+  binTibbleConfs <- pBiomassBins(binValsTibble = binTibbleConfs,
+                                 xmin = min(binTibbleConfs$wmin),
+                                 xmax = max(binTibbleConfs$wmax),
+                                 b = b.confMin,
+                                 n = sum(binTibbleConfs$Number),
+                                 ...) %>%
+    dplyr::rename(estBiomassConfMin = estBiomass,
+                  estBiomassNormConfMin = estBiomassNorm)
+
+  # Maximum of confidence interval for b
+  binTibbleConfs <- pBiomassBins(binValsTibble = binTibbleConfs,
+                                 xmin = min(binTibbleConfs$wmin),
+                                 xmax = max(binTibbleConfs$wmax),
+                                 b = b.confMax,
+                                 n = sum(binTibbleConfs$Number),
+                                 ...) %>%
+    dplyr::rename(estBiomassConfMax = estBiomass,
+                  estBiomassNormConfMax = estBiomassNorm)
+
+  invisible(binTibbleConfs)
 }
