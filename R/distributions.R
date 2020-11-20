@@ -161,18 +161,21 @@ pBiomass <- function(x = c(1, 10, 20, 50, 100),
 ##' Bin breaks are input as EITHER a single tibble `binValsTibble`
 ##'  with each row representing a bin, OR as a vector `binBreaks` of breaks.
 ##'
-##' @param ... extra arguments passed to `bBiomass`; needs to go first to avoid
+##' @param ... extra arguments passed to `bBiomass`: `b`, `xmin`, `xmax, `n`.
+##'   Needs to go first to avoid
 ##'   partial matching of `b` (to be part of `...`) with whichever of
-##'   `binValsTibble` or `binBreaks` is not supplied in the call to `pBiomassBins()`.
+##'   `binValsTibble` or `binBreaks` is not supplied in the call to
+##'   `pBiomassBins()`. Will likely want to specify these in every call (do not
+##'   rely on the default).
 ##' @param binValsTibble tibble of binned data with each row representing a bin
 ##'   and with columns `wmin` and `wmax` (min and max break of each bin), or
 ##'   columns named `binMin` and `binMax`.
 ##'   Extra columns are ignored. Similar to `LBN_bin_plot()`.
 ##' @param binBreaks vector of bin breaks
 ##' @return tibble with each row corresponding to a bin, and columns `wmin`,
-##'   `wmax`,  `binWidth`, `biomass`, and `biomassNorm`. If the input is a tibble with
+##'   `wmax`,  `binWidth`, `estBiomass`, and `estBiomassNorm`. If the input is a tibble with
 ##'   columns `wmin` and `wmax` (or `binMin` and `binMax`), then
-##'   columns `totalBiom` and `totalBiomNorm` are appended to the input tibble.
+##'   columns `estBiomass` and `estBiomassNorm` are appended to the input tibble.
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
@@ -204,15 +207,15 @@ pBiomassBins <- function(...,
   if("wmin" %in% names(binTibble)){
     binTibble <- dplyr::mutate(binTibble,
                                binWidth = wmax - wmin,
-                               biomass = pBiomass(x = wmax, ...) -
+                               estBiomass = pBiomass(x = wmax, ...) -
                                  pBiomass(x = wmin, ...),
-                               biomassNorm = biomass / binWidth)
+                               estBiomassNorm = estBiomass / binWidth)
   } else {
     binTibble <- dplyr::mutate(binTibble,
                                binWidth = binMax - binMin,
-                               biomass = pBiomass(x = binMax, ...) -
+                               estBiomass = pBiomass(x = binMax, ...) -
                                  pBiomass(x = binMin, ...),
-                               biomassNorm = biomass / binWidth)
+                               estBiomassNorm = estBiomass / binWidth)
   }
   return(binTibble)
 }

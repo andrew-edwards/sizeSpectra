@@ -2395,7 +2395,7 @@ LBN_bin_plot_can_delete <- function(binValsTibble = NULL,
 ##' explicitly and the normalised biomass in
 ##' each bin (with resulting uncertainties). So extending MEE Fig. 6 for already
 ##' binned data, using a new approach motivated by MEPS Fig. 7. Should probably
-##' then be used to replace MEE Fig. 6. Axes are logged, and labelled as either
+##' then be recommended to replace MEE Fig. 6. Axes are logged, and labelled as either
 ##' logged or (more intuitive) logged values. See vignette `MLEbin_recommend.Rmd`.
 ##'
 ##' Bin breaks and counts are input as EITHER a single tibble `binValsTibble`
@@ -2419,20 +2419,17 @@ LBN_bin_plot_can_delete <- function(binValsTibble = NULL,
 ##' @param rect.col
 ##' @param logLabels
 ##' @param xLab
-##' @param ""))
 ##' @param yLab
 ##' @param x.PLB vector of values to use to plot the fitted PLB curve; if NA then
 ##'   automatically calculated
-##'
 ##' @param legend if TRUE then add legend
 ##' @param leg.pos position of legend, from "bottomright"', '"bottom"',
 ##'   '"bottomleft"', '"left"', '"topleft"', '"top"', '"topright"', '"right"'
 ##'   and '"center"'.
 ##' @param inset inset distance vector for legend
 ##' @param leg.text text for legend
-##'
 ##' @param ... further arguments to be passed to `plot()` PROBABLY
-##' @return
+##' @return TODO should return a tibble of results
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
@@ -2530,7 +2527,14 @@ LBN_bin_plot <- function(binValsTibble = NULL,
   #           )
   #  }
 
+  # Calculated the fitted estimates of biomass in each bin
+  binTibble <- pBiomassBins(binValsTibble = binTibble,
+                            xmin = min(binTibble$wmin),
+                            xmax = max(binTibble$wmax),
+                            b = b.MLE,
+                            n = sum(binTibble$Number))
 
+browser()
   plot(binTibble$wmin,         # not plotted, just need something
        binTibble$highBiomassNorm,
        log = log.xy,
@@ -2584,11 +2588,11 @@ LBN_bin_plot <- function(binValsTibble = NULL,
                                         # encompassing data
   }
 
+  # Biomass density for each value of x, from MEE equation (4), using the MLE for b.
   B.PLB <- dPLB(x.PLB,
                 b = b.MLE,
                 xmin=min(x.PLB),
                 xmax=max(x.PLB)) * sum(binTibble$Number) * x.PLB
-         # The biomass density, from MEE equation (4), using the MLE for b.
 
   lines(x.PLB,
         B.PLB,
@@ -2616,7 +2620,9 @@ LBN_bin_plot <- function(binValsTibble = NULL,
 
 
 
+
   # Go through this and tidy up. Could also do nonlogged version.
   #   And add red and (uncertainty) pink rectangles for ranges expected by the
   #   fitted distributions
+  return(binTibble)
 }
