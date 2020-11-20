@@ -127,13 +127,16 @@ rPLB <- function(n = 1, b = -2, xmin = 1, xmax = 100)
 ##' @examples
 ##' @donttest{
 ##' pBiomass(x = c(1, 5, 10, 20, 50, 100),
+##'          b = -2,
+##'          xmin = 1,
+##'          xmax = 100,
 ##'          n = 1000)
 ##' }
-pBiomass <- function(x = c(1, 10, 20, 50, 100),
-                     b = -2,
-                     xmin = 1,
-                     xmax = 100,
-                     n = 1000){
+pBiomass <- function(x = NULL,
+                     b = NULL,
+                     xmin = NULL,
+                     xmax = NULL,
+                     n = NULL){
 
   if(xmin <= 0 | xmin >= xmax | min(x) < xmin | max(x) > xmax | n <= 0){
     stop("Parameters out of bounds in pBiomass")
@@ -190,7 +193,9 @@ pBiomass <- function(x = c(1, 10, 20, 50, 100),
 ##' @}
 pBiomassBins <- function(...,
                          binValsTibble = NULL,
-                         binBreaks = NULL){
+                         binBreaks = NULL,
+                         xmin = NULL,
+                         xmax = NULL){
 
   stopifnot(
     "Need binValsTibble OR binBreaksto be NULL" =
@@ -203,22 +208,48 @@ pBiomassBins <- function(...,
          binTibble <- dplyr::tibble(wmin = binBreaks[-length(binBreaks)],
                                     wmax = binBreaks[-1])
          )
-browser()
+
+  # Should really insist on one format of input tibble; trying to be flexible
+  # and back compatible
+  if("wmin" %in% names(binTibble)){
+    if(is.null(xmin)){
+      xmin <- min(binTibble$wmin)
+    }
+    if(is.null(xmax)){
+      xmax <- max(binTibble$wmax)
+    }
+  } else {
+    if(is.null(xmin)){
+      xmin <- min(binTibble$binMin)
+    }
+    if(is.null(xmax)){
+      xmax <- max(binTibble$binMax)
+    }
+  }
+
 
   if("wmin" %in% names(binTibble)){
     binTibble <- dplyr::mutate(binTibble,
-                               binWidth = wmax - wmin) #,
+                               binWidth = wmax - wmin,
                                estBiomass = pBiomass(x = binTibble$wmax,
+                                                     xmin = xmin,
+                                                     xmax = xmax,
                                                      ...) -
                                  pBiomass(x = binTibble$wmin,
+                                          xmin = xmin,
+                                          xmax = xmax,
                                           ...),
                                estBiomassNorm = estBiomass / binWidth)
   } else {
     binTibble <- dplyr::mutate(binTibble,
                                binWidth = binMax - binMin,
                                estBiomass = pBiomass(x = binTibble$binMax,
+                                                     xmin = xmin,
+                                                     xmax = xmax,
                                                      ...) -
                                  pBiomass(x = binTibble$binMin,
+                                          xmin = xmin,
+                                          xmax = xmax,
                                           ...),
                                estBiomassNorm = estBiomass / binWidth)
   }
@@ -254,8 +285,6 @@ pBiomassBinsConfs <- function(...,
 
   # MLE value
   binTibbleConfs <- pBiomassBins(binValsTibble = binValsTibble,
-                                 xmin = min(binValsTibble$wmin),
-                                 xmax = max(binValsTibble$wmax),
                                  b = b.MLE,
                                  n = sum(binValsTibble$Number),
                                  ...) %>%
@@ -264,8 +293,8 @@ pBiomassBinsConfs <- function(...,
 
   # Minimum of confidence interval for b
   binTibbleConfs <- pBiomassBins(binValsTibble = binTibbleConfs,
-                                 xmin = min(binTibbleConfs$wmin),
-                                 xmax = max(binTibbleConfs$wmax),
+#                                 xmin = min(binTibbleConfs$wmin),
+#                                 xmax = max(binTibbleConfs$wmax),
                                  b = b.confMin,
                                  n = sum(binTibbleConfs$Number),
                                  ...) %>%
@@ -274,8 +303,8 @@ pBiomassBinsConfs <- function(...,
 
   # Maximum of confidence interval for b
   binTibbleConfs <- pBiomassBins(binValsTibble = binTibbleConfs,
-                                 xmin = min(binTibbleConfs$wmin),
-                                 xmax = max(binTibbleConfs$wmax),
+#                                 xmin = min(binTibbleConfs$wmin),
+#                                 xmax = max(binTibbleConfs$wmax),
                                  b = b.confMax,
                                  n = sum(binTibbleConfs$Number),
                                  ...) %>%
