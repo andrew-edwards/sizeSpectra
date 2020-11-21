@@ -132,11 +132,11 @@ rPLB <- function(n = 1, b = -2, xmin = 1, xmax = 100)
 ##'          xmax = 100,
 ##'          n = 1000)
 ##' }
-pBiomass <- function(x = NULL,
-                     b = NULL,
-                     xmin = NULL,
-                     xmax = NULL,
-                     n = NULL){
+pBiomass <- function(x,
+                     b,
+                     xmin,
+                     xmax,
+                     n){
 
   if(xmin <= 0 | xmin >= xmax | min(x) < xmin | max(x) > xmax | n <= 0){
     stop("Parameters out of bounds in pBiomass")
@@ -164,7 +164,7 @@ pBiomass <- function(x = NULL,
 ##' Bin breaks are input as EITHER a single tibble `binValsTibble`
 ##'  with each row representing a bin, OR as a vector `binBreaks` of breaks.
 ##'
-##' @param ... extra arguments passed to `bBiomass`: `b`, `xmin`, `xmax, `n`.
+##' @param ... extra arguments passed to `bBiomass`: `b`.
 ##'   Needs to go first to avoid
 ##'   partial matching of `b` (to be part of `...`) with whichever of
 ##'   `binValsTibble` or `binBreaks` is not supplied in the call to
@@ -175,6 +175,7 @@ pBiomass <- function(x = NULL,
 ##'   columns named `binMin` and `binMax`.
 ##'   Extra columns are ignored. Similar to `LBN_bin_plot()`.
 ##' @param binBreaks vector of bin breaks
+##' @param n total number of individuals in the system (needed to calculate biomass)
 ##' @return tibble with each row corresponding to a bin, and columns `wmin`,
 ##'   `wmax`,  `binWidth`, `estBiomass`, and `estBiomassNorm`. If the input is a tibble with
 ##'   columns `wmin` and `wmax` (or `binMin` and `binMax`), then
@@ -195,7 +196,8 @@ pBiomassBins <- function(...,
                          binValsTibble = NULL,
                          binBreaks = NULL,
                          xmin = NULL,
-                         xmax = NULL){
+                         xmax = NULL,
+                         n){
 
   stopifnot(
     "Need binValsTibble OR binBreaksto be NULL" =
@@ -227,17 +229,18 @@ pBiomassBins <- function(...,
     }
   }
 
-
   if("wmin" %in% names(binTibble)){
     binTibble <- dplyr::mutate(binTibble,
                                binWidth = wmax - wmin,
                                estBiomass = pBiomass(x = binTibble$wmax,
                                                      xmin = xmin,
                                                      xmax = xmax,
+                                                     n = n,
                                                      ...) -
                                  pBiomass(x = binTibble$wmin,
                                           xmin = xmin,
                                           xmax = xmax,
+                                          n = n,
                                           ...),
                                estBiomassNorm = estBiomass / binWidth)
   } else {
@@ -246,10 +249,12 @@ pBiomassBins <- function(...,
                                estBiomass = pBiomass(x = binTibble$binMax,
                                                      xmin = xmin,
                                                      xmax = xmax,
+                                                     n = n,
                                                      ...) -
                                  pBiomass(x = binTibble$binMin,
                                           xmin = xmin,
                                           xmax = xmax,
+                                          n = n,
                                           ...),
                                estBiomassNorm = estBiomass / binWidth)
   }

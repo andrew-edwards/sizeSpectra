@@ -173,7 +173,8 @@ LBN_bin_plot(binValsTibble = x.binned$binVals,
              b.MLE = MLEbin.res$MLE,
              b.confMin = MLEbin.res$conf[1],
              b.confMax = MLEbin.res$conf[2],
-             log.xy = "")
+             log.xy = "",
+             plot.binned.fitted = FALSE)
 ```
 
 This is clearly hard to see, hence motivates logging the x-axis:
@@ -183,7 +184,8 @@ LBN_bin_plot(binValsTibble = x.binned$binVals,
              b.confMin = MLEbin.res$conf[1],
              b.confMax = MLEbin.res$conf[2],
              leg.text = "(b)",
-             log.xy = "x")
+             log.xy = "x",
+             plot.binned.fitted = FALSE)
 ```
 
 This is easier to see and shows the good fit to the data, though it is harder to
@@ -201,17 +203,39 @@ LBN_bin_plot(binValsTibble = x.binned$binVals,
              b.confMin = MLEbin.res$conf[1],
              b.confMax = MLEbin.res$conf[2],
              leg.text = "(c)",
-             log.xy = "xy")
+             log.xy = "xy",
+             plot.binned.fitted = FALSE)
 ```
 
 The fit is really good for the numerous small individuals, less so for the
 larger rare individuals. The log-log axes do emphasise the relatively poorer fit of the
 larger body sizes, but there are few individuals here. The red lines are all
 straight because of the log-log axes, but are calculated using likelihood, not
-regression (which would be the LBNbiom method). The LBNbiom method for fitting
-the red lines would weight
-all bins equally, so the few individuals with large body size are given equal
-weight to the numerous small individuals.
+regression (which would be the LBNbiom method).
+
+Since the data are only available in binned form, the straight red lines are,
+upon reflection, not
+actually the most intuitive things to plot. So next we estimate the expected
+normalised biomass in each bin based on the MLE for $b$ (giving the horizontal
+red bars) and the confidence limits for $b$ (giving the pink rectangles,
+slightly shortened horizontally to still show the grey rectangles):
+```{r, plotLBN4, fig.height = 5.7}
+LBN_bin_plot(binValsTibble = x.binned$binVals,
+             b.MLE = MLEbin.res$MLE,
+             b.confMin = MLEbin.res$conf[1],
+             b.confMax = MLEbin.res$conf[2],
+             leg.text = "(c)",
+             log.xy = "xy",
+             plot.binned.fitted = TRUE)
+```
+
+This more clearly shows the uncertainty in expected normalised biomass is larger
+at higher biomasses, because the bins are wider (I think TODO). The pink and
+grey boxes overlap, showing some consistency between them that is not obvious
+from the earlier plots.
+
+
+
 
 
 

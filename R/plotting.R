@@ -2412,6 +2412,8 @@ LBN_bin_plot_can_delete <- function(binValsTibble = NULL,
 ##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbin method)
 ##' @param b.confMin lower 95\% confidence limits of *b*
 ##' @param b.confMax upper 95\% confidence limits of *b*
+##' @param plot.binned.fitted if TRUE then also plot the estimated normalised
+##'   biomass in each bin for the MLE of *b* and it's confidence limits
 ##' @param log.xy Which axes to log, for `plot(..., log = log.xy)`. So "xy" for
 ##'   log-log axes, "x" for only x-axis logged, "" for both axes unlogged.
 ##' @param xLim
@@ -2419,6 +2421,7 @@ LBN_bin_plot_can_delete <- function(binValsTibble = NULL,
 ##' @param rect.col
 ##' @param logLabels
 ##' @param xLab
+##' @param ""))
 ##' @param yLab
 ##' @param x.PLB vector of values to use to plot the fitted PLB curve; if NA then
 ##'   automatically calculated
@@ -2428,7 +2431,8 @@ LBN_bin_plot_can_delete <- function(binValsTibble = NULL,
 ##'   and '"center"'.
 ##' @param inset inset distance vector for legend
 ##' @param leg.text text for legend
-##' @param ... further arguments to be passed to `plot()` PROBABLY
+##' @param ... further arguments to be passed to `plot()` and
+##'   `plot_binned_fitted()`
 ##' @return TODO should return a tibble of results
 ##' @export
 ##' @author Andrew Edwards
@@ -2442,6 +2446,7 @@ LBN_bin_plot <- function(binValsTibble = NULL,
                          b.MLE,
                          b.confMin,
                          b.confMax,
+                         plot.binned.fitted = TRUE,
                          log.xy = "xy",
                          xLim = NA,
                          yLim = NA,
@@ -2530,9 +2535,9 @@ LBN_bin_plot <- function(binValsTibble = NULL,
 
   # Calculate the fitted estimates of biomass in each bin, for b, b.confMin and b.confMax
   binTibble <- pBiomassBinsConfs(binValsTibble = binTibble,
-                                 xmin = min(binTibble$wmin),
-                                 xmax = max(binTibble$wmax),
-                                 n = sum(binTibble$Number),
+#                                 xmin = min(binTibble$wmin),
+#                                 xmax = max(binTibble$wmax),
+#                                 n = sum(binTibble$Number),
                                  b.MLE = b.MLE,
                                  b.confMin = b.confMin,
                                  b.confMax = b.confMax)
@@ -2591,6 +2596,14 @@ LBN_bin_plot <- function(binValsTibble = NULL,
                                         # encompassing data
   }
 
+
+  # Option to plot binned version of fitted curve (do first to then overlay the
+  # straight lines of biomass density)
+  if(plot.binned.fitted){
+    plot_binned_fitted(binTibble,
+                       ...)
+  }
+
   # Biomass density for each value of x, from MEE equation (4), using the MLE for b.
   B.PLB <- dPLB(x.PLB,
                 b = b.MLE,
@@ -2618,14 +2631,60 @@ LBN_bin_plot <- function(binValsTibble = NULL,
         col="red",
         lty=2)
 
-  # Option to plot binned version of fitted curve
-
-
-
-
-
   # Go through this and tidy up. Could also do nonlogged version.
   #   And add red and (uncertainty) pink rectangles for ranges expected by the
   #   fitted distributions
   invisible(binTibble)
+}
+
+##' Add horizontal bars and shaded rectangles to `LBN_bin_plot()`
+##'
+##' These are to show the estimated normalised biomasses in each bin, based on
+##' the MLE value of `b` and it's confidence limit values.
+##' Each horizontal bar spans a bin (default colour is red), with it's vertical value indicating the
+##' expected normalised biomass based on the MLE of `b`. The height of the
+##' shaded rectangles (default colour pink) show the range of expected
+##' normalised biomass based on the 95\% confidence interval of `b`.
+##' @param binTibble tibble of values calculated in `LBN_bin_plot()`; this
+##' function adds to that plot
+##' @param bar.col colour for the horizontal bars representing the MLE values of
+##' normalised biomass in each bin
+##' @param bar.lwd thickness of horiztonal bars
+##' @param rect.shading colour for shading of rectangles corresponding to the
+##' normalised biomasses estimated from confidence intervals of `b`
+##' @param shorter fraction shorter to make the rectangles, so can see them
+##' overlapping with grey rectangles; may not work exacly as planned (won't be symmetric) when x-axis
+##' not logged, but that's not going to be a useful plot anyway
+##' @return
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @
+##' @}
+plot_binned_fitted <- function(binTibble,
+                               bar.col = "red",
+                               bar.lwd = 3,
+                               rect.shading = "pink",
+                               shorter = 0.05
+                               ){
+
+  # Rectangles corresponding to confidence interval ranges, it doesn't matter
+  # that sometimes we'll have ybottom > ytop (I think it might almost be guaranteed
+  # to happen for at least one bin).m
+  rect(xleft = (1 + shorter) * binTibble$wmin,
+       ybottom = binTibble$estBiomassNormConfMin,
+       xright = (1 - shorter) * binTibble$wmax,
+       ytop = binTibble$estBiomassNormConfMax,
+       col = rect.shading)
+
+  # Horizontal bars corresponding to MLE values
+  segments(x0 = binTibble$wmin,
+           y0 = binTibble$estBiomassNormMLE,
+           x1 = binTibble$wmax,
+           y1 = binTibble$estBiomassNormMLE,
+           col = bar.col,
+           lwd = bar.lwd)
+
+
 }
