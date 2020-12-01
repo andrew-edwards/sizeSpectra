@@ -120,13 +120,19 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
 ##' set, it may make more sense fitting the PLB distribution independently
 ##' across segments (distinct ranges) of the data. For example, if the full
 ##' range of body sizes are not collected using the same sampling protocols,
-##' such as when combining phytoplankton and zooplankton data. TODO maybe allow
-##' tibble to be entered
+##' such as when combining phytoplankton and zooplankton data. Data are input as
+##' EITHER vectors `w` and `d` of bin breaks and bin counts, OR as a tibble with
+##' one row for each bin and columns as described below.
 ##'
 ##' @param p initial value of `b` for the numerical optimisation
 ##' @param w vector of length `J+1` giving the bin breaks `w_1, w_2, ..., w_{J+1}`
 ##' @param d vector of length `J` giving the count in each bin; must have `d_1`,
 ##'   `d_J > 0`
+##' @param bin_tibble data as a tibble, with each row representing a bin and
+##'   columns:
+##'   * `wmin`: minimum body mass of that bin
+##'   * `wmax`: maximum body mass of that bin
+##'   * `binCount`: count in that bin
 ##' @param segmentIndices the indices of `w` to use as breakpoints to separate the
 ##'   range of body masses into distinct segments to be fit separately; must
 ##'   have first element 1 and last element the value of `J+1`.
@@ -137,7 +143,8 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
 ##' @param ... further inputs to negLL.PLB.binned *** TODO maybe?
 ##'
 ##' @return list containing:
-##'   * bins_in_segs: tibble with a row for each bin and columns:
+##'   * bins_in_segs: tibble with a row for each bin and columns (this is
+##'   `bin_tibble` with the extra column `segment`):
 ##'      + `wmin`: minimum body mass of that bin
 ##'      + `wmax`: maximum body mass of that bin
 ##'      + `binCount`: count in that bin
@@ -156,10 +163,16 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
 ##' # see vignette ****
 ##' @}
 calcLikeSegments <- function(p = -1.5,
-                             w,
-                             d,
+                             w = NULL,
+                             d = NULL,
+                             bin_tibbley = NULL,
                              segmentIndices,
                              ...){
+browser()
+  stopifnot("Need EITHER w and d OR bin_tibble as arguments" =
+              (is.null(w) & is.null(d) & !is.null(bin_tibbley)) |
+              (!is.null(w) & !is.null(d) & is.null(bin_tibbley)))
+
   J <- length(d)                   # number of bins
   S <- length(segmentIndices) - 1  # number of segments
   stopifnot(segmentIndices[1] == 1 &
@@ -319,7 +332,6 @@ negLL.PLB.binned = function(b,
                             J = length(d),
                             xmin = min(w),
                             xmax = max(w))
-
   {
    # Ideally should fix those J=length(d) type things in args, that messed me up in
    # another project.
