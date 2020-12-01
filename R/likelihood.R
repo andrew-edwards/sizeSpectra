@@ -113,6 +113,61 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
     return(conf)
 }
 
+##' Calculate MLEs and 95\% confidence intervals of `b` for separate body-mass segments
+##'  of a data set
+##'
+##' Rather than trying to estimate a single MLE of `b` across an entire data
+##' set, it may make more sense fitting the PLB distribution independently
+##' across segments (distinct ranges) of the data. For example, if the full
+##' range of body sizes are not collected using the same sampling protocols,
+##' such as when combining phytoplankton and zooplankton data.
+##'
+##' @param p initial value of `b` for the numerical optimisation
+##' @param w vector of length `J+1` giving the bin breaks `w_1, w_2, ..., w_{J+1}`
+##' @param d vector of length `J` giving the count in each bin; must have `d_1,
+##'   d_J > 0`
+##' @param negLL.fn negative log-likelihood function to use - currently only
+##'   works for negLL.PLB.binned
+##' @param segmentBreaks the breakpoints to use to separate the range of body
+##'   masses into distinct segments to be fit separately
+##' @param ... further inputs to negLL.PLB.binned ***
+##'
+##' @return tibble with the original data with columns
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @
+##' @}
+calcLikeSegments <- function(p = -1.5,
+                             w,
+                             d,
+                             negLL.fn = negLL.PLB.binned,
+                             segmentBreaks,
+                             ...){
+  # make data into tibble, with a row for each bin, like other examples; or
+  # allow a tibble to be input
+  # assign each bin a segment, according to segmentBreaks
+  # fit using this, implies may need to input a vector of vecDiff's and vecInc's
+  # and maybe more
+#  MLEbin.res <-  calcLike(negLL.PLB.binned,
+#                        p = -2.1, # PL.bMLE.binned,
+#                        w = binbreaks,
+#                        d = bincounts,
+#                        J = length(bincounts),   # = num.bins
+#                        vecDiff = 1,             # increase this if hit a bound
+#                        vecInc = 1e-10)
+
+  # save a tibble of results with columns segment, b.MLE, MLElow, MLEhigh or
+  # whatever I've called it elsewhere.
+  # Test on data.
+  # Test on simulated data.
+
+}
+
+
+
+
 ##' Calculate negative log-likelihood for the bounded power-law
 ##'   distribution
 ##'
