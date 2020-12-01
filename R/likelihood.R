@@ -124,12 +124,15 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
 ##'
 ##' @param p initial value of `b` for the numerical optimisation
 ##' @param w vector of length `J+1` giving the bin breaks `w_1, w_2, ..., w_{J+1}`
-##' @param d vector of length `J` giving the count in each bin; must have `d_1,
-##'   d_J > 0`
-##' @param negLL.fn negative log-likelihood function to use - currently only
-##'   works for negLL.PLB.binned
-##' @param segmentBreaks the breakpoints to use to separate the range of body
-##'   masses into distinct segments to be fit separately
+##' @param d vector of length `J` giving the count in each bin; must have `d_1`,
+##'   `d_J > 0`
+##' @param segmentIndices the indices of `w` to use as breakpoints to separate the
+##'   range of body masses into distinct segments to be fit separately; must
+##'   have first element 1 and last element the value of `J+1`.
+##'   Segments are assigned based on minima of bins being `>=
+##'   w[segmentIndices]`, so we end up with `length(segmentIndices) - 1`
+##'   segments. Thus, `w[segmentIndices[i]]` is the minimum of segment `i`.
+##'
 ##' @param ... further inputs to negLL.PLB.binned ***
 ##'
 ##' @return tibble with the original data with columns
@@ -137,22 +140,38 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
 ##' @author Andrew Edwards
 ##' @examples
 ##' @donttest{
-##' @
+##' # see vignette ****
 ##' @}
 calcLikeSegments <- function(p = -1.5,
                              w,
                              d,
-                             negLL.fn = negLL.PLB.binned,
-                             segmentBreaks,
+                             segmentIndices,
                              ...){
+  J <- length(d)     # number of bins
+  stopifnot(segmentIndices[1] == 1 &
+            segmentIndices[length(segmentIndices)] == J+1 &
+            min(diff(segmentIndices)) > 0)
+
+  segment <- vector()
+  for(i in 1:(max(segmentIndices)-1)){
+    segment[i] <- sum(i >= segmentIndices)
+  }
+
+  # Each row is a bin with a count, and segment number
+  binsSegs <- dplyr::tibble(wmin = w[1:J],
+                               wmax = w[2:(J+1)],
+                               binCount = d,
+                               segment = segment)
+
+  binsSegs
   # make data into tibble, with a row for each bin, like other examples; or
-  # allow a tibble to be input
-  # assign each bin a segment, according to segmentBreaks
+  # allow a tibble to be input maybe.
+  # assign each bin a segment, according to segmentIndices
   # fit using this, implies may need to input a vector of vecDiff's and vecInc's
   # and maybe more
 #  MLEbin.res <-  calcLike(negLL.PLB.binned,
-#                        p = -2.1, # PL.bMLE.binned,
-#                        w = binbreaks,
+#                          p = p,
+#                          w = w....,
 #                        d = bincounts,
 #                        J = length(bincounts),   # = num.bins
 #                        vecDiff = 1,             # increase this if hit a bound
@@ -162,7 +181,6 @@ calcLikeSegments <- function(p = -1.5,
   # whatever I've called it elsewhere.
   # Test on data.
   # Test on simulated data.
-
 }
 
 
