@@ -120,7 +120,8 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
 ##' set, it may make more sense fitting the PLB distribution independently
 ##' across segments (distinct ranges) of the data. For example, if the full
 ##' range of body sizes are not collected using the same sampling protocols,
-##' such as when combining phytoplankton and zooplankton data.
+##' such as when combining phytoplankton and zooplankton data. TODO maybe allow
+##' tibble to be entered
 ##'
 ##' @param p initial value of `b` for the numerical optimisation
 ##' @param w vector of length `J+1` giving the bin breaks `w_1, w_2, ..., w_{J+1}`
@@ -130,12 +131,24 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
 ##'   range of body masses into distinct segments to be fit separately; must
 ##'   have first element 1 and last element the value of `J+1`.
 ##'   Segments are assigned based on minima of bins being `>=
-##'   w[segmentIndices]`, so we end up with `length(segmentIndices) - 1`
+##'   w[segmentIndices]`, so we end up with `S = length(segmentIndices) - 1`
 ##'   segments. Thus, `w[segmentIndices[i]]` is the minimum of segment `i`.
 ##'
-##' @param ... further inputs to negLL.PLB.binned ***
+##' @param ... further inputs to negLL.PLB.binned *** TODO maybe?
 ##'
-##' @return tibble with the original data with columns
+##' @return list containing:
+##'   * bins_in_segs: tibble with a row for each bin and columns:
+##'      + `wmin`: minimum body mass of that bin
+##'      + `wmax`: maximum body mass of that bin
+##'      + `binCount`: count in that bin
+##'      + `segment`: which segment the bin falls in, an integer from 1 to S
+##'   * b_segs: tibble of results with a row for each segment and columns:
+##'      + `segment`: integer indicating the segment being fitted
+##'      + `segMin`: mininum body mass of that segment
+##'      + `segMax`: maximum body mass of that segment
+##'      + `confMin`: minimum of 95\% confidence interval of `b` for that segment
+##'      + `b`: MLE for `b` for that segment
+##'      + `confMax`:  maximum of 95\% confidence interval of `b` for that segment
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
@@ -147,7 +160,8 @@ calcLikeSegments <- function(p = -1.5,
                              d,
                              segmentIndices,
                              ...){
-  J <- length(d)     # number of bins
+  J <- length(d)                   # number of bins
+  S <- length(segmentIndices) - 1  # number of segments
   stopifnot(segmentIndices[1] == 1 &
             segmentIndices[length(segmentIndices)] == J+1 &
             min(diff(segmentIndices)) > 0)
@@ -157,30 +171,46 @@ calcLikeSegments <- function(p = -1.5,
     segment[i] <- sum(i >= segmentIndices)
   }
 
-  # Each row is a bin with a count, and segment number
-  binsSegs <- dplyr::tibble(wmin = w[1:J],
-                               wmax = w[2:(J+1)],
-                               binCount = d,
-                               segment = segment)
+  stopifnot(S == length(unique(segment)))
 
-  binsSegs
-  # make data into tibble, with a row for each bin, like other examples; or
-  # allow a tibble to be input maybe.
+  # Each row is a bin with a count, and segment number
+  bins_segs <- dplyr::tibble(wmin = w[1:J],
+                             wmax = w[2:(J+1)],
+                             binCount = d,
+                             segment = segment)
+
   # assign each bin a segment, according to segmentIndices
   # fit using this, implies may need to input a vector of vecDiff's and vecInc's
   # and maybe more
-#  MLEbin.res <-  calcLike(negLL.PLB.binned,
-#                          p = p,
-#                          w = w....,
-#                        d = bincounts,
-#                        J = length(bincounts),   # = num.bins
-#                        vecDiff = 1,             # increase this if hit a bound
-#                        vecInc = 1e-10)
 
-  # save a tibble of results with columns segment, b.MLE, MLElow, MLEhigh or
-  # whatever I've called it elsewhere.
-  # Test on data.
+  # Each row will be correspond to a segment, S rows in all
+  res_segs <- dplyr::tibble(segment = 0,
+                            segMin = 0,
+                            segMax = 0,
+                            confMin = 0,
+                            b = 0,
+                            confMax = 0)
+
+  for(s in 1:S){
+    bins_this_seg <- dplyr::filter(bins_segs,
+                                   segment == s)
+    MLEbin.res <- calcLike(negLL.PLB.binned,
+                           p = p,
+                           w = c(bins_this_seg$wmin, max(bins_this_seg$wmax)),
+                           d = bins_this_seg$binCount,
+                           vecDiff = 1,             # increase this if hit a bound
+                           vecInc = 1e-10)
+    res_segs[s, "segment"] <- s
+    res_segs[s, "segMin"] <- min(bins_this_seg$wmin)
+    res_segs[s, "segMax"] <- max(bins_this_seg$wmax)
+    res_segs[s, "confMin"] <- MLEbin.res$conf[1]
+    res_segs[s, "b"]      <- MLEbin.res$MLE
+    res_segs[s, "confMax"] <- MLEbin.res$conf[2]
+  }
+
   # Test on simulated data.
+  return(list(bins_in_segs = bins_segs,
+              b_segs = res_segs))
 }
 
 
