@@ -133,10 +133,10 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
 ##'   * `wmin`: minimum body mass of that bin
 ##'   * `wmax`: maximum body mass of that bin
 ##'   * `binCount`: count in that bin
-##' @param segmentIndices the indices of `w` to use as breakpoints to separate the
+##' @param segmentIndices the indices of `w` or `bin_tibble$wmin` to use as breakpoints to separate the
 ##'   range of body masses into distinct segments to be fit separately; must
-##'   have first element 1 and last element the value of `J+1`.
-##'   Segments are assigned based on minima of bins being `>=
+##'   have first element 1 and last element the value of `J+1`. MAYBE CHANGE?
+##'   CHECK ME: Segments are assigned based on minima of bins being `>=
 ##'   w[segmentIndices]`, so we end up with `S = length(segmentIndices) - 1`
 ##'   segments. Thus, `w[segmentIndices[i]]` is the minimum of segment `i`.
 ##'
@@ -165,20 +165,23 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
 calcLikeSegments <- function(p = -1.5,
                              w = NULL,
                              d = NULL,
-                             bin_tibbley = NULL,
+                             bin_tibble = NULL,
                              segmentIndices,
                              ...){
-browser()
   stopifnot("Need EITHER w and d OR bin_tibble as arguments" =
-              (is.null(w) & is.null(d) & !is.null(bin_tibbley)) |
-              (!is.null(w) & !is.null(d) & is.null(bin_tibbley)))
+              (is.null(w) & is.null(d) & !is.null(bin_tibble)) |
+              (!is.null(w) & !is.null(d) & is.null(bin_tibble)))
+  # J is number of bins
+  ifelse(!is.null(d),
+         J <- length(d),
+         J <- nrow(bin_tibble))
 
-  J <- length(d)                   # number of bins
-  S <- length(segmentIndices) - 1  # number of segments
   stopifnot(segmentIndices[1] == 1 &
             segmentIndices[length(segmentIndices)] == J+1 &
             min(diff(segmentIndices)) > 0)
 
+  # Create vector of which segment each bin is in
+  S <- length(segmentIndices) - 1  # number of segments
   segment <- vector()
   for(i in 1:(max(segmentIndices)-1)){
     segment[i] <- sum(i >= segmentIndices)
@@ -186,42 +189,42 @@ browser()
 
   stopifnot(S == length(unique(segment)))
 
-  # Each row is a bin with a count, and segment number
-  bins_segs <- dplyr::tibble(wmin = w[1:J],
-                             wmax = w[2:(J+1)],
-                             binCount = d,
-                             segment = segment)
+  # Create tibble with a row for each bin, and columns for its segment
+  if(!is.null(bin_tibble)){
+    bins_segs <- dplyr::bind_cols(bin_tibble,
+                                  segment = segment)
+  } else {
+    bins_segs <- dplyr::tibble(wmin = w[1:J],
+                               wmax = w[2:(J+1)],
+                               binCount = d,
+                               segment = segment)
+  }
 
-  # assign each bin a segment, according to segmentIndices
-  # fit using this, implies may need to input a vector of vecDiff's and vecInc's
-  # and maybe more
-
-  # Each row will be correspond to a segment, S rows in all
+  # Results tibble: each row of results will be correspond to a segment, S rows in all
   res_segs <- dplyr::tibble(segment = 0,
                             segMin = 0,
                             segMax = 0,
                             confMin = 0,
                             b = 0,
                             confMax = 0)
-
   for(s in 1:S){
     bins_this_seg <- dplyr::filter(bins_segs,
                                    segment == s)
     MLEbin.res <- calcLike(negLL.PLB.binned,
                            p = p,
-                           w = c(bins_this_seg$wmin, max(bins_this_seg$wmax)),
+                           w = c(bins_this_seg$wmin,
+                                 max(bins_this_seg$wmax)),
                            d = bins_this_seg$binCount,
                            vecDiff = 1,             # increase this if hit a bound
                            vecInc = 1e-10)
     res_segs[s, "segment"] <- s
-    res_segs[s, "segMin"] <- min(bins_this_seg$wmin)
-    res_segs[s, "segMax"] <- max(bins_this_seg$wmax)
+    res_segs[s, "segMin"]  <- min(bins_this_seg$wmin)
+    res_segs[s, "segMax"]  <- max(bins_this_seg$wmax)
     res_segs[s, "confMin"] <- MLEbin.res$conf[1]
-    res_segs[s, "b"]      <- MLEbin.res$MLE
+    res_segs[s, "b"]       <- MLEbin.res$MLE
     res_segs[s, "confMax"] <- MLEbin.res$conf[2]
   }
 
-  # Test on simulated data.
   return(list(bins_in_segs = bins_segs,
               b_segs = res_segs))
 }
