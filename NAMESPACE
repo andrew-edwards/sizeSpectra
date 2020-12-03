@@ -3,7 +3,6 @@
 export(ISD_bin_plot)
 export(ISD_bin_plot_nonoverlapping)
 export(LBN_bin_plot)
-export(LBN_bin_plot_can_delete)
 export(LBNbiom.method)
 export(LBNbiom.method.counts)
 export(LBmizbinsFun)
