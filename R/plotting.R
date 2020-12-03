@@ -29,6 +29,8 @@
 #  (MEPS Figures 6, S.1, S.2 and S.3).
 # ISD_bin_plot - recommended plotting for binned data (MEPS Figures 7 and
 #  S.5-S.34).
+# ISD_bin_plot_nonoverlapping - recommend plotting for binned data with
+#  non-overlapping bins, which is the usual case.
 
 ##' Plot bounded straight line of results of `lm()` fit
 ##'
