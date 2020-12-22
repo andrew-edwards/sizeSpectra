@@ -14,8 +14,3 @@ r_packages:
 
 after_success:
   - Rscript -e 'library(covr); codecov()'
-
-# From https://stackoverflow.com/questions/62937901/r-package-development-using-travis-ci-gets-error-due-to-failing-to-install-depen
-
-global:
-   - _R_CHECK_FORCE_SUGGESTS_: false
