@@ -16,3 +16,4 @@
 # ^vignettes/MEPS_IBTS_2.Rmd$
 # ^vignettes/MEPS_IBTS_MLEbins.Rmd$
 ^vignettes/IBTS_movie.gif$
+^\.github$
