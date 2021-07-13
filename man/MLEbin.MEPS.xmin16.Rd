@@ -5,8 +5,10 @@
 \alias{MLEbin.MEPS.xmin16}
 \title{Simulation results of multiple data sets (with $x_{min}=16$) binned using four binning
 types and fit using MLEmid and MLEbin methods.}
-\format{List containing two arrays and a list of parameters. See
-\code{?sizeSpectra::MLEbin.simulate} for details.}
+\format{
+List containing two arrays and a list of parameters. See
+\code{?sizeSpectra::MLEbin.simulate} for details.
+}
 \source{
 From running \code{MLEbin.simulate()} in \code{data-raw/simulate-data2.R}.
 }

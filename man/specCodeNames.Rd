@@ -4,12 +4,14 @@
 \name{specCodeNames}
 \alias{specCodeNames}
 \title{Species codes and their scientific names}
-\format{Tibble with columns
+\format{
+Tibble with columns
 \itemize{
 \item species: Scientific name of species
 \item speccode: Species code used in the IBTS data for that species (maybe
 not all species codes are here).
-}}
+}
+}
 \source{
 Aphia species codes, Julia obtained them from DATRAS (the ICES
 DATRAS R packages likely has them all).

@@ -5,7 +5,8 @@
 \alias{dataBin}
 \title{The \code{IBTS_data} amended with explicit length and body mass ranges for each
 bin for using the MLEbins method}
-\format{Dataframe where each of 42,298 rows is a unique combination of \code{Year},
+\format{
+Dataframe where each of 42,298 rows is a unique combination of \code{Year},
 \code{SpecCode} and \code{LngtMin}. Columns are:
 \itemize{
 \item Year: Year of survey
@@ -25,7 +26,8 @@ species-specific length-weight coefficients and \code{LngtMin}.
 species-specific length-weight coefficients and \code{LngtMax}.
 \item Number: Number of individuals per hour of trawling observed for that
 combination of \code{Year}, \code{SpecCode} and \code{LngtMin}.
-}}
+}
+}
 \source{
 From amending \code{IBTS_data} as per vignette \code{MEPS_IBTS_MLEbins}.
 }

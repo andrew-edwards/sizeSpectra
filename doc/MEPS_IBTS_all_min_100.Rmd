@@ -422,8 +422,9 @@ and will just refer to the saved animation file.
 #                                                   fullYears[i])$xmin,
 #              xmax = dplyr::filter(MLEbins.res, Year ==
 #                                                fullYears[i])$xmax,
-#             yBig.inc = 500,
-#              ySmall.inc = 100)
+#              yBig.inc = 500,
+#              ySmall.inc = 100,
+#              IBTS_MEPS_figs = TRUE)
 # }
 # ```
 ```
@@ -454,7 +455,8 @@ for(i in 1:length(fullYears))
                xmax = dplyr::filter(MLEbins.res, Year ==
                                                  fullYears[i])$xmax,
                yBig.inc = 500,
-               ySmall.inc = 100)
+               ySmall.inc = 100,
+               IBTS_MEPS_figs = TRUE)
   dev.off()
 }
 ```

@@ -15,3 +15,8 @@ data-raw/*.RData
 
 IBTS-min-100/
 doc
+
+length_weight.png
+vignettes/evansData/
+/doc/
+/Meta/

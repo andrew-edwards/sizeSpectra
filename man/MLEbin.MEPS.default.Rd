@@ -5,8 +5,10 @@
 \alias{MLEbin.MEPS.default}
 \title{Default simulation results of multiple data sets binned using four binning
 types and fit using MLEmid and MLEbin methods.}
-\format{List containing two arrays and a list of parameters. See
-\code{?sizeSpectra::MLEbin.simulate} for details.}
+\format{
+List containing two arrays and a list of parameters. See
+\code{?sizeSpectra::MLEbin.simulate} for details.
+}
 \source{
 From running \code{MLEbin.simulate()} in \code{data-raw/simulate-data2.R}.
 }

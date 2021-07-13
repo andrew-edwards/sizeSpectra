@@ -93,6 +93,10 @@ The vignettes are:
   analysis but setting the minimum body mass to be 100 g. Less for understanding
   everything and more for redoing the analyses with different assumptions (or data).
 
+* [MLEbin_recommend.html](MLEbin_recommend.html): Exploring ways of plotting an
+  LBN type plot for data that are binned with one set of bin breaks (so simpler
+  than the IBTS data). Not part of any paper.
+
 The source code written in `Rmarkdown`, the R code that gets extracted from the
   `Rmarkdown` code, and the resulting .html files are all found within your library
   folder (where all your R libraries get saved), in

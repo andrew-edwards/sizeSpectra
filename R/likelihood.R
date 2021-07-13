@@ -6,6 +6,8 @@
 ##' Calculate maximum likelihood estimate of a parameter and its 95\% confidence
 ##'  interval using the profile log-likelihood method, for a given
 ##'  negative log-likelihood function and its arguments (other parameters and data).
+##' Will likely give warnings that can safely be ignored (see
+##'  `suppress.warnings` description below).
 ##'
 ##' @param negLL.fn negative log-likelihood function that take arguments
 ##'  (parameters and data) in ... and returns a negative
@@ -27,7 +29,8 @@
 ##'   are always:
 ##'   `Warning in nlm(f = negLL.fn, p = p, ...) :
 ##'    NA/Inf replaced by maximum positive value`. The same warning often happens in other
-##'   situations also.
+##'   situations also. It is due to the likelihood function blowing up,
+##'   presumably when searching some very very very unlikely region of paramater space.
 ##'
 ##' @param ... further arguments (including parameters and data) to `negLL.fn()`
 ##' @return       list containing:
@@ -109,6 +112,125 @@ profLike = function(negLL.fn, MLE, minNegLL, vecDiff=0.5, vecInc=0.001, ...)
       }
     return(conf)
 }
+
+##' Calculate MLEs and 95\% confidence intervals of `b` for separate body-mass segments
+##'  of a data set
+##'
+##' Rather than trying to estimate a single MLE of `b` across an entire data
+##' set, it may make more sense fitting the PLB distribution independently
+##' across segments (distinct ranges) of the data. For example, if the full
+##' range of body sizes are not collected using the same sampling protocols,
+##' such as when combining phytoplankton and zooplankton data. Data are input as
+##' EITHER vectors `w` and `d` of bin breaks and bin counts, OR as a tibble with
+##' one row for each bin and columns as described below.
+##'
+##' @param p initial value of `b` for the numerical optimisation
+##' @param w vector of length `J+1` giving the bin breaks `w_1, w_2, ..., w_{J+1}`
+##' @param d vector of length `J` giving the count in each bin; must have `d_1`,
+##'   `d_J > 0`
+##' @param bin_tibble data as a tibble, with each row representing a bin and
+##'   columns:
+##'   * `wmin`: minimum body mass of that bin
+##'   * `wmax`: maximum body mass of that bin
+##'   * `binCount`: count in that bin
+##' @param segmentIndices the indices of `w` or `bin_tibble$wmin` to use as breakpoints to separate the
+##'   range of body masses into distinct segments to be fit separately; must
+##'   have first element 1 and last element the value of `J+1`. MAYBE CHANGE?
+##'   CHECK ME: Segments are assigned based on minima of bins being `>=
+##'   w[segmentIndices]`, so we end up with `S = length(segmentIndices) - 1`
+##'   segments. Thus, `w[segmentIndices[i]]` is the minimum of segment `i`.
+##'
+##' @param ... further inputs to negLL.PLB.binned *** TODO maybe?
+##'
+##' @return list containing:
+##'   * bins_in_segs: tibble with a row for each bin and columns (this is
+##'   `bin_tibble` with the extra column `segment`):
+##'      + `wmin`: minimum body mass of that bin
+##'      + `wmax`: maximum body mass of that bin
+##'      + `binCount`: count in that bin
+##'      + `segment`: which segment the bin falls in, an integer from 1 to S
+##'   * b_segs: tibble of results with a row for each segment and columns:
+##'      + `segment`: integer indicating the segment being fitted
+##'      + `segMin`: mininum body mass of that segment
+##'      + `segMax`: maximum body mass of that segment
+##'      + `confMin`: minimum of 95\% confidence interval of `b` for that segment
+##'      + `b`: MLE for `b` for that segment
+##'      + `confMax`:  maximum of 95\% confidence interval of `b` for that segment
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' # see vignette ****
+##' @}
+calcLikeSegments <- function(p = -1.5,
+                             w = NULL,
+                             d = NULL,
+                             bin_tibble = NULL,
+                             segmentIndices,
+                             ...){
+  stopifnot("Need EITHER w and d OR bin_tibble as arguments" =
+              (is.null(w) & is.null(d) & !is.null(bin_tibble)) |
+              (!is.null(w) & !is.null(d) & is.null(bin_tibble)))
+  # J is number of bins
+  ifelse(!is.null(d),
+         J <- length(d),
+         J <- nrow(bin_tibble))
+
+  stopifnot(segmentIndices[1] == 1 &
+            segmentIndices[length(segmentIndices)] == J+1 &
+            min(diff(segmentIndices)) > 0)
+
+  # Create vector of which segment each bin is in
+  S <- length(segmentIndices) - 1  # number of segments
+  segment <- vector()
+  for(i in 1:(max(segmentIndices)-1)){
+    segment[i] <- sum(i >= segmentIndices)
+  }
+
+  stopifnot(S == length(unique(segment)))
+
+  # Create tibble with a row for each bin, and columns for its segment
+  if(!is.null(bin_tibble)){
+    bins_segs <- dplyr::bind_cols(bin_tibble,
+                                  segment = segment)
+  } else {
+    bins_segs <- dplyr::tibble(wmin = w[1:J],
+                               wmax = w[2:(J+1)],
+                               binCount = d,
+                               segment = segment)
+  }
+
+  # Results tibble: each row of results will be correspond to a segment, S rows in all
+  res_segs <- dplyr::tibble(segment = 0,
+                            segMin = 0,
+                            segMax = 0,
+                            confMin = 0,
+                            b = 0,
+                            confMax = 0)
+  for(s in 1:S){
+    bins_this_seg <- dplyr::filter(bins_segs,
+                                   segment == s)
+    MLEbin.res <- calcLike(negLL.PLB.binned,
+                           p = p,
+                           w = c(bins_this_seg$wmin,
+                                 max(bins_this_seg$wmax)),
+                           d = bins_this_seg$binCount,
+                           vecDiff = 1,             # increase this if hit a bound
+                           vecInc = 1e-10)
+    res_segs[s, "segment"] <- s
+    res_segs[s, "segMin"]  <- min(bins_this_seg$wmin)
+    res_segs[s, "segMax"]  <- max(bins_this_seg$wmax)
+    res_segs[s, "confMin"] <- MLEbin.res$conf[1]
+    res_segs[s, "b"]       <- MLEbin.res$MLE
+    res_segs[s, "confMax"] <- MLEbin.res$conf[2]
+  }
+
+  return(list(bins_in_segs = bins_segs,
+              b_segs = res_segs))
+}
+
+
+
 
 ##' Calculate negative log-likelihood for the bounded power-law
 ##'   distribution
@@ -213,7 +335,6 @@ negLL.PLB.binned = function(b,
                             J = length(d),
                             xmin = min(w),
                             xmax = max(w))
-
   {
    # Ideally should fix those J=length(d) type things in args, that messed me up in
    # another project.

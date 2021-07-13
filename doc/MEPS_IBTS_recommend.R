@@ -217,7 +217,8 @@ xlim.global = c(min(dataRecommend.isd$wmin),
 #  #                 xmin = dplyr::filter(MLEbins.res, Year ==
 #  #                                                      fullYears[i])$xmin,
 #  #                 xmax = dplyr::filter(MLEbins.res, Year ==
-#  #                                                   fullYears[i])$xmax
+#  #                                                   fullYears[i])$xmax,
+#  #                 IBTS_MEPS_figs = TRUE
 #  #                 )
 #  #  }
 #  # ```
@@ -240,7 +241,8 @@ xlim.global = c(min(dataRecommend.isd$wmin),
 #                 xmin = dplyr::filter(MLEbins.res, Year ==
 #                                                      fullYears[i])$xmin,
 #                 xmax = dplyr::filter(MLEbins.res, Year ==
-#                                                   fullYears[i])$xmax
+#                                                   fullYears[i])$xmax,
+#                 IBTS_MEPS_figs = TRUE
 #                 )
 #    dev.off()
 #  }

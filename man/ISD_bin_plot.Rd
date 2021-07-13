@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting.R
 \name{ISD_bin_plot}
 \alias{ISD_bin_plot}
-\title{Recommended plots of individual size distribution and fit for binned data}
+\title{Recommended plots of individual size distribution and fit for binned data with overlapping bins}
 \usage{
 ISD_bin_plot(
   data.year,
@@ -17,7 +17,8 @@ ISD_bin_plot(
   MLE.round = 2,
   xLabel.small = c(5, 50, 500, 5000),
   yBig.inc = 1000,
-  ySmall.inc = 250,
+  yBig.max = 10,
+  ySmall.inc = NA,
   ySmall.tcl = -0.2,
   xLab = expression(paste("Body mass (", italic(x), "), g")),
   yLab = expression(paste("Number of ", values >= italic(x))),
@@ -31,12 +32,17 @@ ISD_bin_plot(
   par.mfrow = c(2, 1),
   par.mai = c(0.4, 0.5, 0.05, 0.3),
   par.cex = 0.7,
-  mgp.vals = c(1.6, 0.5, 0)
+  mgp.vals = c(1.6, 0.5, 0),
+  IBTS_MEPS_figs = FALSE,
+  x.PLB = NA
 )
 }
 \arguments{
 \item{data.year}{tibble containing columns Year, wmin, wmax, Number,
-countGTEwmin, lowCount, highCount}
+countGTEwmin, lowCount, highCount, for a single year (or instance) to
+show; Year not used, but no need to remove (it is in the results for the
+IBTS data). , countGTEwmin is, for a given bin, the total counts greater
+than that bin's wmin.}
 
 \item{b.MLE}{maximum likelihood estimate of \emph{b} (ideally from the MLEbins method)}
 
@@ -47,7 +53,7 @@ countGTEwmin, lowCount, highCount}
 \item{year}{year of data to go into legend (use NA if not applicable)}
 
 \item{xlim}{(soft) limits of x-axis. If NA then automatically uses the minimum
-\code{wmin} and maximum \code{wmax} for that data set (so good to set globally when
+\code{wmin} and maximum \code{wmax} for that data set (so it's good to set it globally when
 doing multiple years).}
 
 \item{xmin, xmax:}{values of \code{xmin} and \code{xmax} to plot the PLB curve}
@@ -57,13 +63,16 @@ log-log plot, but goes to the proportion \code{yScaling} (which is less than 1)
 of the minimum value of counts greater than the highest \code{wmin} value. Do
 such that can see the right-most bin in all plots.}
 
-\item{MLE.round}{number of decimal places to show MLE of b on the top plot}
+\item{MLE.round}{number of decimal places to show MLE of \emph{b} on the top plot}
 
 \item{xLabel.small}{which small tickmarks to label on the x-axis}
 
 \item{yBig.inc}{increment for labelled big tickmarks on the unlogged y-axis}
 
-\item{ySmall.inc}{increment for small unlabelled tickmarks on the y-axis}
+\item{yBig.max}{maximum number of desired labelled big tickmarks on the unlogged y-axis}
+
+\item{ySmall.inc}{increment for small unlabelled tickmarks on the y-axis (if
+NA then is set to yBig.inc/4)}
 
 \item{ySmall.tcl}{length of small y-axis tick marks - only for (a) maybe}
 
@@ -94,6 +103,13 @@ number of columns)}
 \item{par.cex}{magnification of plotting text and symbols relative to default}
 
 \item{mgp.vals}{margin line for axis title, axis labels and axis line}
+
+\item{IBTS_MEPS_figs}{logical, TRUE for exactly reproducing the original
+MEPS Figures 7 and S.5-S.34 (which were done before some improvements to
+this function)}
+
+\item{x.PLB}{vector of values to use to plot the fitted PLB curve; if NA then
+automatically calculated}
 }
 \value{
 two-panel figure of the recommended plot of binned data and the

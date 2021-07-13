@@ -4,7 +4,8 @@
 \name{dataOrig}
 \alias{dataOrig}
 \title{Original IBTS dataset downloaded from DATRAS website}
-\format{Dataframe with 178,435 rows and 13 columns, which are (I think
+\format{
+Dataframe with 178,435 rows and 13 columns, which are (I think
 automatically named from the DATRAS database, with \code{a} and \code{b} added from Fung et
 al. by Julia, though see vignette for units):
 \itemize{
@@ -21,7 +22,8 @@ al. by Julia, though see vignette for units):
 \item b
 \item weight_g
 \item CPUE_bio_per_hour
-}}
+}
+}
 \source{
 From running \code{data-raw/IBTS-data.R} on the original data file (that
 is too big to save in this package).

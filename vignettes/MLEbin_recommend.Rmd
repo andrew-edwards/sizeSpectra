@@ -1,0 +1,259 @@
+---
+title: "MLEbin_recommend"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MLEbin_recommend}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 5.7,
+  fig.height = 7
+)
+```
+
+## Recommended fitting and plotting approach for data that are binned (with just one set of bin breaks)
+
+```{r setup}
+library(sizeSpectra)
+# library(tibble)  # Else prints all of a tibble
+```
+
+This vignette is for data that are only available in standard binned form, with one
+set of bin breaks (unlike the overlapping species-specific bins shown in MEPS
+Fig. 7). For example, zooplankton data available in bins that progressively
+double in bin width. Or, data that are only available in digitised form from earlier papers.
+
+This vignette shows how to fit the PLB disribution (using the
+MLEbin method) and plot it in a similar way to the MEPS Fig. 7. The plotting is
+done using the new function `ISD_bin_plot_nonoverlapping()`, which is a wrapper
+for the more complex (and slightly updated) `ISD_bin_plot()`.
+
+Note: this is not (yet) part of any publication and so has not been peer-reviewed,
+it's just exploring some potentially useful plotting approaches.
+
+### Simulate and fit data
+
+First, generate some data from a true PLB distribution and bin it (using bin widths
+that double in size):
+```{r generate}
+set.seed(42)
+x <- rPLB(n = 1000,
+          b = -2,
+          xmin = 1,
+          xmax = 1000)
+
+x.binned <- binData(x,
+                    binWidth = "2k")  # 1, 2, 5 or "2k"
+
+head(x.binned$indiv)     # Individual x values and which bin they are assigned to
+x.binned$binVals         # Bins and the counts in each bin (with extra columns
+                         #  that we won't need here).
+```
+
+Now fit the PLB distribution using the MLEbin method.
+The fitting function takes the binned data as two vectors (the bin breaks
+and the counts in each bin):
+```{r likelihood}
+num.bins <- nrow(x.binned$binVals)
+
+# bin breaks are the minima plus the max of the final bin:
+binBreaks <- c(dplyr::pull(x.binned$binVals, binMin),
+               dplyr::pull(x.binned$binVals, binMax)[num.bins])
+
+binCounts <- dplyr::pull(x.binned$binVals, binCount)
+
+MLEbin.res <-  calcLike(negLL.PLB.binned,
+                        p = -1.5,
+                        w = binBreaks,
+                        d = binCounts,
+                        J = length(binCounts),   # = num.bins
+                        vecDiff = 1)             # increase this if hit a bound
+```
+The `NA/Inf replaced by maximum positive value` warnings are fine - the
+likelihood function is blowing up in a very unlikely region of parameter
+space.
+
+### Plot the data and the fit like in MEPS Fig. 7
+
+Now plot the data and results using:
+```{r, plotvec, fig.width = 5.36, fig.height = 8}
+# fig.width is 0.67 * fig.height (which is 8)
+ISD_bin_plot_nonoverlapping(binBreaks = binBreaks,
+                            binCounts = binCounts,
+                            b.MLE = MLEbin.res$MLE,
+                            b.confMin = MLEbin.res$conf[1],
+                            b.confMax = MLEbin.res$conf[2])
+```
+
+The y-axis is (a) linear and (b) logarithmic. For each bin, the horizontal green
+line shows the range of body masses of that bin, with its value
+on the y-axis corresponding to the total number of individuals in bins whose
+minima are $\geq$ the bin's minimum. By definition, this includes all individual
+in that bin; for example, all $n = 1000$ individuals are $\geq$ the minimum of
+the first (left-most) bin, so that bin is at $1000$ on the y-axis. The vertical
+span of each grey rectangle shows the possible numbers of
+individuals with body mass $\geq$ the
+body mass of individuals in that bin (horizontal
+span is the same as for the green lines). The maximum number of such individuals
+is the same as the green line, and the minimum number (bottom of grey rectangle)
+is the total number of individuals $\geq$ the bin's maximum. By definition, this is then the
+green line for the next bin. This plotting method allows us to properly represent the
+discrete binned data on a continuous scale. For example, for a body mass of 1.5
+g we can see that the number (on the y-axis) of possible individual individuals with
+body mass $\geq$ 1.5 g is between `r sum(binCounts) - binCounts[1]` and `r
+sum(binCounts)`. This is true for all body masses in the first bin... HERE
+
+
+The text
+in (a) gives the MLE for the size-spectrum exponent
+$b$, and the sample size $n$.
+
+Both figures show that the PLB distribution is an excellent fit for these data
+the red curves go through the top-left and bottom-right corners of the grey
+boxes. Of course, the data are simulated from a PLB distribution and so should
+be a good fit, but these figures show the benefit of the plotting approach
+(which may not have been so obvious in MEPS Fig. 7 for data with a complex bin
+structure).
+
+### Plotting the data if stored as a tibble
+
+Real data can either input to the plotting function in the above form - a vector `binBreaks`
+of breakpoints and a vector `binCounts` of counts in each bin, or as a tibble.
+
+If you prefer keeping your binned data as a tibble, then you can use the tible
+in the call to the plotting function (though you do still need to input the data
+as two vectors in the `calcLike` call above). This gives the same figures:
+```{r, plottib, fig.width = 5.36, fig.height = 8}
+ISD_bin_plot_nonoverlapping(binValsTibble = x.binned$binVals,
+                            b.MLE = MLEbin.res$MLE,
+                            b.confMin = MLEbin.res$conf[1],
+                            b.confMax = MLEbin.res$conf[2],
+                            yBig.inc = 500)
+```
+
+## LBN plot if data are body-masses
+
+In MEE Fig. 6 we recommended, for body-mass data, showing the biomass size
+spectrum, as people are used to seeing this type of plot. If body-mass data are only
+available in binned form (as here), then this would be particularly
+appropriate. The fit is calculated using likelihood, but then shown on the
+biomass size spectrum.
+
+Here, we introduce a modified version of MEE Fig 6(a). In
+that figure the normalised biomass in each bin (the total biomass in a bin divided
+by its bin width) was shown as a single point, as has been traditional in such
+figures. However, this does not explicitly show the true width of the bin, and
+ignores the uncertainty in the total biomass (that arises due to the binning).
+
+Consider an example bin range from 15 to 20 g, with a count of 30
+individuals. The possible range of the *total* biomass of those 30 individuals is
+therefore 450 to 600 g, and the normalised biomass (dividing the total biomass
+by the bin width) is 90 to 120.
+
+More generally,
+following the notation in MEE Section A.1.7, bin $j$ covers values of $x$ (body
+masses) in the interval $[w_j, w_{j+1})$, and contains $d_j$ individuals. So the
+total biomass in bin $j$ is in the range $[d_j w_j, d_j w_{j+1})$. The
+normalised biomass in the bin (of width $w_{j+1} - w_j$), is therefore
+in the range $d_j w_j /(w_{j+1} - w_j)$ to $d_j w_{j+1} / (w_{j+1} - w_j)$. We
+express this as the vertical extent of the grey box for each bin in the figures below.
+
+The horizontal range of each bin is simply shown as the horizontal extent of the
+grey box for that bin; for bin $j$ this is simply $w_j$ to $w_{j+1}$, as in the
+above figures.
+
+We present three options, depending on whether axes are logged or not.
+
+Neither axis logged:
+```{r, plotLBN, fig.height = 5.7}
+LBN_bin_plot(binValsTibble = x.binned$binVals,
+             b.MLE = MLEbin.res$MLE,
+             b.confMin = MLEbin.res$conf[1],
+             b.confMax = MLEbin.res$conf[2],
+             log.xy = "",
+             plot.binned.fitted = FALSE)
+```
+
+This is clearly hard to see, hence motivates logging the x-axis:
+```{r, plotLBN2, fig.height = 5.7}
+LBN_bin_plot(binValsTibble = x.binned$binVals,
+             b.MLE = MLEbin.res$MLE,
+             b.confMin = MLEbin.res$conf[1],
+             b.confMax = MLEbin.res$conf[2],
+             leg.text = "(b)",
+             log.xy = "x",
+             plot.binned.fitted = FALSE)
+```
+
+This is easier to see and shows the good fit to the data, though it is harder to
+see the high body-mass bins that have low normalised biomass in them. The grey
+boxes show (horizontally) the range of each bin, and (vertically) the possible
+range in normalised biomass for that bin, given the data. The red solid curve
+fits through the boxes; dashed lines are the PLB distribution with $b$ set to
+the limits of the 95% confidence interval (calculated using likelihood).
+
+So log both axes (which is analogous to the traditional LBN plot, like in MEE
+Fig. 6):
+```{r, plotLBN3, fig.height = 5.7}
+LBN_bin_plot(binValsTibble = x.binned$binVals,
+             b.MLE = MLEbin.res$MLE,
+             b.confMin = MLEbin.res$conf[1],
+             b.confMax = MLEbin.res$conf[2],
+             leg.text = "(c)",
+             log.xy = "xy",
+             plot.binned.fitted = FALSE)
+```
+
+The fit is really good for the numerous small individuals, less so for the
+larger rare individuals. The log-log axes do emphasise the relatively poorer fit of the
+larger body sizes, but there are few individuals here. The red lines are all
+straight because of the log-log axes, but are calculated using likelihood, not
+regression (which would be the LBNbiom method).
+
+Since the data are only available in binned form, the straight red lines are,
+upon reflection, not
+actually the most intuitive things to plot. So next we estimate the expected
+normalised biomass in each bin based on the MLE for $b$ (giving the horizontal
+red bars) and the confidence limits for $b$ (giving the pink rectangles,
+slightly shortened horizontally to still show the grey rectangles):
+```{r, plotLBN4, fig.height = 5.7}
+LBN_bin_plot(binValsTibble = x.binned$binVals,
+             b.MLE = MLEbin.res$MLE,
+             b.confMin = MLEbin.res$conf[1],
+             b.confMax = MLEbin.res$conf[2],
+             leg.text = "(c)",
+             log.xy = "xy",
+             plot.binned.fitted = TRUE)
+```
+
+This more clearly shows the uncertainty in expected normalised biomass is larger
+at higher biomasses, because the bins are wider (I think). The pink and
+grey boxes overlap, showing some consistency between them that is not obvious
+from the earlier plots.
+
+A useful thing will be to create movie where the fit is for incrementally higher
+values of $x_{min}$
+
+
+### Larger confidence interval curiosity
+
+Just curious to see what the figure looks like with a confidence interval for
+$b$ that's set to twice as wide as the actual one (fixing the interval here by
+adding half the width to each side):
+```{r, plotLBN22, fig.height = 5.7}
+confWidth <- diff(MLEbin.res$conf)
+confWidth
+LBN_bin_plot(binValsTibble = x.binned$binVals,
+             b.MLE = MLEbin.res$MLE,
+             b.confMin = MLEbin.res$conf[1] - confWidth/2,
+             b.confMax = MLEbin.res$conf[2] + confWidth/2)
+```
+
+But, now there's no real reason to label the axes with logged values, rather
+than use the more intuitive actual values (still on a log scale).

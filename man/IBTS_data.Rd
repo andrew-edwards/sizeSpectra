@@ -4,7 +4,8 @@
 \name{IBTS_data}
 \alias{IBTS_data}
 \title{The IBTS data after some processing as in vignette \code{MEPS_IBTS_1}}
-\format{Dataframe where each of 42,298 rows is a unique combination of \code{Year},
+\format{
+Dataframe where each of 42,298 rows is a unique combination of \code{Year},
 \code{SpecCode} and \code{LngtClass}. Columns are:
 \itemize{
 \item Year: Year of survey
@@ -19,7 +20,8 @@ species, as per our MEPS equation (1).
 species, as per our MEPS equation (1).
 \item bodyMass: Estimated body mass (g) for an individual of that species,
 assuming \code{LngtClass} to be the length.
-}}
+}
+}
 \source{
 From preprocessing as per vignette \code{MEPS_IBTS_1}.
 }

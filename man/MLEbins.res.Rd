@@ -4,7 +4,8 @@
 \name{MLEbins.res}
 \alias{MLEbins.res}
 \title{Results from using MLEbins method on each year of IBTS data set, as in MEPS Table S.2}
-\format{Table data frame (\code{tbl_df}) with 30 rows (one for each year) and
+\format{
+Table data frame (\code{tbl_df}) with 30 rows (one for each year) and
 corresponding columns for each year:
 \itemize{
 \item Year: Year of data
@@ -15,7 +16,8 @@ corresponding columns for each year:
 \item confMin,confMax: Minimum and maximum of 95\\% confidence interval of
 $b$
 \item C: Calculated normalisation constant
-}}
+}
+}
 \source{
 Vignette \code{MEPS_IBTS_MLEbins}.
 }

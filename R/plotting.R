@@ -29,6 +29,8 @@
 #  (MEPS Figures 6, S.1, S.2 and S.3).
 # ISD_bin_plot - recommended plotting for binned data (MEPS Figures 7 and
 #  S.5-S.34).
+# ISD_bin_plot_nonoverlapping - recommend plotting for binned data with
+#  non-overlapping bins, which is the usual case.
 
 ##' Plot bounded straight line of results of `lm()` fit
 ##'
@@ -1835,7 +1837,7 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 }
 
 
-##' Recommended plots of individual size distribution and fit for binned data
+##' Recommended plots of individual size distribution and fit for binned data with overlapping bins
 ##'
 ##' Plots the individual size distribution and the fit from the MLEbins method,
 ##' with linear and then logarithmic y-axes, in the recommended way that takes
@@ -1843,23 +1845,28 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' the MEPS paper.
 ##'
 ##' @param data.year tibble containing columns Year, wmin, wmax, Number,
-##'   countGTEwmin, lowCount, highCount
+##'   countGTEwmin, lowCount, highCount, for a single year (or instance) to
+##'   show; Year not used, but no need to remove (it is in the results for the
+##'   IBTS data). , countGTEwmin is, for a given bin, the total counts greater
+##'   than that bin's wmin.
 ##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbins method)
 ##' @param b.confMin lower 95\% confidence limits of *b*
 ##' @param b.confMax upper 95\% confidence limits of *b*
 ##' @param year year of data to go into legend (use NA if not applicable)
 ##' @param xlim (soft) limits of x-axis. If NA then automatically uses the minimum
-##'   `wmin` and maximum `wmax` for that data set (so good to set globally when
+##'   `wmin` and maximum `wmax` for that data set (so it's good to set it globally when
 ##'   doing multiple years).
 ##' @param xmin,xmax: values of `xmin` and `xmax` to plot the PLB curve
 ##' @param yScaling Scaling of y-minimum of y-axis. Axis can't go to zero on
 ##'   log-log plot, but goes to the proportion `yScaling` (which is less than 1)
 ##'   of the minimum value of counts greater than the highest `wmin` value. Do
 ##'   such that can see the right-most bin in all plots.
-##' @param MLE.round number of decimal places to show MLE of b on the top plot
+##' @param MLE.round number of decimal places to show MLE of *b* on the top plot
 ##' @param xLabel.small which small tickmarks to label on the x-axis
 ##' @param yBig.inc increment for labelled big tickmarks on the unlogged y-axis
-##' @param ySmall.inc increment for small unlabelled tickmarks on the y-axis
+##' @param yBig.max maximum number of desired labelled big tickmarks on the unlogged y-axis
+##' @param ySmall.inc increment for small unlabelled tickmarks on the y-axis (if
+##'   NA then is set to yBig.inc/4)
 ##' @param ySmall.tcl length of small y-axis tick marks - only for (a) maybe
 ##' @param xLab label for x-axis
 ##' @param yLab label for y-axis
@@ -1876,6 +1883,11 @@ species_bins_plots <- function(dataBin_vals = dataBin,
 ##' @param par.mai margin size in inches
 ##' @param par.cex magnification of plotting text and symbols relative to default
 ##' @param mgp.vals margin line for axis title, axis labels and axis line
+##' @param IBTS_MEPS_figs logical, TRUE for exactly reproducing the original
+##'   MEPS Figures 7 and S.5-S.34 (which were done before some improvements to
+##'   this function)
+##' @param x.PLB vector of values to use to plot the fitted PLB curve; if NA then
+##'   automatically calculated
 ##' @return two-panel figure of the recommended plot of binned data and the
 ##'   fitted individual size distribution, like Figures 7 and S.5-S.34 of the
 ##'   MEPS paper. See the vignette `MEPS_IBTS_recommend` for explicit example.
@@ -1893,7 +1905,8 @@ ISD_bin_plot <- function(data.year,
                          MLE.round = 2,
                          xLabel.small = c(5, 50, 500, 5000),
                          yBig.inc = 1000,
-                         ySmall.inc = 250,
+                         yBig.max = 10,
+                         ySmall.inc = NA,
                          ySmall.tcl = -0.2,
                          xLab = expression(paste("Body mass (", italic(x), "), g")),
                          yLab = expression(paste("Number of ", values >= italic(x))),
@@ -1907,7 +1920,9 @@ ISD_bin_plot <- function(data.year,
                          par.mfrow = c(2, 1),
                          par.mai = c(0.4, 0.5, 0.05, 0.3),
                          par.cex = 0.7,
-                         mgp.vals = c(1.6,0.5,0)
+                         mgp.vals = c(1.6,0.5,0),
+                         IBTS_MEPS_figs = FALSE,
+                         x.PLB = NA
                          )
   {
   sumNumber = sum(data.year$Number)
@@ -1915,20 +1930,46 @@ ISD_bin_plot <- function(data.year,
   par(mfrow = par.mfrow)
   par(mai = par.mai, cex = par.cex)  # Affects all figures
 
+  if(is.na(ySmall.inc)){
+    ySmall.inc = yBig.inc/4
+  }
+
   if(is.na(xlim[1])){
     xlim = c(min(data.year$wmin),
              max(data.year$wmax))  # Range of axis
-    }
+  }
 
-  x.PLB = seq(xmin,
-              xmax,
-              length=10000)
-          # x values to plot PLB, need high resolution for both plots, but
-          #  insert value close to xmax to make log-log curve go down further
-  x.PLB.length = length(x.PLB)
-  x.PLB = c(x.PLB[-x.PLB.length],
-            0.99999 * x.PLB[x.PLB.length],
-            x.PLB[x.PLB.length])
+  if(is.na(xmin)){
+    xmin = min(data.year$wmin)
+  }
+
+  if(is.na(xmax)){
+    xmax = max(data.year$wmax)
+  }
+
+  # x values to plot PLB if not provided; need high resolution for both plots.
+  if(is.na(x.PLB)){
+    #  First option is just to keep the exact original code used in MEPS
+    #  figures,
+    #  second option is probably more generally useful (for example, when using
+    #  very small size classes like for zooplankton data)
+    ifelse((IBTS_MEPS_figs),
+           x.PLB <- seq(xmin,
+                        xmax,
+                        length=10000),
+           x.PLB <- exp(seq(log(xmin),
+                            log(xmax),
+                            length = 10000))
+           )
+
+    #  Need to insert value close to xmax to make log-log curve go down further;
+    #   since log(1 - pPLB(xmax, ...)) = log(0) = -Inf   we need to force the asymptopte
+    x.PLB.length = length(x.PLB)
+    x.PLB = c(x.PLB[-x.PLB.length],
+              0.9999999999 * x.PLB[x.PLB.length],
+              x.PLB[x.PLB.length])
+  }
+
   y.PLB = (1 - pPLB(x = x.PLB,
                     b = b.MLE,
                     xmin = min(x.PLB),
@@ -1969,6 +2010,15 @@ ISD_bin_plot <- function(data.year,
            yLim=NULL,
            xLabelSmall = xLabel.small)
   yBig = seq(0, yRange[2], yBig.inc)  # May have to tweak for some years
+
+  if(length(yBig) > yBig.max){
+    stop(paste0("The value of yBig.inc will yield ", length(yBig),
+    " big tickmarks on the unlogged y-axis, which seems a little excessive.
+    Decrease the value of yBig.inc in ISD_bin_plot() or ISD_bin_plot_nonoverlapping()
+    by X-fold to decrease the number of tickmarks X-fold to a reasonable amount
+    (default of yBig.inc is 1000). If you do want more than 10 big tickmarks,
+    then set yBig.max to the desired number."))
+  }
   # Big labelled:
   axis(2, at = yBig, labels = yBig, mgp=mgp.vals)
   # Small unlabelled:
@@ -2016,6 +2066,7 @@ ISD_bin_plot <- function(data.year,
          legend = paste0("n=", round(yRange[2], 2)),
          bty = "n",
          inset = 3 * inset.year)
+  box()     # to redraw axes over any boxes
 
   # y-axis logged
   # empty plot:
@@ -2076,4 +2127,404 @@ ISD_bin_plot <- function(data.year,
          "(b)",
          bty="n",
          inset = inset.a)
+  box()       # to redraw axes over any boxes
+}
+
+##' Recommended plots of individual size distribution and fit for binned data with non-overlapping bins
+##'
+##' For data in binned form (i.e. bin breaks and counts), plots the individual
+##' size distribution and the fit from the MLEbin method (alreadly calculated)
+##' with linear and then logarithmic y-axes. This is a simpler version of
+##' the recommended plots in Figures 7 and S.5-S.34 of the MEPS paper; simpler
+##' because if the bins are not overlapping (i.e. just one set of bin breaks,
+##' not differing by species like in Fig. 7) then we do not have the grey boxes,
+##' just the horizontal green lines. See vignette `MLEbin_recommend.Rmd`.
+##'
+##' Bin breaks and counts are input as EITHER a single tibble `binValsTibble`
+##'  with each row representing a bin, OR as vectors `binBreaks` and
+##'  `binCounts`.
+##'
+##' This function calls `ISD_bin_plot()` which is the original one for Fig 7 of
+##'   MEPS paper.
+##' @param binValsTibble tibble of binned data with each row representing a bin
+##'   and with columns `binMin` and `binMmax` (min and max break of each bin)
+##'   and `binCount` (count in that bin), as in the `binVals` component of the
+##'   output of `binData`. `wmin` and `wmax` can also be used instead of
+##'   `binMin` and `binMax`. Extra columns are ignored.
+##' @param binBreaks vector of bin breaks
+##' @param binCounts vector of bin counts
+##'
+##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbin method)
+##' @param b.confMin lower 95\% confidence limits of *b*
+##' @param b.confMax upper 95\% confidence limits of *b*
+##' @param ... further arguments to be passed to `ISD_bin_plot()`
+##' @return
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @
+##' @}
+ISD_bin_plot_nonoverlapping <- function(binValsTibble = NULL,
+                                        binBreaks = NULL,
+                                        binCounts = NULL,
+                                        b.MLE,
+                                        b.confMin,
+                                        b.confMax,
+                                        ...){
+  stopifnot(
+    "Need binValsTibble OR both binBreaks and binCounts to be NULL" =
+    (!is.null(binValsTibble) & is.null(binBreaks) & is.null(binCounts)) |
+    (is.null(binValsTibble) & !is.null(binBreaks) & !is.null(binCounts))
+  )
+
+  # Create a tibble with the desired columns, to go into ISD_bin_plot:
+  ifelse(!is.null(binValsTibble),
+    # Adapt the existing tibble into the required form:
+    ifelse("binMin" %in% names(binValsTibble),
+      binTibble <- dplyr::select(binValsTibble,
+                                 wmin = binMin,
+                                 wmax = binMax,
+                                 Number = binCount),
+      binTibble <- dplyr::select(binValsTibble,
+                                 wmin,
+                                 wmax,
+                                 Number = binCount)),
+    # Else no tibble, so create one from the vectors binBreaks and binCounts:
+    binTibble <- dplyr::tibble(wmin = binBreaks[-length(binBreaks)],
+                               wmax = binBreaks[-1],
+                               Number = binCounts))
+
+    # Have to do not with dplyr:
+    wmin.vec <- binTibble$wmin
+    wmax.vec <- binTibble$wmax
+    num.vec <- binTibble$Number
+
+    # Here, highCount and countGWEwmin will be the same since only one set of
+    # bin breaks; but do them both to save adapting ISD_bin_plot()
+    countGTEwmin <- rep(NA, length(num.vec)) # to do a manual count
+    lowCount <- countGTEwmin
+    highCount <- countGTEwmin
+
+    for(iii in 1:length(countGTEwmin))
+    {
+      countGTEwmin[iii] <- sum( (wmin.vec >= wmin.vec[iii]) * num.vec)
+      lowCount[iii] <-     sum( (wmin.vec >= wmax.vec[iii]) * num.vec)
+      highCount[iii] <-    sum( (wmax.vec >  wmin.vec[iii]) * num.vec)
+    }
+
+# When having working, check if can just to mutate here; think can: - can't,
+#  but there is another command
+    binTibble <- cbind(binTibble,
+                      "countGTEwmin" = countGTEwmin,
+                      "lowCount" = lowCount,
+                      "highCount" = highCount)
+    binTibble <- tibble::as_tibble(binTibble) # This is one of the desired input for
+                                         #  the plotting function below
+  ISD_bin_plot(data.year = binTibble,
+               b.MLE = b.MLE,
+               b.confMin = b.confMin,
+               b.confMax = b.confMax,
+               ...)
+}
+
+
+##' Biomass size spectrum plot for binned data demonstrating uncertainties
+##'
+##' Biomass size spectrum plot for binned data, showing the bin widths
+##' explicitly and the normalised biomass in
+##' each bin (with resulting uncertainties). So extending MEE Fig. 6 for already
+##' binned data, using a new approach motivated by MEPS Fig. 7. Should probably
+##' then be recommended to replace MEE Fig. 6. Axes are logged, and labelled as either
+##' logged or (more intuitive) logged values. See vignette `MLEbin_recommend.Rmd`.
+##'
+##' Bin breaks and counts are input as EITHER a single tibble `binValsTibble`
+##'  with each row representing a bin, OR as vectors `binBreaks` and
+##'  `binCounts`.
+##'
+##' @param binValsTibble tibble of binned data with each row representing a bin
+##'   and with columns `binMin` and `binMmax` (min and max break of each bin)
+##'   and `binCount` (count in that bin), as in the `binVals` component of the
+##'   output of `binData`. `wmin` and `wmax` can also be used instead of
+##'   `binMin` and `binMax`. Extra columns are ignored.
+##' @param binBreaks vector of bin breaks
+##' @param binCounts vector of bin counts
+##' @param b.MLE maximum likelihood estimate of *b* (ideally from the MLEbin method)
+##' @param b.confMin lower 95\% confidence limits of *b*
+##' @param b.confMax upper 95\% confidence limits of *b*
+##' @param plot.binned.fitted if TRUE then also plot the estimated normalised
+##'   biomass in each bin for the MLE of *b* and it's confidence limits
+##' @param log.xy Which axes to log, for `plot(..., log = log.xy)`. So "xy" for
+##'   log-log axes, "x" for only x-axis logged, "" for both axes unlogged.
+##' @param xLim
+##' @param yLim
+##' @param rect.col
+##' @param logLabels
+##' @param xLab
+##' @param ""))
+##' @param yLab
+##' @param x.PLB vector of values to use to plot the fitted PLB curve; if NA then
+##'   automatically calculated
+##' @param legend if TRUE then add legend
+##' @param leg.pos position of legend, from "bottomright"', '"bottom"',
+##'   '"bottomleft"', '"left"', '"topleft"', '"top"', '"topright"', '"right"'
+##'   and '"center"'.
+##' @param inset inset distance vector for legend
+##' @param leg.text text for legend
+##' @param ... further arguments to be passed to `plot()` and
+##'   `plot_binned_fitted()`
+##' @return TODO should return a tibble of results
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @
+##' @}
+LBN_bin_plot <- function(binValsTibble = NULL,
+                         binBreaks = NULL,
+                         binCounts = NULL,
+                         b.MLE,
+                         b.confMin,
+                         b.confMax,
+                         plot.binned.fitted = TRUE,
+                         log.xy = "xy",
+                         xLim = NA,
+                         yLim = NA,
+                         rect.col = "grey",
+                         logLabels = FALSE,   # log marks labelling or unlogged                         # tick marks
+                         xLabel.small = c(2, 5, 20, 50, 200, 500),
+                         yLabel.small = c(5, 50, 500),
+                         xLab = expression(paste("Body mass ", italic(x), "(g)")),
+                         yLab = "Normalised biomass",
+                         x.PLB = NA,
+                         legend = TRUE,
+                         leg.pos = "topright",
+                         inset = c(0,0),
+                         leg.text = "(a)",
+                         ...){
+
+#Maybe extra options to add, as for MLE.plots.recommend:
+
+#                                inset = c(0, -0.04),
+#                                mgpVals = c(1.6, 0.5, 0),
+#                                yBigTicks = 0:3,
+#                                ySmallTicks = c(0.5, 1.5, 2.5)
+
+
+
+  stopifnot(
+    "Need binValsTibble OR both binBreaks and binCounts to be NULL" =
+    (!is.null(binValsTibble) & is.null(binBreaks) & is.null(binCounts)) |
+    (is.null(binValsTibble) & !is.null(binBreaks) & !is.null(binCounts))
+  )
+
+  stopifnot(
+    "log.xy must be xy, x or empty (all in double quotes) -- see ?sizeSpectra::LBN_bin_plot()" =
+      log.xy %in% c("xy", "x", "")
+  )
+
+  # Create a tibble with the desired columns:
+  ifelse(!is.null(binValsTibble),
+    # Adapt the existing tibble into a standard form, similar to for ISD_bin_plot():
+    ifelse("binMin" %in% names(binValsTibble),
+      binTibble <- dplyr::select(binValsTibble,
+                                 wmin = binMin,
+                                 wmax = binMax,
+                                 Number = binCount),
+      binTibble <- dplyr::select(binValsTibble,
+                                 wmin,
+                                 wmax,
+                                 Number = binCount)),
+    # Else no tibble, so create one from the vectors binBreaks and binCounts:
+    binTibble <- dplyr::tibble(wmin = binBreaks[-length(binBreaks)],
+                               wmax = binBreaks[-1],
+                               Number = binCounts))
+
+  binTibble <- dplyr::mutate(binTibble,
+                             lowBiomass = wmin * Number,
+                             highBiomass = wmax * Number,
+                             binWidth = wmax - wmin,
+                             lowBiomassNorm       = lowBiomass / binWidth,
+                             highBiomassNorm      = highBiomass / binWidth)
+
+  if(is.na(xLim)){
+    xLim <- c(min(binTibble$wmin),
+              max(binTibble$wmax))
+  }
+
+  if(is.na(yLim)){
+    yLim <- c(min(binTibble$lowBiomassNorm),
+              max(binTibble$highBiomassNorm))          # may need pull
+  }
+
+  # Was going to include option to have logs on tickmarks, but stick with just
+  # unlogged values
+  #  if(is.null(xLab)){
+  #    ifelse(logLabels,
+  #           xLab <- expression(paste("Log10 (body mass ", italic(x), ")")),
+  #           xLab <- expression(paste("Body mass ", italic(x), "(g)"))
+  #           )
+  #  }
+  #
+  #  if(is.null(yLab)){
+  #    ifelse(logLabels,
+  #           yLab <- "Log10 (normalised biomass)",
+  #           yLab <- "Normalised biomass"
+  #           )
+  #  }
+
+  # Calculate the fitted estimates of biomass in each bin, for b, b.confMin and b.confMax
+  binTibble <- pBiomassBinsConfs(binValsTibble = binTibble,
+#                                 xmin = min(binTibble$wmin),
+#                                 xmax = max(binTibble$wmax),
+#                                 n = sum(binTibble$Number),
+                                 b.MLE = b.MLE,
+                                 b.confMin = b.confMin,
+                                 b.confMax = b.confMax)
+
+
+  plot(binTibble$wmin,         # not plotted, just need something
+       binTibble$highBiomassNorm,
+       log = log.xy,
+       xlab = xLab,
+       ylab = yLab,
+#       mgp = mgpVals,
+       xlim = xLim,
+       ylim = yLim,
+       xaxt = ifelse(log.xy %in% c("x", "xy") , "n", "s"),
+       yaxt = ifelse(log.xy == "xy", "n", "s"),
+       type = "n",            # empty plot
+       ...)
+
+  if(log.xy == "x"){
+    logTicks(xLim,
+             yLim = NULL,
+             xLabelSmall = xLabel.small)
+  }
+
+  if(log.xy == "xy"){
+    logTicks(xLim,
+             yLim,
+             xLabelSmall = xLabel.small,
+             yLabelSmall = yLabel.small)
+  }
+
+  box()
+
+  legend(leg.pos,
+         leg.text,
+         bty="n",
+         inset = inset)
+
+#  axis(2, at = yBigTicks,
+#       mgp = mgpVals)
+#  axis(2, at = ySmallTicks,
+#       mgp = mgpVals,
+#       tcl = -0.2,
+#       labels = rep("", length(ySmallTicks)))
+
+  rect(xleft = binTibble$wmin,
+       ybottom = binTibble$lowBiomassNorm,
+       xright = binTibble$wmax,
+       ytop = binTibble$highBiomassNorm,
+       col = rect.col)
+
+  if(is.na(x.PLB)){
+    x.PLB <- exp(seq(log(min(binTibble$wmin)),
+                     log(max(binTibble$wmax)),
+                     length = 10000))   # values to plot the MLE fit,
+                                        # encompassing data
+  }
+
+
+  # Option to plot binned version of fitted curve (do first to then overlay the
+  # straight lines of biomass density)
+  if(plot.binned.fitted){
+    plot_binned_fitted(binTibble,
+                       ...)
+  }
+
+  # Biomass density for each value of x, from MEE equation (4), using the MLE for b.
+  B.PLB <- dPLB(x.PLB,
+                b = b.MLE,
+                xmin=min(x.PLB),
+                xmax=max(x.PLB)) * sum(binTibble$Number) * x.PLB
+
+  lines(x.PLB,
+        B.PLB,
+        col="red")
+
+  # Add lines at limits of the 95% confidence interval of b:
+  lines(x.PLB,
+        dPLB(x.PLB,
+             b = b.confMin,
+             xmin = min(x.PLB),
+             xmax = max(x.PLB)) * sum(binTibble$Number) * x.PLB,
+        col="red",
+        lty=2)
+
+  lines(x.PLB,
+        dPLB(x.PLB,
+             b = b.confMax,
+             xmin = min(x.PLB),
+             xmax = max(x.PLB)) * sum(binTibble$Number) * x.PLB,
+        col="red",
+        lty=2)
+
+  # Go through this and tidy up. Could also do nonlogged version.
+  #   And add red and (uncertainty) pink rectangles for ranges expected by the
+  #   fitted distributions
+  invisible(binTibble)
+}
+
+##' Add horizontal bars and shaded rectangles to `LBN_bin_plot()`
+##'
+##' These are to show the estimated normalised biomasses in each bin, based on
+##' the MLE value of `b` and it's confidence limit values.
+##' Each horizontal bar spans a bin (default colour is red), with it's vertical value indicating the
+##' expected normalised biomass based on the MLE of `b`. The height of the
+##' shaded rectangles (default colour pink) show the range of expected
+##' normalised biomass based on the 95\% confidence interval of `b`.
+##' @param binTibble tibble of values calculated in `LBN_bin_plot()`; this
+##' function adds to that plot
+##' @param bar.col colour for the horizontal bars representing the MLE values of
+##' normalised biomass in each bin
+##' @param bar.lwd thickness of horiztonal bars
+##' @param rect.shading colour for shading of rectangles corresponding to the
+##' normalised biomasses estimated from confidence intervals of `b`
+##' @param shorter fraction shorter to make the rectangles, so can see them
+##' overlapping with grey rectangles; may not work exacly as planned (won't be symmetric) when x-axis
+##' not logged, but that's not going to be a useful plot anyway
+##' @return
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @
+##' @}
+plot_binned_fitted <- function(binTibble,
+                               bar.col = "red",
+                               bar.lwd = 3,
+                               rect.shading = "pink",
+                               shorter = 0.05
+                               ){
+
+  # Rectangles corresponding to confidence interval ranges, it doesn't matter
+  # that sometimes we'll have ybottom > ytop (I think it might almost be guaranteed
+  # to happen for at least one bin).m
+  rect(xleft = (1 + shorter) * binTibble$wmin,
+       ybottom = binTibble$estBiomassNormConfMin,
+       xright = (1 - shorter) * binTibble$wmax,
+       ytop = binTibble$estBiomassNormConfMax,
+       col = rect.shading)
+
+  # Horizontal bars corresponding to MLE values
+  segments(x0 = binTibble$wmin,
+           y0 = binTibble$estBiomassNormMLE,
+           x1 = binTibble$wmax,
+           y1 = binTibble$estBiomassNormMLE,
+           col = bar.col,
+           lwd = bar.lwd)
+
+
 }
