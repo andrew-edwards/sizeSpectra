@@ -288,7 +288,8 @@ and will just refer to the saved animation file.
 #                 xmin = dplyr::filter(MLEbins.res, Year ==
 #                                                      fullYears[i])$xmin,
 #                 xmax = dplyr::filter(MLEbins.res, Year ==
-#                                                   fullYears[i])$xmax
+#                                                   fullYears[i])$xmax,
+#                 IBTS_MEPS_figs = TRUE
 #                 )
 #  }
 # ```
@@ -319,7 +320,8 @@ for(i in 1:length(fullYears))
                xmin = dplyr::filter(MLEbins.res, Year ==
                                                     fullYears[i])$xmin,
                xmax = dplyr::filter(MLEbins.res, Year ==
-                                                 fullYears[i])$xmax
+                                                 fullYears[i])$xmax,
+               IBTS_MEPS_figs = TRUE
                )
   dev.off()
 }

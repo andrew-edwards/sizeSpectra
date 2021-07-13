@@ -3,7 +3,7 @@ title: "MEPS_IBTS_all_min_100"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MEPS_IBTS_all}
+  %\VignetteIndexEntry{MEPS_IBTS_all_min_100}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

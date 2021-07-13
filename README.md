@@ -27,6 +27,22 @@ See the [overview vignette](http://htmlpreview.github.io/?https://github.com/and
 
 The vignettes explain how to use the functions in the package to reproduce all results in both papers, and to analyse new data sets using our functions. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating text from the papers in the vignettes). In the vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
 
+## Main updates since version 1.0.0.0 (released Dec 2019)
+
+New vignette (`MLE_bin_recommend.Rmd`), linked in the [overview vignette](http://htmlpreview.github.io/?https://github.com/andrew-edwards/sizeSpectra/blob/master/doc/vignettes_overview.html), that explores some new plotting approaches for binned data using the new functions:
+ - `ISD_bin_plot_nonoverlapping()` -- Recommended plotting for binned data with non-overlapping bins, which is the usual case.
+ - `LBN_bin_plot()` -- Biomass size spectrum plot for binned data demonstrating uncertainties, showing the bin widths explicitly and the normalised biomass in each bin (with resulting uncertainties). So extending MEE Fig. 6 for already binned data, using a new approach motivated by MEPS Fig. 7.
+ - `plot_binned_fitted()` -- Add horizontal bars and shaded rectangles to `LBN_bin_plot()`, to show estimated normalised biomasses in each bin.
+
+
+Some other new functions have been added to analyse data in segments, but are not yet
+part of vignettes. These include: 
+ - `pBiomass()` -- function for the biomass distribution function from equations A.4 and A.8 of the MEE paper.
+ - `pBiomassBins()` -- to give total and normalised biomass in each bin for a fitted distribution and given bin breaks.
+ - `pBiomassBinsConfs()` -- to call `pBiomassBins()` for three values of b (MLE and confidence interval values).
+ - `calcLikeSegments()` -- Calculate MLEs and 95% confidence intervals of `b` for analysing separate body-mass segments of a data set
+
+
 ## Install instructions
 
 To install this package directly from GitHub you need the package `devtools`, so if you don't have it install it (once):

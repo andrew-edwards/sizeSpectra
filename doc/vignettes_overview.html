@@ -8,7 +8,7 @@
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Andrew Edwards" />
 
@@ -16,8 +16,24 @@
 <title>Vignettes_overview</title>
 
 
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
-<style type="text/css">code{white-space: pre;}</style>
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
@@ -106,6 +122,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
+
 <style type="text/css">body {
 background-color: #fff;
 margin: 1em auto;
@@ -116,9 +133,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -287,7 +301,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -323,6 +338,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li><p><a href="MEPS_IBTS_MLEbins.html" class="uri">MEPS_IBTS_MLEbins.html</a>: Analyse the IBTS data using the MLEbins method. Gives Figure 6 (and related Figures S.1, S.2 and S.3) showing species-specific body mass bins resulting from the length bins, Figure 8 (comparison of MLE and MLEbins values of b through time), MLEbins row of Table S.1, and Table S.2.</p></li>
 <li><p><a href="MEPS_IBTS_recommend.html" class="uri">MEPS_IBTS_recommend.html</a>: Calculations and schematic diagram (Figure S.4, somewhat automated for any species) to help explain the recommended plotting approach. The recommended Figures 7, and S.5 to S.34 for each year of the IBTS data (with code for doing separate figures and as a movie).</p></li>
 <li><p><a href="MEPS_IBTS_all_min_100.html" class="uri">MEPS_IBTS_all_min_100.html</a>: Combines the essential aspects of the above four IBTS vignettes into one, and repeats the analysis but setting the minimum body mass to be 100 g. Less for understanding everything and more for redoing the analyses with different assumptions (or data).</p></li>
+<li><p><a href="MLEbin_recommend.html" class="uri">MLEbin_recommend.html</a>: Exploring ways of plotting an LBN type plot for data that are binned with one set of bin breaks (so simpler than the IBTS data). Not part of any paper.</p></li>
 </ul>
 <p>The source code written in <code>Rmarkdown</code>, the R code that gets extracted from the <code>Rmarkdown</code> code, and the resulting .html files are all found within your library folder (where all your R libraries get saved), in <code>library\sizeSpectra\doc\</code>.</p>
 </div>

@@ -8,7 +8,7 @@
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Andrew Edwards" />
 
@@ -16,8 +16,24 @@
 <title>MEPS_IBTS_2</title>
 
 
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
-<style type="text/css">code{white-space: pre;}</style>
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
@@ -106,6 +122,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
+
 <style type="text/css">body {
 background-color: #fff;
 margin: 1em auto;
@@ -116,9 +133,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -287,7 +301,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -346,10 +361,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb2-18" data-line-number="18">                                              SpecCode,</a>
 <a class="sourceLine" id="cb2-19" data-line-number="19">                                              LngtClass),</a>
 <a class="sourceLine" id="cb2-20" data-line-number="20">                              <span class="dt">count=</span>dplyr<span class="op">::</span><span class="kw">n</span>()))[<span class="dv">1</span>]</a>
-<a class="sourceLine" id="cb2-21" data-line-number="21">unique</a>
-<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="co">#&gt; [1] 42298</span></a>
-<a class="sourceLine" id="cb2-23" data-line-number="23"></a>
-<a class="sourceLine" id="cb2-24" data-line-number="24"><span class="cf">if</span>( unique <span class="op">!=</span><span class="st"> </span><span class="kw">dim</span>(data)[<span class="dv">1</span>]) <span class="kw">stop</span>(<span class="st">&quot;something wrong with 'data'&quot;</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">#&gt; `summarise()` has grouped output by 'Year', 'SpecCode'. You can override using the `.groups` argument.</span></a>
+<a class="sourceLine" id="cb2-22" data-line-number="22">unique</a>
+<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co">#&gt; [1] 42298</span></a>
+<a class="sourceLine" id="cb2-24" data-line-number="24"></a>
+<a class="sourceLine" id="cb2-25" data-line-number="25"><span class="cf">if</span>( unique <span class="op">!=</span><span class="st"> </span><span class="kw">dim</span>(data)[<span class="dv">1</span>]) <span class="kw">stop</span>(<span class="st">&quot;something wrong with 'data'&quot;</span>)</a></code></pre></div>
 <p>See if the number of length classes or species seems to change over time:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">dataSumm =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(dplyr<span class="op">::</span><span class="kw">group_by</span>(data, Year),</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">                            <span class="dt">uniqLngtClass =</span> <span class="kw">length</span>(<span class="kw">unique</span>(LngtClass)),</a>
