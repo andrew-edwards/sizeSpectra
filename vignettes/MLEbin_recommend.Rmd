@@ -34,6 +34,9 @@ MLEbin method) and plot it in a similar way to the MEPS Fig. 7. The plotting is
 done using the new function `ISD_bin_plot_nonoverlapping()`, which is a wrapper
 for the more complex (and slightly updated) `ISD_bin_plot()`.
 
+Note: this is not (yet) part of any publication and so has not been peer-reviewed,
+it's just exploring some potentially useful plotting approaches.
+
 ### Simulate and fit data
 
 First, generate some data from a true PLB distribution and bin it (using bin widths
@@ -230,16 +233,11 @@ LBN_bin_plot(binValsTibble = x.binned$binVals,
 ```
 
 This more clearly shows the uncertainty in expected normalised biomass is larger
-at higher biomasses, because the bins are wider (I think TODO). The pink and
+at higher biomasses, because the bins are wider (I think). The pink and
 grey boxes overlap, showing some consistency between them that is not obvious
 from the earlier plots.
 
-
-
-
-
-
-XXX - A useful thing will be to create movie where the fit is for incrementally higher
+A useful thing will be to create movie where the fit is for incrementally higher
 values of $x_{min}$
 
 
@@ -259,41 +257,3 @@ LBN_bin_plot(binValsTibble = x.binned$binVals,
 
 But, now there's no real reason to label the axes with logged values, rather
 than use the more intuitive actual values (still on a log scale).
-
-
-## Extra - note I already have a total biomass function - should check it agrees
-## with pBiomassbins
-
-
-Some rough calculations:
-```{r biomass, eval = FALSE}
-bio <- pBiomass(b = MLEbin.res$MLE,
-         xmin = min(x.binned$binVals$binMin),
-         xmax = max(x.binned$binVals$binMax),
-         n = 1000,
-         x1 = 256,   # just testing hardwired values
-         x2 = 512)
-
-log10(bio/256)
-
-bioConfMin <- pBiomass(b = MLEbin.res$conf[1],
-         xmin = min(x.binned$binVals$binMin),
-         xmax = max(x.binned$binVals$binMax),
-         n = 1000,
-         x1 = 256,   # just testing hardwired values
-         x2 = 512)
-
-log10(bioConfMin/256)
-
-bioConfMax <- pBiomass(b = MLEbin.res$conf[2],
-         xmin = min(x.binned$binVals$binMin),
-         xmax = max(x.binned$binVals$binMax),
-         n = 1000,
-         x1 = 256,   # just testing hardwired values
-         x2 = 512)
-
-log10(bioConfMax/256)
-
-```
-
-Then put these calcs into the plotting function as an option - blue box maybe.
