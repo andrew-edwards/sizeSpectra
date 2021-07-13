@@ -20,3 +20,5 @@ length_weight.png
 vignettes/evansData/
 /doc/
 /Meta/
+
+.github/*.html
