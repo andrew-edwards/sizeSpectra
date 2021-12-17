@@ -10,18 +10,23 @@
 ##' and random generation of values (`rPL` and `rPLB`), with exponent `b`, minimum `xmin` and maximum
 ##' (for bounded distribution) `xmax` as described in Edwards et al. (2017, Methods in Ecology and
 ##' Evolution, 8:57-67). Random generation uses the inverse method (e.g. p1215 of Edwards
-##' 2008, Journal of Animal Ecology, 77:1212-1222). Unbounded distribution
-##' included for completeness but is not used in remaining code.
+##' 2008, Journal of Animal Ecology, 77:1212-1222). `qPLB` from inverting the
+##' cumulative distribution function (to be written up). Unbounded distribution
+##' included for completeness (except no `qPL`) but is not used in remaining code.
 ##' @param x vector of values to compute the density and distribution functions.
 ##' @param n number of random numbers to be generated (if `length(n) > 1` then
 ##' generate `length(n)` values)
 ##' @param b exponent of the distribution (must be <-1 for unbounded)
+##' @param p vector of probabilities for `qPLB()`
 ##' @param xmin minimum bound of the distribution, `xmin > 0`
 ##' @param xmax maximum bound for bounded distribution, `xmax > xmin`
 ##' @return `dPL` and `dPLB` return vector of probability density values
 ##' corresponding to `x`. `pPL` and `pPLB` return vector of cumulative
 ##' distribution values P(X <= x) corresponding to `x`. `rPL` and `rPLB` return
 ##' a vector (of length `n`) of independent random draws from the distribution.
+##' `qPLB` returns vector of values of `x` for which `P(X <= x) = p` (each
+##' element corresponding to the element of `p`). So
+##' `pPLB(qPLB(seq(0, 1, by = 0.1)))` gives `0, 0.1, ..., 1`.
 ##' @name Distributions
 NULL
 
@@ -106,6 +111,23 @@ rPLB <- function(n = 1, b = -2, xmin = 1, xmax = 100)
         }
     return(y)
   }
+
+##' @rdname Distributions
+##' @export
+qPLB <- function(p = 0.1,
+                 b = -2,
+                 xmin = 1,
+                 xmax = 100){
+  if(xmin <= 0 | xmin >= xmax | min(p) < 0 | max(p) > 1) stop("Parameters out of bounds in qPLB")
+  if(b != -1){
+    x = (p * xmax^(b+1) + (1 - p) * xmin^(b+1))^(1/(b+1))
+  } else {
+    x = xmax^p * xmin^(1-p)
+  }
+  return(x)
+}
+
+
 
 ##' Biomass distribution function from MEE equations A.4 and A.8
 ##'

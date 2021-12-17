@@ -8,6 +8,7 @@
 \alias{dPLB}
 \alias{pPLB}
 \alias{rPLB}
+\alias{qPLB}
 \title{Bounded and unbounded power-law distributions}
 \usage{
 dPL(x = 1, b = -2, xmin = 1)
@@ -21,6 +22,8 @@ dPLB(x = 1, b = -2, xmin = 1, xmax = 100)
 pPLB(x = 10, b = -2, xmin = 1, xmax = 100)
 
 rPLB(n = 1, b = -2, xmin = 1, xmax = 100)
+
+qPLB(p = 0.1, b = -2, xmin = 1, xmax = 100)
 }
 \arguments{
 \item{x}{vector of values to compute the density and distribution functions.}
@@ -33,12 +36,17 @@ rPLB(n = 1, b = -2, xmin = 1, xmax = 100)
 generate \code{length(n)} values)}
 
 \item{xmax}{maximum bound for bounded distribution, \code{xmax > xmin}}
+
+\item{p}{vector of probabilities for \code{qPLB()}}
 }
 \value{
 \code{dPL} and \code{dPLB} return vector of probability density values
 corresponding to \code{x}. \code{pPL} and \code{pPLB} return vector of cumulative
 distribution values P(X <= x) corresponding to \code{x}. \code{rPL} and \code{rPLB} return
 a vector (of length \code{n}) of independent random draws from the distribution.
+\code{qPLB} returns vector of values of \code{x} for which \code{P(X <= x) = p} (each
+element corresponding to the element of \code{p}). So
+\code{pPLB(qPLB(seq(0, 1, by = 0.1)))} gives \verb{0, 0.1, ..., 1}.
 }
 \description{
 For the unbounded and bounded power-law distributions (PL and PLB
@@ -47,6 +55,7 @@ cumulative distribution function P(X <= x) (\code{pPL} and \code{pPLB}),
 and random generation of values (\code{rPL} and \code{rPLB}), with exponent \code{b}, minimum \code{xmin} and maximum
 (for bounded distribution) \code{xmax} as described in Edwards et al. (2017, Methods in Ecology and
 Evolution, 8:57-67). Random generation uses the inverse method (e.g. p1215 of Edwards
-2008, Journal of Animal Ecology, 77:1212-1222). Unbounded distribution
-included for completeness but is not used in remaining code.
+2008, Journal of Animal Ecology, 77:1212-1222). \code{qPLB} from inverting the
+cumulative distribution function (to be written up). Unbounded distribution
+included for completeness (except no \code{qPL}) but is not used in remaining code.
 }
