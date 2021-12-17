@@ -68,7 +68,7 @@ binBreaks <- c(dplyr::pull(x.binned$binVals, binMin),
 
 binCounts <- dplyr::pull(x.binned$binVals, binCount)
 
-MLEbin.res <-  calcLike(negLL.PLB.binned,
+MLEbin.res <-  calcLike(negLL.fn = negLL.PLB.binned,
                         p = -1.5,
                         w = binBreaks,
                         d = binCounts,
