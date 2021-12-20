@@ -1794,6 +1794,9 @@ binData = function(x = NULL, counts = NULL, binWidth = NULL, binBreaks = NULL,
            # binWidth uses new columns binMax and binMin
         # Indices for minima of bins that have zero counts and so do not
         #  appear in binVals yet:
+        emptyBinMinInd = !(signif(binBreaks[-length(binBreaks)], digits = 8) %in%
+                           signif(binVals$binMin, digits = 8))
+                         # to avoid not-real differences due to rounding/storing
         emptyBinMinInd = !(binBreaks[-length(binBreaks)] %in% binVals$binMin)
         emptyBinMin = binBreaks[emptyBinMinInd]
         empties = length(emptyBinMin)
