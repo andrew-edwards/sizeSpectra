@@ -1797,7 +1797,6 @@ binData = function(x = NULL, counts = NULL, binWidth = NULL, binBreaks = NULL,
         emptyBinMinInd = !(signif(binBreaks[-length(binBreaks)], digits = 8) %in%
                            signif(binVals$binMin, digits = 8))
                          # to avoid not-real differences due to rounding/storing
-        emptyBinMinInd = !(binBreaks[-length(binBreaks)] %in% binVals$binMin)
         emptyBinMin = binBreaks[emptyBinMinInd]
         empties = length(emptyBinMin)
         emptyBinMax = binBreaks[-1][emptyBinMinInd]
