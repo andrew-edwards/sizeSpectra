@@ -57,7 +57,7 @@ dataComb = dplyr::mutate(dataComb, j = dplyr::min_rank(wmin))   # works since
 ```
 
 ```{r combine3}
-dataComb[nrow(dataComb), "j"] = 25                       # manually, because there's a gap
+dataComb[nrow(dataComb), ]$j <- 25                       # manually, because there's a gap
 ```
 
 ```{r combine4}
