@@ -2,6 +2,7 @@
 R package for fitting size spectra to ecological data (including binned data)
 
  <!-- badges: start -->
+ [![R-CMD-check](https://github.com/andrew-edwards/sizeSpectra/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andrew-edwards/sizeSpectra/actions/workflows/R-CMD-check.yaml)
  <!-- [![Codecov test coverage](https://codecov.io/gh/andrew-edwards/sizeSpectra/branch/master/graph/badge.svg)](https://codecov.io/gh/andrew-edwards/sizeSpectra?branch=master) -->
   <!-- badges: end -->
 
