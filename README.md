@@ -2,11 +2,8 @@
 R package for fitting size spectra to ecological data (including binned data)
 
  <!-- badges: start -->
-  [![Travis build status](https://travis-ci.com/andrew-edwards/sizeSpectra.svg?branch=master)](https://travis-ci.com/andrew-edwards/sizeSpectra)
  <!-- [![Codecov test coverage](https://codecov.io/gh/andrew-edwards/sizeSpectra/branch/master/graph/badge.svg)](https://codecov.io/gh/andrew-edwards/sizeSpectra?branch=master) -->
   <!-- badges: end -->
-
-Now downloadable and usable (maybe not if there is no 'build passing' badge above, but try anyway as it's currently just a Travis issue as of 4th January 2021).
 
 ## Description
 This R package contains functions for fitting size spectra to ecological data. In particular, it contains functionalised code to reproduce all the results in [1] and [2], and for users to apply the methods to their own data. See the [vignettes](http://htmlpreview.github.io/?https://github.com/andrew-edwards/sizeSpectra/blob/master/doc/vignettes_overview.html) to see what the package can do.

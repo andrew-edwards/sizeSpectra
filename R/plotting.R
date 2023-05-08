@@ -2014,7 +2014,7 @@ ISD_bin_plot <- function(data.year,
   if(length(yBig) > yBig.max){
     stop(paste0("The value of yBig.inc will yield ", length(yBig),
     " big tickmarks on the unlogged y-axis, which seems a little excessive.
-    Decrease the value of yBig.inc in ISD_bin_plot() or ISD_bin_plot_nonoverlapping()
+    Increase the value of yBig.inc in ISD_bin_plot() or ISD_bin_plot_nonoverlapping()
     by X-fold to decrease the number of tickmarks X-fold to a reasonable amount
     (default of yBig.inc is 1000). If you do want more than 10 big tickmarks,
     then set yBig.max to the desired number."))
