@@ -141,6 +141,7 @@ summary(data)
 
 dplyr::filter(data, SpecCode == 105814, Year == 1986, LngtClass == 60)
 ```
+
 So `Number` here correctly equals the sum of the first two rows of `exampleSp`
 divided by seven (areas).
 
