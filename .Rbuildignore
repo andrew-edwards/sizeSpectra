@@ -9,6 +9,8 @@
 ^codecov\.yml$
 ^fromOtherRepo$
 ^compress-test$
+^vignettes$
+
 # ^vignettes/MEE_Reproduce_1.Rmd$
 # ^vignettes/MEE_Reproduce_2.Rmd$
 # ^vignettes/MEPS_Reproduce_1.Rmd$
