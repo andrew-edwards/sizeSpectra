@@ -15,6 +15,19 @@
 
 <title>Vignettes_overview</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -26,6 +39,7 @@
     </style>
 
 
+
 <style type="text/css">
   code {
     white-space: pre;
@@ -35,26 +49,28 @@
   }
 </style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -63,9 +79,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -320,7 +336,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(sizeSpectra)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sizeSpectra)</span></code></pre></div>
 <div id="overview-of-vignettes-for-sizespectra-package" class="section level2">
 <h2>Overview of vignettes for sizeSpectra package</h2>
 <p>This R package contains functions for fitting size spectra to ecological data. In particular, it contains functionalised code to reproduce all the results in [1] and [2], and for users to apply the methods to their own data.</p>
@@ -329,16 +345,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>The vignettes explain how to use the functions in the package to reproduce the results in both papers. Users should look over the vignettes to determine which functions and code are best suited for analysing their own data. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating explanatory text from the papers in the vignettes). In the vignettes, [1] is referred to as the ‘MEE paper’ and [2] as the ‘MEPS paper’.</p>
 <p>The vignettes are:</p>
 <ul>
-<li><p><a href="MEE_reproduce_1.html" class="uri">MEE_reproduce_1.html</a>: Simulate and fit a single data set using eight methods, and create recommended likelihood-based plot. Reproduces MEE Figures 1, 2, 6 and A.1.</p></li>
-<li><p><a href="MEE_reproduce_2.html" class="uri">MEE_reproduce_2.html</a>: Simulate 10,000 data sets and fit them using eight methods, then plot histograms and confidence intervals of the estimates of the size-spectra exponent <span class="math inline">\(b\)</span>. Reproduces MEE Figures 3 (except currently for the gold histograms), 4 and Table 2. Also for the MLEfix method (Figures A.3 and A.4).</p></li>
-<li><p><a href="MEPS_reproduce_1.html" class="uri">MEPS_reproduce_1.html</a>: Example length-weight relationships for two species and the effect of binned length data (MEPS Figure 2). And how consequent binned body-mass values get assigned to logarithimic size-class bins by some methods (Figure 3).</p></li>
-<li><p><a href="MEPS_reproduce_2.html" class="uri">MEPS_reproduce_2.html</a>: Main simulation results, from fitting maximum likelihood value (and confidence interval) of <span class="math inline">\(b\)</span> for each combination of 10,000 simulated data sets, four binning methods and two fitting methods (MLEmid or MLEbin). Reproduces MEPS Figures 4 and 5 and Table S.3. Then does the same analyses with <span class="math inline">\(x\)</span><sub>min</sub><span class="math inline">\(=16\)</span> (Figures S.35 and S.36 and Table S.4), and with with <span class="math inline">\(x\)</span><sub>min</sub><span class="math inline">\(=1\)</span> but only sampling above a cutoff value of 16 (Figures S.37 and S.38 and Table S.5).</p></li>
-<li><p><a href="MEPS_IBTS_1.html" class="uri">MEPS_IBTS_1.html</a>: Pre-processing of International Bottom Trawl Survey (IBTS) data to extract the required elements. Gives MEPS Table 1.</p></li>
-<li><p><a href="MEPS_IBTS_2.html" class="uri">MEPS_IBTS_2.html</a>: Analyses of the IBTS data using the original eight methods. Gives MEPS Figure 1 and Table S.1.</p></li>
-<li><p><a href="MEPS_IBTS_MLEbins.html" class="uri">MEPS_IBTS_MLEbins.html</a>: Analyse the IBTS data using the MLEbins method. Gives Figure 6 (and related Figures S.1, S.2 and S.3) showing species-specific body mass bins resulting from the length bins, Figure 8 (comparison of MLE and MLEbins values of b through time), MLEbins row of Table S.1, and Table S.2.</p></li>
-<li><p><a href="MEPS_IBTS_recommend.html" class="uri">MEPS_IBTS_recommend.html</a>: Calculations and schematic diagram (Figure S.4, somewhat automated for any species) to help explain the recommended plotting approach. The recommended Figures 7, and S.5 to S.34 for each year of the IBTS data (with code for doing separate figures and as a movie).</p></li>
-<li><p><a href="MEPS_IBTS_all_min_100.html" class="uri">MEPS_IBTS_all_min_100.html</a>: Combines the essential aspects of the above four IBTS vignettes into one, and repeats the analysis but setting the minimum body mass to be 100 g. Less for understanding everything and more for redoing the analyses with different assumptions (or data).</p></li>
-<li><p><a href="MLEbin_recommend.html" class="uri">MLEbin_recommend.html</a>: Exploring ways of plotting an LBN type plot for data that are binned with one set of bin breaks (so simpler than the IBTS data). Not part of any paper.</p></li>
+<li><p><a href="MEE_reproduce_1.html">MEE_reproduce_1.html</a>: Simulate and fit a single data set using eight methods, and create recommended likelihood-based plot. Reproduces MEE Figures 1, 2, 6 and A.1.</p></li>
+<li><p><a href="MEE_reproduce_2.html">MEE_reproduce_2.html</a>: Simulate 10,000 data sets and fit them using eight methods, then plot histograms and confidence intervals of the estimates of the size-spectra exponent <span class="math inline">\(b\)</span>. Reproduces MEE Figures 3 (except currently for the gold histograms), 4 and Table 2. Also for the MLEfix method (Figures A.3 and A.4).</p></li>
+<li><p><a href="MEPS_reproduce_1.html">MEPS_reproduce_1.html</a>: Example length-weight relationships for two species and the effect of binned length data (MEPS Figure 2). And how consequent binned body-mass values get assigned to logarithimic size-class bins by some methods (Figure 3).</p></li>
+<li><p><a href="MEPS_reproduce_2.html">MEPS_reproduce_2.html</a>: Main simulation results, from fitting maximum likelihood value (and confidence interval) of <span class="math inline">\(b\)</span> for each combination of 10,000 simulated data sets, four binning methods and two fitting methods (MLEmid or MLEbin). Reproduces MEPS Figures 4 and 5 and Table S.3. Then does the same analyses with <span class="math inline">\(x\)</span><sub>min</sub><span class="math inline">\(=16\)</span> (Figures S.35 and S.36 and Table S.4), and with with <span class="math inline">\(x\)</span><sub>min</sub><span class="math inline">\(=1\)</span> but only sampling above a cutoff value of 16 (Figures S.37 and S.38 and Table S.5).</p></li>
+<li><p><a href="MEPS_IBTS_1.html">MEPS_IBTS_1.html</a>: Pre-processing of International Bottom Trawl Survey (IBTS) data to extract the required elements. Gives MEPS Table 1.</p></li>
+<li><p><a href="MEPS_IBTS_2.html">MEPS_IBTS_2.html</a>: Analyses of the IBTS data using the original eight methods. Gives MEPS Figure 1 and Table S.1.</p></li>
+<li><p><a href="MEPS_IBTS_MLEbins.html">MEPS_IBTS_MLEbins.html</a>: Analyse the IBTS data using the MLEbins method. Gives Figure 6 (and related Figures S.1, S.2 and S.3) showing species-specific body mass bins resulting from the length bins, Figure 8 (comparison of MLE and MLEbins values of b through time), MLEbins row of Table S.1, and Table S.2.</p></li>
+<li><p><a href="MEPS_IBTS_recommend.html">MEPS_IBTS_recommend.html</a>: Calculations and schematic diagram (Figure S.4, somewhat automated for any species) to help explain the recommended plotting approach. The recommended Figures 7, and S.5 to S.34 for each year of the IBTS data (with code for doing separate figures and as a movie).</p></li>
+<li><p><a href="MEPS_IBTS_all_min_100.html">MEPS_IBTS_all_min_100.html</a>: Combines the essential aspects of the above four IBTS vignettes into one, and repeats the analysis but setting the minimum body mass to be 100 g. Less for understanding everything and more for redoing the analyses with different assumptions (or data).</p></li>
+<li><p><a href="MLEbin_recommend.html">MLEbin_recommend.html</a>: Exploring ways of plotting an LBN type plot for data that are binned with one set of bin breaks (so simpler than the IBTS data). Not part of any paper.</p></li>
 </ul>
 <p>The source code written in <code>Rmarkdown</code>, the R code that gets extracted from the <code>Rmarkdown</code> code, and the resulting .html files are all found within your library folder (where all your R libraries get saved), in <code>library\sizeSpectra\doc\</code>.</p>
 </div>
