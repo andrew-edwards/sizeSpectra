@@ -2,7 +2,7 @@
 R package for fitting size spectra to ecological data (including binned data)
 
  <!-- badges: start -->
- [![R-CMD-check](https://github.com/andrew-edwards/sizeSpectra/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andrew-edwards/sizeSpectra/actions/workflows/R-CMD-check.yaml)
+ <!-- [![R-CMD-check](https://github.com/andrew-edwards/sizeSpectra/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andrew-edwards/sizeSpectra/actions/workflows/R-CMD-check.yaml) -->
  <!-- [![Codecov test coverage](https://codecov.io/gh/andrew-edwards/sizeSpectra/branch/master/graph/badge.svg)](https://codecov.io/gh/andrew-edwards/sizeSpectra?branch=master) -->
   <!-- badges: end -->
 
@@ -43,16 +43,18 @@ part of vignettes. These include:
 
 ## Install instructions
 
-To install this package directly from GitHub you need the package `devtools`, so if you don't have it install it (once):
+To install the latest version of `sizeSpectra` directly from GitHub you need the package `remotes`, so if you don't have it install it (once):
 
 ```
-install.packages("devtools")
+install.packages("remotes")    # If you do not already have the "remotes" package
+remotes::install_github("andrew-edwards/sizeSpectra")
 ```
 
-To install the latest version of `sizeSpectra`:
+If you get an errors, then try:
 ```
-devtools::install_github("andrew-edwards/sizeSpectra")
+remotes::install_github("andrew-edwards/sizeSpectra@d84d484")
 ```
+which refers to an earlier version. Else email me (8th May 2023: I think there's an issue that's arisen with the latest version of some of the packages that `sizeSpectra` depends on, and I've been trying to figure it out).
 
 Then:
 ```
