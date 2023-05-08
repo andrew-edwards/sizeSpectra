@@ -49,8 +49,18 @@ dataComb = dplyr::summarise(dplyr::group_by(dataTwoSpec,
                                             wmin),
                             wmax = unique(wmax),
                             number = round(sum(Number), dig=4))
-dataComb = dplyr::mutate(dataComb, j = dplyr::min_rank(wmin))   # works since they're grouped
+```
+
+```{r combine2}
+dataComb = dplyr::mutate(dataComb, j = dplyr::min_rank(wmin))   # works since
+# they're grouped
+```
+
+```{r combine3}
 dataComb[nrow(dataComb), "j"] = 25                       # manually, because there's a gap
+```
+
+```{r combine4}
 dataComb = dplyr::mutate(dataComb, wmid = (wmin + wmax)/2)  # midpoint for plotting
 ```
 
