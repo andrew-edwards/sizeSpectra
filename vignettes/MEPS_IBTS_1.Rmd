@@ -180,7 +180,7 @@ The unique length classes are:
 ```{r lengths}
 sort(unique(data$LngtClass))
 diff(sort(unique(data$LngtClass)))
- ```
+```
 
 The 0.5-cm length classes are only for two species, Atlantic Herring (code
  126417) and European Sprat (code 126425), as confirmed here (no differences of 0.5cm):

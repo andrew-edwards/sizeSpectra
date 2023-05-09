@@ -128,7 +128,7 @@ sum(data$Number)
 The unique length classes are:
 ```{r lengths}
 sort(unique(data$LngtClass))
- ```
+```
 
 Need this to stop earlier groups being kept (can mess up later code):
 ```{r}
