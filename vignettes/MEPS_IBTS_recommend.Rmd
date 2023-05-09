@@ -66,7 +66,7 @@ dataComb = dplyr::mutate(dataComb, wmid = (wmin + wmax)/2)  # midpoint for plott
 ```
 
 Now create Figure S.4, with semi-automated text for the caption:
-```{r fig.width=6.5, fig.height=4}
+```{r combine5}
 target = 7                 # target bin (for species 2)
 
 target.wmin = dplyr::filter(dataComb,
@@ -93,6 +93,7 @@ colSpec = c("red", "pink")
 thick = 30                 # y thickness of bins
 cex.sub = 0.7              # font size for subscripts
 
+```{r fig.width=6.5, fig.height=4}
 #postscript("binCountRangeSchematic.eps",
 #           height = 4, width = 6.5,
 #           horizontal=FALSE,  paper="special")
