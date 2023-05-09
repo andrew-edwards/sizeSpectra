@@ -52,9 +52,9 @@ remotes::install_github("andrew-edwards/sizeSpectra")
 
 If you get an errors, then try:
 ```
-remotes::install_github("andrew-edwards/sizeSpectra@d84d484")
+remotes::install_github("andrew-edwards/sizeSpectra", build_vignettes = FALSE)
 ```
-which refers to an earlier version. Else email me (8th May 2023: I think there's an issue that's arisen with the latest version of some of the packages that `sizeSpectra` depends on, and I've been trying to figure it out).
+as there's something in the vignettes that is now not working to do with recent versions of R or of packages (as of 9th May 2023); you can still see the built vignettes as described above.
 
 Then:
 ```
