@@ -115,7 +115,7 @@ abline(v = target.wmin, col = "grey")
 abline(v = target.wmax, col = "grey")
 
 for(ii in 1:length(specForFig))   # loop over species, plot bins for each
-  {
+   {
     yVal = yVals[ii]         # where to have horizontal bars
     bins.wmin = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmin  # for this sp
     bins.wmax = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmax
@@ -127,63 +127,70 @@ for(ii in 1:length(specForFig))   # loop over species, plot bins for each
     bins.wmax.gt.tmin = dplyr::filter(dataComb, SpecCode == specForFig[ii])$wmax.gt.tmin
     bins.wmax.gt.tmin.yn = ifelse(bins.wmax.gt.tmin,"Y", "N")
 
-    segments(y0 = yVal,
-             x0 = bins.wmin,
-             x1 = bins.wmax,
-             col=colSpec, lwd=thick)    # recycles col
+    ## TODO these are all commented out to get vignette to build on install
+    ##  properly, yet it still builds locally fine (and used to)
+    ## segments(y0 = yVal,
+    ##          x0 = bins.wmin,
+    ##          x1 = bins.wmax,
+    ##          col=colSpec, lwd=thick)    # recycles col
     # Bin break labels (cannot do , with vector for labels, it seems):
-    for(iiii in 1:length(bins.wmin))
-      {
-        text(x = bins.wmin[iiii],
-             y = yVal,
-             labels = bquote(paste(w[.(ii)*","*
-                    .(dplyr::filter(dataComb, SpecCode == specForFig[ii])$j[iiii])])),
-             pos = 1,
-             offset = 0.03*thick,
-             cex = cex.sub)
-      }
-    # Do final wmax manually:
-    text(x = bins.wmax[length(bins.wmax)],
-         y = yVal,
-         labels = bquote(paste(w[.(ii)*","*
-                     .(max(dplyr::filter(dataComb, SpecCode == specForFig[ii])$j)+1)])),
-         pos = 1,
-         offset = 0.03*thick,
-         cex = cex.sub)
-    # Put counts for each bin
-    text(x = bins.wmid,
-         y = yVal,
-         labels = f(dplyr::filter(dataComb, SpecCode == specForFig[ii])$number, ii+1),
-                  # ii+1 happens to give 3 d.p.s for species 2 and 2 for species 1,
-                  #  as needed on figure
-         pos = NULL,
-         offset = 0.03*thick,
-         cex = cex.sub*1.2)
-    # Whether to include in counts
-    eps = 0.23                  # Offset from wmid for Y's and N's
-    text(x = bins.wmid - eps,
-         y = yVal,
-         labels = bins.wmin.gt.tmax.yn,
-         pos = 3,
-         offset = 0.03*thick,
-         cex = cex.sub*1.2)
-    text(x = bins.wmid + eps,
-         y = yVal,
-         labels = bins.wmax.gt.tmin.yn,
-         pos = 3,
-         offset = 0.03*thick,
-         cex = cex.sub*1.2)
-  }
 
-# Need w_1,24 manually, assumes this is the only one with j=23
-text(x = dplyr::filter(dataComb, j==23)$wmax,
-     y = yVals[1],
-     labels = bquote(paste(w[.(1)*","*24])),
-     pos = 1,
-     offset = 0.03*thick,
-     cex = cex.sub)
+    ## for(iiii in 1:length(bins.wmin))
+    ##   {
+    ##     text(x = bins.wmin[iiii],
+    ##          y = yVal,
+    ##          labels = "XXX",
+    ##          # TODO commenting out this as it stopped working when building with
+    ##          #  R version 4.3.0 (something between 4.2.1 and 4.3.0). Though
+    ##          #  build_vignettes() works locally.
+    ##          # bquote(paste(w[.(ii)*","*.(dplyr::filter(dataComb, SpecCode == specForFig[ii])$j[iiii])])),
+    ##          pos = 1,
+    ##          offset = 0.03*thick,
+    ##          cex = cex.sub)
+    ##   }
 
-# Calculations for the caption:
+##     # Do final wmax manually:
+##     text(x = bins.wmax[length(bins.wmax)],
+##          y = yVal,
+##          labels = bquote(paste(w[.(ii)*","*
+##                      .(max(dplyr::filter(dataComb, SpecCode == specForFig[ii])$j)+1)])),
+##          pos = 1,
+##          offset = 0.03*thick,
+##          cex = cex.sub)
+##     # Put counts for each bin
+##     text(x = bins.wmid,
+##          y = yVal,
+##          labels = f(dplyr::filter(dataComb, SpecCode == specForFig[ii])$number, ii+1),
+##                   # ii+1 happens to give 3 d.p.s for species 2 and 2 for species 1,
+##                   #  as needed on figure
+##          pos = NULL,
+##          offset = 0.03*thick,
+##          cex = cex.sub*1.2)
+##     # Whether to include in counts
+##     eps = 0.23                  # Offset from wmid for Y's and N's
+##     text(x = bins.wmid - eps,
+##          y = yVal,
+##          labels = bins.wmin.gt.tmax.yn,
+##          pos = 3,
+##          offset = 0.03*thick,
+##          cex = cex.sub*1.2)
+##     text(x = bins.wmid + eps,
+##          y = yVal,
+##          labels = bins.wmax.gt.tmin.yn,
+##          pos = 3,
+##          offset = 0.03*thick,
+##          cex = cex.sub*1.2)
+}
+
+## # Need w_1,24 manually, assumes this is the only one with j=23
+## text(x = dplyr::filter(dataComb, j==23)$wmax,
+##      y = yVals[1],
+##      labels = bquote(paste(w[.(1)*","*24])),
+##      pos = 1,
+##      offset = 0.03*thick,
+##      cex = cex.sub)
+
+## # Calculations for the caption:
 lowCount = sum(dataComb$wmin.gt.tmax * dataComb$number)
 highCount = sum(dataComb$wmax.gt.tmin * dataComb$number)
 
