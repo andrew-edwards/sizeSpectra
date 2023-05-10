@@ -2,7 +2,7 @@
 R package for fitting size spectra to ecological data (including binned data)
 
  <!-- badges: start -->
- <!-- [![R-CMD-check](https://github.com/andrew-edwards/sizeSpectra/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andrew-edwards/sizeSpectra/actions/workflows/R-CMD-check.yaml) -->
+ [![R-CMD-check](https://github.com/andrew-edwards/sizeSpectra/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andrew-edwards/sizeSpectra/actions/workflows/R-CMD-check.yaml)
  <!-- [![Codecov test coverage](https://codecov.io/gh/andrew-edwards/sizeSpectra/branch/master/graph/badge.svg)](https://codecov.io/gh/andrew-edwards/sizeSpectra?branch=master) -->
   <!-- badges: end -->
 
@@ -54,7 +54,7 @@ If you get an errors, then try:
 ```
 remotes::install_github("andrew-edwards/sizeSpectra", build_vignettes = FALSE)
 ```
-as there's something in the vignettes that is now not working to do with recent versions of R or of packages (as of 9th May 2023); you can still see the built vignettes as described above.
+as there's something in the vignettes that is now not working to do with recent versions of R or of packages (as of 9th May 2023); you can still see the built vignettes as described above. Note that I've had to comment out some of the code to build one of the figures in the MEPS_IBTS_recommend vignette -- something has changed between R versions 4.2.1 and 4.3.0 that stops it building. However, the figure (Figure S.4 of MEPS paper) is likely not of major interest for users to produce. As mentioned, the rendered vignette above has been left as the earlier working version. I build the the original vignette locally, just not when doing `install(dependencies = FALSE, build_vignettes = TRUE)`. Will look into it further (should make an Issue).
 
 Then:
 ```
