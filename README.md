@@ -23,11 +23,13 @@ Here is a movie showing fits to 30 years of International Bottom Trawl Survey da
 
 See the [overview vignette](http://htmlpreview.github.io/?https://github.com/andrew-edwards/sizeSpectra/blob/master/doc/vignettes_overview.html) for a summary of all vignettes. They are available on this GitHub site, and also within the package in the usual way (see below).
 
-The vignettes explain how to use the functions in the package to reproduce all results in both papers, and to analyse new data sets using our functions. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating text from the papers in the vignettes). In the vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'.
+The vignettes explain how to use the functions in the package to reproduce all results in both papers, and to analyse new data sets using our functions. The vignettes are descriptions of how to use the code to implement the methods. The two papers should be consulted first to understand the methods (I have tried to avoid repeating text from the papers in the vignettes). In the vignettes, [1] is referred to as the 'MEE paper' and [2] as the 'MEPS paper'. 
+
+**In particular** see the new `MLEbin_recommend.Rmd` which starts with the core functions needed to fit and plot data using the MLEbin method. Use this as a template if you want to fit your own data. 
 
 ## Main updates since version 1.0.0.0 (released Dec 2019)
 
-New vignette (`MLE_bin_recommend.Rmd`), linked in the [overview vignette](http://htmlpreview.github.io/?https://github.com/andrew-edwards/sizeSpectra/blob/master/doc/vignettes_overview.html), that explores some new plotting approaches for binned data using the new functions:
+New vignette (`MLEbin_recommend.Rmd`), linked in the [overview vignette](http://htmlpreview.github.io/?https://github.com/andrew-edwards/sizeSpectra/blob/master/doc/vignettes_overview.html), that gives the core steps for using the MLEbin method, plus also explores some new plotting approaches for binned data using the new functions:
  - `ISD_bin_plot_nonoverlapping()` -- Recommended plotting for binned data with non-overlapping bins, which is the usual case.
  - `LBN_bin_plot()` -- Biomass size spectrum plot for binned data demonstrating uncertainties, showing the bin widths explicitly and the normalised biomass in each bin (with resulting uncertainties). So extending MEE Fig. 6 for already binned data, using a new approach motivated by MEPS Fig. 7.
  - `plot_binned_fitted()` -- Add horizontal bars and shaded rectangles to `LBN_bin_plot()`, to show estimated normalised biomasses in each bin.
