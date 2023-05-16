@@ -14,8 +14,8 @@ log2bins(x = NULL, counts = NULL)
 individuals for that value. Only \code{x} or \code{counts} can be specified.}
 }
 \value{
-\preformatted{  list containing:
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{  list containing:
+}\if{html}{\out{</div>}}
 \itemize{
 \item indiv: dataframe with a row for each x value, with columns:
 \itemize{

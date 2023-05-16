@@ -28,9 +28,6 @@ normalised biomasses estimated from confidence intervals of \code{b}}
 overlapping with grey rectangles; may not work exacly as planned (won't be symmetric) when x-axis
 not logged, but that's not going to be a useful plot anyway}
 }
-\value{
-
-}
 \description{
 These are to show the estimated normalised biomasses in each bin, based on
 the MLE value of \code{b} and it's confidence limit values.

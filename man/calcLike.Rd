@@ -44,8 +44,8 @@ presumably when searching some very very very unlikely region of paramater space
 \item{...}{further arguments (including parameters and data) to \code{negLL.fn()}}
 }
 \value{
-\preformatted{  list containing:
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{  list containing:
+}\if{html}{\out{</div>}}
 \itemize{
 \item MLE: the maximum likelihood estimate
 \item conf: the 95\\% confidence interval of the MLE

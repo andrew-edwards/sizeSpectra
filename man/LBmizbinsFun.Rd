@@ -8,10 +8,12 @@ LBmizbinsFun(beta, xmin, xmax, k)
 }
 \arguments{
 \item{beta}{to be calculated, \code{log10(beta)} is the constant binwidth on
-log10 scale. \code{beta} is solution to\preformatted{0 = beta^(k-2) * (2 * beta-1) - xmax/xmin
+log10 scale. \code{beta} is solution to
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{0 = beta^(k-2) * (2 * beta-1) - xmax/xmin
 
   = 2 * beta^(k-1) - beta^(k-2) - xmax/xmin
-}}
+}\if{html}{\out{</div>}}}
 
 \item{xmin}{minimum of data (lower bound of lowest bin)}
 

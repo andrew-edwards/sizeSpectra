@@ -33,9 +33,6 @@ output of \code{binData}. \code{wmin} and \code{wmax} can also be used instead o
 
 \item{...}{further arguments to be passed to \code{ISD_bin_plot()}}
 }
-\value{
-
-}
 \description{
 For data in binned form (i.e. bin breaks and counts), plots the individual
 size distribution and the fit from the MLEbin method (alreadly calculated)
