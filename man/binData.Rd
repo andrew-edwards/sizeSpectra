@@ -61,7 +61,7 @@ maximum, and width, respectively, of the bin within
 which the \code{x} value falls.  If indiv has \verb{>=10^6} rows then it isn't saved.
 If \code{counts} was specified then an equivalent \code{x}
 vector is created and is column \code{x} (i.e. \code{x} values are repeated). May
-not be the most efficient way, but it easiest to program.
+not be the most efficient way, but is easiest to program.
 }
 \item binVals: dataframe with a row for each new bin and columns:
 \itemize{

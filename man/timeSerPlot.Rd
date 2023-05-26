@@ -32,7 +32,8 @@ timeSerPlot(
   legExtraPos = "topleft",
   legExtraCol = "",
   insetVal = c(-0.08, -0.06),
-  xJitter = 0
+  xJitter = 0,
+  doRegression = TRUE
 )
 }
 \arguments{
@@ -101,9 +102,12 @@ sets of results)}
 
 \item{xJitter}{value to jitter the x-values by (for comparison plot the
 confidence intervals overlap)}
+
+\item{doRegression}{whether to calculate a regression for the time series of estimates}
 }
 \value{
-dataframe of just one row with columns:
+if \code{doRegression} is TRUE (default) then return dataframe of just
+one row with columns (else return nothing):
 \itemize{
 \item Method: method used
 \item Low: lower bound of 95\\% confidence interval
@@ -117,7 +121,8 @@ dataframe of just one row with columns:
 \description{
 Plot time series of estimated \emph{b} with confidence intervals, for
 data that are analysed year-by-year by a single method. And then
-fit a linear regression with its confidence intervals.
+fit a linear regression with its confidence intervals (or not if
+\code{doRegression = FALSE}).
 This will get called eight times to produce a comparison figure of
 the methods.
 }
