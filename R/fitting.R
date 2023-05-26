@@ -1686,7 +1686,7 @@ eightMethods.count = function(data = data, oneYear = 1980,
 ##'      which the `x` value falls.  If indiv has `>=10^6` rows then it isn't saved.
 ##'      If `counts` was specified then an equivalent `x`
 ##'      vector is created and is column `x` (i.e. `x` values are repeated). May
-##'      not be the most efficient way, but it easiest to program.
+##'      not be the most efficient way, but is easiest to program.
 ##'   * binVals: dataframe with a row for each new bin and columns:
 ##'      + `binMid`, `binMin`, `binMax`, `binWidth`: midpoint, minimum,
 ##'         maximum, and width, respectively, of the bin

@@ -1343,7 +1343,8 @@ MLEmid.MLEbin.table = function(results.list)
 ##'
 ##' Plot time series of estimated *b* with confidence intervals, for
 ##' data that are analysed year-by-year by a single method. And then
-##' fit a linear regression with its confidence intervals.
+##' fit a linear regression with its confidence intervals (or not if
+##' `doRegression = FALSE`).
 ##' This will get called eight times to produce a comparison figure of
 ##' the methods.
 ##'
@@ -1385,7 +1386,9 @@ MLEmid.MLEbin.table = function(results.list)
 ##' @param insetVal inset shift for naming the panel
 ##' @param xJitter value to jitter the x-values by (for comparison plot the
 ##'   confidence intervals overlap)
-##' @return dataframe of just one row with columns:
+##' @param doRegression whether to calculate a regression for the time series of estimates
+##' @return if `doRegression` is TRUE (default) then return dataframe of just
+##'   one row with columns (else return nothing):
 ##'   * Method: method used
 ##'   * Low: lower bound of 95\% confidence interval
 ##'   * Trend: gradient of regression fit
@@ -1423,7 +1426,8 @@ timeSerPlot = function(bForYears,
                        legExtraPos = "topleft",
                        legExtraCol = "",
                        insetVal = c(-0.08, -0.06),
-                       xJitter = 0)
+                       xJitter = 0,
+                       doRegression = TRUE)
     {
     if(is.null(xLim))
         {
@@ -1482,15 +1486,17 @@ timeSerPlot = function(bForYears,
     # Now just fit a linear regression through the points,
     #  and colour code it red if significant trend and grey if not. This
     #  is taken and adapted from regress2.Snw from RBR14 assessment.
-    if(weightReg == TRUE)
-        { lm = lm(b ~ Year, data = bForYears, weights = 1/(stdErr^2))   } else
-        { lm = lm(b ~ Year, data = bForYears) }
+    if(doRegression){
+      if(weightReg == TRUE){
+        lm = lm(b ~ Year, data = bForYears, weights = 1/(stdErr^2))
+      } else {
+        lm = lm(b ~ Year, data = bForYears)
+      }
 
-    yearInc = seq(xLim[1], xLim[2], 0.1)
-    p.conf = predict(lm, newdata=data.frame(Year=yearInc), interval="confidence")
-    pVal = summary(lm)$coeff["Year",4]
-    if(regPlot)
-      {
+      yearInc = seq(xLim[1], xLim[2], 0.1)
+      p.conf = predict(lm, newdata=data.frame(Year=yearInc), interval="confidence")
+      pVal = summary(lm)$coeff["Year",4]
+      if(regPlot){
         if (pVal > 0.05) regCol = regColNotSig else regCol= regColSig
         lm.line(xLim, lm, col=regCol)
         matlines(yearInc,
@@ -1498,18 +1504,22 @@ timeSerPlot = function(bForYears,
                  col=regCol,
                  lty=2)
       }
-    confVals = confint(lm, "Year", level=0.95)
+      confVals = confint(lm, "Year", level=0.95)
 
-    res = data.frame(Method = method,
-                     Low = confVals[1],
-                     Trend = lm$coeff[2],
-                     High = confVals[2],
-                     p = pVal,
-                     Rsquared = summary(lm)$r.squared,
-                     adjRsquared = summary(lm)$adj.r.squared,
-                     row.names=NULL)
-    return(res)
+      res = data.frame(Method = method,
+                       Low = confVals[1],
+                       Trend = lm$coeff[2],
+                       High = confVals[2],
+                       p = pVal,
+                       Rsquared = summary(lm)$r.squared,
+                       adjRsquared = summary(lm)$adj.r.squared,
+                       row.names=NULL)
+      return(res)
+    } else {
+      invisible()
+    }
 }
+
 ##' Call `timeSerPlot()` eight times to create MEPS Figure 1, eight methods
 ##'  applied to 30 years of data
 ##'
