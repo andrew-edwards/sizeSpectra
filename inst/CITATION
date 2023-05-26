@@ -1,0 +1,17 @@
+citHeader("To cite sizeSpectra in publications use:")
+
+citEntry(
+  entry    = "misc",
+  title    = "sizeSpectra: R package for fitting size spectra to ecological data (including binned data)",
+  author   = "A. M. Edwards",
+  journal  = "",
+  year     = "2020",
+  volume   = "",
+  number   = "",
+  pages    = "",
+  note     = "Available at https://github.com/andrew-edwards/sizeSpectra",
+  url      = "https://github.com/andrew-edwards/sizeSpectra",
+  textVersion = paste(
+
+  )
+)

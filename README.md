@@ -69,6 +69,12 @@ vignette("Vignettes_overview")
 ```
 [Note that if you are using Rstudio there is a [known issue](https://github.com/rstudio/rstudio/issues/2253) that equations don't render properly in the viewer; they are fine in a usual html viewer. Also `browseVignettes("sizeSpectra")` didn't seem to work in Rstudio either. Running from a different R console (e.g. the default non-Rstudio version) should work fine.]
 
+## Citation
+
+The package is being used in applications around the world (I will add a list at some point). If you using it then please cite it so I know about it and will continue to devote time to updating and maintaining it. See `citation(sizeSpectra)` for a bibTeX entry, or use:
+
+Edwards, A.M. (2020). sizeSpectra: R package for fitting size spectra to ecological data (including binned data). Available at https://github.com/andrew-edwards/sizeSpectra.
+
 ## Issues, problems
 
 Please report any problems as a [GitHub Issue](https://github.com/andrew-edwards/sizeSpectra/issues), using a minimal working example if possible (and please check the closed issues first).
