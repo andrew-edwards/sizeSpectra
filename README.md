@@ -71,7 +71,7 @@ vignette("Vignettes_overview")
 
 ## Citation
 
-The package is being used in applications around the world (I will add a list at some point). If you using it then please cite it so I know about it and will continue to devote time to updating and maintaining it. See `citation(sizeSpectra)` for a bibTeX entry, or use:
+The package is being used in applications around the world (I will add a list at some point). If you using it then please cite it so I know about it and will continue to devote time to updating and maintaining it. See `citation("sizeSpectra")` for a bibTeX entry, or use:
 
 Edwards, A.M. (2020). sizeSpectra: R package for fitting size spectra to ecological data (including binned data). Available at https://github.com/andrew-edwards/sizeSpectra.
 
